@@ -1,0 +1,32 @@
+name: globe
+repository: https://github.com/invertase/globe
+packages:
+  - "*"
+  - "packages/*"
+
+command:
+  version:
+    linkToCommits: true
+    branch: main
+    workspaceChangelog: true
+    hooks:
+      preCommit: |
+        dart run scripts/generate_version.dart && \
+        git add packages/globe_cli/lib/src/package_info.dart
+
+scripts:
+  analyze:
+    run: |
+      melos exec -c 1 -- \
+        dart analyze --fatal-infos
+    description: Run `flutter analyze` for all packages.
+
+  format:
+    run: melos exec dart format . --fix
+    description: Run `dart format` for all packages.
+
+  format-check:
+    run: melos exec dart format . --set-exit-if-changed
+    description: Run `dart format` checks for all packages.
+
+  test: melos exec --no-flutter --dir-exists="test" -- "dart test ."
