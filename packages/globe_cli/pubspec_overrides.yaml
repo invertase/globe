@@ -1,0 +1,4 @@
+# melos_managed_dependency_overrides: globe_lints
+dependency_overrides:
+  globe_lints:
+    path: ../globe_lints

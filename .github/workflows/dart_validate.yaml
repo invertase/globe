@@ -1,0 +1,37 @@
+name: all_dart_packages
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+      - uses: bluefireteam/melos-action@v3
+      - run: melos run format-check
+
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+      - uses: bluefireteam/melos-action@v3
+      - uses: invertase/github-action-dart-analyzer@v2.0.0
+        with:
+          fatal-infos: true
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          cache: true
+      - uses: bluefireteam/melos-action@v3
+      - name: Run tests
+        run: melos test

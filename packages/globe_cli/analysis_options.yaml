@@ -1,0 +1,10 @@
+include: package:globe_lints/lints.yaml
+
+linter:
+  rules:
+    # We don't sort dev_dependencies to keep
+    # transitive dependencies fix at the end of the dependency list.
+    sort_pub_dependencies: false
+
+    # No public API in this project
+    public_member_api_docs: false

@@ -1,0 +1,10 @@
+name: dart_globe_services_root
+
+dependencies:
+  melos:
+environment:
+  sdk: "^3.2.0"
+
+dev_dependencies:
+  path:
+  yaml:
