@@ -1,0 +1,95 @@
+name: Bug Report
+description: Create a report to help us improve Globe.
+title: "bug:  "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+
+  - type: checkboxes
+    attributes:
+      label: Is there an existing issue for this?
+      description: |
+        Please search to see if an issue already exists for the bug you encountered.
+      options:
+        - label: I have searched the existing issues.
+          required: true
+
+  - type: input
+    id: version
+    validations:
+      required: true
+    attributes:
+      label: CLI Version
+      description: |
+        What version of the Globe CLI are you running?
+
+        > Tip: You can use `globe --version` to get the current version. 
+        > Use N/A if not applicable.
+      placeholder: "1.2.3"
+
+  - type: input
+    id: project_id
+    validations:
+      required: true
+    attributes:
+      label: Project ID
+      description: |
+        What is your Globe project ID?
+
+        > Tip: you can find this at the bottom of your project settings on the Globe dashboard, it looks something like `c6a86c6b-4ca6-4b5e-944b-c6bfa046b540`.
+        > Use N/A if not applicable.
+      placeholder: "..."
+
+  - type: textarea
+    id: description
+    validations:
+      required: true
+    attributes:
+      label: Description
+      description: |
+        Give us a clear and concise description of what the bug is and what happened.
+      placeholder: CLI/Dashboard shows an error if I do...
+
+  - type: textarea
+    id: reproduction
+    validations:
+      required: true
+    attributes:
+      label: Steps to reproduce
+      description: |
+        What steps can we take to reproduce the bug?
+      placeholder: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+
+  - type: textarea
+    id: expected
+    validations:
+      required: true
+    attributes:
+      label: Expected behavior
+      description: |
+        What did you expect to happen?
+      placeholder: |
+        When running ..., Globe should ...
+
+  - type: textarea
+    id: screenshots
+    validations:
+      required: false
+    attributes:
+      label: Screenshots
+      description: |
+        If you have any screenshots, please attach them here.
+
+  - type: textarea
+    id: comments
+    attributes:
+      label: Additional context and comments
+      description: |
+        Anything else you want to say?
