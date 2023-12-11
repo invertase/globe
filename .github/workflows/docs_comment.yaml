@@ -1,0 +1,19 @@
+on:
+  pull_request:
+    paths:
+      - "docs/**"
+      - "docs.yaml"
+    # types: [opened]
+
+jobs:
+  add_docs_link:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Comment PR
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          # pr number
+          message: |
+            :wave: Documentation changes in this PR can be previewed [here](https://docs.page/invertase/globe~${{ github.event.pull_request.number }}).

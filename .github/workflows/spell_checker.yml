@@ -1,0 +1,16 @@
+name: spell_checker
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: npm -g install cspell
+      - run: ./scripts/cspell-run.sh
+      - run: ./scripts/cspell-verify.sh
