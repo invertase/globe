@@ -4,7 +4,7 @@ on:
     paths:
       - "docs/**"
       - "docs.yaml"
-    # types: [opened]
+    types: [opened]
 
 jobs:
   comment_link:
