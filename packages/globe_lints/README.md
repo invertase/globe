@@ -1,6 +1,6 @@
 # globe_lints
 
-Package with the lint rules used in all Flutter and Dart projects maintained by Canonical.
+Lint rules used across Globe projects.
 
 ## Install
 
