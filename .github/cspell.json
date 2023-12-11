@@ -1,0 +1,37 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "flagWords": ["teh", "hte"],
+  "ignorePaths": [".github/**", "**/CHANGELOG.md"],
+  "ignoreRegExpList": ["\\#[\\w\\-]+"],
+  "dictionaries": [
+    "en_US",
+    "softwareTerms",
+    "dart_dictionary",
+    "globe_dictionary",
+    "people_usernames",
+    "words_dictionary"
+  ],
+  "dictionaryDefinitions": [
+    {
+      "name": "dart_dictionary",
+      "path": "./.github/.cspell/dart_dictionary.txt",
+      "addWords": true
+    },
+    {
+      "name": "globe_dictionary",
+      "path": "./.github/.cspell/globe_dictionary.txt",
+      "addWords": true
+    },
+    {
+      "name": "usernames",
+      "path": "./.github/.cspell/people_usernames.txt",
+      "addWords": true
+    },
+    {
+      "name": "words_dictionary",
+      "path": "./.github/.cspell/words_dictionary.txt",
+      "addWords": true
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+---
+title: Headers
+---
+
+# Headers
+
+Each request to a deployment on Globe is automatically provided with a number of request headers which you could use in your application to customize how your application responds to the request.
+
+| **Header**             | **Type** | **Description**                                                                                           |
+| ---------------------- | :------: | --------------------------------------------------------------------------------------------------------- |
+| `x-globe-request-id`   |  String  | The unique ID for this request.                                                                           |
+| `x-globe-dc-id`        | String?  | The IATA code of where this request is executing.                                                         |
+| `x-globe-dc-eu`        | String?  | A "true" or "false" string value of whether this request is executing within a data center within the EU. |
+| `x-globe-dc-city`      | String?  | The data center city name of where this request is executing.                                             |
+| `x-globe-dc-country`   |  String  | The data center ISO-3166-1 alpha-2 code of this request (e.g. "US").                                      |
+| `x-globe-dc-continent` |  String  | The data center continent (e.g. "Europe").                                                                |
+| `x-globe-dc-latitude`  |  String  | The data center location latitude.                                                                        |
+| `x-globe-dc-longitude` |  String  | The data center location longitude.                                                                       |
+| `x-globe-eu`           | String?  | A "true" or "false" string value of whether this request originated from within the EU.                   |
+| `x-globe-latitude`     | String?  | The location latitude of where this request originated from.                                              |
+| `x-globe-longitude`    | String?  | The location longitude of where this request originated from.                                             |
+| `x-globe-city`         | String?  | The closest city of where this request originated from.                                                   |
+| `x-globe-country`      | String?  | The ISO-3166-1 alpha-2 code of where this request originated from (e.g. "US").                            |
+| `x-globe-region`       | String?  | The location region of the incoming request (e.g. "Texas").                                               |
+| `x-globe-region-code`  | String?  | The region code of the incoming request (as a ISO-3166-2 code e.g. "TX").                                 |
+| `x-globe-continent`    | String?  | The continent of the incoming request (e.g. "Europe").                                                    |
+| `x-globe-tz`           | String?  | The location timezone of the incoming request, e.g. "America/Chicago".                                    |
