@@ -1,3 +1,7 @@
+## 0.0.1+1
+
+ - **DOCS**: Add CLI readme ([#5](https://github.com/invertase/globe/issues/5)). ([d6216e67](https://github.com/invertase/globe/commit/d6216e6774bf430b76ab792b28c57352e79c5d04))
+
 ## 0.0.1
 
  - Graduate package to a stable release. See pre-releases prior to this version for changelog entries.

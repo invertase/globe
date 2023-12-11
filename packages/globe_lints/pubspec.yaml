@@ -1,6 +1,6 @@
 name: globe_lints
 description: Lint rules used across Globe projects
-version: 1.0.0
+version: 1.0.1
 repository: https://github.com/invertase/dart_globe
 
 environment:
