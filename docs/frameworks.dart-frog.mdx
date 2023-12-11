@@ -1,0 +1,27 @@
+---
+title: Deploying a Dart Frog application
+---
+
+# Deploying a Dart Frog application
+
+[Dart Frog](https://dartfrog.vgv.dev/) is a fast, minimalistic backend framework for Dart which is built on top of [Shelf](https://pub.dev/packages/shelf). Dart Frog supports routing, middleware, and DI out of the box with a local CLI to assist with development.
+
+Follow their [documentation](https://dartfrog.vgv.dev/docs/overview) for assistance with installing the CLI.
+
+## Create a new project
+
+Create a new Dart Frog project by running the following command:
+
+```bash
+dart_frog create my_dart_frog_app
+```
+
+Start a local development server with the following command:
+
+```bash
+dart_frog dev
+```
+
+## Deploying to Globe
+
+Deploying your project through the CLI or the dashboard will work as normal. Globe will detect Dart Frog is being used and automatically select it as a framework preset on your project settings. No additional steps are required.

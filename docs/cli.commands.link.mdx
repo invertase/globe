@@ -1,0 +1,29 @@
+---
+title: Link a project to Globe
+---
+
+# Link
+
+The `link` command links a local Dart project to a Globe project. Linking is required to deploy a project to Globe.
+
+Project linking is carried out automatically if the project is not yet linked when running the [`deploy`](/docs/cli/commands/deploy) command.
+
+## Usage
+
+```bash
+globe link
+```
+
+The `link` command will first prompt, asking whether you wish to continue linking the local project. If you continue, you will be further prompted to:
+
+1. Select an account you wish to link this project to.
+2. Select, or create a new project to link this project to.
+
+Upon completion, the project will be linked to your Globe account and you will be able to deploy the project.
+
+## Details
+
+A linked project stores metadata about the project in the local `.dart_tool/dart_globe` directory on your machine. This metadata is used to identify the project when deploying to Globe. If not already,
+the `.dart_tool` directory should not be committed to your Git repository. You can add this directory to your `.gitignore` file to ensure it is not committed.
+
+If you accidentally delete this directory, or run the [`unlink`](/docs/cli/commands/unlink) command, you will need to re-link the project before you can deploy again.

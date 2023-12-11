@@ -1,0 +1,17 @@
+---
+title: Unlink a project from Globe
+---
+
+# Unlink
+
+The `unlink` command removes any previously linked projects from the current local project. This will prevent you from deploying the project to Globe.
+
+## Usage
+
+```bash
+globe unlink
+```
+
+## Details
+
+The command removes the `.dart_tool/dart_globe` directory from the local project. This directory stores metadata about the project, which is used to identify the project when deploying to Globe.
