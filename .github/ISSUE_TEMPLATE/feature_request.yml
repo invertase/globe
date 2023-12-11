@@ -1,0 +1,50 @@
+name: Feature Request
+description: Request a new feature you would like to see in Globe.
+title: "request:  "
+labels: ["feature-request", "triage"]
+# assignees:
+#   - ...
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this feature request!
+
+  - type: checkboxes
+    attributes:
+      label: Is there an existing feature request for this?
+      description: |
+        Please search to see if an issue already exists for the feature you would like to see.
+      options:
+        - label: I have searched the existing issues.
+          required: true
+
+
+  - type: textarea
+    validations:
+      required: true
+    id: description
+    attributes:
+      label: Description
+      description: |
+        Give us a clear and concise description of what the feature is and what it would do.
+      placeholder: As a developer, I want Globe to be able to...
+
+  - type: textarea
+    validations:
+      required: true
+    id: reasoning
+    attributes:
+      label: Reasoning
+      description: |
+        What is the reason for your request?
+        Why do you think this feature would be useful?
+      placeholder: |
+        I think this feature would be useful because...
+
+  - type: textarea
+    id: comments
+    attributes:
+      label: Additional context and comments
+      description: |
+        Anything else you want to say?
