@@ -1,5 +1,124 @@
-# Globe CLI
+<p align="center">
+  <a href="https://globe.dev">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://static.invertase.io/assets/globe_light.png">
+  <img src="https://static.invertase.io/assets/globe_dark.png" width="256">
+  </picture>
+  <br /><br />
+  </a>
+  <span>The global deployment platform for Dart & Flutter applications.</span>
+</p>
 
-```sh
-dart pub global activate --source="path" . --executable="globe"
+<p align="center">
+  <a href="https://github.com/invertase/melos#readme-badge"><img src="https://img.shields.io/badge/maintained%20with-melos-f700ff.svg?style=flat-square" alt="Melos" /></a>
+ <a href="https://discord.gg/UCcCYjDaTy">
+   <img src="https://img.shields.io/discord/1179425190007021568.svg?style=flat-square&colorA=7289da&label=Chat%20on%20Discord" alt="Chat on Discord">
+ </a>
+</p>
+
+<p align="center">
+  <a href="https://globe.dev/docs">Documentation</a> &bull;
+  <a href="https://github.com/invertase/globe/blob/main/LICENSE">License</a>
+</p>
+
+---
+
+# CLI
+
+The Globe CLI is a command line tool that allows you to interact with your Globe account and deploy from the command line. It is not required to use Globe, but it can be useful for some workflows.
+
+To install the Globe CLI, run the following command:
+
+```bash
+dart pub global activate globe_cli
 ```
+
+Once installed, you can access the globe executable from anywhere on your machine.
+
+To login with your Globe account, run the following command:
+
+```bash
+globe login
+```
+
+To learn more about the CLI, view the [documentation](https://globe.dev/docs/cli).
+
+## Create a new Dart project
+
+To get started with, we're going to create a simple Dart application which will be deployed to Globe. We'll use [Shelf](https://pub.dev/packages/shelf) to start a HTTP server which can handle requests and log some information about our application. Let's go ahead and create a basic Dart application. In your terminal, run the following command where you'd like to create a project:
+
+```bash
+dart create my_shelf_app
+```
+
+Rename the file `lib/my_shelf_app.dart` to `lib/main.dart` - this is the entrypoint for our application. Next, install the [`shelf`](https://pub.dev/packages/shelf) package via pub:
+
+```bash
+dart pub add shelf
+```
+
+Copy the following code into `lib/main.dart`:
+
+```dart
+import 'dart:io';
+
+import 'package:shelf/shelf.dart';
+import 'package:shelf/shelf_io.dart' as shelf_io;
+
+void main() async {
+  final handler =
+      const Pipeline().addMiddleware(logRequests()).addHandler(_echoRequest);
+
+  final server = await shelf_io.serve(
+    handler,
+    InternetAddress.anyIPv4,
+    int.tryParse(Platform.environment['PORT'] ?? '8080') ?? 8080,
+  );
+
+  print('Serving at http://${server.address.host}:${server.port}');
+}
+
+Response _echoRequest(Request request) =>
+    Response.ok('Request for "${request.url}"... worked!');
+```
+
+To test your application out locally, run `dart run lib/main.dart` and visit `http://0.0.0.0:8080/hello` in your browser. You should see the following: `Request for "hello"... worked!`.
+
+This is a basic HTTP server that will respond to any request with a 200 OK response and the body `Request for "${request.url}"... worked!`, whilst also logging out information about the request. From here you could build out a full application yourself, adding in routing, database calls, middleware and more. For this example, we'll keep it simple.
+
+## Deploying to Globe
+
+Now that we have a basic application, we can deploy it to Globe. Deploying to Globe is simple; run the `globe deploy` command from your project root in the terminal:
+
+```bash
+globe deploy
+```
+
+The first time you deploy, you'll:
+
+1. Be prompted to continue with setup of the deployment (press `Y`)
+1. Enter a name for your project: Enter: `my-shelf-app`
+
+After waiting for a couple of seconds, you'll be shown that your new deployment has been queued and be provided a unique URL for that deployment. You can visit this URL in your browser to view the build logs and deployment status.
+
+## Viewing your deployment logs
+
+Once complete, your deployment will be available via the URL shown in the dashboard. Each deployment has it's own unique URL, with a `globeapp.dev` domain. Click the URL and you'll be shown the `Request for "hello"... worked!` message which your saw when running your application locally.
+
+Since our application has both a `print` statement and and a middleware logger (provided by Shelf), we're able to inspect those logs in realtime from the dashboard. Click the "Logs" tab in the dashboard to view the logs for your deployment. Each time your refresh the deployment URL, a new log will appear in the dashboard! Any errors (which emit to `stderr`) will be highlighted in red.
+
+## Further reading
+
+- [Learn about to manage your deployments](https://globe.dev/docs/deployments)
+- [Learn about the Globe CLI](https://globe.dev/docs/cli)
+- [Integrate with GitHub](https://globe.dev/docs/deployments/github-integration)
+
+---
+
+<p align="center">
+  <a href="https://invertase.io/?utm_source=readme&utm_medium=footer&utm_campaign=melos">
+    <img width="75px" src="https://static.invertase.io/assets/invertase/invertase-rounded-avatar.png">
+  </a>
+  <p align="center">
+    Built and maintained with 💛 by <a href="https://invertase.io/?utm_source=readme&utm_medium=footer&utm_campaign=globe">Invertase</a>.
+</p>

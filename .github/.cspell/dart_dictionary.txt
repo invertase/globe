@@ -6,3 +6,4 @@ endtemplate
 gitignores
 writeln
 Stderrs
+srcset
