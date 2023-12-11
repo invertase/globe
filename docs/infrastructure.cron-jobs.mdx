@@ -21,13 +21,13 @@ crons:
 
 In the above example, the cron job will be executed every 45 minutes.
 
-Whenever a new production deployment is successful, the cron jobs will be sychronized and shown in the dashboard.
+Whenever a new production deployment is successful, the cron jobs will be synchronized and shown in the dashboard.
 
 ## Handling Cron Jobs
 
 Your application code should handle the cron job request via the path specified (`/auth/refresh` in the above example). The request will be a `POST` request.
 
-For example, using [`shelf_router`]() this can be achived as follows:
+For example, using `shelf_router` this can be achieved as follows:
 
 ```dart
 import 'package:shelf_router/shelf_router.dart';
@@ -49,7 +49,7 @@ If a specific ID is removed, and later added, new event logs will be stored alon
 
 - The list cannot contain duplicate IDs.
 - The maximum length of an ID is 50 characters.
-- The ID can only contain lowecase letters, numbers, and underscores (`a-z0-9_`).
+- The ID can only contain lowercase letters, numbers, and underscores (`a-z0-9_`).
 
 ## Timezone
 
