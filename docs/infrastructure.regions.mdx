@@ -1,0 +1,90 @@
+---
+title: Regions
+---
+
+# Regions
+
+The Globe edge network is located in some [300 cities in 100+ countries](https://www.cloudflare.com/en-gb/network/) and is powered by Cloudflare’s network - which is milliseconds away from virtually every Internet user on the globe.
+
+Our edge network is responsible for features such as DDoS mitigation, zero latency routing to our compute regions, instant rollbacks, A/B testing deployments and more.
+
+## Compute Regions
+
+Globe runs your deployments in 37 (currently) compute regions.
+
+<details>
+  <summary>Compute Regions</summary>
+
+| **Region**              | **Country**    | **Continent** |
+| ----------------------- | -------------- | ------------- |
+| MAD (Madrid)            | Spain          | Europe        |
+| BRU (Belgium)           | Belgium        | Europe        |
+| AMS (Netherlands)       | Netherlands    | Europe        |
+| MXP (Milan)             | Italy          | Europe        |
+| CDG (Paris)             | France         | Europe        |
+| TPE (Taiwan)            | Taiwan         | Asia          |
+| NRT (Tokyo)             | Japan          | Asia          |
+| KIX (Osaka)             | Japan          | Asia          |
+| HEL (Finland)           | Finland        | Europe        |
+| TLV (Tel Aviv)          | Israel         | Asia          |
+| DSM (Iowa)              | United States  | North America |
+| CHS (South Carolina)    | United States  | North America |
+| IAD (Northern Virginia) | United States  | North America |
+| CMH (Columbus)          | United States  | North America |
+| DFW (Dallas)            | United States  | North America |
+| PDX (Oregon)            | United States  | North America |
+| HKG (Hong Kong)         | Hong Kong      | Asia          |
+| ICN (Seoul)             | South Korea    | Asia          |
+| SIN (Singapore)         | Singapore      | Asia          |
+| CGK (Jakarta)           | Indonesia      | Asia          |
+| BOM (Mumbai)            | India          | Asia          |
+| DEL (Delhi)             | India          | Asia          |
+| SYD (Sydney)            | Australia      | Oceania       |
+| MEL (Melbourne)         | Australia      | Oceania       |
+| WAW (Warsaw)            | Poland         | Europe        |
+| TRN (Turin)             | Italy          | Europe        |
+| LHR (London)            | United Kingdom | Europe        |
+| FRA (Frankfurt)         | Germany        | Europe        |
+| ZRH (Zurich)            | Switzerland    | Europe        |
+| DOH (Doha)              | Qatar          | Asia          |
+| YUL (Montreal)          | Canada         | North America |
+| YYZ (Toronto)           | Canada         | North America |
+| GRU (Sao Paulo)         | Brazil         | South America |
+| SCL (Santiago)          | Chile          | South America |
+| LAX (Los Angeles)       | United States  | North America |
+| SLC (Salt Lake City)    | United States  | North America |
+| LAS (Las Vegas)         | United States  | North America |
+
+</details>
+
+Globe compute regions will continue expanding into the following regions: Berlin (Germany), Dammam (Kingdom of Saudi Arabia), Querétaro (Mexico), Malaysia, Thailand, New Zealand, Greece, Norway, South Africa, Austria and Sweden.
+
+## Preferred Regions
+
+In some cases, executing a request in a region closest to the user may not be desirable. Consider a user who hits your application from Europe but your application uses a region specific database located in the United States.
+
+Multiple outbound requests from Europe to the US data center could result in potentially long response times for
+the user whilst data is sent across the network. In this scenario, it may make more sense to handle the request in the US data center, and then
+return the response to the user from there.
+
+This can be achieved by specifying preferred region(s). When preferred regions are specified Globe will:
+
+- if a single preferred region is provided: execute the request in the preferred region
+  - if the specified region is unhealthy or experiencing an outage, then default global routing behavior is used and the nearest healthy region executes the request.
+- if multiple regions are provided, Globe will choose the closest preferred region to the user and execute the request there
+  - if any of specified regions are unhealthy or experiencing an outage, they will no longer be preferred.
+  - if all of the specified regions are unhealthy or experiencing an outage, then default global routing behavior is used and the nearest healthy region executes the request.
+
+### Configure via Project Settings
+
+Within the Globe dashboard, under **Project** -> **Settings** -> **Preferred Region**, you can select a preferred region for your project.
+
+When selecting preferred regions from the dashboard, this will only apply to new deployments.
+
+### Configure via `X-Globe-Preferred-Region` header
+
+Specify IATA codes from the region list in the `X-Globe-Preferred-Region` header of a request.
+
+For example: `X-Globe-Preferred-Region: DFW, PDX`
+
+Note that when specifying a preferred region via the header this will override any preferred region(s) set in the Project Settings dashboard.

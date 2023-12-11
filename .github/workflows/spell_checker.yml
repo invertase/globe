@@ -1,0 +1,17 @@
+name: spell_checker
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: streetsidesoftware/cspell-action@v5
+        with:
+          config: ".github/cspell.json"
+          files: "**/*.{md,mdx,dart}"

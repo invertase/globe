@@ -1,0 +1,34 @@
+---
+title: Environment Variables
+---
+
+# Environment Variables
+
+Environment variables are a set of named values that can affect the way running processes will behave on a deployment. An environment variable can be used to store secret values which are not safe to be stored in the codebase. You may wish to use
+different values for different environments, such as development, preview, and production to connect to different databases or API endpoints.
+
+## Creating environment variables
+
+To create a new environment variable, navigate to the **Environment Variables** tab in the **Settings** section of the project on the dashboard. Click the **Add Variable** button.
+
+![New Environment Variable](/docs/new-env-variable.png)
+
+Enter the name and value of your variable. All values are encrypted, and can only be viewed by a specifically viewing it on the dashboard.
+
+It is also possible to specify what environments the variable should be available in.
+
+## Accessing environment variables
+
+Within your Dart code, you can access environment variables using the `Platform.environment` map.
+
+```dart
+String? value = Platform.environment['MY_VARIABLE'];
+```
+
+## System environment variables
+
+The following environment variables are available on all deployments:
+
+| Name   | Description                                     |
+| ------ | ----------------------------------------------- |
+| `PORT` | The port that the application should listen on. |
