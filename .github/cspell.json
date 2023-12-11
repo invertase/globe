@@ -1,16 +1,9 @@
 {
   "version": "0.2",
   "language": "en",
-  "flagWords": [
-    "teh",
-    "hte"
-  ],
-  "ignorePaths": [
-    "**/CHANGELOG.md"
-  ],
-  "ignoreRegExpList": [
-    "\\#[\\w\\-]+"
-  ],
+  "flagWords": ["teh", "hte"],
+  "ignorePaths": [".github/**", "**/CHANGELOG.md"],
+  "ignoreRegExpList": ["\\#[\\w\\-]+"],
   "dictionaries": [
     "en_US",
     "softwareTerms",

@@ -1,1 +1,6 @@
 # Dictionary file for Globe-related words
+Redeployments
+Jaspr
+globeapp
+Dammam
+Querétaro
