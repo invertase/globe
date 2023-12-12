@@ -45,7 +45,7 @@ class DeployCommand extends BaseGlobeCommand {
 
     final validated = await scope.validate();
 
-    final deployProgess = logger.progress(
+    final deployProgress = logger.progress(
       'Deploying to ${styleBold.wrap('${validated.organization.slug}/${validated.project.slug}')}${environment == DeploymentEnvironment.production ? ' (production)' : ''}',
     );
 
@@ -63,7 +63,7 @@ class DeployCommand extends BaseGlobeCommand {
         archive: archive,
       );
 
-      deployProgess.complete();
+      deployProgress.complete();
 
       logger.success(
         '${lightGreen.wrap('✓')} Deployment has been queued',
@@ -149,11 +149,11 @@ class DeployCommand extends BaseGlobeCommand {
 
       return ExitCode.success.code;
     } on ApiException catch (e) {
-      deployProgess.fail();
+      deployProgress.fail();
       logger.err('✗ Failed to deploy project: ${e.message}');
       return ExitCode.software.code;
     } catch (e, s) {
-      deployProgess.fail();
+      deployProgress.fail();
       logger
         ..err('✗ Failed to deploy project: $e')
         ..err(s.toString());
