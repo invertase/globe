@@ -466,6 +466,7 @@ class Deployment {
 enum DeploymentState {
   pending('Queued'),
   working('In progress'),
+  deploying('Deploying'),
   success('Deployment successful'),
   error('Deployment failed'),
   cancelled('Deployment cancelled');

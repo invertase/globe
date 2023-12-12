@@ -85,7 +85,8 @@ class DeployCommand extends BaseGlobeCommand {
           deploymentId: deployment.id,
         );
 
-        if (update.state == DeploymentState.working) {
+        if (update.state == DeploymentState.working ||
+            update.state == DeploymentState.deploying) {
           if (logs != null) return;
 
           status.complete();
