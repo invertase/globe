@@ -45,7 +45,7 @@ class DeployCommand extends BaseGlobeCommand {
 
     final validated = await scope.validate();
 
-    final deployProgess = logger.progress(
+    final deployProgress = logger.progress(
       'Deploying to ${styleBold.wrap('${validated.organization.slug}/${validated.project.slug}')}${environment == DeploymentEnvironment.production ? ' (production)' : ''}',
     );
 
@@ -63,7 +63,7 @@ class DeployCommand extends BaseGlobeCommand {
         archive: archive,
       );
 
-      deployProgess.complete();
+      deployProgress.complete();
 
       logger.success(
         '${lightGreen.wrap('✓')} Deployment has been queued',
@@ -85,7 +85,8 @@ class DeployCommand extends BaseGlobeCommand {
           deploymentId: deployment.id,
         );
 
-        if (update.state == DeploymentState.working) {
+        if (update.state == DeploymentState.working ||
+            update.state == DeploymentState.deploying) {
           if (logs != null) return;
 
           status.complete();
@@ -136,6 +137,13 @@ class DeployCommand extends BaseGlobeCommand {
           logger.info('Deployment cancelled');
         }
 
+        if (update.state == DeploymentState.invalid) {
+          status.complete();
+          status = logger.progress(
+            'Invalid Deployment State Received. Waiting for valid state',
+          );
+        }
+
         if (update.state == DeploymentState.success ||
             update.state == DeploymentState.cancelled ||
             update.state == DeploymentState.error) {
@@ -148,11 +156,11 @@ class DeployCommand extends BaseGlobeCommand {
 
       return ExitCode.success.code;
     } on ApiException catch (e) {
-      deployProgess.fail();
+      deployProgress.fail();
       logger.err('✗ Failed to deploy project: ${e.message}');
       return ExitCode.software.code;
     } catch (e, s) {
-      deployProgess.fail();
+      deployProgress.fail();
       logger
         ..err('✗ Failed to deploy project: $e')
         ..err(s.toString());
