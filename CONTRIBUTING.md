@@ -76,6 +76,12 @@ command once.
 
 > You do not need to run `dart pub get` once bootstrap has been completed.
 
+To activate the Globe CLI for local development, run the following command inside the package directory:
+
+```sh
+dart pub global activate --source="path" . --executable="globe"
+```
+
 ### Performing changes
 
 - Create a new local branch from `main` (e.g. `git checkout -b my-new-feature`)
