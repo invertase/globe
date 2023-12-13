@@ -21,12 +21,12 @@ sidebar:
       - "/cli/commands/deploy"
     - - Link
       - "/cli/commands/link"
+    - - Unlink
+      - "/cli/commands/unlink"
     - - Login
       - "/cli/commands/login"
     - - Logout
       - "/cli/commands/logout"
-    - - Unlink
-      - "/cli/commands/unlink"
 - - Deployments
   - - - Overview
       - "/deployments"
