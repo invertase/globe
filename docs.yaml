@@ -20,13 +20,13 @@ sidebar:
     - - Deploy
       - "/cli/commands/deploy"
     - - Link
-      - "/cli.commands.link"
+      - "/cli/commands/link"
     - - Login
-      - "/cli.commands.login"
+      - "/cli/commands/login"
     - - Logout
-      - "/cli.commands.logout"
+      - "/cli/commands/logout"
     - - Unlink
-      - "/cli.commands.unlink"
+      - "/cli/commands/unlink"
 - - Deployments
   - - - Overview
       - "/deployments"
