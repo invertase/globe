@@ -3,7 +3,7 @@
 **Note:** If these contribution guidelines are not followed your issue or PR might be closed, so
 please read these instructions carefully.
 
-_See also: [Invertases's code of conduct](https://github.com/invertase/meta/blob/main/CODE_OF_CONDUCT.md)_
+_See also: [the Invertase code of conduct](https://github.com/invertase/meta/blob/main/CODE_OF_CONDUCT.md)_
 
 ## About
 
