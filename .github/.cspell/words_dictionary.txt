@@ -1,2 +1,3 @@
 # Actual english words (or common abbreviations) missing from CSpell
 upvote
+archiver
