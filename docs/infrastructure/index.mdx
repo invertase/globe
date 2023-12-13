@@ -10,14 +10,14 @@ Globe is built on top of multiple cloud compute providers to provide a scalable 
 
 Each time you create a new successful deployment, the Globe deployment service creates an executable of your Dart project. This executable is distributed to our global private deployment registry.
 
-When a user makes a request to your application, they first end up connecting to our global edge network (300+ locations). Our edge network provides zero latency routing management and allows us to route your user to the nearest [Globe compute region](/docs/infrastructure/regions) where our infrastructure will start a container in isolation on demand if necessary.
+When a user makes a request to your application, they first end up connecting to our global edge network (300+ locations). Our edge network provides zero latency routing management and allows us to route your user to the nearest [Globe compute region](/infrastructure/regions) where our infrastructure will start a container in isolation on demand if necessary.
 
 Our edge network routing service is also responsible for features such as DDoS mitigation, instant rollbacks, A/B testing deployments and more.
 
 ## Containers
 
 Globe uses container technology to start your Dart applications on demand. The platform will automatically scale your application based on the number of requests it receives.
-Containers are created on demand in the closest [region](/docs/infrastructure/regions) to where a user request originates from.
+Containers are created on demand in the closest [region](/infrastructure/regions) to where a user request originates from.
 
 An on demand container environment means you should:
 
@@ -36,7 +36,7 @@ The Globe infrastructure expects that your Dart application starts listening to 
 a check will take place to ensure that your application is listening to a port. If this is not the case, the deployment will fail.
 
 Using a package such as [shelf](https://pub.dev/packages/shelf), you can easily start a server which accepts in-bound HTTP requests by accessing
-the `PORT` [environment variable](/docs/deployments/environment-variables):
+the `PORT` [environment variable](/deployments/environment-variables):
 
 ```dart
 import 'dart:io';
