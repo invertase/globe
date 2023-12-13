@@ -31,34 +31,34 @@ sidebar:
   - - - Overview
       - "/deployments"
     - - Build Settings
-      - "/deployments.build-settings"
+      - "/deployments/build-settings"
     - - Domains
-      - "/deployments.domains"
+      - "/deployments/domains"
     - - Environment Variables
-      - "/deployments.environment-variables"
+      - "/deployments/environment-variables"
     - - GitHub Integration
-      - "/deployments.github-integration"
+      - "/deployments/github-integration"
     - - Hooks
-      - "/deployments.hooks"
+      - "/deployments/hooks"
     - - Redeployments
-      - "/deployments.redeployments"
+      - "/deployments/redeployments"
 - - Frameworks
   - - - Overview
       - "/frameworks"
     - - Dart Frog
-      - "/frameworks.dart-frog"
+      - "/frameworks/dart-frog"
     - - Jaspr
-      - "/frameworks.jaspr"
+      - "/frameworks/jaspr"
 - - Infrastructure
   - - - Overview
       - "/infrastructure"
     - - Cold Starts
-      - "/infrastructure.cold-starts"
+      - "/infrastructure/cold-starts"
     - - Cron Jobs
-      - "/infrastructure.cron-jobs"
+      - "/infrastructure/cron-jobs"
     - - Headers
-      - "/infrastructure.headers"
+      - "/infrastructure/headers"
     - - Regions
-      - "/infrastructure.regions"
+      - "/infrastructure/regions"
     - - WebSockets
-      - "/infrastructure.websockets"
+      - "/infrastructure/websockets"
