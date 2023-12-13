@@ -137,6 +137,13 @@ class DeployCommand extends BaseGlobeCommand {
           logger.info('Deployment cancelled');
         }
 
+        if (update.state == DeploymentState.invalid) {
+          status.complete();
+          status = logger.progress(
+            'Invalid Deployment State Received. Waiting for valid state',
+          );
+        }
+
         if (update.state == DeploymentState.success ||
             update.state == DeploymentState.cancelled ||
             update.state == DeploymentState.error) {

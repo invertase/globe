@@ -436,9 +436,13 @@ class Deployment {
           projectId: projectId,
           environment: DeploymentEnvironment.values.firstWhere(
             (e) => e.name == environment,
+            orElse: () => DeploymentEnvironment.invalid,
           ),
           status: status,
-          state: DeploymentState.values.firstWhere((e) => e.name == state),
+          state: DeploymentState.values.firstWhere(
+            (e) => e.name == state,
+            orElse: () => DeploymentState.invalid,
+          ),
           message: message ?? '',
           url: url,
           hash: hash,
@@ -469,7 +473,9 @@ enum DeploymentState {
   deploying('Deploying'),
   success('Deployment successful'),
   error('Deployment failed'),
-  cancelled('Deployment cancelled');
+  cancelled('Deployment cancelled'),
+  // state is not a valid state, but is used to represent an invalid state.
+  invalid('Invalid');
 
   const DeploymentState(this.message);
 
@@ -519,7 +525,8 @@ class FrameworkPresetOptions {
 
 enum DeploymentEnvironment {
   preview,
-  production;
+  production,
+  invalid;
 }
 
 enum Role {
