@@ -18,7 +18,7 @@ sidebar:
   - - - CLI Overview
       - "/cli"
     - - Deploy
-      - "/cli.commands.deploy"
+      - "/cli/commands/deploy"
     - - Link
       - "/cli.commands.link"
     - - Login
