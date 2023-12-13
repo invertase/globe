@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2023-12-13
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`globe_cli` - `v0.0.2`](#globe_cli---v002)
+
+---
+
+#### `globe_cli` - `v0.0.2`
+
+ - Manual version to fix `globe update` command.
+
+ - **FIX**(globe_cli): Bad state no element error on deployment fixed ([#8](https://github.com/invertase/globe/issues/8)). ([6856942b](https://github.com/invertase/globe/commit/6856942b9c70d8b69c4cc663afbcab3782a45d39))
+
+
 ## 2023-12-11
 
 ### Changes
