@@ -1,0 +1,51 @@
+---
+title: Deploying to Globe
+---
+
+# Deployments
+
+A deployment can be triggered when you wish to deploy new code to your Globe project. In Globe, a deployment can be staged to two environments; [Production](/deployments#creating-a-production-deployment) or [Preview](/deployments#creating-a-preview-deployment).
+When a Production deployment has been successfully built, your domains will be updated automatically to point to the new deployment. Preview deployments on the other hand are accessible
+via a URL unique to the deployment. This allows you to test and share your changes on a live environment before deploying to production.
+
+![Deployments](/assets/deployments.png)
+
+Once deployments have been successfully built, you can access the unique URL from the Globe dashboard.
+
+## Creating a preview deployment
+
+To create a new preview deployment, you have two options:
+
+### via the CLI
+
+Run the [`deploy`](/cli/commands/deploy) command. By default, deployments from the CLI are staged as a preview deployment:
+
+```bash
+globe deploy
+```
+
+### via GitHub
+
+Using the [GitHub Integration](/deployments/github-integration), you can trigger a preview deployment by pushing to a branch that
+is not defined as the production branch in your project settings.
+
+To learn more, view the [GitHub Integration](/deployments/github-integration) documentation.
+
+## Creating a production deployment
+
+To create a new production deployment, you have two options:
+
+### via the CLI
+
+Run the [`deploy`](/cli/commands/deploy) command with the `--prod` flag:
+
+```bash
+globe deploy --prod
+```
+
+### via GitHub
+
+Using the [GitHub Integration](/deployments/github-integration), you can trigger a production deployment by pushing to the branch
+specified in your project settings. By default, this is the `main` branch.
+
+To learn more, view the [GitHub Integration](/deployments/github-integration) documentation.
