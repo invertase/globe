@@ -6,7 +6,7 @@ title: Cold Starts
 
 Globe infrastructure is built in a way to minimize and reduce the impact of cold starts. When a request starts a new container on demand this is known as a cold start.
 
-In Globe however we have 3 levels of 'starts';
+In Globe however, we have 3 levels of 'starts';
 
 - `cold` - Container image has to be fetched, cached and started.
   - This is usually when your deployment has not yet had any requests in a specific compute region or has been idle for an extended period of time.
@@ -15,11 +15,11 @@ In Globe however we have 3 levels of 'starts';
 - `hot` - Container image is already fetched, cached and still running.
   - This happens when requests in a specific region have kept the container from idling.
 
-Overall you should experience a reduced number of cold starts compared to other cloud providers as well as a reduced cold start time. During the private preview you can expect to see some cold starts of around 500ms. We're still working on reducing this number.
+Overall you should experience a reduced number of cold starts compared to other cloud providers as well as reduced cold start times. During the private preview, you can expect to see some cold starts of around 500ms. We're still working on reducing this number.
 
 ## Mitigating cold starts
 
-Whilst it may not necessary for every application; there are a number of ways you can help mitigate the impact of cold starts specific to your deployment;
+Whilst it may not be necessary for every application; there are a number of ways you can help mitigate the impact of cold starts specific to your deployment;
 
 - Reduce the size of your application by removing unnecessary dependencies and imports.
 

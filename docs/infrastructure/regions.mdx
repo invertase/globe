@@ -4,7 +4,7 @@ title: Regions
 
 # Regions
 
-The Globe edge network is located in some [300 cities in 100+ countries](https://www.cloudflare.com/en-gb/network/) and is powered by Cloudflare’s network - which is milliseconds away from virtually every Internet user on the globe.
+The Globe edge network is located in some [300 cities in 100+ countries](https://www.cloudflare.com/en-gb/network/) and is powered by [Cloudflare’s network][cloudflare-network-url] - which is milliseconds away from virtually every Internet user on the globe.
 
 Our edge network is responsible for features such as DDoS mitigation, zero latency routing to our compute regions, instant rollbacks, A/B testing deployments and more.
 
@@ -61,13 +61,13 @@ Globe compute regions will continue expanding into the following regions: Berlin
 
 ## Preferred Regions
 
-In some cases, executing a request in a region closest to the user may not be desirable. Consider a user who hits your application from Europe but your application uses a region specific database located in the United States.
+In some cases, executing a request in a region closest to the user may not be desirable. Consider a user who hits your application from Europe but your application uses a region-specific database located in the United States.
 
 Multiple outbound requests from Europe to the US data center could result in potentially long response times for
 the user whilst data is sent across the network. In this scenario, it may make more sense to handle the request in the US data center, and then
 return the response to the user from there.
 
-This can be achieved by specifying preferred region(s). When preferred regions are specified Globe will:
+This can be achieved by specifying the preferred region(s). When preferred regions are specified Globe will:
 
 - if a single preferred region is provided: execute the request in the preferred region
   - if the specified region is unhealthy or experiencing an outage, then default global routing behavior is used and the nearest healthy region executes the request.
@@ -88,3 +88,5 @@ Specify IATA codes from the region list in the `X-Globe-Preferred-Region` header
 For example: `X-Globe-Preferred-Region: DFW, PDX`
 
 Note that when specifying a preferred region via the header this will override any preferred region(s) set in the Project Settings dashboard.
+
+[cloudflare-network-url]: https://www.cloudflare.com/network/

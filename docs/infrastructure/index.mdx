@@ -19,7 +19,7 @@ Our edge network routing service is also responsible for features such as DDoS m
 Globe uses container technology to start your Dart applications on demand. The platform will automatically scale your application based on the number of requests it receives.
 Containers are created on demand in the closest [region](/infrastructure/regions) to where a user request originates from.
 
-An on demand container environment means you should:
+An on-demand container environment means you should:
 
 - Not rely on having a persistent file system.
 - Not rely on having persistent memory.
@@ -28,14 +28,14 @@ Even if a user is performing multiple requests from the same region, it is not g
 
 ## Serverless
 
-Globe currently does not yet have a functions / serverless model, however we are experimenting providing this via upcoming technologies like WASM. Please consider providing your thoughts and your upvote on [this feature request](https://invertase.canny.io/globe/p/faas-serverless) if this is something that interests you.
+Globe currently does not yet have a functions / serverless model, however, we are experimenting with providing this via upcoming technologies like WASM. Please consider providing your thoughts and your upvote on [this feature request](https://invertase.canny.io/globe/p/faas-serverless) if this is something that interests you.
 
 ## Starting a server
 
 The Globe infrastructure expects that your Dart application starts listening to a port whenever executed. During the build phase of a deployment,
 a check will take place to ensure that your application is listening to a port. If this is not the case, the deployment will fail.
 
-Using a package such as [shelf](https://pub.dev/packages/shelf), you can easily start a server which accepts in-bound HTTP requests by accessing
+Using a package such as [shelf](https://pub.dev/packages/shelf), you can easily start a server that accepts inbound HTTP requests by accessing
 the `PORT` [environment variable](/deployments/environment-variables):
 
 ```dart
@@ -72,16 +72,16 @@ You should only rely on the file system for temporary storage such as processing
 
 A single request is allowed to run for a maximum duration. If a request takes longer than the allowed duration, the request will be terminated.
 
-During private preview the maximum duration is currently **5 seconds**. We may increase this based on feedback and also allow higher limits for paid plans in future.
+During private preview the maximum duration is currently **5 seconds**. We may increase this based on feedback and also allow higher limits for paid plans in the future.
 
 #### CPU Usage
 
-You cannot perform CPU heavy tasks for an extended period of time (determined by the current infrastructure load). Any requests which exceed the allotted CPU usage will be terminated.
+You cannot perform CPU heavy tasks for an extended period of time (determined by the current infrastructure load). Any requests that exceed the allotted CPU usage will be terminated.
 
 #### Memory Usage
 
-Each container has a limited amount of memory available (128MB). Performing on-going memory heavy tasks may result in the request being terminated. We may increase this based on feedback and also allow higher limits for paid plans in future.
+Each container has a limited amount of memory available (128MB). Performing ongoing memory-heavy tasks may result in the request being terminated. We may increase this based on feedback and also allow higher limits for paid plans in the future.
 
 #### FFI
 
-Usage of FFI (via `dart:ffi`) is not currently supported. We are working on providing this in future.
+Usage of FFI (via `dart:ffi`) is not currently supported. We are working on providing this in the future.

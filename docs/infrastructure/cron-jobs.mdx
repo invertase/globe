@@ -4,9 +4,9 @@ title: Cron Jobs
 
 # Cron Jobs
 
-Cron jobs can be used to periodically perform a HTTP request to your production Globe deployment. You can specify the cron schedule and the path to request.
+Cron jobs can be used to periodically perform an HTTP request to your production Globe deployment. You can specify the cron schedule and the path to request.
 
-Cron jobs only work with production deployments. If your project does not have a production deployment, the cron execution will be ignored and no events will be shown.
+Cron jobs only work with **production** deployments. If your project does not have a production deployment, the cron execution will be ignored and no events will be shown.
 
 ## Creating a Cron Job
 
@@ -15,7 +15,7 @@ Cron jobs can be created via the `globe.yaml` file in the root of your applicati
 ```yaml
 crons:
   - id: refresh_auth_token
-    schedule: '0,45 * * * *'
+    schedule: '0/45 * * * *'
     path: '/auth/refresh'
 ```
 
