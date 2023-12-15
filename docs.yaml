@@ -54,8 +54,8 @@ sidebar:
       - "/infrastructure"
     - - Cold Starts
       - "/infrastructure/cold-starts"
-    - - Cron Jobs
-      - "/infrastructure/cron-jobs"
+    # - - Cron Jobs
+    #   - "/infrastructure/cron-jobs"
     - - Headers
       - "/infrastructure/headers"
     - - Regions
