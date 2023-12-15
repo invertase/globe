@@ -1,3 +1,7 @@
+## 0.0.2+1
+
+ - **REFACTOR**: Remove logging streaming from CLI ([#13](https://github.com/invertase/globe/issues/13)). ([3e86f9d2](https://github.com/invertase/globe/commit/3e86f9d2d8ef820b8ff319eb137c9afa4605c732))
+
 ## 0.0.2
 
  - Manual version to fix `globe update` command.
