@@ -6,7 +6,6 @@ import 'package:mason_logger/mason_logger.dart';
 import '../command.dart';
 import '../utils/api.dart';
 import '../utils/archiver.dart';
-import '../utils/logs.dart';
 import '../utils/prompts.dart';
 
 /// `globe deploy`
@@ -73,86 +72,87 @@ class DeployCommand extends BaseGlobeCommand {
         '🔍 View deployment: ${metadata.endpoint}/${validated.organization.slug}/${validated.project.slug}/deployments/${deployment.id}',
       );
 
-      var status = logger.progress(deployment.state.message);
-      final completer = Completer<void>();
-      Stream<BuildLogEvent>? logs;
+      // TODO: handle deployment logs - they currently disconnect immediately
+      // var status = logger.progress(deployment.state.message);
+      // final completer = Completer<void>();
+      // Stream<BuildLogEvent>? logs;
 
-      // Check the deployment status every x seconds.
-      Timer.periodic(const Duration(milliseconds: 2000), (timer) async {
-        final update = await api.getDeployment(
-          orgId: validated.organization.id,
-          projectId: validated.project.id,
-          deploymentId: deployment.id,
-        );
+      // // Check the deployment status every x seconds.
+      // Timer.periodic(const Duration(milliseconds: 2000), (timer) async {
+      //   final update = await api.getDeployment(
+      //     orgId: validated.organization.id,
+      //     projectId: validated.project.id,
+      //     deploymentId: deployment.id,
+      //   );
 
-        if (update.state == DeploymentState.working ||
-            update.state == DeploymentState.deploying) {
-          if (logs != null) return;
+      //   if (update.state == DeploymentState.working ||
+      //       update.state == DeploymentState.deploying) {
+      //     if (logs != null) return;
 
-          status.complete();
-          status = logger.progress('Preparing build environment');
+      //     status.complete();
+      //     status = logger.progress('Preparing build environment');
 
-          logs = await streamBuildLogs(
-            api: api,
-            orgId: validated.organization.id,
-            projectId: validated.project.id,
-            deploymentId: deployment.id,
-          );
+      //     logs = await streamBuildLogs(
+      //       api: api,
+      //       orgId: validated.organization.id,
+      //       projectId: validated.project.id,
+      //       deploymentId: deployment.id,
+      //     );
 
-          unawaited(
-            logs!
-                .firstWhere((element) => element is! UnknownBuildLogEvent)
-                .then((_) => status.complete()),
-          );
+      //     unawaited(
+      //       logs!
+      //           .firstWhere((element) => element is! UnknownBuildLogEvent)
+      //           .then((_) => status.complete()),
+      //     );
 
-          unawaited(
-            logs!.firstWhere((element) {
-              if (element case LogsBuildLogEvent(done: final done)) return done;
-              return false;
-            }).then((_) {
-              status = logger.progress('Deploying...');
-            }),
-          );
+      //     unawaited(
+      //       logs!.firstWhere((element) {
+      //         if (element case LogsBuildLogEvent(done: final done)) return done;
+      //         return false;
+      //       }).then((_) {
+      //         status = logger.progress('Deploying...');
+      //       }),
+      //     );
 
-          unawaited(printLogs(logger, logs!));
-        }
+      //     unawaited(printLogs(logger, logs!));
+      //   }
 
-        if (update.state == DeploymentState.success) {
-          status.complete();
-          logger.info(
-            '${lightGreen.wrap('✓')} Preview: https://${update.url}',
-          );
-        }
+      //   if (update.state == DeploymentState.success) {
+      //     status.complete();
+      //     logger.info(
+      //       '${lightGreen.wrap('✓')} Preview: https://${update.url}',
+      //     );
+      //   }
 
-        if (update.state == DeploymentState.error) {
-          var message = 'Deployment failed';
-          if (update.message.isNotEmpty) {
-            message = '$message: ${update.message}';
-          }
-          status.fail(message);
-        }
+      //   if (update.state == DeploymentState.error) {
+      //     var message = 'Deployment failed';
+      //     if (update.message.isNotEmpty) {
+      //       message = '$message: ${update.message}';
+      //     }
+      //     status.fail(message);
+      //   }
 
-        if (update.state == DeploymentState.cancelled) {
-          status.complete();
-          logger.info('Deployment cancelled');
-        }
+      //   if (update.state == DeploymentState.cancelled) {
+      //     status.complete();
+      //     logger.info('Deployment cancelled');
+      //   }
 
-        if (update.state == DeploymentState.invalid) {
-          status.complete();
-          status = logger.progress(
-            'Invalid Deployment State Received. Waiting for valid state',
-          );
-        }
+      //   if (update.state == DeploymentState.invalid) {
+      //     status.complete();
+      //     status = logger.progress(
+      //       'Invalid Deployment State Received. Waiting for valid state',
+      //     );
+      //   }
 
-        if (update.state == DeploymentState.success ||
-            update.state == DeploymentState.cancelled ||
-            update.state == DeploymentState.error) {
-          timer.cancel();
-          completer.complete();
-        }
-      });
+      //   if (update.state == DeploymentState.success ||
+      //       update.state == DeploymentState.cancelled ||
+      //       update.state == DeploymentState.error) {
+      //     timer.cancel();
+      //     completer.complete();
+      //   }
+      // });
 
-      await completer.future;
+      // await completer.future;
 
       return ExitCode.success.code;
     } on ApiException catch (e) {
