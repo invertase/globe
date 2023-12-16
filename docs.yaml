@@ -47,15 +47,15 @@ sidebar:
       - "/frameworks"
     - - Dart Frog
       - "/frameworks/dart-frog"
-    - - Jaspr
-      - "/frameworks/jaspr"
+    # - - Jaspr
+    #   - "/frameworks/jaspr"
 - - Infrastructure
   - - - Overview
       - "/infrastructure"
     - - Cold Starts
       - "/infrastructure/cold-starts"
-    - - Cron Jobs
-      - "/infrastructure/cron-jobs"
+    # - - Cron Jobs
+    #   - "/infrastructure/cron-jobs"
     - - Headers
       - "/infrastructure/headers"
     - - Regions
