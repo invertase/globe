@@ -1,0 +1,11 @@
+name: shelf_on_globe
+version: 0.0.1
+description: A new shelf example project.
+publish_to: none
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  image:
+  shelf: "1.4.0"
