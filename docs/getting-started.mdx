@@ -36,6 +36,8 @@ globe login
 
 To learn more about the CLI, view the [documentation](/cli).
 
+## Deploying your first application
+
 <Tabs
   values={[
     { label: 'Deploy a Backend Shelf Application', value: 'backend' },
@@ -92,7 +94,7 @@ To learn more about the CLI, view the [documentation](/cli).
 
     This is a basic HTTP server that will respond to any request with a 200 OK response and the body `Request for "${request.url}"... worked!`, whilst also logging out information about the request. From here you could build out a full application yourself, adding in routing, database calls, middleware and more. For this example, we'll keep it simple.
 
-## Deploying to Globe
+    ### Deployment
 
     Now that we have a basic application, we can deploy it to Globe. Deploying to Globe is simple; run the `globe deploy` command from your project root in the terminal:
 
@@ -107,7 +109,7 @@ To learn more about the CLI, view the [documentation](/cli).
 
     After waiting for a couple of seconds, you'll be shown that your new deployment has been queued and be provided a unique URL for that deployment. You can visit this URL in your browser to view the build logs and deployment status. You can also use the [`build-logs`](/cli/commands/build-logs) command to view the logs directly from the CLI
 
-## Viewing your deployment logs
+    ## Viewing your deployment logs
 
     Once complete, your deployment will be available via the URL shown in the dashboard. Each deployment has its own unique URL, with a `globeapp.dev` domain. Click the URL and you'll be shown the `Request for "hello"... worked!` message that you saw when running your application locally.
 
