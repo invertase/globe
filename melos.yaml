@@ -3,6 +3,7 @@ repository: https://github.com/invertase/globe
 packages:
   - "*"
   - "packages/*"
+  - "examples/*"
 
 command:
   version:
