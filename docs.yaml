@@ -19,6 +19,8 @@ sidebar:
       - "/cli"
     - - Deploy
       - "/cli/commands/deploy"
+    - - Build Logs
+      - "/cli/commands/build-logs"
     - - Link
       - "/cli/commands/link"
     - - Unlink
@@ -27,6 +29,8 @@ sidebar:
       - "/cli/commands/login"
     - - Logout
       - "/cli/commands/logout"
+    - - Update
+      - "/cli/commands/update"
 - - Deployments
   - - - Overview
       - "/deployments"
