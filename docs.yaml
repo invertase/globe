@@ -16,7 +16,7 @@ sidebar:
   - - - Overview
       - "/getting-started"
     - - Shelf Server
-      - "/getting-started/shelf"
+      - "/getting-started/shelf-server"
     - - Flutter Web
       - "/getting-started/flutter-web"
 - - CLI
