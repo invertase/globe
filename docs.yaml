@@ -8,7 +8,7 @@ anchors:
   icon: discord
   link: https://invertase.link/globe-discord
 theme: "#FFA03F"
-favicon: "/assets/globe-dark-favicon.png"
+favicon: "/assets/globe-favicon-dark.png"
 sidebar:
 - - Overview
   - "/"
@@ -63,6 +63,8 @@ sidebar:
 - - Infrastructure
   - - - Overview
       - "/infrastructure"
+    - - Limits
+      - "/infrastructure/limits"
     - - Cold Starts
       - "/infrastructure/cold-starts"
     # - - Cron Jobs
