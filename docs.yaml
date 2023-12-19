@@ -13,9 +13,14 @@ sidebar:
 - - Overview
   - "/"
 - - Getting Started
-  - "/getting-started"
+  - - - Overview
+      - "/getting-started"
+    - - Backend Shelf Application
+      - "/getting-started"
+    - - Frontend Flutter Web Application
+      - "/getting-started"
 - - CLI
-  - - - CLI Overview
+  - - - Overview
       - "/cli"
     - - Deploy
       - "/cli/commands/deploy"
