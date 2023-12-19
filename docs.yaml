@@ -15,10 +15,10 @@ sidebar:
 - - Getting Started
   - - - Overview
       - "/getting-started"
-    - - Backend Shelf Application
-      - "/getting-started"
-    - - Frontend Flutter Web Application
-      - "/getting-started"
+    - - Shelf Server
+      - "/getting-started/shelf"
+    - - Flutter Web
+      - "/getting-started/flutter-web"
 - - CLI
   - - - Overview
       - "/cli"
@@ -56,6 +56,8 @@ sidebar:
       - "/frameworks"
     - - Dart Frog
       - "/frameworks/dart-frog"
+    - - Flutter Web
+      - "/frameworks/flutter-web"
     # - - Jaspr
     #   - "/frameworks/jaspr"
 - - Infrastructure
