@@ -15,8 +15,36 @@ Globe integrates with GitHub via the [GitHub Application](https://github.com/app
 
 ## Authorization
 
-TODO: Add authorization instructions.
+Within the Globe dashboard, browse to **Projects** -> **Create Project** by clicking the `+ Create Project Button`. If not already authorized, you will be able to add a Github account to your Globe Organization.
+
+![Connect Github Account](/assets/connect-github-account.png)
+
+Click on `Connect your GitHub account` and you will be asked to authorize our GitHub app.
+
+![Authorize Github App](/assets/authorize-github-app.png)
+
+Click on `Authorize Dart Globe` to add your GitHub account to your Globe Organization. You will be redirected back to the Project Create screen afterwards.
 
 ## Configuration
 
-TODO: Add configuration instructions.
+After authorizing the GitHub app, you will need to configure the repositories that are available to Globe. Click on `Configure` to select the repositories you want to import.
+
+![Configure Repositories](/assets/configure-github-app.png)
+
+In this screen you can add all repositories or specific repositories that you want available in globe. After configuratin you should be redirected to the Project Create screen. Now you will have a list of all the repositories that you have configured.
+
+## Importing a Repository and Creating a Deployment
+
+You can click on the `Import` button on the right side of any repository you want to import to create a project from it.
+
+![Github Import](/assets/github-import.png)
+
+Select the options you want for your project and click on `Configure`.
+
+![Github Configure](/assets/github-configure.png)
+
+Framework Preset will be selected based on detected framework. Check the [Frameworks Section](/frameworks) section for more details.
+
+After configuration you can click on the `Deploy` button to create a new Project and trigger the first deployment.
+
+From now on. Every time you push to GitHub, Globe will create a new deployment. If there is a commit in the main branch selected in the import stage, a production deployment will be created. For all other branches, a preview deployment is triggered.
