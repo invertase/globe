@@ -8,7 +8,7 @@ anchors:
   icon: discord
   link: https://invertase.link/globe-discord
 theme: "#FFA03F"
-favicon: "/assets/globe_dark_favicon.png"
+favicon: "/assets/globe-dark-favicon.png"
 sidebar:
 - - Overview
   - "/"
