@@ -49,8 +49,8 @@ sidebar:
       - "/deployments/github-integration"
     - - Hooks
       - "/deployments/hooks"
-    - - Redeployments
-      - "/deployments/redeployments"
+    # - - Redeployments
+    #   - "/deployments/redeployments"
 - - Frameworks
   - - - Overview
       - "/frameworks"
