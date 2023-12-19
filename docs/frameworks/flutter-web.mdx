@@ -2,4 +2,20 @@
 title: Flutter Web
 ---
 
-# Deploy a Flutter Web Application
+# Flutter Web
+
+To deploy a Flutter Web Application, you can run the following command in the root of the project and Globe will automatically apply the correct preset and deploy your application. The build system will auto-detect `build_runner` if used and build generated files as well.
+
+```bash
+globe deploy
+```
+
+For a more detailed example, [click here.](/getting-started/flutter-web)
+
+## How it works
+
+Globe builds your Flutter Application for the Web and uploads the built files to our globally distributed CDN network. Hence, your application is always served from a location nearest to the user thus reducing latency and improving load times.
+
+## Automatic Optimizations
+
+Globe hashes your assets and applies filename fingerprinting to vastly improve cache performance. This also ensures your files are correctly updated by the browser for every new deployment.
