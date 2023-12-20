@@ -3,6 +3,14 @@ import 'dart:io';
 
 import 'package:mason_logger/mason_logger.dart';
 
+import 'templates.dart';
+
+enum GlobeHttpServerRedirectStrategy {
+  /// The server will respond with a HTML template that will redirect the user
+  /// to the provided callback URL.
+  redirect,
+}
+
 /// A utility class for creating a simple HTTP server.
 class GlobeHttpServer {
   /// Starts a local HTTP server which listens for an incoming request
@@ -37,8 +45,22 @@ class GlobeHttpServer {
                 ..add('Access-Control-Allow-Origin', '*')
                 ..add('Access-Control-Allow-Methods', '*')
                 ..add('Access-Control-Allow-Headers', '*');
+
+              final session = request.uri.queryParameters['session'];
+              final strategy = request.uri.queryParameters['strategy'];
+
+              if (strategy == GlobeHttpServerRedirectStrategy.redirect.name) {
+                final message = session == null
+                    ? 'Failed to login. No session token was provided.'
+                    : 'Successfully logged in. You may now close this tab.';
+
+                // Return a HTML template.
+                request.response.headers.contentType = ContentType.html;
+                request.response.write(cliCallbackTemplate(message));
+              }
+
               // Stop the server from getting new requests
-              return request.uri.queryParameters['session'];
+              return session;
             default:
             // On unknown requests, do nothing
           }
