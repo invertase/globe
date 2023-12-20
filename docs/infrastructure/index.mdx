@@ -14,21 +14,20 @@ When a user makes a request to your application, they first end up connecting to
 
 Our edge network routing service is also responsible for features such as DDoS mitigation, instant rollbacks, A/B testing deployments and more.
 
-## Containers
+## Architecture
 
-Globe uses container technology to start your Dart applications on demand. The platform will automatically scale your application based on the number of requests it receives.
-Containers are created on demand in the closest [region](/infrastructure/regions) to where a user request originates from.
+Globe uses a custom made runner technology to start your Dart applications on demand in a sandbox environment. The platform will automatically scale your application based on the number of requests it receives.
+Runners are created on demand in the closest [region](/infrastructure/regions) to where a user request originates from.
 
-An on-demand container environment means you should:
+Globe's on-demand dart runner environment means you should:
+- Have a theoretically unlimited amount of scale.
+- Fully Managed Networking Infrastructure.
 
-- Not rely on having a persistent file system.
-- Not rely on having persistent memory.
+However, there are some limitations to achieve this:
+- The application cannot rely on having a persistent file system.
+- It cannot rely on having persistent memory.
 
-Even if a user is performing multiple requests from the same region, it is not guaranteed that the same container will be used to handle the request. Treat each request as though it is a new environment.
-
-## Serverless
-
-Globe currently does not yet have a functions / serverless model, however, we are experimenting with providing this via upcoming technologies like WASM. Please consider providing your thoughts and your upvote on [this feature request](https://invertase.canny.io/globe/p/faas-serverless) if this is something that interests you.
+Even if a user is performing multiple requests from the same region, it is not guaranteed that the same runner will be used to handle the request. Treat each request as though it is a new environment.
 
 ## Starting a server
 
@@ -59,29 +58,3 @@ void main() async {
   );
 }
 ```
-
-## Limitations
-
-Globe imposes a few request limits to ensure that the platform is not abused.
-
-#### File System
-
-You should only rely on the file system for temporary storage such as processing of files. Any files created during a request will be removed once the request is finished.
-
-#### Execution Timeout
-
-A single request is allowed to run for a maximum duration. If a request takes longer than the allowed duration, the request will be terminated.
-
-During preview the maximum duration is currently **5 seconds**. We may increase this based on feedback and also allow higher limits for paid plans in the future.
-
-#### CPU Usage
-
-You cannot perform CPU heavy tasks for an extended period of time (determined by the current infrastructure load). Any requests that exceed the allotted CPU usage will be terminated.
-
-#### Memory Usage
-
-Each container has a limited amount of memory available (128MB). Performing ongoing memory-heavy tasks may result in the request being terminated. We may increase this based on feedback and also allow higher limits for paid plans in the future.
-
-#### FFI
-
-Usage of FFI (via `dart:ffi`) is not currently supported. We are working on providing this in the future.

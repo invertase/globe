@@ -8,17 +8,24 @@ anchors:
   icon: discord
   link: https://invertase.link/globe-discord
 theme: "#FFA03F"
-favicon: "/assets/globe_dark.png"
+favicon: "/assets/globe-favicon-dark.png"
 sidebar:
 - - Overview
   - "/"
 - - Getting Started
-  - "/getting-started"
+  - - - Overview
+      - "/getting-started"
+    - - Shelf Server
+      - "/getting-started/shelf-server"
+    - - Flutter Web
+      - "/getting-started/flutter-web"
 - - CLI
-  - - - CLI Overview
+  - - - Overview
       - "/cli"
     - - Deploy
       - "/cli/commands/deploy"
+    - - Build Logs
+      - "/cli/commands/build-logs"
     - - Link
       - "/cli/commands/link"
     - - Unlink
@@ -27,6 +34,8 @@ sidebar:
       - "/cli/commands/login"
     - - Logout
       - "/cli/commands/logout"
+    - - Update
+      - "/cli/commands/update"
 - - Deployments
   - - - Overview
       - "/deployments"
@@ -40,18 +49,22 @@ sidebar:
       - "/deployments/github-integration"
     - - Hooks
       - "/deployments/hooks"
-    - - Redeployments
-      - "/deployments/redeployments"
+    # - - Redeployments
+    #   - "/deployments/redeployments"
 - - Frameworks
   - - - Overview
       - "/frameworks"
     - - Dart Frog
       - "/frameworks/dart-frog"
+    - - Flutter Web
+      - "/frameworks/flutter-web"
     # - - Jaspr
     #   - "/frameworks/jaspr"
 - - Infrastructure
   - - - Overview
       - "/infrastructure"
+    - - Limits
+      - "/infrastructure/limits"
     - - Cold Starts
       - "/infrastructure/cold-starts"
     # - - Cron Jobs
