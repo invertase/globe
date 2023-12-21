@@ -30,8 +30,17 @@ When successfully built, the deployment will be promoted to production and will 
 
 You can learn more about [preview and production deployments](/deployments) in the deployments documentation.
 
+## Build logs
+
+If you want to see realtime build logs for your deployment on CLI, use `--logs` flag:
+
+```bash
+globe deploy --logs
+```
+
 ### Flags
 
 The command has flags (in addition to [global flags](/cli#global-flags)) that can be used to modify the behavior of the command, which can be accessed by running `globe deploy --<flag>`:
 
 - `--prod` - Creates a deployment that will be promoted to production once built.
+- `--logs` - Streams build logs
