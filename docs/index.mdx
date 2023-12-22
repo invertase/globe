@@ -4,7 +4,7 @@ title: Globe Overview
 
 # What is Globe?
 
-Globe is a deployment platform for [Dart](https://dart.dev/) developers, that allows you to deploy your Dart **Backend**, **Frontend** and **Flutter Web** applications to a globally
+Globe is a deployment platform for [Dart](https://dart.dev/) developers, that allows you to deploy your Dart **Backend**, **Frontend**, and **Flutter Web** applications to a globally
 distributed service without the need to manage servers, networks, or scaling. The core principle of Globe is a simplified deployment service
 with great developer experience in mind.
 
@@ -13,7 +13,7 @@ with great developer experience in mind.
 Some of the core features of Globe include:
 
 - [Deployments][deployment-url]: Deploy your Dart applications to Globe with a single command or automatically on every push to your Git repository. Globe supports both [preview][preview-url] and [production][production-url] deployments.
-- [GitHub Integration][github-integration-url]: Globe integrates with your existing github repository to automatically deploy your applications on every push.
+- [GitHub Integration][github-integration-url]: Globe integrates with your existing GitHub repository to automatically deploy your applications on every push.
 - [Custom domains][custom-domains-url]: Assign custom domains to your projects, with SSL certificates automatically generated and renewed for you.
 - **Organization support**: Globe supports organizations, allowing you to manage multiple projects and users under a single account.
 
@@ -21,20 +21,20 @@ Some of the core features of Globe include:
 
 Dart on the server is a great choice for building server-based applications, such as APIs, websites, and more. The language has great support for building these applications with packages such
 as [Shelf][shelf-url-ext] and [Dart Frog][dart-frog-url-ext] providing a great base for getting started. However, deploying these applications can be a challenge for
-a number of reasons:
+many reasons:
 
-- Developers require experience with cloud providers such as Google Cloud Platform (GCP), Amazon Web Services (AWS), Digital Ocean and more.
+- Developers require experience with cloud providers such as Google Cloud Platform (GCP), Amazon Web Services (AWS), Digital Ocean, and more.
 - Familiarity with tools such as Docker, Kubernetes, and Terraform is required to deploy applications.
 - Critical components such as scaling, load balancing, and SSL certificates must be configured and monitored.
 - Integrating with CI/CD flows can be challenging, especially when deploying multiple environments and preview deployments.
 - This architecture comes with challenges such as managing cold starts, region-based latency, and more.
 
-Globe aims to solve these problems by providing a simple, easy to use deployment platform for Dart developers. Globe utilizes a number of cloud providers to provide a globally distributed service with the following benefits:
+Globe aims to solve these problems by providing a simple, easy-to-use deployment platform for Dart developers. Globe utilizes several cloud providers to provide a globally distributed service with the following benefits:
 
-- Zero management overhead of servers, networking and scaling.
+- Zero management overhead of servers, networking, and scaling.
 - Globally available regions. Globe deployments of your application are available around the world, providing low latency to your users and high availability.
 - Globe automatically scales your application to meet demand.
-- Built-in support for preview deployments, allowing you to preview every change, commit or PR before deploying to production.
+- Built-in support for preview deployments, allowing you to preview every change, commit, or PR before deploying to production.
 
 Simply run the `deploy` command or push to your Git repository and Globe will create a globally managed deployment for you within seconds.
 
@@ -44,4 +44,4 @@ Simply run the `deploy` command or push to your Git repository and Globe will cr
 [preview-url]: /deployments#creating-a-preview-deployment
 [production-url]: /deployments#creating-a-production-deployment
 [shelf-url-ext]: https://pub.dev/packages/shelf
-[dart-frog-url-ext]: https://pub.dev/packages/shelf
+[dart-frog-url-ext]: https://pub.dev/packages/dart_frog
