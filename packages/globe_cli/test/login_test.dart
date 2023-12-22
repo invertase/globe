@@ -69,7 +69,7 @@ void main() {
 
       verify(
         openUrlMock(
-          'https://globe.dev/login/cli?callback=http://localhost:4242/callback',
+          'https://globe.dev/login/cli?callback=http://localhost:4242/callback?strategy=redirect',
         ),
       ).called(1);
       verifyNoMoreInteractions(openUrlMock);
@@ -120,7 +120,7 @@ void main() {
 
       verify(
         openUrlMock(
-          'https://globe.dev/login/cli?callback=http://localhost:4242/callback',
+          'https://globe.dev/login/cli?callback=http://localhost:4242/callback?strategy=redirect',
         ),
       ).called(1);
       verifyNoMoreInteractions(openUrlMock);
