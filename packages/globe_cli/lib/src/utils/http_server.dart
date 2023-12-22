@@ -69,7 +69,7 @@ class GlobeHttpServer {
           // the error for debugging purposes.
 
           logger.err('''
-An error occured while handling the request $request:
+An error occurred while handling the request $request:
 $error
 $stackTrace
 ''');

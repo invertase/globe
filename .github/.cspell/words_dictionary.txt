@@ -1,3 +1,9 @@
 # Actual english words (or common abbreviations) missing from CSpell
 upvote
 archiver
+
+# Fonts
+Segoe
+Roboto
+Cantarell
+Neue
