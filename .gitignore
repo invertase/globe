@@ -8,3 +8,4 @@ dist/
 .idea
 *.iml
 .dart_tool
+.fvm
