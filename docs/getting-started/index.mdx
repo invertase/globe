@@ -1,0 +1,45 @@
+---
+title: Getting started with Globe
+---
+
+# Getting Started
+
+To get started using Globe, ensure you have [logged in](https://globe.dev/login) to your account.
+
+There are two ways to deploy to Globe:
+- Using the [Globe CLI](#install-the-globe-cli-optional), or
+- Using the [GitHub integration](/deployments/github-integration)
+
+## Install the Globe CLI (optional)
+
+The Globe CLI is a command line tool that allows you to interact with your Globe account and deploy from the command line. It is not required to use Globe, but it can be useful for some workflows.
+
+#### Pre-requisites
+
+To get started, you must have the [Dart SDK](https://dart.dev/get-dart) installed on your machine.
+
+#### Installation
+
+To install the Globe CLI, run the following command:
+
+```bash
+dart pub global activate globe_cli
+```
+
+Once installed, you can access the globe executable from anywhere on your machine.
+
+To login with your Globe account, run the following command:
+
+```bash
+globe login
+```
+
+To learn more about the CLI, view the [documentation](/cli).
+
+## Deploying your first application
+
+You can deploy your Dart applications to a Globally distributed network using the [framework of your choice](/frameworks). It is possible to deploy both Backend and Frontend applications as shown below. For simplicity, the CLI will be used for deployment.
+
+- [Backend Shelf Server](/getting-started/shelf-server)
+- [Frontend Flutter Web Application](/getting-started/flutter-web)
+

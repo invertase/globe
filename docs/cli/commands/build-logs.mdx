@@ -1,0 +1,22 @@
+---
+title: View Build Logs
+description: View Build Logs for a given deployment ID within the CLI
+---
+
+# Build Logs
+
+The `build-logs` command allows you to view the live build logs of a running deployment. The deployment must be in the `building` state for this command to work. The --deployment flag is required.
+
+## Usage
+
+To use, run the following command with the deployment ID of the currently running deployment.
+
+```bash
+globe build-logs -d <DEPLOYMENT-ID>
+```
+
+### Flags
+
+The command has flags (in addition to [global flags](/cli#global-flags)) that can be used to modify the behavior of the command, which can be accessed by running `globe build-logs --<flag>`:
+
+- `-d, --deployment` - Provide the deployment ID of the deployment you want to view the build logs for

@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2023-12-15
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`globe_cli` - `v0.0.2+1`](#globe_cli---v0021)
+
+---
+
+#### `globe_cli` - `v0.0.2+1`
+
+ - **REFACTOR**: Remove logging streaming from CLI ([#13](https://github.com/invertase/globe/issues/13)). ([3e86f9d2](https://github.com/invertase/globe/commit/3e86f9d2d8ef820b8ff319eb137c9afa4605c732))
+
+
 ## 2023-12-13
 
 ### Changes

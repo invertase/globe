@@ -4,9 +4,9 @@ title: Regions
 
 # Regions
 
-The Globe edge network is located in some [300 cities in 100+ countries](https://www.cloudflare.com/en-gb/network/) and is powered by [Cloudflare’s network][cloudflare-network-url] - which is milliseconds away from virtually every Internet user on the globe.
+The Globe edge network is located in some [300 cities in 100+ countries](https://www.cloudflare.com/en-gb/network/) and is powered by Cloudflare’s network - which is milliseconds away from virtually every Internet user on the planet.
 
-Our edge network is responsible for features such as DDoS mitigation, zero latency routing to our compute regions, instant rollbacks, A/B testing deployments and more.
+Our edge network is responsible for features such as DDoS mitigation, zero latency routing to our compute regions, instant rollbacks, A/B testing deployments and more. Caching also happens in the regional level, so cache hits are served directly from the routing region.
 
 ## Compute Regions
 
@@ -89,4 +89,6 @@ For example: `X-Globe-Preferred-Region: DFW, PDX`
 
 Note that when specifying a preferred region via the header this will override any preferred region(s) set in the Project Settings dashboard.
 
-[cloudflare-network-url]: https://www.cloudflare.com/network/
+### What are IATA codes?
+
+IATA codes are 3-letter codes that represent airports. Globe uses IATA codes to designate compute and routing regions in the same area that it represents. For example, `DFW` is the IATA code for Dallas Fort Worth International Airport it is also the code for the Dallas compute region in North America. To check your current network's routing region's IATA code [click here](https://1.1.1.1/cdn-cgi/trace). The `colo=XXX` field specifies the code. The Globe infrastructure is built on top of the Cloudflare network, so the IATA codes are the same as Cloudflare's. The system then routes the request to the closest available [compute region](/infrastructure/regions#compute-regions).

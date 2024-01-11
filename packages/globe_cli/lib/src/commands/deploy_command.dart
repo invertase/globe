@@ -17,11 +17,16 @@ import '../utils/prompts.dart';
 class DeployCommand extends BaseGlobeCommand {
   /// {@macro deploy_command}
   DeployCommand() {
-    argParser.addFlag(
-      'prod',
-      help: 'Creates a new deployment, '
-          'and if successful promotes it to the latest production deployment.',
-    );
+    argParser
+      ..addFlag(
+        'prod',
+        help: 'Creates a new deployment, '
+            'and if successful promotes it to the latest production deployment.',
+      )
+      ..addFlag(
+        'logs',
+        help: 'Shows build logs for the deployment.',
+      );
   }
 
   @override
@@ -72,6 +77,10 @@ class DeployCommand extends BaseGlobeCommand {
       logger.info(
         '🔍 View deployment: ${metadata.endpoint}/${validated.organization.slug}/${validated.project.slug}/deployments/${deployment.id}',
       );
+
+      if (!(argResults!['logs'] as bool)) {
+        return ExitCode.success.code;
+      }
 
       var status = logger.progress(deployment.state.message);
       final completer = Completer<void>();
