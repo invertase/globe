@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2024-01-11
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`globe_cli` - `v0.0.3`](#globe_cli---v003)
+
+---
+
+#### `globe_cli` - `v0.0.3`
+
+ - **FIX**: update tests. ([e2d34290](https://github.com/invertase/globe/commit/e2d34290eb5d24378c01ee48f500dd73bf4ef7dc))
+ - **FIX**: spell check. ([cc763c5e](https://github.com/invertase/globe/commit/cc763c5ec0d9f294174ba4f24aa11d20c0a8af17))
+ - **FEAT**: handle cli redirect. ([b25514d8](https://github.com/invertase/globe/commit/b25514d8ff522a48b840333365560807b3de56d9))
+ - **FEAT**(globe_cli): Add --logs for globe deploy ([#28](https://github.com/invertase/globe/issues/28)). ([479b11e7](https://github.com/invertase/globe/commit/479b11e7b3391d4a8ee05847d0cd53b9e37aac80))
+
+
 ## 2023-12-15
 
 ### Changes

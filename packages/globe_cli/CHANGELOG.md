@@ -1,3 +1,10 @@
+## 0.0.3
+
+ - **FIX**: update tests. ([e2d34290](https://github.com/invertase/globe/commit/e2d34290eb5d24378c01ee48f500dd73bf4ef7dc))
+ - **FIX**: spell check. ([cc763c5e](https://github.com/invertase/globe/commit/cc763c5ec0d9f294174ba4f24aa11d20c0a8af17))
+ - **FEAT**: handle cli redirect. ([b25514d8](https://github.com/invertase/globe/commit/b25514d8ff522a48b840333365560807b3de56d9))
+ - **FEAT**(globe_cli): Add --logs for globe deploy ([#28](https://github.com/invertase/globe/issues/28)). ([479b11e7](https://github.com/invertase/globe/commit/479b11e7b3391d4a8ee05847d0cd53b9e37aac80))
+
 ## 0.0.2+1
 
  - **REFACTOR**: Remove logging streaming from CLI ([#13](https://github.com/invertase/globe/issues/13)). ([3e86f9d2](https://github.com/invertase/globe/commit/3e86f9d2d8ef820b8ff319eb137c9afa4605c732))
