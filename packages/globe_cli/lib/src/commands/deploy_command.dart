@@ -109,7 +109,7 @@ class DeployCommand extends BaseGlobeCommand {
               case DeploymentState.error:
                 status.fail(update.state.message);
                 logger.info(
-                  'Use globe build-logs --deployment="${deployment.id}" to view the build logs',
+                  'Use ${lightCyan.wrap('globe build-logs --deployment="${deployment.id}"')}  to view the build logs',
                 );
                 timer.cancel();
                 completer.complete();
