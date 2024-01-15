@@ -108,6 +108,9 @@ class DeployCommand extends BaseGlobeCommand {
                 completer.complete();
               case DeploymentState.error:
                 status.fail(update.state.message);
+                logger.info(
+                  'Use globe build-logs --deployment="deploymentId" to view the build logs',
+                );
                 timer.cancel();
                 completer.complete();
               case DeploymentState.cancelled:
