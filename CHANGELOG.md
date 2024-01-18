@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2024-01-18
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`globe_cli` - `v0.0.4`](#globe_cli---v004)
+
+---
+
+#### `globe_cli` - `v0.0.4`
+
+ - **FEAT**(globe_cli): Show build-log hint when deployment fails ([#33](https://github.com/invertase/globe/issues/33)). ([19e882d8](https://github.com/invertase/globe/commit/19e882d84022d529335db01ce1dc29dd9da8342a))
+ - **FEAT**(globe_cli): Show deployment statuses while deploying ([#29](https://github.com/invertase/globe/issues/29)). ([d8bace79](https://github.com/invertase/globe/commit/d8bace793f8cb905dc52a7ed4a8e0876c9b5e936))
+
+
 ## 2024-01-11
 
 ### Changes

@@ -1,3 +1,8 @@
+## 0.0.4
+
+ - **FEAT**(globe_cli): Show build-log hint when deployment fails ([#33](https://github.com/invertase/globe/issues/33)). ([19e882d8](https://github.com/invertase/globe/commit/19e882d84022d529335db01ce1dc29dd9da8342a))
+ - **FEAT**(globe_cli): Show deployment statuses while deploying ([#29](https://github.com/invertase/globe/issues/29)). ([d8bace79](https://github.com/invertase/globe/commit/d8bace793f8cb905dc52a7ed4a8e0876c9b5e936))
+
 ## 0.0.3
 
  - **FIX**: update tests. ([e2d34290](https://github.com/invertase/globe/commit/e2d34290eb5d24378c01ee48f500dd73bf4ef7dc))
