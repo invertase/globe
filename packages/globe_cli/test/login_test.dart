@@ -58,7 +58,7 @@ void main() {
         ),
       );
 
-      final url =
+      const url =
           'https://globe.dev/login/cli?callback=http://localhost:4242/callback?strategy=redirect';
 
       await expectLater(
@@ -115,7 +115,7 @@ void main() {
         ),
       );
 
-      final url =
+      const url =
           'https://globe.dev/login/cli?callback=http://localhost:4242/callback?strategy=redirect';
 
       await expectLater(
