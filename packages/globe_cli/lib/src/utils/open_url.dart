@@ -25,8 +25,7 @@ String get _openUrlCommand {
     return 'open';
   } else {
     throw UnsupportedError(
-      'Operating system not supported by the open_url '
-      'package: ${Platform.operatingSystem}',
+      'Operating system not supported: ${Platform.operatingSystem}',
     );
   }
 }
