@@ -1,3 +1,7 @@
+## 0.0.5
+
+ - **FEAT**(globe_cli): Added login url in output of login command ([#34](https://github.com/invertase/globe/issues/34)). ([5294dcbe](https://github.com/invertase/globe/commit/5294dcbe53c2866b491818ad4fc410c6a60e0bc4))
+
 ## 0.0.4
 
  - **FEAT**(globe_cli): Show build-log hint when deployment fails ([#33](https://github.com/invertase/globe/issues/33)). ([19e882d8](https://github.com/invertase/globe/commit/19e882d84022d529335db01ce1dc29dd9da8342a))
