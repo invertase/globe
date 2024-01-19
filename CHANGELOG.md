@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2024-01-19
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`globe_cli` - `v0.0.5`](#globe_cli---v005)
+
+---
+
+#### `globe_cli` - `v0.0.5`
+
+ - **FEAT**(globe_cli): Added login url in output of login command ([#34](https://github.com/invertase/globe/issues/34)). ([5294dcbe](https://github.com/invertase/globe/commit/5294dcbe53c2866b491818ad4fc410c6a60e0bc4))
+
+
 ## 2024-01-18
 
 ### Changes
