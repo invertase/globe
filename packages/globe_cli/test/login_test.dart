@@ -58,7 +58,8 @@ void main() {
         ),
       );
 
-      final url = 'https://globe.dev/login/cli?callback=http://localhost:4242/callback?strategy=redirect';
+      final url =
+          'https://globe.dev/login/cli?callback=http://localhost:4242/callback?strategy=redirect';
 
       await expectLater(
         result.testOutputByLines,
@@ -114,7 +115,8 @@ void main() {
         ),
       );
 
-      final url = 'https://globe.dev/login/cli?callback=http://localhost:4242/callback?strategy=redirect';
+      final url =
+          'https://globe.dev/login/cli?callback=http://localhost:4242/callback?strategy=redirect';
 
       await expectLater(
         result.testOutputByLines,
