@@ -58,10 +58,16 @@ void main() {
         ),
       );
 
+      const url =
+          'https://globe.dev/login/cli?callback=http://localhost:4242/callback?strategy=redirect';
+
       await expectLater(
         result.testOutputByLines,
         emitsInOrder([
           'Please authenticate via the opened browser window.',
+          '',
+          'Or go to this link: $url',
+          '',
           'Successfully logged in.',
           emitsDone,
         ]),
@@ -69,7 +75,7 @@ void main() {
 
       verify(
         openUrlMock(
-          'https://globe.dev/login/cli?callback=http://localhost:4242/callback?strategy=redirect',
+          url,
         ),
       ).called(1);
       verifyNoMoreInteractions(openUrlMock);
@@ -109,10 +115,16 @@ void main() {
         ),
       );
 
+      const url =
+          'https://globe.dev/login/cli?callback=http://localhost:4242/callback?strategy=redirect';
+
       await expectLater(
         result.testOutputByLines,
         emitsInOrder([
           'Please authenticate via the opened browser window.',
+          '',
+          'Or go to this link: $url',
+          '',
           'err: Failed to login.',
           emitsDone,
         ]),
@@ -120,7 +132,7 @@ void main() {
 
       verify(
         openUrlMock(
-          'https://globe.dev/login/cli?callback=http://localhost:4242/callback?strategy=redirect',
+          url,
         ),
       ).called(1);
       verifyNoMoreInteractions(openUrlMock);
