@@ -40,7 +40,8 @@ class LoginCommand extends BaseGlobeCommand {
       onConnected: (port) async {
         logger.info('Please authenticate via the opened browser window.');
         // TODO can we react to openUrl close, to have the command emit a "failed to login"?
-        final url = '$endpoint/login/cli?callback=http://localhost:$port/callback?strategy=${GlobeHttpServerRedirectStrategy.redirect.name}';
+        final url =
+            '$endpoint/login/cli?callback=http://localhost:$port/callback?strategy=${GlobeHttpServerRedirectStrategy.redirect.name}';
         logger.info('\nOr go to this link: $url\n');
         await openUrl(
           url,
