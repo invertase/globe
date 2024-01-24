@@ -87,7 +87,7 @@ void main() {
 
       expect(
         workspace.remoteAuthFile.readAsStringSync(),
-        '{"jwt":"my-token"}',
+        '{"jwt":"my-token","authenticationMethod":"jwt"}',
       );
     });
 
