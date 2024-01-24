@@ -103,16 +103,20 @@ class GlobeSession {
     return switch (json) {
       {
         'jwt': final String jwt,
-        'authenticationMethod': final String? authMethod
+        'authenticationMethod': final String authMethod,
       } =>
         GlobeSession(
           jwt: jwt,
-          authenticationMethod: authMethod != null
-              ? AuthenticationMethod.values
-                  .firstWhere((e) => e.name == authMethod)
-              : AuthenticationMethod.jwt,
+          authenticationMethod: AuthenticationMethod.values.firstWhere(
+            (e) => e.name == authMethod,
+            orElse: () => throw ArgumentError('Invalid AuthenticationMethod'),
+          ),
         ),
-      _ => throw ArgumentError(),
+      {
+        'jwt': final String jwt,
+      } =>
+        GlobeSession(jwt: jwt, authenticationMethod: AuthenticationMethod.jwt),
+      _ => throw ArgumentError('Invalid JSON object.')
     };
   }
 
