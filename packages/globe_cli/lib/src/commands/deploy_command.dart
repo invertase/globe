@@ -26,6 +26,15 @@ class DeployCommand extends BaseGlobeCommand {
       ..addFlag(
         'logs',
         help: 'Shows build logs for the deployment.',
+      )
+      ..addFlag(
+        'token',
+        help: 'Set the API token for deployment. Also needs --project',
+      )
+      ..addFlag(
+        'project',
+        help:
+            'Set the project for deployment with API token. Used with --token',
       );
   }
 
