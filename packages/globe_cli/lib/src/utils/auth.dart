@@ -37,8 +37,10 @@ class GlobeAuth {
   ///
   /// Note this is still validated on the server side.
   void login({required String jwt}) {
-    final session = _session =
-        GlobeSession(jwt: jwt, authenticationMethod: AuthenticationMethod.jwt);
+    final session = _session = GlobeSession(
+      jwt: jwt,
+      authenticationMethod: AuthenticationMethod.jwt,
+    );
     _flushSession(session);
   }
 
@@ -47,7 +49,9 @@ class GlobeAuth {
   /// Note this is still validated on the server side.
   void loginWithApiToken({required String jwt}) {
     final session = _session = GlobeSession(
-        jwt: jwt, authenticationMethod: AuthenticationMethod.apiToken);
+      jwt: jwt,
+      authenticationMethod: AuthenticationMethod.apiToken,
+    );
     _flushSession(session);
   }
 
@@ -92,7 +96,7 @@ enum AuthenticationMethod {
 
 /// A data class representing a user's authentication session.
 class GlobeSession {
-  /// Creates a session with the given [jwt]. And optionally sets the [authenticationMethod].
+  /// Creates a session with the given [jwt] and [authenticationMethod].
   const GlobeSession({
     required this.jwt,
     required this.authenticationMethod,
@@ -115,7 +119,10 @@ class GlobeSession {
       {
         'jwt': final String jwt,
       } =>
-        GlobeSession(jwt: jwt, authenticationMethod: AuthenticationMethod.jwt),
+        GlobeSession(
+          jwt: jwt,
+          authenticationMethod: AuthenticationMethod.jwt,
+        ),
       _ => throw ArgumentError('Invalid JSON object.')
     };
   }
@@ -125,6 +132,8 @@ class GlobeSession {
   final AuthenticationMethod authenticationMethod;
 
   /// Converts this session to a JSON object.
-  Map<String, dynamic> toJson() =>
-      {'jwt': jwt, 'authenticationMethod': authenticationMethod.name};
+  Map<String, dynamic> toJson() => {
+        'jwt': jwt,
+        'authenticationMethod': authenticationMethod.name,
+      };
 }
