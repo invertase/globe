@@ -31,7 +31,7 @@ Future<ScopeMetadata> linkProject({
     }
   } else {
     if (!logger.confirm(
-      '❓ Link this project to a Globe ${cyan.wrap('"${Directory.current.path}"')}?',
+      '❓ Link this project to Globe ${cyan.wrap('"${Directory.current.path}"')}?',
       defaultValue: true,
     )) {
       exitOverride(0);
