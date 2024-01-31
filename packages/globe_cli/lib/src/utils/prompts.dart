@@ -28,13 +28,6 @@ Future<ScopeMetadata> linkProject({
     )) {
       exitOverride(0);
     }
-  } else {
-    if (!logger.confirm(
-      '❓ Link this project to a Globe ${cyan.wrap('"${Directory.current.path}"')}?',
-      defaultValue: true,
-    )) {
-      exitOverride(0);
-    }
   }
 
   try {
@@ -181,28 +174,8 @@ Future<Project> selectProject(
     String? entrypoint;
 
     if (discoveredPreset != null) {
-      final useDefaultSettings = logger.confirm(
-        '❓ Detected "${discoveredPreset.name}" preset, would you like to use the default build settings?',
-        defaultValue: true,
-      );
-
-      if (!useDefaultSettings) {
-        buildCommand = logger.prompt(
-          '❓ Enter a build command:',
-          defaultValue: discoveredPreset.buildCommand,
-        );
-
-        entrypoint = logger.prompt(
-          '❓ Enter a Dart entrypoint file:',
-          defaultValue: discoveredPreset.entrypoint,
-        );
-
-        // If it's the same as the preset, don't send it.
-        buildCommand =
-            buildCommand == discoveredPreset.buildCommand ? null : buildCommand;
-        entrypoint =
-            entrypoint == discoveredPreset.entrypoint ? null : entrypoint;
-      }
+      buildCommand = discoveredPreset.buildCommand;
+      entrypoint = discoveredPreset.entrypoint;
     } else {
       if (logger.confirm('❓ Would you like to run a custom build command?')) {
         buildCommand = logger.prompt(
@@ -290,7 +263,7 @@ Future<Project> selectProject(
 
   // Select a project or create a new one.
   final selectedProject = logger.chooseOne(
-    '❓ Please a project you want to deploy to:',
+    '❓ Select a project you want to deploy to:',
     choices: [createSymbol, ...projects.map((p) => p.id)],
     display: (choice) {
       if (choice == createSymbol) {
