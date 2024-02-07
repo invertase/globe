@@ -1,3 +1,7 @@
+## 0.0.6
+
+ - **FEAT**(globe_cli): API token support for cli login and deploy ([#36](https://github.com/invertase/globe/issues/36)). ([48b6e41a](https://github.com/invertase/globe/commit/48b6e41a49dd15ad75f490b8f180338bdd0f9438))
+
 ## 0.0.5
 
  - **FEAT**(globe_cli): Added login url in output of login command ([#34](https://github.com/invertase/globe/issues/34)). ([5294dcbe](https://github.com/invertase/globe/commit/5294dcbe53c2866b491818ad4fc410c6a60e0bc4))

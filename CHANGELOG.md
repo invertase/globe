@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2024-02-07
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`globe_cli` - `v0.0.6`](#globe_cli---v006)
+
+---
+
+#### `globe_cli` - `v0.0.6`
+
+ - **FEAT**(globe_cli): API token support for cli login and deploy ([#36](https://github.com/invertase/globe/issues/36)). ([48b6e41a](https://github.com/invertase/globe/commit/48b6e41a49dd15ad75f490b8f180338bdd0f9438))
+
+
 ## 2024-01-19
 
 ### Changes
