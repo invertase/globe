@@ -7,6 +7,7 @@ import 'package:pubspec_parse/pubspec_parse.dart';
 
 import '../exit.dart';
 import 'api.dart';
+import 'auth.dart';
 import 'env.dart';
 import 'project_settings.dart';
 import 'scope.dart';
@@ -30,7 +31,7 @@ Future<ScopeMetadata> linkProject({
     }
   } else {
     if (!logger.confirm(
-      '❓ Link this project to a Globe ${cyan.wrap('"${Directory.current.path}"')}?',
+      '❓ Link this project to Globe ${cyan.wrap('"${Directory.current.path}"')}?',
       defaultValue: true,
     )) {
       exitOverride(0);
@@ -290,8 +291,13 @@ Future<Project> selectProject(
 
   // Select a project or create a new one.
   final selectedProject = logger.chooseOne(
-    '❓ Please a project you want to deploy to:',
-    choices: [createSymbol, ...projects.map((p) => p.id)],
+    '❓ Please select a project you want to deploy to:',
+    choices: [
+      if (api.auth.currentSession?.authenticationMethod !=
+          AuthenticationMethod.apiToken)
+        createSymbol,
+      ...projects.map((p) => p.id),
+    ],
     display: (choice) {
       if (choice == createSymbol) {
         return 'Create a new project';

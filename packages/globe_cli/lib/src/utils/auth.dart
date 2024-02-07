@@ -37,7 +37,21 @@ class GlobeAuth {
   ///
   /// Note this is still validated on the server side.
   void login({required String jwt}) {
-    final session = _session = GlobeSession(jwt: jwt);
+    final session = _session = GlobeSession(
+      jwt: jwt,
+      authenticationMethod: AuthenticationMethod.jwt,
+    );
+    _flushSession(session);
+  }
+
+  /// Logs the user in with the given [jwt]. as an api token.
+  ///
+  /// Note this is still validated on the server side.
+  void loginWithApiToken({required String jwt}) {
+    final session = _session = GlobeSession(
+      jwt: jwt,
+      authenticationMethod: AuthenticationMethod.apiToken,
+    );
     _flushSession(session);
   }
 
@@ -72,22 +86,54 @@ class GlobeAuth {
   }
 }
 
+enum AuthenticationMethod {
+  /// The user is authenticated via a JWT token.
+  jwt,
+
+  /// The user is authenticated via an api token.
+  apiToken,
+}
+
 /// A data class representing a user's authentication session.
 class GlobeSession {
-  /// Creates a session with the given [jwt].
-  const GlobeSession({required this.jwt});
+  /// Creates a session with the given [jwt] and [authenticationMethod].
+  const GlobeSession({
+    required this.jwt,
+    required this.authenticationMethod,
+  });
 
   /// Creates a session from the given [json] object.
   factory GlobeSession.fromJson(Map<String, Object?> json) {
     return switch (json) {
-      {'jwt': final String jwt} => GlobeSession(jwt: jwt),
-      _ => throw ArgumentError(),
+      {
+        'jwt': final String jwt,
+        'authenticationMethod': final String authMethod,
+      } =>
+        GlobeSession(
+          jwt: jwt,
+          authenticationMethod: AuthenticationMethod.values.firstWhere(
+            (e) => e.name == authMethod,
+            orElse: () => throw ArgumentError('Invalid AuthenticationMethod'),
+          ),
+        ),
+      {
+        'jwt': final String jwt,
+      } =>
+        GlobeSession(
+          jwt: jwt,
+          authenticationMethod: AuthenticationMethod.jwt,
+        ),
+      _ => throw ArgumentError('Invalid JSON object.')
     };
   }
 
   /// The users JWT token, used for authentication via the API.
   final String jwt;
+  final AuthenticationMethod authenticationMethod;
 
   /// Converts this session to a JSON object.
-  Map<String, dynamic> toJson() => {'jwt': jwt};
+  Map<String, dynamic> toJson() => {
+        'jwt': jwt,
+        'authenticationMethod': authenticationMethod.name,
+      };
 }

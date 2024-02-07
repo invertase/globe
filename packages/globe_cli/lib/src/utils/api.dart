@@ -31,8 +31,12 @@ class GlobeApi {
     return {
       'X-Globe-Platform': 'globe_cli',
       'X-Globe-Platform-Version': package_info.version,
-      if (currentSession != null)
+      if (currentSession != null &&
+          currentSession.authenticationMethod == AuthenticationMethod.jwt)
         'Authorization': 'Bearer ${currentSession.jwt}',
+      if (currentSession != null &&
+          currentSession.authenticationMethod == AuthenticationMethod.apiToken)
+        'x-api-token': currentSession.jwt,
     };
   }
 

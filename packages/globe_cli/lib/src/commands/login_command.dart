@@ -13,10 +13,16 @@ import '../utils/open_url.dart';
 /// {@endtemplate}
 class LoginCommand extends BaseGlobeCommand {
   /// {@macro login_command}
-  LoginCommand({GlobeHttpServer? httpServer})
-      : _httpServer = httpServer ?? GlobeHttpServer();
+  LoginCommand({GlobeHttpServer? httpServer}) {
+    _httpServer = httpServer ?? GlobeHttpServer();
+    argParser.addOption(
+      'token',
+      abbr: 't',
+      help: 'Login with an API token instead of the browser.',
+    );
+  }
 
-  final GlobeHttpServer _httpServer;
+  late final GlobeHttpServer _httpServer;
 
   @override
   String get name => 'login';
@@ -32,6 +38,13 @@ class LoginCommand extends BaseGlobeCommand {
     if (session != null) {
       // TODO should "login" ping the server to reconnect if the token is expired?
       logger.info('You are already logged in.');
+      return ExitCode.success.code;
+    }
+
+    if (argResults?['token'] != null) {
+      final token = argResults!['token'] as String;
+      auth.loginWithApiToken(jwt: token);
+      logger.info('API token set.');
       return ExitCode.success.code;
     }
 
