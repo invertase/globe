@@ -50,6 +50,7 @@ class GlobeCliCommandRunner extends CompletionCommandRunner<int> {
     addCommand(LinkCommand());
     addCommand(UnlinkCommand());
     addCommand(BuildLogsCommand());
+    addCommand(TokenCommand());
   }
 
   final Logger _logger;
