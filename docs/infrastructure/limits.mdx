@@ -2,38 +2,40 @@
 title: Limits
 ---
 
-# Resource Limits
+# Limits
 
-We may change some of these based on feedback and we will also allow higher limits on paid plans in the future.
+To preven abuse of our platform and Free Plan, Globe imposes a few limits. We may change some of these based on feedback and we will also allow higher limits on paid plans in the future.
 
-## Requests
+## Resource Limits
+
+### Requests
 
 On the Free Plan a limit of 1 million requests per month is in place.
 
-## Bandwidth
+### Bandwidth
 
 On the Free Plan a uncached bandwidth limit of 10GB per month is in place.
 
-## CPU Usage
+### CPU Usage
 
 You cannot perform CPU heavy tasks for an extended period of time (determined by the current infrastructure load). Any requests that exceed the allotted CPU usage will be terminated.
 
-## Memory Usage
+### Memory Usage
 
 Each container has a limited amount of memory available (128MB for the Free Plan). Performing ongoing memory-heavy tasks may result in the request being terminated.
 
-## Execution Time
+### Execution Time
 
 A single request is allowed to run for a maximum duration. If a request takes longer than the allowed duration, the request will be terminated.
 
 For the Free Plan the maximum duration is currently **5 seconds** or **10 seconds** for CRON schedule executions.
 
-# Platform Limits
+## Platform Limits
 
-## File System
+### File System
 
 You should only rely on the file system for temporary storage such as processing of files. Any files created during a request will be removed once the request is finished.
 
-## FFI
+### FFI
 
 Usage of FFI (via `dart:ffi`) is not currently supported. We are working on providing this in the future.
