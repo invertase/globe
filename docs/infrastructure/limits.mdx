@@ -4,26 +4,42 @@ title: Limits
 
 # Limits
 
-Globe imposes a few request limits to ensure that the platform is not abused.
+To preven abuse of our platform and Free Plan; Globe imposes a few limits.
 
-## File System
+## Resource Limits
 
-You should only rely on the file system for temporary storage such as processing of files. Any files created during a request will be removed once the request is finished.
+We may scale some of these for the Free Plan based on feedback and we will also allow higher limits here on paid plans in the future.
 
-## Execution Timeout
+### Requests
 
-A single request is allowed to run for a maximum duration. If a request takes longer than the allowed duration, the request will be terminated.
+On the Free Plan a limit of **1 million** requests per month is in place.
 
-During preview the maximum duration is currently **5 seconds**. We may increase this based on feedback and also allow higher limits for paid plans in the future.
+### Bandwidth
 
-## CPU Usage
+On the Free Plan a uncached bandwidth limit of **10GB** per month is in place.
+
+> Static assets that are cached on our edge network do not consume your bandwidth limit, but they do count towards your number of requests limit.
+
+### CPU Usage
 
 You cannot perform CPU heavy tasks for an extended period of time (determined by the current infrastructure load). Any requests that exceed the allotted CPU usage will be terminated.
 
-## Memory Usage
+### Memory Usage
 
-Each container has a limited amount of memory available (128MB). Performing ongoing memory-heavy tasks may result in the request being terminated. We may increase this based on feedback and also allow higher limits for paid plans in the future.
+Each container has a limited amount of memory available (128MB for the Free Plan). Performing ongoing memory-heavy tasks may result in the request being terminated.
 
-## FFI
+### Execution Time
+
+A single request is allowed to run for a maximum duration. If a request takes longer than the allowed duration, the request will be terminated.
+
+For the Free Plan the maximum duration is currently **5 seconds** or **10 seconds** for CRON schedule executions.
+
+## Platform Limits
+
+### File System
+
+You should only rely on the file system for temporary storage such as processing of files. Any files created during a request will be removed once the request is finished.
+
+### FFI
 
 Usage of FFI (via `dart:ffi`) is not currently supported. We are working on providing this in the future.
