@@ -220,7 +220,7 @@ class GlobeApi {
     return Deployment.fromJson(response);
   }
 
-  Future<String> createToken({
+  Future<({String id, String value})> createToken({
     required String orgId,
     required String name,
     required List<String> projectUuids,
@@ -250,7 +250,21 @@ class GlobeApi {
     response = _handleResponse(
       await http.get(_buildUri(generateTokenPath), headers: headers),
     )! as Map<String, Object?>;
-    return response['token'].toString();
+    return (id: token.uuid, value: response['token'].toString());
+  }
+
+  Future<void> deleteToken({
+    required String orgId,
+    required String tokenId,
+  }) async {
+    requireAuth();
+
+    final deleteTokenPath = '/orgs/$orgId/api-tokens/$tokenId';
+    logger.detail('API Request: DELETE $deleteTokenPath');
+
+    _handleResponse(
+      await http.delete(_buildUri(deleteTokenPath), headers: headers),
+    )! as Map<String, Object?>;
   }
 }
 

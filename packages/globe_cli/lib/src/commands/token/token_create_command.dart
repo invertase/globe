@@ -73,7 +73,9 @@ class TokenCreateCommand extends BaseGlobeCommand {
         projectUuids: projects.map((e) => e.id).toList(),
         expiresAt: expiry,
       );
-      createTokenProgress.complete("Here's your token: ${cyan.wrap(token)}");
+      createTokenProgress.complete(
+        "Here's your token:\nID: ${cyan.wrap(token.id)}\nToken: ${cyan.wrap(token.value)}",
+      );
       return ExitCode.success.code;
     } on ApiException catch (e) {
       createTokenProgress.fail('✗ Failed to create token: ${e.message}');
