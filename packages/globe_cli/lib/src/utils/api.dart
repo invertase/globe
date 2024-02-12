@@ -227,7 +227,9 @@ class GlobeApi {
     required DateTime expiresAt,
   }) async {
     requireAuth();
-    logger.detail('API Request: POST /orgs/$orgId/api-tokens');
+
+    final createTokenPath = '/orgs/$orgId/api-tokens';
+    logger.detail('API Request: POST $createTokenPath');
 
     final body = json.encode({
       'name': name,
@@ -237,20 +239,16 @@ class GlobeApi {
 
     // create token
     var response = _handleResponse(
-      await http.post(
-        _buildUri('/orgs/$orgId/api-tokens'),
-        headers: headers,
-        body: body,
-      ),
+      await http.post(_buildUri(createTokenPath), headers: headers, body: body),
     )! as Map<String, Object?>;
     final token = Token.fromJson(response);
 
+    final generateTokenPath = '/orgs/$orgId/api-tokens/${token.uuid}/generate';
+    logger.detail('API Request: POST $generateTokenPath');
+
     // get token value
     response = _handleResponse(
-      await http.get(
-        _buildUri('/orgs/$orgId/api-tokens/${token.uuid}/generate'),
-        headers: headers,
-      ),
+      await http.get(_buildUri(generateTokenPath), headers: headers),
     )! as Map<String, Object?>;
     return response['token'].toString();
   }

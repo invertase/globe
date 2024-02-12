@@ -22,14 +22,14 @@ class TokenCreateCommand extends BaseGlobeCommand {
         mandatory: true,
         help: 'Specify lifespan of token.',
       )
-      ..addOption(
+      ..addMultiOption(
         'project',
         help: 'Specify projects(s) to associate token with.',
       );
   }
 
   @override
-  String get description => 'Create auth tokens for your projects.';
+  String get description => 'Create globe auth token.';
 
   @override
   String get name => 'create';
@@ -39,6 +39,7 @@ class TokenCreateCommand extends BaseGlobeCommand {
     requireAuth();
 
     final name = argResults?['name'] as String;
+    final projectIds = argResults?['project'] as List<String>?;
     final dateString = argResults?['expiry'] as String;
     final expiry = DateTime.tryParse(dateString)?.toUtc();
     if (expiry == null) {
@@ -47,11 +48,6 @@ class TokenCreateCommand extends BaseGlobeCommand {
       );
       exitOverride(1);
     }
-
-    final projectIds = (argResults?['project'] as String?)
-        ?.split(',')
-        .map((e) => e.trim())
-        .toList();
 
     final validated = await scope.validate();
 
