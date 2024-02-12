@@ -30,7 +30,10 @@ class TokenDeleteCommand extends BaseGlobeCommand {
         logger.progress('Deleting Token: ${cyan.wrap(tokenId)}');
 
     try {
-      await api.deleteToken(orgId: validated.organization.id, tokenId: tokenId);
+      await api.deleteToken(
+        orgId: validated.organization.slug,
+        tokenId: tokenId,
+      );
       deleteTokenProgress.complete('Token deleted');
     } on ApiException catch (e) {
       deleteTokenProgress.fail('✗ Failed to delete token: ${e.message}');
