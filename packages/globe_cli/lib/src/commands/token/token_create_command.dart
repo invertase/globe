@@ -41,7 +41,7 @@ class TokenCreateCommand extends BaseGlobeCommand {
     final name = argResults?['name'] as String;
     final projectIds = argResults?['project'] as List<String>?;
     final dateString = argResults?['expiry'] as String;
-    final expiry = DateTime.tryParse(dateString)?.toUtc();
+    final expiry = DateTime.tryParse(dateString);
     if (expiry == null) {
       logger.err(
         'Invalid date format.\nDate format should be ${cyan.wrap('2012-02-27')} or ${cyan.wrap('2012-02-27 13:27:00"')}',

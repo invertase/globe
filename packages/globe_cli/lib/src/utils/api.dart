@@ -234,7 +234,7 @@ class GlobeApi {
     final body = json.encode({
       'name': name,
       'projectUuids': projectUuids,
-      'expiresAt': expiresAt.toIso8601String(),
+      'expiresAt': expiresAt.toUtc().toIso8601String(),
     });
 
     // create token
