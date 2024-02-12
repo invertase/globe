@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:mason_logger/mason_logger.dart';
 
 import '../../command.dart';
+import '../../exit.dart';
 import '../../utils/api.dart';
 import '../../utils/prompts.dart';
 
@@ -11,17 +12,18 @@ class TokenCreateCommand extends BaseGlobeCommand {
     argParser
       ..addOption(
         'name',
-        // abbr: 'n',
+        abbr: 'n',
+        mandatory: true,
         help: 'Specify name to identity token.',
       )
       ..addOption(
         'expiry',
-        // abbr: 'x',
+        abbr: 'e',
+        mandatory: true,
         help: 'Specify lifespan of token.',
       )
       ..addOption(
         'project',
-        // abbr: 'p',
         help: 'Specify projects(s) to associate token with.',
       );
   }
@@ -36,6 +38,21 @@ class TokenCreateCommand extends BaseGlobeCommand {
   FutureOr<int> run() async {
     requireAuth();
 
+    final name = argResults?['name'] as String;
+    final dateString = argResults?['expiry'] as String;
+    final expiry = DateTime.tryParse(dateString)?.toUtc();
+    if (expiry == null) {
+      logger.err(
+        'Invalid date format.\nDate format should be ${cyan.wrap('2012-02-27')} or ${cyan.wrap('2012-02-27 13:27:00"')}',
+      );
+      exitOverride(1);
+    }
+
+    final projectIds = (argResults?['project'] as String?)
+        ?.split(',')
+        .map((e) => e.trim())
+        .toList();
+
     final validated = await scope.validate();
 
     final projects = await selectProjects(
@@ -43,6 +60,7 @@ class TokenCreateCommand extends BaseGlobeCommand {
       logger: logger,
       api: api,
       scope: scope,
+      ids: projectIds,
     );
     if (projects.isEmpty) {
       return ExitCode.software.code;
@@ -55,9 +73,9 @@ class TokenCreateCommand extends BaseGlobeCommand {
     try {
       final token = await api.createToken(
         orgId: validated.organization.slug,
-        name: 'New Token',
+        name: name,
         projectUuids: projects.map((e) => e.id).toList(),
-        expiresAt: DateTime(2024, 12),
+        expiresAt: expiry,
       );
       createTokenProgress.complete("Here's your token: ${cyan.wrap(token)}");
       return ExitCode.success.code;
