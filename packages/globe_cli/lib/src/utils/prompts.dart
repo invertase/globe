@@ -370,6 +370,7 @@ Future<List<Project>> selectProjects(
       'No projects selected, you need to select atleast one project.',
     );
     logger.err('No projects selected.');
+    exitOverride(1);
   }
 
   return selections.map((e) => projectsBySlug[e]!).toList();

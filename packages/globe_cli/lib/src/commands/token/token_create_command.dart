@@ -50,7 +50,6 @@ class TokenCreateCommand extends BaseGlobeCommand {
     }
 
     final validated = await scope.validate();
-
     final projects = await selectProjects(
       validated.organization,
       logger: logger,
@@ -58,11 +57,8 @@ class TokenCreateCommand extends BaseGlobeCommand {
       scope: scope,
       ids: projectIds,
     );
-    if (projects.isEmpty) {
-      return ExitCode.software.code;
-    }
-
     final projectNames = projects.map((e) => cyan.wrap(e.slug)).join(', ');
+
     final createTokenProgress =
         logger.progress('Creating Token for $projectNames');
 
