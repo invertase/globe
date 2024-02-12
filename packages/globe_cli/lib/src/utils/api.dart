@@ -219,6 +219,41 @@ class GlobeApi {
 
     return Deployment.fromJson(response);
   }
+
+  Future<String> createToken({
+    required String orgId,
+    required String name,
+    required List<String> projectUuids,
+    required DateTime expiresAt,
+  }) async {
+    requireAuth();
+    logger.detail('API Request: POST /orgs/$orgId/api-tokens');
+
+    final body = json.encode({
+      'name': name,
+      'projectUuids': projectUuids,
+      'expiresAt': expiresAt.toIso8601String()
+    });
+
+    // create token
+    var response = _handleResponse(
+      await http.post(
+        _buildUri('/orgs/$orgId/api-tokens'),
+        headers: headers,
+        body: body,
+      ),
+    )! as Map<String, Object?>;
+    final token = Token.fromJson(response);
+
+    // get token value
+    response = _handleResponse(
+      await http.get(
+        _buildUri('/orgs/$orgId/api-tokens/${token.uuid}/generate'),
+        headers: headers,
+      ),
+    )! as Map<String, Object?>;
+    return response['token'].toString();
+  }
 }
 
 class Settings {
@@ -562,5 +597,43 @@ enum OrganizationType {
       default:
         throw ArgumentError.value(type, 'type');
     }
+  }
+}
+
+class Token {
+  final String uuid;
+  final String name;
+  final String organizationUuid;
+  final DateTime expiresAt;
+  final List<String> cliTokenClaimProject;
+
+  const Token._({
+    required this.uuid,
+    required this.name,
+    required this.organizationUuid,
+    required this.expiresAt,
+    required this.cliTokenClaimProject,
+  });
+
+  factory Token.fromJson(Map<String, dynamic> json) {
+    return switch (json) {
+      {
+        'uuid': final String uuid,
+        'name': final String name,
+        'organizationUuid': final String organizationUuid,
+        'expiresAt': final String expiresAt,
+        'cliTokenClaimProject': final List<dynamic> cliTokenClaimProject,
+      } =>
+        Token._(
+          uuid: uuid,
+          name: name,
+          organizationUuid: organizationUuid,
+          expiresAt: DateTime.parse(expiresAt),
+          cliTokenClaimProject: cliTokenClaimProject
+              .map((e) => (e as Map)['projectUuid'].toString())
+              .toList(),
+        ),
+      _ => throw const FormatException('Token'),
+    };
   }
 }

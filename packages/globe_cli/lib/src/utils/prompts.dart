@@ -314,3 +314,47 @@ Future<Project> selectProject(
 
   return projects.firstWhere((p) => p.id == selectedProject);
 }
+
+Future<List<Project>> selectProjects(
+  Organization organization, {
+  required Logger logger,
+  required GlobeApi api,
+  required GlobeScope scope,
+}) async {
+  logger.detail('Fetching organization projects');
+  final projects = await api.getProjects(org: organization.id);
+  logger.detail('Found ${projects.length} projects');
+
+  if (projects.isEmpty) {
+    logger.detail(
+      'No projects found, you need to create a new project first.',
+    );
+    logger.err('No projects found.');
+    exitOverride(1);
+  }
+
+  /// If there's only one, automatically select it.
+  if (projects.length == 1) {
+    final project = projects.first;
+    logger.detail('Automatically selecting ${project.slug}.');
+    return projects;
+  }
+
+  final projectsMap = projects
+      .fold<Map<String, Project>>({}, (prev, curr) => prev..[curr.slug] = curr);
+
+  /// Ask user to choose zero or more options.
+  final selections = logger.chooseAny(
+    'Select projects to associate token with:',
+    choices: projectsMap.keys.toList(),
+  );
+
+  if (selections.isEmpty) {
+    logger.detail(
+      'No projects selected, you need to select atleast one project.',
+    );
+    logger.err('No projects selected.');
+  }
+
+  return selections.map((e) => projectsMap[e]!).toList();
+}
