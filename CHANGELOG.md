@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2024-02-13
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`globe_cli` - `v0.0.7`](#globe_cli---v007)
+
+---
+
+#### `globe_cli` - `v0.0.7`
+
+ - **FIX**: switch to event source log streaming ([#41](https://github.com/invertase/globe/issues/41)). ([6b6709f9](https://github.com/invertase/globe/commit/6b6709f948e9365a6727ab08d725d9e0b1d5fd53))
+
+
 ## 2024-02-07
 
 ### Changes

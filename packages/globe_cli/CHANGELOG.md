@@ -1,3 +1,7 @@
+## 0.0.7
+
+ - **FIX**: switch to event source log streaming ([#41](https://github.com/invertase/globe/issues/41)). ([6b6709f9](https://github.com/invertase/globe/commit/6b6709f948e9365a6727ab08d725d9e0b1d5fd53))
+
 ## 0.0.6
 
  - **FEAT**(globe_cli): API token support for cli login and deploy ([#36](https://github.com/invertase/globe/issues/36)). ([48b6e41a](https://github.com/invertase/globe/commit/48b6e41a49dd15ad75f490b8f180338bdd0f9438))
