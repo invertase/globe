@@ -634,14 +634,14 @@ class Token {
         'name': final String name,
         'organizationUuid': final String organizationUuid,
         'expiresAt': final String expiresAt,
-        'cliTokenClaimProject': final List<dynamic> cliTokenClaimProject,
+        'projects': final List<dynamic> projects,
       } =>
         Token._(
           uuid: uuid,
           name: name,
           organizationUuid: organizationUuid,
           expiresAt: DateTime.parse(expiresAt),
-          cliTokenClaimProject: cliTokenClaimProject
+          cliTokenClaimProject: projects
               .map((e) => (e as Map)['projectUuid'].toString())
               .toList(),
         ),
