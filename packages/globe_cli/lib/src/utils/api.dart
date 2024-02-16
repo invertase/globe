@@ -238,19 +238,20 @@ class GlobeApi {
     });
 
     // create token
-    var response = _handleResponse(
+    final response = _handleResponse(
       await http.post(_buildUri(createTokenPath), headers: headers, body: body),
     )! as Map<String, Object?>;
     final token = Token.fromJson(response);
 
     final generateTokenPath = '/orgs/$orgId/api-tokens/${token.uuid}/generate';
-    logger.detail('API Request: POST $generateTokenPath');
+    logger.detail('API Request: GET $generateTokenPath');
 
     // get token value
-    response = _handleResponse(
+    final tokenValue = _handleResponse(
       await http.get(_buildUri(generateTokenPath), headers: headers),
-    )! as Map<String, Object?>;
-    return (id: token.uuid, value: response['token'].toString());
+    )! as String;
+
+    return (id: token.uuid, value: tokenValue);
   }
 
   Future<void> deleteToken({
