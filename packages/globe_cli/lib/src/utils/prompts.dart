@@ -361,7 +361,7 @@ Future<List<Project>> selectProjects(
 
   /// Ask user to choose zero or more options.
   final selections = logger.chooseAny(
-    'Select projects to associate token with:',
+    '❓ Select projects to associate token with:',
     choices: projectsBySlug.keys.toList(),
   );
 

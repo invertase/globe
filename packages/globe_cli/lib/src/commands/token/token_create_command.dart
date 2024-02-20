@@ -13,13 +13,11 @@ class TokenCreateCommand extends BaseGlobeCommand {
       ..addOption(
         'name',
         abbr: 'n',
-        mandatory: true,
         help: 'Specify name to identity token.',
       )
       ..addOption(
         'expiry',
         abbr: 'e',
-        mandatory: true,
         help: 'Specify lifespan of token.',
       )
       ..addMultiOption(
@@ -38,9 +36,13 @@ class TokenCreateCommand extends BaseGlobeCommand {
   FutureOr<int> run() async {
     requireAuth();
 
-    final name = argResults?['name'] as String;
-    final projectIds = argResults?['project'] as List<String>?;
-    final dateString = argResults?['expiry'] as String;
+    final validated = await scope.validate();
+
+    final name =
+        argResults?['name']?.toString() ?? logger.prompt('❓ Name for token:');
+    final dateString = argResults?['expiry']?.toString() ??
+        logger.prompt('❓ Expiry (yyyy-mm-dd):');
+
     final expiry = DateTime.tryParse(dateString);
     if (expiry == null) {
       logger.err(
@@ -49,13 +51,12 @@ class TokenCreateCommand extends BaseGlobeCommand {
       exitOverride(1);
     }
 
-    final validated = await scope.validate();
     final projects = await selectProjects(
       validated.organization,
       logger: logger,
       api: api,
       scope: scope,
-      ids: projectIds,
+      ids: argResults?['project'] as List<String>?,
     );
     final projectNames = projects.map((e) => cyan.wrap(e.slug)).join(', ');
 
