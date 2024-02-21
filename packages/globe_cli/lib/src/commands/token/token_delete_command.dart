@@ -23,9 +23,9 @@ class TokenDeleteCommand extends BaseGlobeCommand {
   FutureOr<int> run() async {
     requireAuth();
 
+    final validated = await scope.validate();
     final tokenId = (argResults?['tokenId'] as String?) ??
         logger.prompt('❓ Provide id for token:');
-    final validated = await scope.validate();
 
     final deleteTokenProgress =
         logger.progress('Deleting Token: ${cyan.wrap(tokenId)}');
