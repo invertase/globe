@@ -38,10 +38,10 @@ class TokenCreateCommand extends BaseGlobeCommand {
 
     final validated = await scope.validate();
 
-    final name =
-        argResults?['name']?.toString() ?? logger.prompt('❓ Name for token:');
+    final name = argResults?['name']?.toString() ??
+        logger.prompt('❓ Provide name for token:');
     final dateString = argResults?['expiry']?.toString() ??
-        logger.prompt('❓ Expiry (yyyy-mm-dd):');
+        logger.prompt('❓ Set Expiry (yyyy-mm-dd):');
 
     final expiry = DateTime.tryParse(dateString);
     if (expiry == null) {

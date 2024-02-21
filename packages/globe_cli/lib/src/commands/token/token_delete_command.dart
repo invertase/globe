@@ -9,8 +9,8 @@ class TokenDeleteCommand extends BaseGlobeCommand {
   TokenDeleteCommand() {
     argParser.addOption(
       'tokenId',
-      mandatory: true,
-      help: 'Specify globe auth token to delete.',
+      abbr: 't',
+      help: 'Specify globe auth token id.',
     );
   }
   @override
@@ -23,7 +23,8 @@ class TokenDeleteCommand extends BaseGlobeCommand {
   FutureOr<int> run() async {
     requireAuth();
 
-    final tokenId = argResults?['tokenId'] as String;
+    final tokenId = (argResults?['tokenId'] as String?) ??
+        logger.prompt('❓ Provide id for token:');
     final validated = await scope.validate();
 
     final deleteTokenProgress =
