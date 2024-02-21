@@ -254,6 +254,25 @@ class GlobeApi {
     return (id: token.uuid, value: tokenValue);
   }
 
+  Future<List<Token>> listTokens({
+    required String orgId,
+    required List<String> projectUuids,
+  }) async {
+    requireAuth();
+
+    final listTokensPath =
+        '/orgs/$orgId/api-tokens?projects=${projectUuids.join(',')}';
+    logger.detail('API Request: GET $listTokensPath');
+
+    final response = _handleResponse(
+      await http.get(_buildUri(listTokensPath), headers: headers),
+    )! as List<dynamic>;
+
+    return response
+        .map((e) => Token.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
   Future<void> deleteToken({
     required String orgId,
     required String tokenId,
