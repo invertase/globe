@@ -314,3 +314,64 @@ Future<Project> selectProject(
 
   return projects.firstWhere((p) => p.id == selectedProject);
 }
+
+/// Prompts the user to select single or multiple projects.
+///
+/// Optionally pass [ids] to only verify projects Ids actually exist
+Future<List<Project>> selectProjects(
+  Organization organization, {
+  required Logger logger,
+  required GlobeApi api,
+  required GlobeScope scope,
+  List<String>? ids,
+}) async {
+  logger.detail('Fetching organization projects');
+  final projects = await api.getProjects(org: organization.id);
+  logger.detail('Found ${projects.length} projects');
+
+  if (projects.isEmpty) {
+    logger.detail(
+      'No projects found, you need to create a new project first.',
+    );
+    logger.err('No projects found.');
+    exitOverride(1);
+  }
+
+  /// If ids passed, verify they exist
+  if (ids != null && ids.isNotEmpty) {
+    final projectsById = projects
+        .fold<Map<String, Project>>({}, (prev, curr) => prev..[curr.id] = curr);
+    final invalidIds = ids.where((id) => projectsById[id] == null);
+    if (invalidIds.isNotEmpty) {
+      logger.err('Project not found: ${cyan.wrap(invalidIds.join(', '))}.');
+      exitOverride(1);
+    }
+    return ids.map((id) => projectsById[id]!).toList();
+  }
+
+  /// If there's only one, automatically select it.
+  if (projects.length == 1) {
+    final project = projects.first;
+    logger.detail('Automatically selecting ${project.slug}.');
+    return projects;
+  }
+
+  final projectsBySlug = projects
+      .fold<Map<String, Project>>({}, (prev, curr) => prev..[curr.slug] = curr);
+
+  /// Ask user to choose zero or more options.
+  final selections = logger.chooseAny(
+    '❓ Select projects to associate token with:',
+    choices: projectsBySlug.keys.toList(),
+  );
+
+  if (selections.isEmpty) {
+    logger.detail(
+      'No projects selected, you need to select atleast one project.',
+    );
+    logger.err('No projects selected.');
+    exitOverride(1);
+  }
+
+  return selections.map((e) => projectsBySlug[e]!).toList();
+}

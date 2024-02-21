@@ -219,6 +219,73 @@ class GlobeApi {
 
     return Deployment.fromJson(response);
   }
+
+  Future<({String id, String value})> createToken({
+    required String orgId,
+    required String name,
+    required List<String> projectUuids,
+    required DateTime expiresAt,
+  }) async {
+    requireAuth();
+
+    final createTokenPath = '/orgs/$orgId/api-tokens';
+    logger.detail('API Request: POST $createTokenPath');
+
+    final body = json.encode({
+      'name': name,
+      'projectUuids': projectUuids,
+      'expiresAt': expiresAt.toUtc().toIso8601String(),
+    });
+
+    // create token
+    final response = _handleResponse(
+      await http.post(_buildUri(createTokenPath), headers: headers, body: body),
+    )! as Map<String, Object?>;
+    final token = Token.fromJson(response);
+
+    final generateTokenPath = '/orgs/$orgId/api-tokens/${token.uuid}/generate';
+    logger.detail('API Request: GET $generateTokenPath');
+
+    // get token value
+    final tokenValue = _handleResponse(
+      await http.get(_buildUri(generateTokenPath), headers: headers),
+    )! as String;
+
+    return (id: token.uuid, value: tokenValue);
+  }
+
+  Future<List<Token>> listTokens({
+    required String orgId,
+    required List<String> projectUuids,
+  }) async {
+    requireAuth();
+
+    final listTokensPath =
+        '/orgs/$orgId/api-tokens?projects=${projectUuids.join(',')}';
+    logger.detail('API Request: GET $listTokensPath');
+
+    final response = _handleResponse(
+      await http.get(_buildUri(listTokensPath), headers: headers),
+    )! as List<dynamic>;
+
+    return response
+        .map((e) => Token.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<void> deleteToken({
+    required String orgId,
+    required String tokenId,
+  }) async {
+    requireAuth();
+
+    final deleteTokenPath = '/orgs/$orgId/api-tokens/$tokenId';
+    logger.detail('API Request: DELETE $deleteTokenPath');
+
+    _handleResponse(
+      await http.delete(_buildUri(deleteTokenPath), headers: headers),
+    )! as Map<String, Object?>;
+  }
 }
 
 class Settings {
@@ -562,5 +629,43 @@ enum OrganizationType {
       default:
         throw ArgumentError.value(type, 'type');
     }
+  }
+}
+
+class Token {
+  final String uuid;
+  final String name;
+  final String organizationUuid;
+  final DateTime expiresAt;
+  final List<String> cliTokenClaimProject;
+
+  const Token._({
+    required this.uuid,
+    required this.name,
+    required this.organizationUuid,
+    required this.expiresAt,
+    required this.cliTokenClaimProject,
+  });
+
+  factory Token.fromJson(Map<String, dynamic> json) {
+    return switch (json) {
+      {
+        'uuid': final String uuid,
+        'name': final String name,
+        'organizationUuid': final String organizationUuid,
+        'expiresAt': final String expiresAt,
+        'projects': final List<dynamic> projects,
+      } =>
+        Token._(
+          uuid: uuid,
+          name: name,
+          organizationUuid: organizationUuid,
+          expiresAt: DateTime.parse(expiresAt),
+          cliTokenClaimProject: projects
+              .map((e) => (e as Map)['projectUuid'].toString())
+              .toList(),
+        ),
+      _ => throw const FormatException('Token'),
+    };
   }
 }
