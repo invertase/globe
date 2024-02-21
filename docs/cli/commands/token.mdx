@@ -1,0 +1,27 @@
+---
+title: Globe Tokens
+description: Create, Delete & List globe auth tokens from the command line.
+---
+
+# Create
+
+The `create` command allows you to create auth tokens for your projects. You can use this token to 
+login to Globe in any environment.
+
+## Usage
+
+You can run the command interactively by running 
+
+```bash
+globe token create
+```
+
+or in-lined by providing necessary arguments 
+
+```bash
+globe token create --name="Foo Bar" --expiry="yyyy-mm-dd" --project="project-ids-go-here"
+```
+
+- `--name`- specify name to identity token.
+- `--expiry` - specify lifespan of token.
+- `--project` - specify projects(s) to associate token with.
