@@ -44,10 +44,10 @@ class TokenListCommand extends BaseGlobeCommand {
 
       return ExitCode.success.code;
     } on ApiException catch (e) {
-      listTokenProgress.fail('✗ Failed to create token: ${e.message}');
+      listTokenProgress.fail('✗ Failed to list tokens: ${e.message}');
       return ExitCode.software.code;
     } catch (e, s) {
-      listTokenProgress.fail('✗ Failed to create token: $e');
+      listTokenProgress.fail('✗ Failed to list tokens: $e');
       logger.detail(s.toString());
       return ExitCode.software.code;
     }
