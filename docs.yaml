@@ -32,7 +32,7 @@ sidebar:
       - "/cli/commands/unlink"
     - - Login
       - "/cli/commands/login"
-    - - Login
+    - - Token
       - "/cli/commands/token"
     - - Logout
       - "/cli/commands/logout"
