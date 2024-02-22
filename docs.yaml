@@ -32,6 +32,8 @@ sidebar:
       - "/cli/commands/unlink"
     - - Login
       - "/cli/commands/login"
+    - - Token
+      - "/cli/commands/token"
     - - Logout
       - "/cli/commands/logout"
     - - Update
