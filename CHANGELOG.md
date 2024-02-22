@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2024-02-22
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`globe_cli` - `v0.0.8`](#globe_cli---v008)
+
+---
+
+#### `globe_cli` - `v0.0.8`
+
+ - **FEAT**: Token create & delete from CLI ([#39](https://github.com/invertase/globe/issues/39)). ([e87e5a01](https://github.com/invertase/globe/commit/e87e5a01cfe21a4dbd113315967f5f41bc80d7a6))
+
+
 ## 2024-02-13
 
 ### Changes

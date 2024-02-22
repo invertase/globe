@@ -1,3 +1,7 @@
+## 0.0.8
+
+ - **FEAT**: Token create & delete from CLI ([#39](https://github.com/invertase/globe/issues/39)). ([e87e5a01](https://github.com/invertase/globe/commit/e87e5a01cfe21a4dbd113315967f5f41bc80d7a6))
+
 ## 0.0.7
 
  - **FIX**: switch to event source log streaming ([#41](https://github.com/invertase/globe/issues/41)). ([6b6709f9](https://github.com/invertase/globe/commit/6b6709f948e9365a6727ab08d725d9e0b1d5fd53))

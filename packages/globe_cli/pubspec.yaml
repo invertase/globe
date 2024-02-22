@@ -1,6 +1,6 @@
 name: globe_cli
 description: Globe CLI
-version: 0.0.7
+version: 0.0.8
 repository: https://github.com/invertase/globe
 
 environment:
