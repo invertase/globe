@@ -3,44 +3,50 @@ title: Globe Tokens
 description: Create, Delete & List globe auth tokens from the command line.
 ---
 
-# Create
+The token command helps you to create a token that can be used in any environment, especially in your CI providers.
 
-The `create` command allows you to create auth tokens for your projects. You can use this token to 
-login to Globe in any environment.
+## Create
 
-## Usage
+The `create` command allows you to create auth tokens for your projects. You can use this token to login to Globe in any environment.
+
+### Usage
 
 You can run the command interactively by running 
 
 ```bash
 globe token create
 ```
+after running this command, you will be prompted to enter a name or expiry and select a list of projects that you want to associate this token to. 
 
-or in-lined by providing necessary arguments 
+Alternatively, you can use the necessary arguments and pass the interactive mode: 
 
-- `--name`- specify a name to identity the token.
+- `--name`- specify a name to identify the token.
 - `--expiry` - specify lifespan of the token.
 - `--project` - specify projects(s) to associate the token with.
 
 ```bash
-globe token create --name="Foo Bar" --expiry="yyyy-mm-dd" --project="project-ids-go-here"
+globe token create --name="Foo Bar" --expiry="yyyy-mm-dd" --project="project-id-1" --project="project-id-2"
 ```
 
-# List Tokens
+Note: to run this command, you should be at the root of your project.
+
+## List Tokens
 
 The `list` command lists all tokens associated with the current project.
 
-## Usage
+### Usage
 
 ```bash
 globe token list
 ```
 
-# Delete Token
+Note: to run this command, you should be at the root of your project and it returns a list of tokens associated with your current project. 
+
+## Delete Token
 
 The `delete` command allows you to delete a token by providing a token ID.
 
-## Usage
+### Usage
 
 ```bash
 globe token delete --tokenId="token-id-goes-here"
