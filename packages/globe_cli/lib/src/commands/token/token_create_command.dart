@@ -36,8 +36,7 @@ class TokenCreateCommand extends BaseGlobeCommand {
   FutureOr<int> run() async {
     requireAuth();
 
-    final validated = await scope.validate();
-
+    final organization = await selectOrganization(logger: logger, api: api);
     final name = argResults?['name']?.toString() ??
         logger.prompt('❓ Provide name for token:');
     final dateString = argResults?['expiry']?.toString() ??
@@ -52,7 +51,8 @@ class TokenCreateCommand extends BaseGlobeCommand {
     }
 
     final projects = await selectProjects(
-      validated.organization,
+      'Select projects to associate token with:',
+      organization,
       logger: logger,
       api: api,
       scope: scope,
@@ -65,7 +65,7 @@ class TokenCreateCommand extends BaseGlobeCommand {
 
     try {
       final token = await api.createToken(
-        orgId: validated.organization.id,
+        orgId: organization.id,
         name: name,
         projectUuids: projects.map((e) => e.id).toList(),
         expiresAt: expiry,

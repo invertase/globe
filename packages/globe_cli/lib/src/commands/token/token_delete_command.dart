@@ -4,6 +4,7 @@ import 'package:mason_logger/mason_logger.dart';
 
 import '../../command.dart';
 import '../../utils/api.dart';
+import '../../utils/prompts.dart';
 
 class TokenDeleteCommand extends BaseGlobeCommand {
   TokenDeleteCommand() {
@@ -23,7 +24,7 @@ class TokenDeleteCommand extends BaseGlobeCommand {
   FutureOr<int> run() async {
     requireAuth();
 
-    final validated = await scope.validate();
+    final organization = await selectOrganization(logger: logger, api: api);
     final tokenId = (argResults?['tokenId'] as String?) ??
         logger.prompt('❓ Provide id for token:');
 
@@ -32,7 +33,7 @@ class TokenDeleteCommand extends BaseGlobeCommand {
 
     try {
       await api.deleteToken(
-        orgId: validated.organization.id,
+        orgId: organization.id,
         tokenId: tokenId,
       );
       deleteTokenProgress.complete('Token deleted');
