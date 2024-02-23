@@ -10,11 +10,11 @@ class TokenListCommand extends BaseGlobeCommand {
   TokenListCommand() {
     argParser.addOption(
       'project',
-      help: 'Specify project to list token for.',
+      help: 'Specify projects(s) to list token for.',
     );
   }
   @override
-  String get description => 'List globe auth tokens for current project';
+  String get description => 'List globe auth tokens for project(s)';
 
   @override
   String get name => 'list';
