@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:eventsource/eventsource.dart';
 import 'package:mason_logger/mason_logger.dart';
 
 import '../command.dart';
@@ -36,12 +39,23 @@ class BuildLogsCommand extends BaseGlobeCommand {
       return ExitCode.software.code;
     }
 
-    final logs = await streamBuildLogs(
-      api: api,
-      orgId: validated.organization.id,
-      projectId: validated.project.id,
-      deploymentId: deploymentId,
-    );
+    late Stream<BuildLogEvent> logs;
+
+    try {
+      logs = await streamBuildLogs(
+        api: api,
+        orgId: validated.organization.id,
+        projectId: validated.project.id,
+        deploymentId: deploymentId,
+      );
+    } on EventSourceSubscriptionException catch (e) {
+      logger.err(
+        e.statusCode == HttpStatus.notFound
+            ? '✗ An error occurred: Either invalid deployment or project ID. '
+            : '✗ An error occurred: ${e.message}',
+      );
+      return ExitCode.software.code;
+    }
 
     await printLogs(logger, logs);
 
