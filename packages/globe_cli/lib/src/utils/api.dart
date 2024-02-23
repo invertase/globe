@@ -260,13 +260,12 @@ class GlobeApi {
   }) async {
     requireAuth();
 
-    final listTokensPath =
-        '/orgs/$orgId/api-tokens?projects=${projectUuids.join(',')}';
-    logger.detail('API Request: GET $listTokensPath');
+    final fullUri = _buildUri('/orgs/$orgId/api-tokens')
+        .replace(queryParameters: {'projects': projectUuids});
 
-    final response = _handleResponse(
-      await http.get(_buildUri(listTokensPath), headers: headers),
-    )! as List<dynamic>;
+    logger.detail('API Request: GET /orgs/$orgId/api-tokens');
+    final response = _handleResponse(await http.get(fullUri, headers: headers))!
+        as List<dynamic>;
 
     return response
         .map((e) => Token.fromJson(e as Map<String, dynamic>))

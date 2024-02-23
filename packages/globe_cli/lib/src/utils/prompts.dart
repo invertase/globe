@@ -319,6 +319,7 @@ Future<Project> selectProject(
 ///
 /// Optionally pass [ids] to only verify projects Ids actually exist
 Future<List<Project>> selectProjects(
+  String question,
   Organization organization, {
   required Logger logger,
   required GlobeApi api,
@@ -361,7 +362,7 @@ Future<List<Project>> selectProjects(
 
   /// Ask user to choose zero or more options.
   final selections = logger.chooseAny(
-    '❓ Select projects to associate token with:',
+    '❓ $question',
     choices: projectsBySlug.keys.toList(),
   );
 
