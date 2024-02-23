@@ -8,7 +8,7 @@ import '../../utils/prompts.dart';
 
 class TokenListCommand extends BaseGlobeCommand {
   TokenListCommand() {
-    argParser.addOption(
+    argParser.addMultiOption(
       'project',
       help: 'Specify projects(s) to list token for.',
     );
@@ -24,15 +24,13 @@ class TokenListCommand extends BaseGlobeCommand {
     requireAuth();
 
     final organization = await selectOrganization(logger: logger, api: api);
-    final projectUuidsFromArgs = argResults?['project'] as String?;
-
     final projects = await selectProjects(
       'Select projects to list tokens for:',
       organization,
       logger: logger,
       api: api,
       scope: scope,
-      ids: projectUuidsFromArgs == null ? null : [projectUuidsFromArgs],
+      ids: argResults?['project'] as List<String>?,
     );
 
     final projectNames = projects.map((e) => cyan.wrap(e.slug)).join(', ');
