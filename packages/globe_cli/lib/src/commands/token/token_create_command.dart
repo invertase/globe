@@ -42,10 +42,10 @@ class TokenCreateCommand extends BaseGlobeCommand {
     final dateString = argResults?['expiry']?.toString() ??
         logger.prompt('❓ Set Expiry (yyyy-mm-dd):');
 
-    final expiry = DateTime.tryParse(dateString);
+    final expiry = _parseTokenExpiryStr(dateString);
     if (expiry == null) {
       logger.err(
-        'Invalid date format.\nDate format should be ${cyan.wrap('2012-02-27')} or ${cyan.wrap('2012-02-27 13:27:00')}',
+        'Invalid date.\nDate format should be ${cyan.wrap('2012-02-27')} or ${cyan.wrap('2012-02-27 13:27:00')}',
       );
       exitOverride(1);
     }
@@ -83,4 +83,22 @@ class TokenCreateCommand extends BaseGlobeCommand {
       return ExitCode.software.code;
     }
   }
+}
+
+DateTime? _parseTokenExpiryStr(String dateStr) {
+  final parsedDate = DateTime.tryParse(dateStr);
+  if (parsedDate == null) return null;
+
+  final parts = dateStr.split('-');
+  if (parsedDate.year != int.parse(parts[0]) ||
+      parsedDate.month != int.parse(parts[1]) ||
+      parsedDate.day != int.parse(parts[2])) {
+    return null;
+  }
+
+  if (parsedDate.isBefore(DateTime.now().add(const Duration(hours: 2)))) {
+    return null;
+  }
+
+  return parsedDate;
 }
