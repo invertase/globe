@@ -1,3 +1,9 @@
+## 0.0.9
+
+ - **FIX**: Remove need for scope validation ([#49](https://github.com/invertase/globe/issues/49)). ([cc0e715d](https://github.com/invertase/globe/commit/cc0e715da731585dc3fcb03ec8caf6e29af6308d))
+ - **FIX**: Handle event-source exception gracefully ([#47](https://github.com/invertase/globe/issues/47)). ([dd006f46](https://github.com/invertase/globe/commit/dd006f46c935f02cbbb2966e69a7dfad26c2175f))
+ - **FEAT**: Token create & delete from CLI ([#39](https://github.com/invertase/globe/issues/39)). ([e87e5a01](https://github.com/invertase/globe/commit/e87e5a01cfe21a4dbd113315967f5f41bc80d7a6))
+
 ## 0.0.8
 
  - **FEAT**: Token create & delete from CLI ([#39](https://github.com/invertase/globe/issues/39)). ([e87e5a01](https://github.com/invertase/globe/commit/e87e5a01cfe21a4dbd113315967f5f41bc80d7a6))

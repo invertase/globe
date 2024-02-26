@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2024-02-26
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`globe_cli` - `v0.0.9`](#globe_cli---v009)
+
+---
+
+#### `globe_cli` - `v0.0.9`
+
+ - **FIX**: Remove need for scope validation ([#49](https://github.com/invertase/globe/issues/49)). ([cc0e715d](https://github.com/invertase/globe/commit/cc0e715da731585dc3fcb03ec8caf6e29af6308d))
+ - **FIX**: Handle event-source exception gracefully ([#47](https://github.com/invertase/globe/issues/47)). ([dd006f46](https://github.com/invertase/globe/commit/dd006f46c935f02cbbb2966e69a7dfad26c2175f))
+ - **FEAT**: Token create & delete from CLI ([#39](https://github.com/invertase/globe/issues/39)). ([e87e5a01](https://github.com/invertase/globe/commit/e87e5a01cfe21a4dbd113315967f5f41bc80d7a6))
+
+
 ## 2024-02-22
 
 ### Changes
