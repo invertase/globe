@@ -91,6 +91,16 @@ dart pub global activate --source="path" . --executable="globe"
 - Push your new branch to your own fork into the same remote branch
   (e.g. `git push origin my-username.my-new-feature`, replace `origin` if you use another remote.)
 
+### Publishing changes
+
+1. Switch to `main` branch locally.
+2. Run `git pull origin main`.
+3. Run `git pull --tags` to make sure all tags are fetched.
+5. Run `melos version` to automatically version packages and update Changelogs.
+6. Run `melos publish` to dry run and confirm all packages are publishable.
+7. Run `melos publish --no-dry-run`
+8. Run `git push --follow-tags` to ensure the release is pushed to GitHub.
+
 ### Open a pull request
 
 To send us a pull request:
