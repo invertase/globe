@@ -7,10 +7,14 @@ import 'package:pool/pool.dart';
 
 /// Creates a zip archive of the given [directory].
 Future<List<int>> zipDir(Directory directory) async {
-  final directoryPath = p.join(directory.path, p.separator);
+  // NOTE: We can't use p.join here due to https://github.com/dart-lang/path/issues/37
+  // being present on Windows.
+  final directoryPath = directory.path + p.separator;
+
   final archive = Archive();
   final files = directory.listSync(recursive: true);
 
+  // Find all nested .gitignore files in the project.
   final gitignoreFiles = files
       .where((entity) => entity is File && entity.path.endsWith('.gitignore'))
       .map((entity) => File(entity.path));
