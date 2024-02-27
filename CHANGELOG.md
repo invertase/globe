@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2024-02-27
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`globe_cli` - `v0.0.9-dev.1`](#globe_cli---v009-dev1)
+
+---
+
+#### `globe_cli` - `v0.0.9-dev.1`
+
+ - **FIX**: correctly join paths on windows. ([72e82463](https://github.com/invertase/globe/commit/72e824631d5a50386dcb4e59c23007e30f8dd8ab))
+
+
 ## 2024-02-26
 
 ### Changes
