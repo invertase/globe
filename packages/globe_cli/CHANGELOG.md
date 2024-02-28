@@ -1,3 +1,7 @@
+## 0.0.9+1
+
+ - **FIX**: Correctly handle windows path separators ([#52](https://github.com/invertase/globe/issues/52)). ([80750097](https://github.com/invertase/globe/commit/80750097ecc2a6ab472a982b5aa9eee63737d57e))
+
 ## 0.0.9
 
  - Graduate package to a stable release. See pre-releases prior to this version for changelog entries.

@@ -15,6 +15,27 @@ Packages with breaking changes:
 
 Packages with other changes:
 
+ - [`globe_cli` - `v0.0.9+1`](#globe_cli---v0091)
+
+---
+
+#### `globe_cli` - `v0.0.9+1`
+
+ - **FIX**: Correctly handle windows path separators ([#52](https://github.com/invertase/globe/issues/52)). ([80750097](https://github.com/invertase/globe/commit/80750097ecc2a6ab472a982b5aa9eee63737d57e))
+
+
+## 2024-02-28
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
  - [`globe_cli` - `v0.0.9`](#globe_cli---v009)
 
 Packages graduated to a stable release (see pre-releases prior to the stable version for changelog entries):
