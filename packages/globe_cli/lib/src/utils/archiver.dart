@@ -85,7 +85,8 @@ Future<List<int>> zipDir(Directory directory) async {
 
   if (archive.isEmpty) {
     throw Exception(
-        'Archive appears to be empty. This may be a bug, please report on GitHub.');
+      'Archive appears to be empty. This may be a bug, please report on GitHub.',
+    );
   }
 
   final encoded = TarEncoder().encode(archive);
