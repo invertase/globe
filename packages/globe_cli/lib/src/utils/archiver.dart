@@ -2,13 +2,19 @@ import 'dart:io';
 
 import 'package:archive/archive_io.dart';
 import 'package:glob/glob.dart';
+import 'package:path/path.dart' as p;
 import 'package:pool/pool.dart';
 
 /// Creates a zip archive of the given [directory].
 Future<List<int>> zipDir(Directory directory) async {
+  // NOTE: We can't use p.join here due to https://github.com/dart-lang/path/issues/37
+  // being present on Windows.
+  final directoryPath = directory.path + p.separator;
+
   final archive = Archive();
   final files = directory.listSync(recursive: true);
 
+  // Find all nested .gitignore files in the project.
   final gitignoreFiles = files
       .where((entity) => entity is File && entity.path.endsWith('.gitignore'))
       .map((entity) => File(entity.path));
@@ -52,8 +58,7 @@ Future<List<int>> zipDir(Directory directory) async {
     // Exclude files that match the patterns in the `.gitignore` file.
     for (final pattern in exclude) {
       final glob = Glob(pattern);
-      final match =
-          glob.matches(entity.path.replaceFirst('${directory.path}/', ''));
+      final match = glob.matches(entity.path.replaceFirst(directoryPath, ''));
 
       if (match) {
         return;
@@ -67,7 +72,7 @@ Future<List<int>> zipDir(Directory directory) async {
       archive.addFile(
         ArchiveFile(
           // Store the files within a `project` directory.
-          entity.path.replaceFirst('${directory.path}/', 'project/'),
+          entity.path.replaceFirst(directoryPath, 'project/'),
           length,
           bytes,
         ),
@@ -77,6 +82,12 @@ Future<List<int>> zipDir(Directory directory) async {
 
   // Add all files to the archive in parallel.
   await Future.wait(files.map(addEntityToArchive).toList());
+
+  if (archive.isEmpty) {
+    throw Exception(
+      'Archive appears to be empty. This may be a bug, please report on GitHub.',
+    );
+  }
 
   final encoded = TarEncoder().encode(archive);
 

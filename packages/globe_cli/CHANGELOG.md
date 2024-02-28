@@ -1,3 +1,11 @@
+## 0.0.9-dev.1
+
+ - **FIX**: correctly join paths on windows. ([72e82463](https://github.com/invertase/globe/commit/72e824631d5a50386dcb4e59c23007e30f8dd8ab))
+
+## 0.0.9-dev.0+1
+
+ - **FIX**: correctly handle windows path separators. ([e9bcd44b](https://github.com/invertase/globe/commit/e9bcd44ba9dce8c6b7ea49d266a1c9a6cf68f59d))
+
 ## 0.0.9
 
  - **FIX**: Remove need for scope validation ([#49](https://github.com/invertase/globe/issues/49)). ([cc0e715d](https://github.com/invertase/globe/commit/cc0e715da731585dc3fcb03ec8caf6e29af6308d))
