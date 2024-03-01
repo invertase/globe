@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2024-03-01
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`globe_cli` - `v0.0.9+2`](#globe_cli---v0092)
+
+---
+
+#### `globe_cli` - `v0.0.9+2`
+
+ - **FIX**: Stream build logs over WS ([#55](https://github.com/invertase/globe/issues/55)). ([52fabbcb](https://github.com/invertase/globe/commit/52fabbcb7bb8119a1305eca8ed7791cad2ff0571))
+
+
 ## 2024-02-28
 
 ### Changes
