@@ -297,10 +297,6 @@ class GlobeApi {
       'realtime',
       'orgs',
       orgId,
-      'projects',
-      projectId,
-      'deployments',
-      deploymentId,
       path,
       'tune',
     ].join('/');

@@ -126,7 +126,7 @@ Future<Stream<BuildLogEvent>> streamBuildLogs({
   );
 
   final ws = await WebSocket.connect(
-    'wss://$host/api/realtime/orgs/$orgId/projects/$projectId/deployments/$deploymentId/$buildLogsToken',
+    'wss://$host/api/realtime/orgs/$orgId/$buildLogsToken',
     headers: api.headers,
   );
 
