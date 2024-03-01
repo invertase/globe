@@ -22,6 +22,10 @@ class BuildLogsCommand extends BaseGlobeCommand {
   Future<int> run() async {
     requireAuth();
 
+    if (!scope.hasScope()) {
+      logger.err('Not a Globe project.');
+    }
+
     final validated = await scope.validate();
     final deploymentId = argResults!['deployment'] as String?;
 
