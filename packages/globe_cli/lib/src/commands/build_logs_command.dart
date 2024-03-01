@@ -43,7 +43,7 @@ class BuildLogsCommand extends BaseGlobeCommand {
     );
 
     if (deployment.buildId == null) {
-      logger.err('Build for $deploymentId has not started yet.');
+      logger.info('Build for $deploymentId has not started yet.');
       return ExitCode.software.code;
     }
 
