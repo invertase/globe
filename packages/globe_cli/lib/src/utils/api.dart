@@ -285,6 +285,61 @@ class GlobeApi {
       await http.delete(_buildUri(deleteTokenPath), headers: headers),
     )! as Map<String, Object?>;
   }
+
+  Future<String> getRealtimeToken({
+    required String orgId,
+    required String projectId,
+    required String deploymentId,
+    required String path,
+    Map<String, String>? headers,
+  }) {
+    final urlPath = [
+      'realtime',
+      'orgs',
+      orgId,
+      path,
+      'tune',
+    ].join('/');
+
+    final uri = _buildUri('/$urlPath');
+    logger.detail('API Request: GET /$urlPath');
+
+    final request = http.Request('GET', uri);
+    request.headers.addAll(this.headers);
+    if (headers != null) {
+      request.headers.addAll(headers);
+    }
+
+    return request.send().then((response) async {
+      final json = jsonDecode(await response.stream.bytesToString())
+          as Map<String, Object?>;
+      if (response.statusCode == 200) {
+        return json['token']! as String;
+      } else {
+        throw ApiException._(response.statusCode, json['message']! as String);
+      }
+    });
+  }
+
+  Future<String> getBuildLogsToken({
+    required String orgId,
+    required String projectId,
+    required String deploymentId,
+    required String buildId,
+  }) {
+    requireAuth();
+
+    return getRealtimeToken(
+      orgId: orgId,
+      projectId: projectId,
+      deploymentId: deploymentId,
+      path: 'build-logs',
+      headers: {
+        'x-globe-build-id': buildId,
+        'x-globe-location': 'us-central1',
+      },
+    );
+  }
 }
 
 class Settings {
@@ -484,6 +539,7 @@ class Deployment {
     required this.active,
     required this.createdAt,
     required this.updatedAt,
+    required this.buildId,
   });
 
   factory Deployment.fromJson(Map<dynamic, dynamic> json) {
@@ -500,6 +556,7 @@ class Deployment {
         'active': final bool active,
         'createdAt': final String createdAt,
         'updatedAt': final String updatedAt,
+        'buildId': final String? buildId,
       } =>
         Deployment._(
           id: id,
@@ -519,6 +576,7 @@ class Deployment {
           active: active,
           createdAt: DateTime.parse(createdAt),
           updatedAt: DateTime.parse(updatedAt),
+          buildId: buildId,
         ),
       _ => throw const FormatException('Deployment'),
     };
@@ -535,6 +593,7 @@ class Deployment {
   final bool active;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? buildId;
 }
 
 enum DeploymentState {

@@ -188,6 +188,7 @@ class DeployCommand extends BaseGlobeCommand {
             orgId: validated.organization.id,
             projectId: validated.project.id,
             deploymentId: deployment.id,
+            buildId: update.buildId!,
           );
 
           unawaited(
