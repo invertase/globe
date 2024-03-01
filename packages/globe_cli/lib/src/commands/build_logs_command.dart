@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:eventsource/eventsource.dart';
 import 'package:mason_logger/mason_logger.dart';
 
 import '../command.dart';
@@ -25,10 +22,6 @@ class BuildLogsCommand extends BaseGlobeCommand {
   Future<int> run() async {
     requireAuth();
 
-    if (!scope.hasScope()) {
-      logger.err('Not a Globe project.');
-    }
-
     final validated = await scope.validate();
     final deploymentId = argResults!['deployment'] as String?;
 
@@ -39,23 +32,24 @@ class BuildLogsCommand extends BaseGlobeCommand {
       return ExitCode.software.code;
     }
 
-    late Stream<BuildLogEvent> logs;
+    final deployment = await api.getDeployment(
+      orgId: validated.organization.id,
+      projectId: validated.project.id,
+      deploymentId: deploymentId,
+    );
 
-    try {
-      logs = await streamBuildLogs(
-        api: api,
-        orgId: validated.organization.id,
-        projectId: validated.project.id,
-        deploymentId: deploymentId,
-      );
-    } on EventSourceSubscriptionException catch (e) {
-      logger.err(
-        e.statusCode == HttpStatus.notFound
-            ? '✗ An error occurred: Either invalid deployment or project ID. '
-            : '✗ An error occurred: ${e.message}',
-      );
+    if (deployment.buildId == null) {
+      logger.err('Build for $deploymentId has not started yet.');
       return ExitCode.software.code;
     }
+
+    final logs = await streamBuildLogs(
+      api: api,
+      orgId: validated.organization.id,
+      projectId: validated.project.id,
+      deploymentId: deploymentId,
+      buildId: deployment.buildId!,
+    );
 
     await printLogs(logger, logs);
 

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
-import 'package:eventsource/eventsource.dart';
 import 'package:mason_logger/mason_logger.dart';
 
 import 'api.dart';
@@ -113,34 +113,36 @@ Future<Stream<BuildLogEvent>> streamBuildLogs({
   required String orgId,
   required String projectId,
   required String deploymentId,
+  required String buildId,
 }) async {
+  final host = Uri.parse(api.metadata.endpoint).host;
   final ctrl = StreamController<BuildLogEvent>.broadcast();
 
-  final es = await EventSource.connect(
-    '${api.metadata.endpoint}/api/orgs/$orgId/projects/$projectId/deployments/$deploymentId/build-logs',
+  final buildLogsToken = await api.getBuildLogsToken(
+    orgId: orgId,
+    projectId: projectId,
+    deploymentId: deploymentId,
+    buildId: buildId,
+  );
+
+  final ws = await WebSocket.connect(
+    'wss://$host/api/realtime/orgs/$orgId/projects/$projectId/deployments/$deploymentId/$buildLogsToken',
     headers: api.headers,
   );
 
-  es.listen((e) {
-    if (e.data == null) {
-      return;
-    }
-
-    final json = jsonDecode(e.data!) as Map<String, dynamic>;
-
-    // The server emits a status event when a connection is established.
-    if (json['status'] != null) {
-      return;
-    }
-
+  ws.listen((e) {
+    final json = jsonDecode(e as String) as Map<String, dynamic>;
     final event = BuildLogEvent.fromJson(json);
+
     ctrl.add(event);
   });
 
-  es.onError.listen((e) {
-    ctrl.add(ErrorBuildLogEvent(error: e.toString()));
+  unawaited(ws.done.then((_) => ctrl.close()));
+
+  ctrl.onCancel = () {
+    ws.close();
     ctrl.close();
-  });
+  };
 
   return ctrl.stream;
 }
