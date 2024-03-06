@@ -15,7 +15,7 @@ class GlobeMetadata {
   );
 
   static const local = GlobeMetadata(
-    endpoint: 'http://127.0.0.1:8788',
+    endpoint: 'http://localhost:8788',
     isLocal: true,
   );
 
