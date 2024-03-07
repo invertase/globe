@@ -1,6 +1,7 @@
 ---
 name: Shelf JWT Auth
 description: Build an authentication flow using JWT from a Flutter application.
+tags: ["dart","shelf","authentication"]
 ---
 
 # Shelf JWT Auth
