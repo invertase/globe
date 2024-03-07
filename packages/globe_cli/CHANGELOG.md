@@ -1,3 +1,8 @@
+## 0.0.9+3
+
+ - **FIX**(globe_cli): Changed local base url to localhost from 127.0.0.1 ([#62](https://github.com/invertase/globe/issues/62)). ([5467d63f](https://github.com/invertase/globe/commit/5467d63ff510ebdb22748fbe95ed95b99ea2393b))
+ - **FIX**: Improve archiver gitignore matching ([#60](https://github.com/invertase/globe/issues/60)). ([c36b29c5](https://github.com/invertase/globe/commit/c36b29c59e63dacfc158dd3329237c1206954b3b))
+
 ## 0.0.9+2
 
  - **FIX**: Stream build logs over WS ([#55](https://github.com/invertase/globe/issues/55)). ([52fabbcb](https://github.com/invertase/globe/commit/52fabbcb7bb8119a1305eca8ed7791cad2ff0571))
