@@ -5,7 +5,7 @@ title: Environment Variables
 # Environment Variables
 
 Environment variables are a set of named values that can affect the way running processes will behave on a deployment. An environment variable can be used to store secret values that are not safe to be stored in the codebase. You may wish to use
-different values for different environments, such as development, preview, and production to connect to different databases or API endpoints.
+different values for different environments, such as preview, and production to connect to different databases or API endpoints.
 
 ## Creating environment variables
 
@@ -17,13 +17,34 @@ Enter the name and value of your variable. All values are encrypted, and can onl
 
 It is also possible to specify what environments the variable should be available in.
 
+<Warning>
+After creating or updating an environment variable, you will need to redeploy your project for the changes to take effect.
+</Warning>
+
 ## Accessing environment variables
 
-Within your Dart code, you can access environment variables using the `Platform.environment` map.
+Within your Dart code, you can access environment variables using the `Platform.environment` map. Any package that uses this map can access Globe environment variables as well.
 
 ```dart
 String? value = Platform.environment['MY_VARIABLE'];
 ```
+
+### Using "dotenv" package
+
+If you prefer to use a `.env` file for local development, you can use the [dotenv package](https://pub.dev/packages/dotenv) to load values from a file locally and use environment variables when deployed.
+
+Add the `includePlatformEnvironment: true` to the `DotEnv` constructor to include platform environment variables when `.env` file is not defined.
+
+```dart
+final env = DotEnv(includePlatformEnvironment: true)..load();
+String? value = env['MY_VARIABLE'];
+```
+
+### Using "envied" package
+
+Currently the Globe environment variables does not support the [envied package](https://pub.dev/packages/envied). This is because the environment variables are not available during the build process, and `envied_generator` requires it. We are currently working on adding support for it.
+
+Check [this issue](https://github.com/invertase/globe/issues/59) for more information. Upvote if this is something you would like to see.
 
 ## System environment variables
 
@@ -32,3 +53,9 @@ The following environment variables are available on all deployments:
 | Name   | Description                                     |
 | ------ | ----------------------------------------------- |
 | `PORT` | The port that the application should listen on. |
+| `GLOBE` | * Pending * |
+| `HOSTNAME` | * Pending * |
+| `CRON_EVENT_ID` | * Pending * |
+| `CRON_NAME` | * Pending * |
+| `CRON_SCHEDULE` | * Pending * |
+| `CRON_ID` | * Pending * |
