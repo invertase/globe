@@ -53,9 +53,11 @@ The following environment variables are available on all deployments:
 | Name   | Description                                     |
 | ------ | ----------------------------------------------- |
 | `PORT` | The port that the application should listen on. |
-| `GLOBE` | * Pending * |
-| `HOSTNAME` | * Pending * |
-| `CRON_EVENT_ID` | * Pending * |
-| `CRON_NAME` | * Pending * |
-| `CRON_SCHEDULE` | * Pending * |
-| `CRON_ID` | * Pending * |
+| `GLOBE` | Variable for checking if running in Globe. Will be set to '1' |
+| `HOSTNAME` | The hostname of your deployed application in Globe. |
+| `CRON_NAME` | Name of the cron job provided in the `globe.yaml` file. |
+| `CRON_SCHEDULE` | The cron schedule code. For example, `* * * * *` |
+| `CRON_ID` | Unique identifier for the defined cron job. |
+| `CRON_EVENT_ID` | Unique identifier for the current running cron job. |
+
+* Cron environment variables are only available when a cron job is running.
