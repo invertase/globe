@@ -31,24 +31,18 @@ String? value = Platform.environment['MY_VARIABLE'];
 
 ### Using "dotenv" package
 
-If you prefer to use a `.env` file for local development, you can use the [dotenv package](https://pub.dev/packages/dotenv) to load values from a file locally and use environment variables when deployed.
+If you prefer to use a `.env` file for local development, you can use the [dotenv package](https://pub.dev/packages/dotenv) to load values from the `.env` file locally and use environment variables when deployed.
 
-Add the `includePlatformEnvironment: true` to the `DotEnv` constructor to include platform environment variables when `.env` file is not defined.
+When your app is deployed to Globe, any static assets are ignored, so you need to pass `includePlatformEnvironment: true` to the `DotEnv` constructor to include platform environment variables that you previously defined on Globe dashboard (Project > Settings > Environment variables).
 
 ```dart
 final env = DotEnv(includePlatformEnvironment: true)..load();
 String? value = env['MY_VARIABLE'];
 ```
 
-### Using "envied" package
-
-Currently the Globe environment variables does not support the [envied package](https://pub.dev/packages/envied). This is because the environment variables are not available during the build process, and `envied_generator` requires it. We are currently working on adding support for it.
-
-Check [this issue](https://github.com/invertase/globe/issues/59) for more information. Upvote if this is something you would like to see.
-
 ## System environment variables
 
-The following environment variables are available on all deployments:
+Your deployed Dart application has access to the Globe-specific environment variables which wouldn't be typically available while you develop/test your app locally. These are as follows:
 
 | Name   | Description                                     |
 | ------ | ----------------------------------------------- |
