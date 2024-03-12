@@ -3,23 +3,21 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dart_firebase_admin/auth.dart';
+import 'package:dart_firebase_admin/firestore.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 
 import 'firebase.dart';
 import 'utils.dart';
 
+CollectionReference get userCollection =>
+    Firebase.firestore.collection('users');
+
 Router get router => Router()
-  ..get('/me', (req) => checkAuth(req, _echoHandler))
-  ..post('/signin', _loginHandler)
-  ..post('/signup', _signupHandler);
+  ..get('/user', (req) => checkAuth(req, _getUser))
+  ..post('/api/auth/register', _signupHandler);
 
-Response _echoHandler(Request request, Object user) {
-  final message = request.params['message'];
-  return Response.ok('$message\n');
-}
-
-Future<Response> _loginHandler(Request request) async {
+Future<Response> _getUser(Request request, User) async {
   final {
     'email': email as String,
     'password': password as String,
@@ -30,9 +28,9 @@ Future<Response> _loginHandler(Request request) async {
 
 Future<Response> _signupHandler(Request request) async {
   final {
+    'name': name as String,
     'email': email as String,
     'password': password as String,
-    'name': name as String,
   } = jsonDecode(await request.readAsString());
 
   final user = await Firebase.auth.createUser(CreateRequest(
@@ -49,7 +47,7 @@ Future<Response> _signupHandler(Request request) async {
     'updatedAt': now
   };
 
-  await Firebase.firestore.collection('users').doc(user.uid).create(userData);
+  await userCollection.doc(user.uid).create(userData);
 
   return Response.ok(
     jsonEncode({

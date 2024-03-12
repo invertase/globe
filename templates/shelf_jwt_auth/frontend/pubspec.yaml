@@ -1,26 +1,37 @@
 name: frontend
 description: "A new Flutter project."
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.2.3 <4.0.0'
-
+  sdk: ^3.0.0
 
 dependencies:
   flutter:
     sdk: flutter
 
+  json_annotation: ^4.8.1
   cupertino_icons: ^1.0.2
-  carbon_flutter: ^0.11.1
+  fluent_ui: ^4.8.3
+  get_it: ^7.6.4
+  provider: ^6.1.1
+  go_router: ^13.0.1
+
+  firebase_auth: ^4.16.0
+
+  cherry_toast: ^1.6.4
+  http: ^1.1.0
+  localstorage: ^4.0.1+4
+  firebase_core: ^2.24.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   flutter_lints: ^2.0.0
-
+  json_serializable: ^6.7.1
+  build_runner: ^2.4.7
 
 flutter:
   uses-material-design: true

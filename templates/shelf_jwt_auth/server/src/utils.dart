@@ -5,6 +5,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shelf/shelf.dart';
 
 import 'firebase.dart';
+import 'router.dart';
 
 final class APIError {
   static final String unauthorized = 'You are not authorized';
@@ -27,7 +28,8 @@ Future<Response> checkAuth(Request request, RequiresUser action) async {
     return Response.unauthorized(APIError.unauthorized);
   }
 
-  final user = await Firebase.auth.getUser(tokenValue['uid']);
+  // retrieve user record from firestore
+  final userFromDb = await userCollection.doc(tokenValue['uid']).get();
 
-  return action.call(request, user);
+  return action.call(request, userFromDb.data());
 }

@@ -12,9 +12,10 @@ dependencies:
   shelf_router: ^1.1.0
 
   dotenv: ^4.2.0
-  
+
   dart_firebase_admin: ^0.3.0
   jwt_decoder: ^2.0.1
+  shelf_cors_headers: ^0.1.5
 
 dev_dependencies:
   lints: ^2.1.0
