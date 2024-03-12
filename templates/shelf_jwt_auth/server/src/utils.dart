@@ -4,32 +4,64 @@ import 'dart:io';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shelf/shelf.dart';
 
-import 'firebase.dart';
 import 'router.dart';
+
+class User {
+  final String id;
+  final String name;
+  final String email;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+
+  const User(
+    this.id, {
+    required this.name,
+    required this.email,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+  factory User.fromJson(String id, Map<String, dynamic> json) => User(
+        id,
+        name: json['name'],
+        email: json['email'],
+        createdAt: DateTime.parse(json['createdAt']),
+        updatedAt: DateTime.parse(json['updatedAt']),
+      );
+
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'email': email,
+        'createdAt': createdAt.toIso8601String(),
+        'updatedAt': updatedAt.toIso8601String(),
+      };
+}
 
 final class APIError {
   static final String unauthorized = 'You are not authorized';
 }
 
-typedef RequiresUser = FutureOr<Response> Function(Request req, Object user);
+typedef RequiresUser = FutureOr<Response> Function(Request req, User user);
 
 /// Middleware that checks for Bearer Token in incoming request header.
 Future<Response> checkAuth(Request request, RequiresUser action) async {
-  final tokenFromHeader =
+  final userToken =
       request.headers[HttpHeaders.authorizationHeader]?.split(' ').lastOrNull;
 
   // ensure token is present
-  if (tokenFromHeader == null) {
+  if (userToken == null) {
     return Response.unauthorized(APIError.unauthorized);
   }
 
-  final tokenValue = JwtDecoder.tryDecode(tokenFromHeader);
-  if (tokenValue == null) {
+  final tokenValue = JwtDecoder.tryDecode(userToken) ?? {};
+
+  final userId = tokenValue['user_id'];
+  if (userId == null) {
     return Response.unauthorized(APIError.unauthorized);
   }
 
   // retrieve user record from firestore
-  final userFromDb = await userCollection.doc(tokenValue['uid']).get();
+  final userData = (await userCollection.doc(userId).get()).data();
 
-  return action.call(request, userFromDb.data());
+  return action.call(request, User.fromJson(userId, userData));
 }

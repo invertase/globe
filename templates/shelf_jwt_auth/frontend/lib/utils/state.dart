@@ -80,6 +80,10 @@ abstract class BaseProvider<T> extends ChangeNotifier
     addEvent(const ProviderEvent.idle());
   }
 
+  void addError(String message) {
+    addEvent(ProviderEvent.error(errorMessage: message));
+  }
+
   Future<Result?> safeRun<Result>(FutureOr<Result> Function() apiCall) async {
     addEvent(const ProviderEvent.loading());
 

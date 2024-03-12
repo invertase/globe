@@ -8,7 +8,7 @@ import 'firebase_options.dart';
 
 import 'data/providers/auth_provider.dart';
 
-const primaryColor = Color.fromARGB(255, 226, 30, 16);
+const primaryColor = Color(0xff0078d4);
 
 final router = GoRouter(
   routes: <RouteBase>[
@@ -41,11 +41,7 @@ class MyApp extends StatelessWidget {
         routerConfig: router,
         title: 'Shelf Firebase Auth',
         debugShowCheckedModeBanner: false,
-        builder: (_, child) {
-          return _AppLayout(
-            child: child!,
-          );
-        },
+        builder: (_, child) => _AppLayout(child: child!),
       ),
     );
   }
@@ -63,7 +59,7 @@ class _AppLayout extends StatelessWidget {
         FluentTheme(
           data: FluentThemeData.dark(),
           child: Container(
-            decoration: BoxDecoration(color: Colors.blue.dark),
+            decoration: BoxDecoration(color: Colors.blue),
             padding: const EdgeInsets.only(top: 12),
             alignment: Alignment.center,
             child: PageHeader(

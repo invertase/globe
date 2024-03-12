@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html;
 
 import 'package:http/http.dart' as http;
 
@@ -20,7 +18,7 @@ class ApiService {
 
   ApiService(this.baseUrl);
 
-  void setToken(String token) {
+  void setToken(String? token) {
     _authToken = token;
   }
 
@@ -35,16 +33,7 @@ class ApiService {
     final result = await _runCatching(
         () => http.get(_getUri('/users/me'), headers: _headers));
 
-    final data = jsonDecode(result.body)['user'];
-    return AuthUser.fromJson(data);
-  }
-
-  Future<AuthUser> getUserById(int userId) async {
-    final result = await _runCatching(
-        () => http.get(_getUri('/users/$userId'), headers: _headers));
-
-    final data = jsonDecode(result.body)['user'];
-    return AuthUser.fromJson(data);
+    return AuthUser.fromJson(jsonDecode(result.body));
   }
 
   Future<bool> registerUser(
@@ -57,6 +46,7 @@ class ApiService {
       'email': email,
       'password': password,
     });
+
     await _runCatching(() => http.post(_getUri('/auth/register'),
         headers: _headers, body: requestBody));
 

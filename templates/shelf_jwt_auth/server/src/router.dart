@@ -14,16 +14,16 @@ CollectionReference get userCollection =>
     Firebase.firestore.collection('users');
 
 Router get router => Router()
-  ..get('/user', (req) => checkAuth(req, _getUser))
-  ..post('/api/auth/register', _signupHandler);
+  ..post('/api/auth/register', _signupHandler)
+  ..get('/api/users/me', (req) => checkAuth(req, _getUser));
 
-Future<Response> _getUser(Request request, User) async {
-  final {
-    'email': email as String,
-    'password': password as String,
-  } = jsonDecode(await request.readAsString());
-
-  return Response.ok('Hello, World!');
+Future<Response> _getUser(Request request, User user) async {
+  return Response.ok(
+    jsonEncode(user.toJson()),
+    headers: {
+      HttpHeaders.contentTypeHeader: 'application/json; charset=utf-8',
+    },
+  );
 }
 
 Future<Response> _signupHandler(Request request) async {
@@ -50,9 +50,7 @@ Future<Response> _signupHandler(Request request) async {
   await userCollection.doc(user.uid).create(userData);
 
   return Response.ok(
-    jsonEncode({
-      "user": {...userData, "id": user.uid},
-    }),
+    jsonEncode({...userData, "id": user.uid}),
     headers: {HttpHeaders.contentTypeHeader: 'application/json'},
   );
 }

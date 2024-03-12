@@ -10,7 +10,7 @@ final class Firebase {
     final dotenv = DotEnv()..load();
 
     _admin = FirebaseAdminApp.initializeApp(
-      'yaroo-example',
+      dotenv['PROJECT_ID']!,
       Credential.fromServiceAccountParams(
         clientId: dotenv['FIREBASE_CLIENT_ID']!,
         privateKey: dotenv['FIREBASE_PRIVATE_KEY']!.replaceAll(r'\n', '\n'),

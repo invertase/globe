@@ -33,22 +33,25 @@ class AuthProvider extends BaseProvider<AuthUser> {
     } on FirebaseAuthException catch (e) {
       return addEvent(ProviderEvent.error(errorMessage: e.message));
     } catch (e) {
-      print(e);
-
-      return addEvent(
-        const ProviderEvent.error(
-            errorMessage: 'An error occurred while signin in'),
-      );
+      addError('An error occurred while signin in');
+      return;
     }
 
     final user = await safeRun(() => _apiService.getUser());
-    if (user == null) return;
+    if (user == null) {
+      logout();
+      addError('An error occurred while fetching user');
+      return;
+    }
 
     addEvent(ProviderEvent.success(data: user));
   }
 
   Future<bool> register(
-      String displayName, String email, String password) async {
+    String displayName,
+    String email,
+    String password,
+  ) async {
     final success = await safeRun(
         () => _apiService.registerUser(displayName, email, password));
     if (success != true) return false;
@@ -58,6 +61,7 @@ class AuthProvider extends BaseProvider<AuthUser> {
   }
 
   void logout() async {
+    _apiService.setToken(null);
     await _fireAuth.signOut();
     addEvent(const ProviderEvent.idle());
   }

@@ -8,9 +8,18 @@ class AuthUser {
   final String name;
   final String email;
 
-  const AuthUser(this.id, this.name, this.email);
+  final DateTime createdAt, updatedAt;
 
-  Map<String, dynamic> toJson() => _$UserToJson(this);
+  const AuthUser(
+    this.id,
+    this.name,
+    this.email,
+    this.createdAt,
+    this.updatedAt,
+  );
 
-  factory AuthUser.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+  Map<String, dynamic> toJson() => _$AuthUserToJson(this);
+
+  factory AuthUser.fromJson(Map<String, dynamic> json) =>
+      _$AuthUserFromJson(json);
 }
