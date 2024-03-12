@@ -1,0 +1,16 @@
+name: yaroodev
+
+packages:
+  - frontend
+  - server
+
+command:
+  bootstrap:
+    runPubGetInParallel: false
+
+scripts:
+  test: melos exec -c 1  -- "dart test" --fail-fast
+
+  format: melos exec -- "dart format ."
+
+  analyze: melos exec -- "dart analyze . --fatal-infos --no-fatal-warnings"
