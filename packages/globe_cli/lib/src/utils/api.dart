@@ -243,7 +243,7 @@ class GlobeApi {
     )! as Map<String, Object?>;
     final token = Token.fromJson(response);
 
-    return (id: token.uuid, value: token.value);
+    return (id: token.uuid, value: token.value!);
   }
 
   Future<List<Token>> listTokens({
@@ -688,7 +688,7 @@ class Token {
   final String organizationUuid;
   final DateTime expiresAt;
   final List<String> cliTokenClaimProject;
-  final String value;
+  final String? value;
 
   const Token._({
     required this.uuid,
@@ -707,7 +707,7 @@ class Token {
         'organizationUuid': final String organizationUuid,
         'expiresAt': final String expiresAt,
         'projects': final List<dynamic> projects,
-        'value': final String value,
+        'value': final String? value,
       } =>
         Token._(
           uuid: uuid,
