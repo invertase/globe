@@ -243,15 +243,7 @@ class GlobeApi {
     )! as Map<String, Object?>;
     final token = Token.fromJson(response);
 
-    final generateTokenPath = '/orgs/$orgId/api-tokens/${token.uuid}/generate';
-    logger.detail('API Request: GET $generateTokenPath');
-
-    // get token value
-    final tokenValue = _handleResponse(
-      await http.get(_buildUri(generateTokenPath), headers: headers),
-    )! as String;
-
-    return (id: token.uuid, value: tokenValue);
+    return (id: token.uuid, value: token.value);
   }
 
   Future<List<Token>> listTokens({
@@ -696,6 +688,7 @@ class Token {
   final String organizationUuid;
   final DateTime expiresAt;
   final List<String> cliTokenClaimProject;
+  final String value;
 
   const Token._({
     required this.uuid,
@@ -703,6 +696,7 @@ class Token {
     required this.organizationUuid,
     required this.expiresAt,
     required this.cliTokenClaimProject,
+    required this.value,
   });
 
   factory Token.fromJson(Map<String, dynamic> json) {
@@ -713,6 +707,7 @@ class Token {
         'organizationUuid': final String organizationUuid,
         'expiresAt': final String expiresAt,
         'projects': final List<dynamic> projects,
+        'value': final String value,
       } =>
         Token._(
           uuid: uuid,
@@ -722,6 +717,7 @@ class Token {
           cliTokenClaimProject: projects
               .map((e) => (e as Map)['projectUuid'].toString())
               .toList(),
+          value: value,
         ),
       _ => throw const FormatException('Token'),
     };
