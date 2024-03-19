@@ -360,11 +360,19 @@ Future<List<Project>> selectProjects(
   final projectsBySlug = projects
       .fold<Map<String, Project>>({}, (prev, curr) => prev..[curr.slug] = curr);
 
+  final projectChoices = projectsBySlug.keys.toList();
+  projectChoices.insert(0, 'All projects');
+
   /// Ask user to choose zero or more options.
   final selections = logger.chooseAny(
     '❓ $question',
-    choices: projectsBySlug.keys.toList(),
+    choices: projectChoices,
   );
+
+  if (selections.contains('All projects')) {
+    logger.detail('All projects selected.');
+    return projects;
+  }
 
   if (selections.isEmpty) {
     logger.detail(
