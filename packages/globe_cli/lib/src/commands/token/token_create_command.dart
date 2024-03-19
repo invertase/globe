@@ -40,7 +40,8 @@ class TokenCreateCommand extends BaseGlobeCommand {
     final name = argResults?['name']?.toString() ??
         logger.prompt('❓ Provide name for token:');
     final dateString = argResults?['expiry']?.toString() ??
-        logger.prompt('❓ Set Expiry (yyyy-mm-dd):');
+        logger.prompt('❓ Set Expiry (yyyy-mm-dd):',
+            defaultValue: _getDefaultDate());
 
     final expiry = _parseTokenExpiryStr(dateString);
     if (expiry == null) {
@@ -101,4 +102,14 @@ DateTime? _parseTokenExpiryStr(String dateStr) {
   }
 
   return parsedDate;
+}
+
+String _getDefaultDate() {
+  final yearFromNow = DateTime.now().add(const Duration(days: 365));
+
+  final year = yearFromNow.year;
+  final month = yearFromNow.month.toString().padLeft(2, '0');
+  final day = yearFromNow.day.toString().padLeft(2, '0');
+
+  return '$year-$month-$day';
 }
