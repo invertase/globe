@@ -19,5 +19,5 @@ Future<void> run(HookContext context) async {
     workingDirectory: actualPath,
   );
 
-  progress.complete();
+  progress.complete('Workspace setup completed');
 }
