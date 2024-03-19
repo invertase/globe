@@ -1,4 +1,4 @@
-name: { { project_name.snakeCase() } }
+name: {{ project_name.snakeCase() }}
 
 environment:
   sdk: ^3.2.0
