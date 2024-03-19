@@ -10,7 +10,7 @@ Future<void> run(HookContext context) async {
     await Process.run('dart', ['pub', 'global', 'activate', 'melos']);
   }
 
-  final directoryName = context.vars['project_name'];
+  final directoryName = context.vars['project_name'] as String;
   final actualPath = path.join(Directory.current.path, directoryName);
 
   await Process.run(
