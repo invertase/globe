@@ -1,4 +1,4 @@
-name: shelf_jwt_auth
+name: { { project_name.snakeCase() } }
 
 environment:
   sdk: ^3.2.0

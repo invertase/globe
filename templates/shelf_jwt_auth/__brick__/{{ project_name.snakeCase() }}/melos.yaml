@@ -1,12 +1,8 @@
-name: yaroodev
+name: {{ project_name }}_dev
 
 packages:
   - frontend
   - server
-
-command:
-  bootstrap:
-    runPubGetInParallel: false
 
 scripts:
   test: melos exec -c 1  -- "dart test" --fail-fast

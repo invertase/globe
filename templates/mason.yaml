@@ -1,0 +1,6 @@
+# Register bricks which can be consumed via the Mason CLI.
+# Run "mason get" to install all registered bricks.
+# To learn more, visit https://docs.brickhub.dev.
+bricks:
+  shelf_jwt_auth:
+    path: shelf_jwt_auth
