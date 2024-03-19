@@ -40,8 +40,10 @@ class TokenCreateCommand extends BaseGlobeCommand {
     final name = argResults?['name']?.toString() ??
         logger.prompt('❓ Provide name for token:');
     final dateString = argResults?['expiry']?.toString() ??
-        logger.prompt('❓ Set Expiry (yyyy-mm-dd):',
-            defaultValue: _getDefaultDate());
+        logger.prompt(
+          '❓ Set Expiry (yyyy-mm-dd):',
+          defaultValue: _getDefaultDate(),
+        );
 
     final expiry = _parseTokenExpiryStr(dateString);
     if (expiry == null) {
