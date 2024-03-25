@@ -1,0 +1,18 @@
+name: globe_rest_server
+description: A highly customizable template for creating RESTful servers with Dart.
+version: 0.1.0+1
+environment:
+  mason: ">=0.1.0-dev.52 <0.1.0"
+vars:
+  project_name:
+    type: string
+    description: "The name of your project, used to name the project directory and as the default project name in pubspec.yaml."
+    prompt: "What is the name of your project?"
+  package_description:
+    type: string
+    default: "A new Globe REST server project."
+    description: "A short description of your project."
+  primary_endpoint:
+    type: string
+    description: "The name of the primary endpoint for your REST server."
+    prompt: "What is the name of your primary endpoint (e.g., users, products)?"

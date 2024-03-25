@@ -1,0 +1,39 @@
+name: {{project_name.snakeCase()}}
+description: {{package_description}}
+version: 0.1.0+1
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+environment:
+  sdk: {{dart_sdk_version}}
+
+dependencies:
+  dart_frog: ^1.1.0
+  dart_frog_auth: ^1.1.0
+  shelf_cors_headers: ^0.1.5
+
+  {{#if include_json_serializable}}
+  json_annotation: ^4.8.1
+  {{/if}}  
+  authentication_repository:
+    path: packages/authentication_repository
+  user_repository:
+    path: packages/user_repository
+  db_client:
+    path: packages/db_client
+  session_repository:
+    path: packages/session_repository
+  api_domain:
+    path: packages/api_domain  
+  {{#if include_logging}}
+  logging: ^1.2.0
+  {{/if}}
+
+dev_dependencies:
+  mocktail: ^1.0.3
+  test: ^1.19.2
+  very_good_analysis: ^5.1.0
+  {{#if include_json_serializable}}
+  dart_frog_build: ^0.5.0
+  build_runner: ^2.1.4
+  json_serializable: ^6.7.1
+  {{/if}}
