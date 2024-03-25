@@ -1,0 +1,8 @@
+name: {{project_name.snakeCase()}}
+description: {{package_description}}
+version: 0.1.0+1
+environment:
+  sdk: '>=2.12.0 <3.0.0'
+
+dependencies:
+  dart_frog: ^0.1.0

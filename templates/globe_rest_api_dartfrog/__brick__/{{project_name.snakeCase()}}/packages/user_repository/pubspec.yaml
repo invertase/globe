@@ -1,0 +1,19 @@
+name: user_repository
+description: API's user repository
+version: 0.1.0+1
+publish_to: none
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  crypto: ^3.0.3
+  db_client:
+    path: ../db_client
+  api_domain:
+    path: ../api_domain
+
+dev_dependencies:
+  mocktail: ^1.0.0
+  test: ^1.19.2
+  very_good_analysis: ^5.1.0

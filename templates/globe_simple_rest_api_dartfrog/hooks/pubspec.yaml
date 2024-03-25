@@ -1,0 +1,7 @@
+name: mason_hooks
+
+dependencies:
+  mason:
+
+environment:
+  sdk: "^3.2.0"

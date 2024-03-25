@@ -1,0 +1,64 @@
+name: globe_rest_server
+description: A highly customizable template for creating RESTful servers with Dart.
+version: 0.1.0+1
+environment:
+  mason: ">=0.1.0-dev.52 <0.1.0"
+vars:
+  project_name:
+    type: string
+    description: "The name of your project, used to name the project directory and as the default project name in pubspec.yaml."
+    prompt: "What is the name of your project?"
+  package_description:
+    type: string
+    default: "A new Globe REST server project."
+    description: "A short description of your project."
+  dart_sdk_version:
+    type: string
+    default: ">=2.12.0 <3.0.0"
+    description: "The Dart SDK version constraint."  
+  endpoint_name:
+    type: string
+    description: "The name of the primary endpoint for your REST server."
+    prompt: "What is the name of your primary endpoint (e.g., users, products)?"
+  custom_entrypoint:
+    type: boolean
+    description: "Use a custom entry point for the server."
+    prompt: "Do you want a custom entry point for your server (yes/no)?"
+    default: false
+  authentication_method:
+    type: string
+    description: "The method of authentication for your server."
+    prompt: "What authentication method would you like to use (none, JWT, OAuth2)?"
+    default: "none"
+  enable_cors:
+    type: boolean
+    description: "Enable CORS policy for your server."
+    prompt: "Would you like to enable CORS policy (yes/no)?"
+    default: false
+  include_logging:
+    type: boolean
+    description: "Include a logging middleware for your application."
+    prompt: "Would you like to include logging functionality (yes/no)?"
+    default: false
+  support_wildcard_routes:
+    type: boolean
+    description: "Add support for wildcard routes in your application."
+    prompt: "Do you need support for wildcard routes (yes/no)?"
+  wildcard_route_name:
+    type: string
+    description: "The name of the wildcard route, default is posts for a blog."
+    prompt: "What is the name of your wildcard route?"
+    default: "posts"
+  include_json_serializable:
+    type: boolean
+    description: "Include json_serializable for easier JSON serialization/deserialization."
+    prompt: "Would you like to add support for json_serializable (yes/no)?"
+  form_data_support:
+    type: string
+    description: "The type of form data support your server will handle."
+    prompt: "What type of form data does your server need to support (none, application/x-www-form-urlencoded, multipart/form-data)?"
+    default: "none"
+  include_docker_support:
+    type: boolean
+    description: "Include Dockerfile for containerizing your application."
+    prompt: "Would you like to include Docker support (yes/no)?"

@@ -1,0 +1,11 @@
+
+name: {{project_name.snakeCase()}}
+description: A DartFrog REST API project with optional CORS and authentication.
+version: 0.1.0+1
+environment:
+  sdk: '>=2.12.0 <3.0.0'
+
+dependencies:
+  dart_frog: ^0.1.0
+  {{#include_cors}}cors_headers: ^0.1.0{{/include_cors}}
+  {{#include_auth}}jwt: ^0.1.0{{/include_auth}}
