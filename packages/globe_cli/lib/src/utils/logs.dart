@@ -149,6 +149,12 @@ Future<Stream<BuildLogEvent>> streamBuildLogs({
     ctrl.add(event);
   });
 
+  final params = GetBuildLogsParams(buildId);
+  final method = GetBuildLogs(params);
+  final message = jsonEncode(method.toJson());
+
+  ws.add(message);
+
   unawaited(ws.done.then((_) => ctrl.close()));
 
   ctrl.onCancel = () {
