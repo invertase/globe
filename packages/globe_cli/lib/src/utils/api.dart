@@ -277,61 +277,6 @@ class GlobeApi {
       await http.delete(_buildUri(deleteTokenPath), headers: headers),
     )! as Map<String, Object?>;
   }
-
-  Future<String> getRealtimeToken({
-    required String orgId,
-    required String projectId,
-    required String deploymentId,
-    required String path,
-    Map<String, String>? headers,
-  }) {
-    final urlPath = [
-      'realtime',
-      'orgs',
-      orgId,
-      path,
-      'tune',
-    ].join('/');
-
-    final uri = _buildUri('/$urlPath');
-    logger.detail('API Request: GET /$urlPath');
-
-    final request = http.Request('GET', uri);
-    request.headers.addAll(this.headers);
-    if (headers != null) {
-      request.headers.addAll(headers);
-    }
-
-    return request.send().then((response) async {
-      final json = jsonDecode(await response.stream.bytesToString())
-          as Map<String, Object?>;
-      if (response.statusCode == 200) {
-        return json['token']! as String;
-      } else {
-        throw ApiException._(response.statusCode, json['message']! as String);
-      }
-    });
-  }
-
-  Future<String> getBuildLogsToken({
-    required String orgId,
-    required String projectId,
-    required String deploymentId,
-    required String buildId,
-  }) {
-    requireAuth();
-
-    return getRealtimeToken(
-      orgId: orgId,
-      projectId: projectId,
-      deploymentId: deploymentId,
-      path: 'build-logs',
-      headers: {
-        'x-globe-build-id': buildId,
-        'x-globe-location': 'us-central1',
-      },
-    );
-  }
 }
 
 class Settings {
