@@ -1,3 +1,7 @@
+## 0.0.9+5
+
+ - **REFACTOR**: Migrate to the latest realtime API ([#70](https://github.com/invertase/globe/issues/70)). ([6d4285a6](https://github.com/invertase/globe/commit/6d4285a6c79dafffd27c7f3ab5a9c4b12e9e0ef1))
+
 ## 0.0.9+4
 
  - **REFACTOR**: Add select all projects option ([#66](https://github.com/invertase/globe/issues/66)). ([c2e786ff](https://github.com/invertase/globe/commit/c2e786ffbb84ec6ee0747efbca4cfa9b7a8239af))

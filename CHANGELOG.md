@@ -15,6 +15,27 @@ Packages with breaking changes:
 
 Packages with other changes:
 
+ - [`globe_cli` - `v0.0.9+5`](#globe_cli---v0095)
+
+---
+
+#### `globe_cli` - `v0.0.9+5`
+
+ - **REFACTOR**: Migrate to the latest realtime API ([#70](https://github.com/invertase/globe/issues/70)). ([6d4285a6](https://github.com/invertase/globe/commit/6d4285a6c79dafffd27c7f3ab5a9c4b12e9e0ef1))
+
+
+## 2024-03-26
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
  - [`globe_cli` - `v0.0.9+4`](#globe_cli---v0094)
 
 ---
