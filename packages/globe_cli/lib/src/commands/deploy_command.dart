@@ -199,7 +199,7 @@ class DeployCommand extends BaseGlobeCommand {
 
           unawaited(
             logs!.firstWhere((element) {
-              if (element case LogsBuildLogEvent(done: final done)) return done;
+              if (element case BuildLogs(done: final done)) return done;
               return false;
             }).then((_) {
               status = logger.progress('Deploying...');

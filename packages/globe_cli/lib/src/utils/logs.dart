@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:mason_logger/mason_logger.dart';
 
 import 'api.dart';
+import 'rpc.dart';
 
 enum BuildLogEventType {
   error,
@@ -12,29 +13,52 @@ enum BuildLogEventType {
   unknown,
 }
 
+class GetBuildLogsParams {
+  final String buildId;
+
+  const GetBuildLogsParams(this.buildId);
+
+  Map<String, dynamic> toJson() {
+    return {
+      'buildId': buildId,
+    };
+  }
+}
+
+class GetBuildLogs extends MethodCall<GetBuildLogsParams> with JsonParams {
+  @override
+  final String method = 'getBuildLogs';
+  @override
+  final GetBuildLogsParams params;
+
+  GetBuildLogs(this.params);
+}
+
 sealed class BuildLogEvent {
   const BuildLogEvent();
 
-  factory BuildLogEvent.fromJson(Map<String, dynamic> json) {
-    switch (json['type'] as String) {
-      case 'error':
-        return ErrorBuildLogEvent.fromJson(json);
-      case 'logs':
-        return LogsBuildLogEvent.fromJson(json);
+  factory BuildLogEvent.fromRPCResponse(RPCResponse response) {
+    switch (response) {
+      case SuccessResponseWithResult(result: final result):
+        return BuildLogs.fromJson(result as List);
+      case DoneResponse():
+        return BuildLogs([], done: true);
+      case ErrorResponse(error: final error):
+        return BuildLogsError(error: '[${error.code}]: ${error.message}');
       default:
-        return UnknownBuildLogEvent(json);
+        throw Exception('Unknown response type');
     }
   }
   BuildLogEventType get type;
 }
 
-class ErrorBuildLogEvent extends BuildLogEvent {
-  ErrorBuildLogEvent({
+class BuildLogsError extends BuildLogEvent {
+  BuildLogsError({
     required this.error,
   });
 
-  factory ErrorBuildLogEvent.fromJson(Map<String, dynamic> json) {
-    return ErrorBuildLogEvent(
+  factory BuildLogsError.fromJson(Map<String, dynamic> json) {
+    return BuildLogsError(
       error: json['error'] as String,
     );
   }
@@ -43,23 +67,17 @@ class ErrorBuildLogEvent extends BuildLogEvent {
   final String error;
 }
 
-class LogsBuildLogEvent extends BuildLogEvent {
-  LogsBuildLogEvent({
-    required this.logs,
-    this.done = false,
-  });
+class BuildLogs extends BuildLogEvent {
+  BuildLogs(this.items, {this.done = false});
 
-  factory LogsBuildLogEvent.fromJson(Map<String, dynamic> json) {
-    return LogsBuildLogEvent(
-      done: json['done'] as bool? ?? false,
-      logs: (json['logs'] as List<dynamic>)
-          .map((e) => BuildLog.fromJson(e as Map<String, dynamic>))
-          .toList(),
+  factory BuildLogs.fromJson(List<dynamic> json) {
+    return BuildLogs(
+      json.map((e) => BuildLog.fromJson(e as Map<String, dynamic>)).toList(),
     );
   }
   @override
   final BuildLogEventType type = BuildLogEventType.logs;
-  final List<BuildLog> logs;
+  final List<BuildLog> items;
   final bool done;
 }
 
@@ -118,21 +136,15 @@ Future<Stream<BuildLogEvent>> streamBuildLogs({
   final host = Uri.parse(api.metadata.endpoint).host;
   final ctrl = StreamController<BuildLogEvent>.broadcast();
 
-  final buildLogsToken = await api.getBuildLogsToken(
-    orgId: orgId,
-    projectId: projectId,
-    deploymentId: deploymentId,
-    buildId: buildId,
-  );
-
   final ws = await WebSocket.connect(
-    'wss://$host/api/realtime/orgs/$orgId/$buildLogsToken',
+    'wss://$host/api/realtime/orgs/$orgId',
     headers: api.headers,
   );
 
   ws.listen((e) {
     final json = jsonDecode(e as String) as Map<String, dynamic>;
-    final event = BuildLogEvent.fromJson(json);
+    final res = RPCResponse.fromJson(json);
+    final event = BuildLogEvent.fromRPCResponse(res);
 
     ctrl.add(event);
   });
@@ -151,7 +163,7 @@ Future<void> printLogs(Logger logger, Stream<BuildLogEvent> logs) async {
   await for (final event in logs) {
     printLog(logger, event);
 
-    if (event case LogsBuildLogEvent(done: final done)) {
+    if (event case BuildLogs(done: final done)) {
       if (done) {
         break;
       }
@@ -161,9 +173,9 @@ Future<void> printLogs(Logger logger, Stream<BuildLogEvent> logs) async {
 
 void printLog(Logger logger, BuildLogEvent log) {
   switch (log) {
-    case ErrorBuildLogEvent(error: final error):
+    case BuildLogsError(error: final error):
       logger.err(error);
-    case LogsBuildLogEvent(logs: final logs):
+    case BuildLogs(items: final logs):
       for (final log in logs) {
         logger.info(log.toString());
       }
