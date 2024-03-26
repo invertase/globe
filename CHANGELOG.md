@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2024-03-26
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`globe_cli` - `v0.0.9+4`](#globe_cli---v0094)
+
+---
+
+#### `globe_cli` - `v0.0.9+4`
+
+ - **REFACTOR**: Add select all projects option ([#66](https://github.com/invertase/globe/issues/66)). ([c2e786ff](https://github.com/invertase/globe/commit/c2e786ffbb84ec6ee0747efbca4cfa9b7a8239af))
+ - **REFACTOR**: Add default expiry date ([#65](https://github.com/invertase/globe/issues/65)). ([1d7274d4](https://github.com/invertase/globe/commit/1d7274d47fcda809f9f2022426b923151a39e263))
+
+
 ## 2024-03-07
 
 ### Changes

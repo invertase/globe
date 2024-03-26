@@ -1,3 +1,8 @@
+## 0.0.9+4
+
+ - **REFACTOR**: Add select all projects option ([#66](https://github.com/invertase/globe/issues/66)). ([c2e786ff](https://github.com/invertase/globe/commit/c2e786ffbb84ec6ee0747efbca4cfa9b7a8239af))
+ - **REFACTOR**: Add default expiry date ([#65](https://github.com/invertase/globe/issues/65)). ([1d7274d4](https://github.com/invertase/globe/commit/1d7274d47fcda809f9f2022426b923151a39e263))
+
 ## 0.0.9+3
 
  - **FIX**(globe_cli): Changed local base url to localhost from 127.0.0.1 ([#62](https://github.com/invertase/globe/issues/62)). ([5467d63f](https://github.com/invertase/globe/commit/5467d63ff510ebdb22748fbe95ed95b99ea2393b))
