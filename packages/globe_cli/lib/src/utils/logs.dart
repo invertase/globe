@@ -137,7 +137,7 @@ Future<Stream<BuildLogEvent>> streamBuildLogs({
   final ctrl = StreamController<BuildLogEvent>.broadcast();
 
   final ws = await WebSocket.connect(
-    'wss://$host/api/realtime/orgs/$orgId',
+    'wss://$host/api/realtime/$orgId',
     headers: api.headers,
   );
 
