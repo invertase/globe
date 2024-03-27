@@ -1,11 +1,11 @@
 ---
-name: RESTapi with DartFrog
+name: RESTApi with DartFrog
 description: Building a RESTapi backend with DartFrog
 tags: ["dart", "dartfrog", "globe"]
 username: Invertase
 ---
 
-# RESTapi With DartFrog
+# RESTApi With DartFrog
 
 ## Overview
 
@@ -24,6 +24,7 @@ This package comes with
 - Dynamic route handle
 - Wildcard route handle
 - Serializable
+- Blog ready endpoint
 - And more
 
 ### How to use
