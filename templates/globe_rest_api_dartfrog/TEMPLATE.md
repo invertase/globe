@@ -42,6 +42,8 @@ define the following environment variables
 
 ```bash
 PROJECT_URL=https://localhost:3000 # Or your domain
+SECRET=xxxx # your authentication provider secret 
+ISSUER=xxx # your authentication provider issuer
 ```
 
 ### Links
