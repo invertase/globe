@@ -6,9 +6,15 @@ import '../middlewares/middlewares.dart';
 
 Handler middleware(Handler handler) {
   return handler
+      {{#if include_authentication}}
       .use(authenticationValidator())
+      {{/if}}
+      {{#if enable_cors}}
       .use(corsHeaders())
+      {{/if}}
+      {{#if include_logging}}
       .use(requestLogger())
+      {{/if}}
       .use(
         provider<SessionRepository>(
           (context) => SessionRepository(dbClient: context.read<DbClient>()),

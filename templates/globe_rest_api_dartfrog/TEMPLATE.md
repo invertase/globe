@@ -17,14 +17,17 @@ Creating a simple RESTApi server usually comes with many boilerplate codes which
 
 This package comes with
 
-- Authentication
+- JWT Authentication
 - Custom Entry point
 - Logger
 - CORS
 - Dynamic route handle
 - Wildcard route handle
 - Serializable
-- Blog ready endpoint
+- Session Manager
+- In-Memory database
+- Adapters
+- Middlewares
 - And more
 
 ### How to use
@@ -33,6 +36,12 @@ Simply install `mason`
 
 ```bash
 mason make ... 
+```
+
+define the following environment variables
+
+```bash
+PROJECT_URL=https://localhost:3000 # Or your domain
 ```
 
 ### Links
