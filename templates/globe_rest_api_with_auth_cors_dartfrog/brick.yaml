@@ -7,6 +7,10 @@ vars:
     type: string
     description: 'The name of your DartFrog project.'
     prompt: 'What is the name of your project?'
+  primary_endpoint:
+    type: string
+    description: "The name of the primary endpoint for your REST server."
+    prompt: "What is the name of your primary endpoint (e.g., users, products)?"    
   include_cors:
     type: boolean
     description: 'Include CORS middleware?'
