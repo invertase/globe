@@ -29,26 +29,22 @@ vars:
     type: boolean
     description: "The method of authentication for your server."
     prompt: "Would like to enable JWT parsing in your project?"
-    default: false
+    default: true
   enable_cors:
     type: boolean
     description: "Enable CORS policy for your server."
     prompt: "Would you like to enable CORS policy (yes/no)?"
-    default: false
+    default: true
   create_changelogs:
     type: boolean
     description: "Create a CHANGELOG.md for the project."
     prompt: "Would you like to enable changelog (yes/no)?"
-    default: false
+    default: true
   include_logging:
     type: boolean
     description: "Include a logging middleware for your application."
     prompt: "Would you like to include logging functionality (yes/no)?"
-    default: false
-  support_wildcard_routes:
-    type: boolean
-    description: "Add support for wildcard routes in your application."
-    prompt: "Do you need support for wildcard routes (yes/no)?"
+    default: true
   wildcard_route_name:
     type: string
     description: "The name of the wildcard route, default is posts for a blog."
@@ -58,3 +54,4 @@ vars:
     type: boolean
     description: "Include Dockerfile and docker-compose for containerizing your application."
     prompt: "Would you like to include Docker support (yes/no)?"
+    default: true
