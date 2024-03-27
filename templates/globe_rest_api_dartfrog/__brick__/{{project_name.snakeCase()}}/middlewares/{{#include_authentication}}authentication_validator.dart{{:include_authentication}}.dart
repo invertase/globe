@@ -1,9 +1,8 @@
-import 'package:authentication_repository/authentication_repository.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:dart_frog_auth/dart_frog_auth.dart';
-import 'package:api_domain/api_domain.dart';
-import 'package:user_repository/user_repository.dart';
-import 'package:{{project_name.snakeCase()}}/models/models.dart';
+
+import '../models/models.dart';
+import '../repositories/repositories.dart';
 
 /// Middleware that checks if the request authentication is valid.
 ///

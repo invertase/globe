@@ -15,9 +15,7 @@ dependencies:
   {{#if enable_cors}}
   shelf_cors_headers: ^0.1.5
   {{/if}}  
-  {{#if include_json_serializable}}
   json_annotation: ^4.8.1
-  {{/if}}  
   logging: ^1.2.0
   equatable: ^2.0.5
   bad_words: ^0.3.0
@@ -29,8 +27,6 @@ dev_dependencies:
   mocktail: ^1.0.3
   test: ^1.19.2
   very_good_analysis: ^5.1.0
-  {{#if include_json_serializable}}
   dart_frog_build: ^0.5.0
   build_runner: ^2.1.4
   json_serializable: ^6.7.1
-  {{/if}}
