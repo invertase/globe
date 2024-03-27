@@ -1,9 +1,9 @@
 // ignore_for_file: prefer_const_constructors
-import 'package:db_client/db_client.dart';
-import 'package:api_domain/api_domain.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
-import 'package:user_repository/user_repository.dart';
+import 'package:{{project_name.snakeCase()}}/models/models.dart';
+import 'package:{{project_name.snakeCase()}}/repositories/repositories.dart';
+import 'package:{{project_name.snakeCase()}}/services/db_client.dart';
 
 class _MockDbClient extends Mock implements DbClient {}
 

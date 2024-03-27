@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
-import 'package:db_client/db_client.dart';
-import 'package:api_domain/api_domain.dart';
+import '../../services/db_client.dart';
+import '../../models/models.dart';
 
 /// Exception thrown when a user tries to sign up with a username
 class UserAlreadyExistsException implements Exception {}

@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:dart_frog/dart_frog.dart';
-import 'package:api_domain/api_domain.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
-import 'package:user_repository/user_repository.dart';
+import 'package:{{project_name.snakeCase()}}/repositories/repositories.dart';
+import 'package:{{project_name.snakeCase()}}/models/models.dart';
 
 import '../../../routes/auth/sign_up.dart' as route;
 

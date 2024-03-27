@@ -40,11 +40,6 @@ vars:
     description: "Create a CHANGELOG.md for the project."
     prompt: "Would you like to enable changelog (yes/no)?"
     default: false
-  include_in_memory_db:
-    type: boolean
-    description: "Create an in-memory database"
-    prompt: "Would you like to enable in-memory db (yes/no)?"
-    default: false    
   include_logging:
     type: boolean
     description: "Include a logging middleware for your application."
@@ -59,16 +54,7 @@ vars:
     description: "The name of the wildcard route, default is posts for a blog."
     prompt: "What is the name of your wildcard route?"
     default: "posts"
-  include_json_serializable:
+  include_docker:
     type: boolean
-    description: "Include json_serializable for easier JSON serialization/deserialization."
-    prompt: "Would you like to add support for json_serializable (yes/no)?"
-  form_data_support:
-    type: string
-    description: "The type of form data support your server will handle."
-    prompt: "What type of form data does your server need to support (none, application/x-www-form-urlencoded, multipart/form-data)?"
-    default: "none"
-  include_docker_support:
-    type: boolean
-    description: "Include Dockerfile for containerizing your application."
+    description: "Include Dockerfile and docker-compose for containerizing your application."
     prompt: "Would you like to include Docker support (yes/no)?"

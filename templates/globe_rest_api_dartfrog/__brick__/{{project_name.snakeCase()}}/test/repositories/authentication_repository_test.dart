@@ -1,6 +1,6 @@
 // ignore_for_file: prefer_const_constructors
-import 'package:authentication_repository/authentication_repository.dart';
 import 'package:test/test.dart';
+import 'package:{{project_name.snakeCase()}}/repositories/repositories.dart';
 
 void main() {
   group('AuthenticationRepository', () {

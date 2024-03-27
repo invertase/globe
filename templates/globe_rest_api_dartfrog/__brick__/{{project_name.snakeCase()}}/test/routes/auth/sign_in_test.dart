@@ -4,8 +4,6 @@ import 'package:dart_frog/dart_frog.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 import 'package:{{project_name.snakeCase()}}/services/db_client.dart';
-import 'package:{{project_name.snakeCase()}}/services/db_client.dart';
-import 'package:{{project_name.snakeCase()}}/services/db_client.dart';
 
 import '../../../routes/auth/sign_in.dart' as route;
 

@@ -23,6 +23,7 @@ dependencies:
   bad_words: ^0.3.0
   uuid: ^4.3.3
   crypto: ^3.0.3
+  provider: ^6.1.2
 
 dev_dependencies:
   mocktail: ^1.0.3
