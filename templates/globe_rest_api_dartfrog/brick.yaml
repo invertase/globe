@@ -25,16 +25,26 @@ vars:
     description: "Use a custom entry point for the server."
     prompt: "Do you want a custom entry point for your server (yes/no)?"
     default: false
-  authentication_method:
-    type: string
+  include_authentication:
+    type: boolean
     description: "The method of authentication for your server."
-    prompt: "What authentication method would you like to use (none, JWT, OAuth2)?"
-    default: "none"
+    prompt: "Would like to enable JWT parsing in your project?"
+    default: false
   enable_cors:
     type: boolean
     description: "Enable CORS policy for your server."
     prompt: "Would you like to enable CORS policy (yes/no)?"
     default: false
+  create_changelogs:
+    type: boolean
+    description: "Create a CHANGELOG.md for the project."
+    prompt: "Would you like to enable changelog (yes/no)?"
+    default: false
+  include_in_memory_db:
+    type: boolean
+    description: "Create an in-memory database"
+    prompt: "Would you like to enable in-memory db (yes/no)?"
+    default: false    
   include_logging:
     type: boolean
     description: "Include a logging middleware for your application."

@@ -1,12 +1,11 @@
 import 'dart:io';
 
-import 'package:authentication_repository/authentication_repository.dart';
 import 'package:dart_frog/dart_frog.dart';
-import 'package:api_domain/api_domain.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:session_repository/session_repository.dart';
 import 'package:test/test.dart';
-import 'package:user_repository/user_repository.dart';
+import 'package:{{project_name.snakeCase()}}/services/db_client.dart';
+import 'package:{{project_name.snakeCase()}}/services/db_client.dart';
+import 'package:{{project_name.snakeCase()}}/services/db_client.dart';
 
 import '../../../routes/auth/sign_in.dart' as route;
 

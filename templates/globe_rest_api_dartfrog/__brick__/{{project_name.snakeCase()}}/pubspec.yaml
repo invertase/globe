@@ -8,25 +8,21 @@ environment:
 
 dependencies:
   dart_frog: ^1.1.0
+  {{#if include_authentication}}
   dart_frog_auth: ^1.1.0
+  dart_jsonwebtoken: ^2.13.0
+  {{/if}}  
+  {{#if enable_cors}}
   shelf_cors_headers: ^0.1.5
-
+  {{/if}}  
   {{#if include_json_serializable}}
   json_annotation: ^4.8.1
   {{/if}}  
-  authentication_repository:
-    path: packages/authentication_repository
-  user_repository:
-    path: packages/user_repository
-  db_client:
-    path: packages/db_client
-  session_repository:
-    path: packages/session_repository
-  api_domain:
-    path: packages/api_domain  
-  {{#if include_logging}}
   logging: ^1.2.0
-  {{/if}}
+  equatable: ^2.0.5
+  bad_words: ^0.3.0
+  uuid: ^4.3.3
+  crypto: ^3.0.3
 
 dev_dependencies:
   mocktail: ^1.0.3

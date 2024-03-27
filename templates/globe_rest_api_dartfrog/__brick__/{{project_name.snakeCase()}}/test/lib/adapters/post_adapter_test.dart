@@ -1,8 +1,8 @@
-import 'package:db_client/db_client.dart';
-import 'package:api_domain/api_domain.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 import 'package:{{project_name.snakeCase()}}/adapters/adapters.dart';
+import 'package:{{project_name.snakeCase()}}/services/db_client.dart';
+import 'package:{{project_name.snakeCase()}}/models/models.dart';
 
 class _MockDbClient extends Mock implements DbClient {}
 
