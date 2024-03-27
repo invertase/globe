@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:dart_frog/dart_frog.dart';
-import 'package:user_repository/user_repository.dart';
+import '../../repositories/repositories.dart';
 
 Future<Response> onRequest(RequestContext context) async {
   return switch (context.request.method) {

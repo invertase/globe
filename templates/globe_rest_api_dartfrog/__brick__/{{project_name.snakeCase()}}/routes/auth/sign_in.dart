@@ -1,9 +1,6 @@
 import 'dart:io';
-
-import 'package:authentication_repository/authentication_repository.dart';
 import 'package:dart_frog/dart_frog.dart';
-import 'package:session_repository/session_repository.dart';
-import 'package:user_repository/user_repository.dart';
+import '../../repositories/repositories.dart';
 
 Future<Response> onRequest(RequestContext context) async {
   return switch (context.request.method) {

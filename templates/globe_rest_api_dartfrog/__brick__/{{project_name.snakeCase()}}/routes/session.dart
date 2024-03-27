@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:authentication_repository/authentication_repository.dart';
 import 'package:dart_frog/dart_frog.dart';
-import 'package:{{project_name.snakeCase()}}/models/models.dart';
+import '../models/models.dart';
+import '../repositories/repositories.dart';
 
 Future<Response> onRequest(RequestContext context) async {
   return switch (context.request.method) {
