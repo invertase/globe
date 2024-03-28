@@ -13,11 +13,21 @@ Future<void> run(HookContext context) async {
   final directoryName = context.vars['project_name'] as String;
   final actualPath = path.join(Directory.current.path, directoryName);
 
+  /// bootstrap workspace
   await Process.run(
     'dart',
     ["pub", "global", "run", "melos", "bootstrap"],
     workingDirectory: actualPath,
   );
 
-  progress.complete('Workspace setup completed');
+  progress.update('Generating frontend code');
+
+  /// Generate code
+  await Process.run(
+    'flutter',
+    ['pub', 'run', 'build_runner', 'build', '--delete-conflicting-outputs'],
+    workingDirectory: path.join(actualPath, 'frontend'),
+  );
+
+  progress.complete('$directoryName is ready 🔥');
 }

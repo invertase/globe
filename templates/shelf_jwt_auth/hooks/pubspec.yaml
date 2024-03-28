@@ -1,4 +1,4 @@
-name: mason_hooks
+name: hooks
 
 dependencies:
   mason:
