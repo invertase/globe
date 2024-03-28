@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shelf/shelf.dart';
 
-import 'router.dart';
+import 'firebase.dart';
 
 class User {
   final String id;

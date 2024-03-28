@@ -20,14 +20,23 @@ Future<void> run(HookContext context) async {
     workingDirectory: actualPath,
   );
 
-  progress.update('Generating frontend code');
+  progress.update('Generating project code');
+
+  const buildRunnerCmds = ['build_runner', 'build'];
 
   /// Generate code
-  await Process.run(
-    'flutter',
-    ['pub', 'run', 'build_runner', 'build', '--delete-conflicting-outputs'],
-    workingDirectory: path.join(actualPath, 'frontend'),
-  );
+  await Future.wait([
+    Process.run(
+      'flutter',
+      ['pub', 'run', ...buildRunnerCmds],
+      workingDirectory: path.join(actualPath, 'frontend'),
+    ),
+    Process.run(
+      'dart',
+      ['run', ...buildRunnerCmds],
+      workingDirectory: path.join(actualPath, 'server'),
+    ),
+  ]);
 
   progress.complete('$directoryName is ready 🔥');
 }

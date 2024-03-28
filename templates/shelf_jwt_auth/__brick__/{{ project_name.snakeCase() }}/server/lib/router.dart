@@ -3,19 +3,15 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dart_firebase_admin/auth.dart';
-import 'package:dart_firebase_admin/firestore.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 
-import 'firebase.dart';
-import 'utils.dart';
+import 'src/firebase.dart';
+import 'src/utils.dart';
 
 Router get router => Router()
   ..post('/api/auth/register', _signupHandler)
   ..get('/api/users/me', (req) => checkAuth(req, _getUser));
-
-CollectionReference get userCollection =>
-    Firebase.firestore.collection('users');
 
 Future<Response> _getUser(Request request, User user) async {
   return Response.ok(

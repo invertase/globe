@@ -1,21 +1,19 @@
 import 'dart:io';
 
-import 'package:dotenv/dotenv.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart';
 import 'package:shelf_cors_headers/shelf_cors_headers.dart';
 
-import '../src/router.dart';
-import '../src/firebase.dart';
+import 'package:server/env.dart';
+import 'package:server/router.dart';
+import 'package:server/src/firebase.dart';
 
 void main(List<String> args) async {
-  final dotenv = DotEnv()..load();
-
   Firebase.init(
-    projectId: dotenv['PROJECT_ID']!,
-    clientId: dotenv['FIREBASE_CLIENT_ID']!,
-    privateKey: dotenv['FIREBASE_PRIVATE_KEY']!.replaceAll(r'\n', '\n'),
-    clientEmail: dotenv['FIREBASE_CLIENT_EMAIL']!,
+    projectId: Env.firebaseProjectId,
+    clientId: Env.firebaseClientId,
+    privateKey: Env.firebasePrivateKey.replaceAll(r'\n', '\n'),
+    clientEmail: Env.firebasePrivateEmail,
   );
 
   // Use any available host or container IP (usually `0.0.0.0`).

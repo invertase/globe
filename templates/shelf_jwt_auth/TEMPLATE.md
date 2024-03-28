@@ -1,11 +1,13 @@
 ---
-name: Shelf JWT Auth
-description: Build an authentication flow using JWT from a Flutter application.
-tags: ["dart", "shelf", "authentication"]
+name: Firebase + JWT Auth + Shelf
+description: Build an authentication flow using Firebase + JWT with your Backend from a Flutter application.
+tags: ["firebase", "shelf", "authentication", "jwt"]
 username: Invertase
 ---
 
-# Shelf JWT Auth
+# Firebase + JWT Auth + Shelf
+
+The example shows how to do JWT authentication at the edge using Edge Middleware and Edge Functions.
 
 ## Overview
 
