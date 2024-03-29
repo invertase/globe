@@ -52,8 +52,6 @@ class DeployCommand extends BaseGlobeCommand {
 
   @override
   Future<int> run() async {
-    requireAuth();
-
     if (argResults?['token'] != null && argResults?['project'] != null) {
       final token = argResults!['token'] as String;
       final project = argResults!['project'] as String;
@@ -70,6 +68,8 @@ class DeployCommand extends BaseGlobeCommand {
       }
 
       scope.setScope(orgId: organizations.first.id, projectId: project);
+    } else {
+      requireAuth();
     }
 
     // If there is no scope, ask the user to link the project.
