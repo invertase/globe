@@ -8,3 +8,7 @@ linter:
 
     # No public API in this project
     public_member_api_docs: false
+
+analyzer:
+  exclude:
+    - lib/src/utils/ignore.dart
