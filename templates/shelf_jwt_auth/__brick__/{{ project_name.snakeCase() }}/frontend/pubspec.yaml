@@ -24,6 +24,7 @@ dependencies:
   http: ^1.1.0
   localstorage: ^4.0.1+4
   firebase_core: ^2.24.2
+  envied: ^0.5.3
 
 dev_dependencies:
   flutter_test:
@@ -32,6 +33,7 @@ dev_dependencies:
   flutter_lints: ^2.0.0
   json_serializable: ^6.7.1
   build_runner: ^2.4.7
+  envied_generator: ^0.5.3
 
 flutter:
   uses-material-design: true
