@@ -7,8 +7,10 @@ export 'api_service.dart';
 final getIt = GetIt.instance;
 
 void setupServices() {
-  var apiEndpoint = const String.fromEnvironment('Endpoint');
-  if (apiEndpoint.trim().isEmpty) apiEndpoint = 'http://localhost:8080';
+  final apiEndpoint = const String.fromEnvironment(
+    'API_URL',
+    defaultValue: 'http://localhost:8080',
+  );
 
   getIt.registerSingleton<ApiService>(ApiService(Uri.parse(apiEndpoint)));
   getIt.registerSingleton<FirebaseAuth>(FirebaseAuth.instance);
