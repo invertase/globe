@@ -28,11 +28,13 @@ Initialize your project using the `shelf_jwt_auth` brick
 $ mason make shelf_jwt_auth
 ```
 
-#### Create Firebase Account
+#### Setup Firebase Project
 
 You must create a Firebase account and generate Firebase Admin Service Account and download.
 
 Copy the `project_id`, `private_key`, `client_id`, `client_email` and fill in the `.env` file in the `server` directory.
+
+> We'll only need the `.env` for local development.
 
 ```
 FIREBASE_PROJECT_ID=
@@ -41,7 +43,11 @@ FIREBASE_PRIVATE_KEY=
 FIREBASE_CLIENT_EMAIL=
 ```
 
-> We'll only need the `.env` for local development.
+#### Link Frontend with Firebase
+
+Follow the guide at https://firebase.flutter.dev/docs/cli to link the `frontend` project with newly created Firebase project.
+
+> You should have a `firebase_options.dart` generated after completing this step.
 
 ### Running Project
 
