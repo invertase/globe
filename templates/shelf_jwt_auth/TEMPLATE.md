@@ -81,7 +81,7 @@ $ globe login
 
 #### Deploy Server
 
-To deploy the Shelf Dart server, in the `server` directory, run the following command:
+In the `server` directory, run the following command:
 
 ```shell
 $ globe deploy
@@ -89,4 +89,14 @@ $ globe deploy
 
 Once this is complete, copy your Deployment URL. Checkout [Deployments](https://docs.globe.dev/deployments) for more details.
 
+> Remember to set Environment Variables for your server app on Globe Dashboard and re-deploy your project.
+
 #### Deploy Frontend
+
+In the `frontend` directory, run the following command:
+
+```shell
+$ globe deploy
+```
+
+> You'll need to add an `API_URL` Environment variable to your project on Globe Dashboard. Then re-deploy your project.
