@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2024-03-30
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`globe_cli` - `v0.0.9+6`](#globe_cli---v0096)
+
+---
+
+#### `globe_cli` - `v0.0.9+6`
+
+ - **FIX**(globe_cli): Auth required before token checked bug ([#72](https://github.com/invertase/globe/issues/72)). ([d91b86c9](https://github.com/invertase/globe/commit/d91b86c93f74762f677499a4cc801951b536b258))
+ - **FIX**: Rework gitignore matching ([#71](https://github.com/invertase/globe/issues/71)). ([75b6b744](https://github.com/invertase/globe/commit/75b6b744f08d080a4a5541666d7732579f21a6c7))
+
+
 ## 2024-03-26
 
 ### Changes

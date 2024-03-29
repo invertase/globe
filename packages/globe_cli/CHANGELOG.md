@@ -1,3 +1,8 @@
+## 0.0.9+6
+
+ - **FIX**(globe_cli): Auth required before token checked bug ([#72](https://github.com/invertase/globe/issues/72)). ([d91b86c9](https://github.com/invertase/globe/commit/d91b86c93f74762f677499a4cc801951b536b258))
+ - **FIX**: Rework gitignore matching ([#71](https://github.com/invertase/globe/issues/71)). ([75b6b744](https://github.com/invertase/globe/commit/75b6b744f08d080a4a5541666d7732579f21a6c7))
+
 ## 0.0.9+5
 
  - **REFACTOR**: Migrate to the latest realtime API ([#70](https://github.com/invertase/globe/issues/70)). ([6d4285a6](https://github.com/invertase/globe/commit/6d4285a6c79dafffd27c7f3ab5a9c4b12e9e0ef1))
