@@ -9,7 +9,7 @@ username: Invertase
 
 ## Overview
 
-The example shows how to use Firebase + JWT Authentication on Flutter app & Dart Backend.
+The example shows how to use Firebase + JWT Authentication in Flutter app & Dart Backend.
 
 ### Features
 
@@ -45,7 +45,7 @@ FIREBASE_CLIENT_EMAIL=
 
 #### Link Frontend with Firebase
 
-Follow the guide at https://firebase.flutter.dev/docs/cli to link the `frontend` project with newly created Firebase project.
+Follow the guide at https://firebase.flutter.dev/docs/cli to link the `frontend` project with existing/newly created Firebase project.
 
 > You should have a `firebase_options.dart` generated after completing this step.
 
