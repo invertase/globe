@@ -432,12 +432,29 @@ class Project {
     required this.id,
     required this.orgId,
     required this.slug,
+    required this.paused,
     required this.createdAt,
     required this.updatedAt,
   });
 
   factory Project.fromJson(Map<dynamic, dynamic> json) {
     return switch (json) {
+      {
+        'id': final String id,
+        'organizationId': final String organizationId,
+        'slug': final String slug,
+        'paused': final bool paused,
+        'createdAt': final String createdAt,
+        'updatedAt': final String updatedAt,
+      } =>
+        Project._(
+          id: id,
+          orgId: organizationId,
+          slug: slug,
+          paused: paused,
+          createdAt: DateTime.parse(createdAt),
+          updatedAt: DateTime.parse(updatedAt),
+        ),
       {
         'id': final String id,
         'organizationId': final String organizationId,
@@ -449,6 +466,7 @@ class Project {
           id: id,
           orgId: organizationId,
           slug: slug,
+          paused: false,
           createdAt: DateTime.parse(createdAt),
           updatedAt: DateTime.parse(updatedAt),
         ),
@@ -459,6 +477,7 @@ class Project {
   final String id;
   final String orgId;
   final String slug;
+  final bool paused;
   final DateTime createdAt;
   final DateTime updatedAt;
 }
