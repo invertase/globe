@@ -1,6 +1,18 @@
 import 'dart:io';
-import 'package:path/path.dart' as path;
+
 import 'package:mason/mason.dart';
+import 'package:path/path.dart' as path;
+
+const _serverEnvVars = '''
+FIREBASE_PROJECT_ID=""
+FIREBASE_CLIENT_ID=""
+FIREBASE_PRIVATE_KEY=""
+FIREBASE_CLIENT_EMAIL=""
+''';
+
+const _frontendEnvVars = '''
+API_URL="http://localhost:8080"
+''';
 
 Future<void> run(HookContext context) async {
   final progress = context.logger.progress('Setting up melos for workspace');
@@ -22,6 +34,13 @@ Future<void> run(HookContext context) async {
 
   progress.update('Generating project code');
 
+  final frontendPath = path.join(actualPath, 'frontend');
+  final serverPath = path.join(actualPath, 'server');
+
+  /// Create .env files for local dev
+  File(path.join(frontendPath, '.env')).writeAsStringSync(_frontendEnvVars);
+  File(path.join(serverPath, '.env')).writeAsStringSync(_serverEnvVars);
+
   const buildRunnerCmds = ['build_runner', 'build'];
 
   /// Generate code
@@ -29,12 +48,12 @@ Future<void> run(HookContext context) async {
     Process.run(
       'flutter',
       ['pub', 'run', ...buildRunnerCmds],
-      workingDirectory: path.join(actualPath, 'frontend'),
+      workingDirectory: frontendPath,
     ),
     Process.run(
       'dart',
       ['run', ...buildRunnerCmds],
-      workingDirectory: path.join(actualPath, 'server'),
+      workingDirectory: serverPath,
     ),
   ]);
 
