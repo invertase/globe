@@ -1,18 +1,19 @@
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:frontend/data/services.dart';
-import 'package:frontend/pages/auth/auth.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
-import 'data/providers/auth_provider.dart';
+import 'src/data/providers/auth_provider.dart';
+import 'src/data/services.dart';
+import 'src/pages/auth/auth.dart';
+import 'src/pages/home.dart';
 
 const primaryColor = Color(0xff0078d4);
 
 final router = GoRouter(
   routes: <RouteBase>[
-    GoRoute(path: '/', builder: (_, __) => const SizedBox()),
+    GoRoute(path: '/', builder: (_, __) => const HomePage()),
     GoRoute(path: '/login', builder: (_, state) => const LoginPage()),
     GoRoute(path: '/register', builder: (_, __) => const RegisterPage()),
   ],

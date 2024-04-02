@@ -1,8 +1,9 @@
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:frontend/data/providers/auth_provider.dart';
 import 'package:frontend/main.dart';
-import 'package:frontend/utils/state.dart';
 import 'package:provider/provider.dart';
+
+import '../../data/providers/auth_provider.dart';
+import '../../utils/state.dart';
 
 class AuthHeaderOptions extends StatelessWidget {
   const AuthHeaderOptions({super.key});

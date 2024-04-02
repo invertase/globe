@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:frontend/data/api_service.dart';
-import 'package:frontend/env.dart';
+
 import 'package:get_it/get_it.dart';
 
-export 'api_service.dart';
+import '../env.dart';
+import 'api_service.dart';
 
 final getIt = GetIt.instance;
 

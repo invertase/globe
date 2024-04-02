@@ -1,10 +1,11 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:frontend/data/services.dart';
-import 'package:frontend/utils/state.dart';
 
+import '../../utils/state.dart';
+import '../api_service.dart';
 import '../models/user.dart';
+import '../services.dart';
 
 typedef UserEvent = ProviderEvent<AuthUser>;
 
@@ -15,11 +16,24 @@ class AuthProvider extends BaseProvider<AuthUser> {
   AuthUser? _customer;
   AuthUser? get customer => _customer;
 
+  AuthProvider() {
+    final user = _fireAuth.currentUser;
+    if (user != null) _resolveToken(user);
+  }
+
   Future<void> getUser() async {
     final user = await safeRun(() => _apiService.getUser());
     if (user == null) return;
 
     addEvent(ProviderEvent.success(data: user));
+  }
+
+  Future<void> _resolveToken(User user) async {
+    addEvent(const ProviderEvent.loading());
+
+    final token = await user.getIdToken();
+    _apiService.setToken(token!);
+    await getUser();
   }
 
   Future<void> login(String email, String password) async {
@@ -28,8 +42,8 @@ class AuthProvider extends BaseProvider<AuthUser> {
         email: email,
         password: password,
       );
-      final token = await result.user!.getIdToken();
-      _apiService.setToken(token!);
+
+      await _resolveToken(result.user!);
     } on FirebaseAuthException catch (e) {
       return addEvent(ProviderEvent.error(errorMessage: e.message));
     } catch (e) {
