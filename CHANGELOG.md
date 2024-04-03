@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2024-04-03
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`globe_cli` - `v0.0.10`](#globe_cli---v0010)
+
+---
+
+#### `globe_cli` - `v0.0.10`
+
+ - **FEAT**(globe_cli): paused project handle for deploy and build log ([#75](https://github.com/invertase/globe/issues/75)). ([f8e0c8de](https://github.com/invertase/globe/commit/f8e0c8de47c4570b609ebc7626c935dc8fdbd710))
+
+
 ## 2024-03-30
 
 ### Changes

@@ -1,3 +1,7 @@
+## 0.0.10
+
+ - **FEAT**(globe_cli): paused project handle for deploy and build log ([#75](https://github.com/invertase/globe/issues/75)). ([f8e0c8de](https://github.com/invertase/globe/commit/f8e0c8de47c4570b609ebc7626c935dc8fdbd710))
+
 ## 0.0.9+6
 
  - **FIX**(globe_cli): Auth required before token checked bug ([#72](https://github.com/invertase/globe/issues/72)). ([d91b86c9](https://github.com/invertase/globe/commit/d91b86c93f74762f677499a4cc801951b536b258))
