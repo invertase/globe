@@ -22,10 +22,10 @@ The example shows how to use Firebase + JWT Authentication in Flutter app & Dart
 
 #### Bootstrap
 
-Initialize your project using the `shelf_jwt_auth` brick
+Initialize your project using the `shelf_firebase_jwt` brick
 
 ```shell
-$ mason make shelf_jwt_auth
+$ mason make shelf_firebase_jwt
 ```
 
 #### Setup Firebase Project
