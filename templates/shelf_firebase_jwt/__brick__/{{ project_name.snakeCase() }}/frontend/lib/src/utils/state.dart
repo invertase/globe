@@ -64,8 +64,7 @@ mixin DataStreamMixin<T> {
   }
 }
 
-abstract class BaseProvider<T> extends ChangeNotifier
-    with DataStreamMixin<ProviderEvent<T>> {
+abstract class BaseProvider<T> with DataStreamMixin<ProviderEvent<T>> {
   ProviderState? get state => lastEvent?.state;
 
   bool get isLoading => state == ProviderState.loading;

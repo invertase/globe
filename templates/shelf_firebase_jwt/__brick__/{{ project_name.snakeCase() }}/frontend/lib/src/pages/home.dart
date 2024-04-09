@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:frontend/main.dart';
 
 import '../data/models/user.dart';
-import '../data/providers/auth_provider.dart';
 import '../utils/state.dart';
 
 import 'auth/login_page.dart';
@@ -20,7 +19,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    final auth = context.read<AuthProvider>();
+    final auth = MyApp.authProvider;
 
     return StreamBuilder<ProviderEvent<AuthUser>>(
       stream: auth.stream,

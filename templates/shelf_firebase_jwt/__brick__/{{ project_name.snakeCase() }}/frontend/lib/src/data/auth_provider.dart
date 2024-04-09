@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../../utils/state.dart';
-import '../api_service.dart';
-import '../models/user.dart';
+import '../utils/state.dart';
+import 'api_service.dart';
+import 'models/user.dart';
 
 typedef UserEvent = ProviderEvent<AuthUser>;
 

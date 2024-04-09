@@ -1,8 +1,8 @@
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:provider/provider.dart';
+import 'package:frontend/main.dart';
 
 import '../../data/models/user.dart';
-import '../../data/providers/auth_provider.dart';
+import '../../data/auth_provider.dart';
 import '../../utils/misc.dart';
 import '../../utils/state.dart';
 
@@ -20,7 +20,7 @@ class BaseAuthLayoutState extends State<BaseAuthLayout> {
 
   @override
   Widget build(BuildContext context) {
-    final authProv = context.read<AuthProvider>();
+    final authProv = MyApp.authProvider;
     return ScaffoldPage(
       padding: EdgeInsets.zero,
       content: Stack(
