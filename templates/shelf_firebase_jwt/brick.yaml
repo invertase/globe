@@ -1,4 +1,4 @@
-name: shelf_jwt_auth
+name: shelf_firebase_jwt
 description: A new brick created with the Mason CLI.
 
 # The following defines the brick repository url.
@@ -29,5 +29,5 @@ vars:
   project_name:
     type: string
     description: Set a custom name for your project
-    default: shelf_jwt_auth
+    default: shelf_firebase_jwt
     prompt: Provide name for project?

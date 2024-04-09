@@ -1,14 +1,15 @@
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:frontend/main.dart';
 
-import 'auth_layout.dart';
+import '../home.dart';
+import '_auth_layout.dart';
+import 'register_page.dart';
 
 const _spacing = SizedBox(height: 18);
 
 class LoginPage extends StatefulWidget {
-  final String? returnUrl;
+  static const String route = '/login';
 
-  const LoginPage({super.key, this.returnUrl});
+  const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -17,6 +18,13 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String? email;
   String? password;
+
+  void goto(BuildContext context, String route) {
+    Navigator.of(context).pushNamedAndRemoveUntil(
+      route,
+      (route) => route.isFirst,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,9 +38,10 @@ class _LoginPageState extends State<LoginPage> {
 
           final lastEvent = auth.lastEvent!;
           if (lastEvent.data != null) {
-            return router.pushReplacement(widget.returnUrl ?? '/');
-          } else {
-            router.pushReplacement('/login');
+            // ignore: use_build_context_synchronously
+            goto(context, HomePage.route);
+
+            return;
           }
 
           layout
@@ -63,15 +72,16 @@ class _LoginPageState extends State<LoginPage> {
             ),
             _spacing,
             GestureDetector(
-              onTap: () => router.push('/register'),
+              onTap: () => Navigator.of(context).pushNamed(RegisterPage.route),
               child: Text.rich(
                 TextSpan(
                   text: 'No account? ',
                   children: <InlineSpan>[
                     TextSpan(
-                        text: 'Create one!',
-                        style: themeData.typography.body
-                            ?.apply(color: themeData.accentColor.dark)),
+                      text: 'Create one!',
+                      style: themeData.typography.body
+                          ?.apply(color: themeData.accentColor.dark),
+                    ),
                   ],
                 ),
               ),
@@ -82,8 +92,11 @@ class _LoginPageState extends State<LoginPage> {
                 const Expanded(child: SizedBox.shrink()),
                 FilledButton(
                   style: ButtonStyle(
-                    shape: ButtonState.all(const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.zero)),
+                    shape: ButtonState.all(
+                      const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
+                      ),
+                    ),
                   ),
                   onPressed: [email, password].contains(null)
                       ? null

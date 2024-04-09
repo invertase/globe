@@ -1,11 +1,12 @@
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:frontend/main.dart';
 
-import 'auth_layout.dart';
+import '_auth_layout.dart';
+import 'login_page.dart';
 
 const _spacing = SizedBox(height: 24);
 
 class RegisterPage extends StatefulWidget {
+  static const String route = '/register';
   const RegisterPage({super.key});
 
   @override
@@ -17,16 +18,22 @@ class _RegisterPageState extends State<RegisterPage> {
   String? email;
   String? password;
 
+  void goto(BuildContext context, String route) {
+    Navigator.of(context).pushReplacementNamed(route);
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeData = FluentTheme.of(context);
 
     return BaseAuthLayout(
       child: (auth, layout) {
-        registerAction(String name, String email, String password) async {
+        void registerAction(String name, String email, String password) async {
           layout.setLoading(true);
           final success = await auth.register(name, email, password);
-          router.pushReplacement(success ? '/login' : '/register');
+
+          // ignore: use_build_context_synchronously
+          goto(context, success ? LoginPage.route : RegisterPage.route);
 
           layout
             ..setLoading(false)

@@ -1,10 +1,10 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 
-import '../../../data/models/user.dart';
-import '../../../data/providers/auth_provider.dart';
-import '../../../utils/misc.dart';
-import '../../../utils/state.dart';
+import '../../data/models/user.dart';
+import '../../data/providers/auth_provider.dart';
+import '../../utils/misc.dart';
+import '../../utils/state.dart';
 
 class BaseAuthLayout extends StatefulWidget {
   final Widget Function(AuthProvider auth, BaseAuthLayoutState layout) child;
