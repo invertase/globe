@@ -80,7 +80,7 @@ class DeployCommand extends BaseGlobeCommand {
     final validated = await scope.validate();
     if (validated.project.paused) {
       logger
-        ..err('No new deployments cannot be created for this project.')
+        ..err('No new deployments can be created for this project.')
         ..err(
           '✗ Failed to deploy project: ${cyan.wrap(validated.project.slug)} is paused.',
         )
