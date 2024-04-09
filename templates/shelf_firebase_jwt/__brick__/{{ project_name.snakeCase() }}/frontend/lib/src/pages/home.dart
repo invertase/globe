@@ -21,7 +21,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final auth = context.read<AuthProvider>();
-    const spacing = SizedBox(width: 24);
 
     return StreamBuilder<ProviderEvent<AuthUser>>(
       stream: auth.stream,
@@ -54,8 +53,8 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 50),
             if (user != null) ...[
               Text('Welcome, ${user.name.split(' ').first}'),
-              spacing,
-              OutlinedButton(
+              const SizedBox(height: 16),
+              TextButton(
                 child: const Text('Logout'),
                 onPressed: () {
                   auth.logout();
@@ -71,7 +70,7 @@ class _HomePageState extends State<HomePage> {
                     child: const Text('Login '),
                     onPressed: () => navigator.pushNamed(LoginPage.route),
                   ),
-                  spacing,
+                  const SizedBox(width: 24),
                   ElevatedButton(
                     child: const Text('Register'),
                     onPressed: () => navigator.pushNamed(RegisterPage.route),
