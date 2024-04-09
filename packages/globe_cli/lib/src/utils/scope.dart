@@ -78,13 +78,6 @@ class GlobeScope {
           'Either that project does not exists or you do not have permission to access to it.',
         ),
       );
-
-      if (project.paused) {
-        throw Exception(
-          'Project #${metadata.projectId} is paused. '
-          'So, new deployments cannot be created for this project.',
-        );
-      }
     } on ApiException catch (e) {
       logger.err(e.message);
       exitOverride(1);

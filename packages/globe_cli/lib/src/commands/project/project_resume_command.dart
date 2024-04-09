@@ -35,7 +35,7 @@ class ProjectResumeCommand extends BaseGlobeCommand {
           .complete('Your project: ${cyan.wrap(projectSlug)} is now resumed');
       return ExitCode.success.code;
     } on ApiException catch (e) {
-      pauseProjectProgress.fail('✗ Failed to resume project: $e');
+      pauseProjectProgress.fail('✗ Failed to pause project: ${e.message}');
       return ExitCode.software.code;
     } catch (e, s) {
       pauseProjectProgress.fail('✗ Failed to resume project: $e');
