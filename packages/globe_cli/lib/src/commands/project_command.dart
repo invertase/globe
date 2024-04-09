@@ -3,7 +3,7 @@ import 'project/project_pause_command.dart';
 import 'project/project_resume_command.dart';
 
 class ProjectCommand extends BaseGlobeCommand {
-  TokenCommand() {
+  ProjectCommand() {
     addSubcommand(ProjectPauseCommand());
     addSubcommand(ProjectResumeCommand());
   }
