@@ -151,6 +151,30 @@ class GlobeApi {
     return Project.fromJson(response);
   }
 
+  Future<void> pauseProject({
+    required String orgId,
+    required String projectId,
+  }) async {
+    final url = '/orgs/$orgId/projects/$projectId/pause';
+    logger.detail('API Request: PUT $url');
+    final request = http.Request('PUT', _buildUri(url));
+    request.headers.addAll(headers);
+
+    _handleResponse(await request.send().then(http.Response.fromStream));
+  }
+
+  Future<void> resumeProject({
+    required String orgId,
+    required String projectId,
+  }) async {
+    final url = '/orgs/$orgId/projects/$projectId/resume';
+    logger.detail('API Request: PUT $url');
+    final request = http.Request('PUT', _buildUri(url));
+    request.headers.addAll(headers);
+
+    _handleResponse(await request.send().then(http.Response.fromStream));
+  }
+
   Future<FrameworkPresetOptions?> discoverPreset(String pubspecContent) async {
     const path = '/preset-discovery';
     logger.detail('API Request: POST $path');

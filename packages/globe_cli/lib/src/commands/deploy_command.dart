@@ -78,6 +78,17 @@ class DeployCommand extends BaseGlobeCommand {
     }
 
     final validated = await scope.validate();
+    if (validated.project.paused) {
+      logger
+        ..err('No new deployments can be created for this project.')
+        ..err(
+          '✗ Failed to deploy project: ${cyan.wrap(validated.project.slug)} is paused.',
+        )
+        ..info(
+          'Use ${lightCyan.wrap('globe project resume')} to re-enable deployments.',
+        );
+      return ExitCode.software.code;
+    }
 
     final deployProgress = logger.progress(
       'Deploying to ${styleBold.wrap('${validated.organization.slug}/${validated.project.slug}')}${environment == DeploymentEnvironment.production ? ' (production)' : ''}',
