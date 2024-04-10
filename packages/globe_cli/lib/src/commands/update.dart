@@ -29,7 +29,7 @@ class UpdateCommand extends BaseGlobeCommand {
       return ExitCode.success.code;
     }
 
-    logger.progress('Updating Globe CLI...');
+    logger.progress('Updating Globe CLI');
 
     final result = await updater.update(
       packageName: package_info.name,
