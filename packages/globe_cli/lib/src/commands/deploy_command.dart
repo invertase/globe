@@ -213,7 +213,7 @@ class DeployCommand extends BaseGlobeCommand {
               if (element case BuildLogs(done: final done)) return done;
               return false;
             }).then((_) {
-              status = logger.progress('Deploying...');
+              status = logger.progress('Deploying');
             }),
           );
 
