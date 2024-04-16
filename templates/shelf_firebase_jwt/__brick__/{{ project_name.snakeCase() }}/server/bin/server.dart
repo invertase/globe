@@ -16,18 +16,17 @@ void main(List<String> args) async {
     clientEmail: Env.firebasePrivateEmail,
   );
 
-  // Use any available host or container IP (usually `0.0.0.0`).
-  final ip = InternetAddress.anyIPv4;
-
   // Configure a pipeline that logs requests.
   final handler = Pipeline()
       .addMiddleware(logRequests())
       .addMiddleware(corsHeaders())
+      .addMiddleware(authMiddleware)
       .addHandler(router);
 
   // For running in containers, we respect the PORT environment variable.
   final port = int.parse(Platform.environment['PORT'] ?? '8080');
-  final server = await serve(handler, ip, port);
+
+  final server = await serve(handler, InternetAddress.anyIPv4, port);
   print('Server listening on port ${server.port}');
 
   ProcessSignal.sigint.watch().listen((_) async {

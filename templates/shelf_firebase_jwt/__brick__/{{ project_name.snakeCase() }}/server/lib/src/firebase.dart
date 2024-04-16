@@ -30,5 +30,5 @@ final class Firebase {
   static Future<void> close() => _admin.close();
 }
 
-CollectionReference get userCollection =>
-    Firebase.firestore.collection('users');
+CollectionReference get notesCollection =>
+    Firebase.firestore.collection('notes');
