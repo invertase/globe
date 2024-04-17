@@ -1,7 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
-
-import '../data/api_service.dart';
 
 enum ProviderState { idle, loading, success, error }
 
@@ -64,7 +64,8 @@ mixin DataStreamMixin<T> {
   }
 }
 
-abstract class BaseProvider<T> with DataStreamMixin<ProviderEvent<T>> {
+abstract class BaseProvider<T> extends ChangeNotifier
+    with DataStreamMixin<ProviderEvent<T>> {
   ProviderState? get state => lastEvent?.state;
 
   bool get isLoading => state == ProviderState.loading;
@@ -88,9 +89,11 @@ abstract class BaseProvider<T> with DataStreamMixin<ProviderEvent<T>> {
 
     try {
       return await apiCall.call();
-    } on ApiException catch (e) {
-      addEvent(ProviderEvent.error(errorMessage: e.errors.join('\n')));
-      return null;
+    } on HttpException catch (e) {
+      addError(e.message);
+    } on Exception catch (e) {
+      addError(e.toString());
     }
+    return null;
   }
 }

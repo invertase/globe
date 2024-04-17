@@ -1,8 +1,10 @@
-import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/material.dart';
+
+import '../../utils/misc.dart';
+import '_layout.dart';
 
 import '../home.dart';
-import '_auth_layout.dart';
-import 'register_page.dart';
+import 'register.dart';
 
 const _spacing = SizedBox(height: 18);
 
@@ -19,16 +21,11 @@ class _LoginPageState extends State<LoginPage> {
   String? email;
   String? password;
 
-  void goto(BuildContext context, String route) {
-    Navigator.of(context).pushNamedAndRemoveUntil(
-      route,
-      (route) => route.isFirst,
-    );
-  }
+  void goto(BuildContext context, String route) {}
 
   @override
   Widget build(BuildContext context) {
-    final themeData = FluentTheme.of(context);
+    final themeData = Theme.of(context);
 
     return BaseAuthLayout(
       child: (auth, layout) {
@@ -37,16 +34,19 @@ class _LoginPageState extends State<LoginPage> {
           await auth.login(email, password);
 
           final lastEvent = auth.lastEvent!;
-          if (lastEvent.data != null) {
-            // ignore: use_build_context_synchronously
-            goto(context, HomePage.route);
 
+          if (lastEvent.data == null) {
+            layout
+              ..setLoading(false)
+              ..handleErrors(lastEvent);
             return;
           }
 
-          layout
-            ..setLoading(false)
-            ..handleErrors(lastEvent);
+          // ignore: use_build_context_synchronously
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            HomePage.route,
+            (_) => false,
+          );
         }
 
         return Column(
@@ -55,20 +55,19 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             Text(
               'Login',
-              style: themeData.typography.subtitle,
+              style: themeData.textTheme.headlineSmall,
             ),
             _spacing,
             _spacing,
-            InfoLabel(
-              label: 'Email',
-              child:
-                  TextBox(onChanged: (value) => setState(() => email = value)),
+            TextField(
+              onChanged: (value) => setState(() => email = value),
+              decoration: const InputDecoration(hintText: 'Email'),
             ),
             _spacing,
-            InfoLabel(
-              label: 'Password',
-              child: PasswordBox(
-                  onChanged: (value) => setState(() => password = value)),
+            TextField(
+              onChanged: (value) => setState(() => password = value),
+              obscureText: true,
+              decoration: const InputDecoration(hintText: 'Password'),
             ),
             _spacing,
             GestureDetector(
@@ -79,8 +78,8 @@ class _LoginPageState extends State<LoginPage> {
                   children: <InlineSpan>[
                     TextSpan(
                       text: 'Create one!',
-                      style: themeData.typography.body
-                          ?.apply(color: themeData.accentColor.dark),
+                      style: themeData.typography.black.bodySmall
+                          ?.apply(color: Colors.red),
                     ),
                   ],
                 ),
@@ -90,14 +89,8 @@ class _LoginPageState extends State<LoginPage> {
             Row(
               children: [
                 const Expanded(child: SizedBox.shrink()),
-                FilledButton(
-                  style: ButtonStyle(
-                    shape: ButtonState.all(
-                      const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.zero,
-                      ),
-                    ),
-                  ),
+                ElevatedButton(
+                  style: buttonStyle,
                   onPressed: [email, password].contains(null)
                       ? null
                       : () => loginAction(email!, password!),

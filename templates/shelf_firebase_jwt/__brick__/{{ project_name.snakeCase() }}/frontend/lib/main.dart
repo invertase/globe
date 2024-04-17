@@ -1,17 +1,19 @@
 import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth;
-import 'package:fluent_ui/fluent_ui.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+import 'package:frontend/src/data/note_provider.dart';
 import 'firebase_options.dart';
 
 import 'src/data/api_service.dart';
 import 'src/data/auth_provider.dart';
 
 import 'src/env.dart';
-import 'src/pages/auth/login_page.dart';
-import 'src/pages/auth/register_page.dart';
+import 'src/pages/auth/login.dart';
+import 'src/pages/auth/register.dart';
 import 'src/pages/home.dart';
 
 const primaryColor = Color(0xff0078d4);
+final _apiSvc = ApiService(Uri.parse(Env.apiURL));
 
 void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -23,8 +25,13 @@ class MyApp extends StatelessWidget {
   static AuthProvider? _authProviderCache;
   static AuthProvider get authProvider {
     if (_authProviderCache != null) return _authProviderCache!;
-    final apiSvc = ApiService(Uri.parse(Env.apiURL));
-    return _authProviderCache = AuthProvider(FirebaseAuth.instance, apiSvc);
+    return _authProviderCache = AuthProvider(FirebaseAuth.instance, _apiSvc);
+  }
+
+  static NoteProvider? _noteProviderCache;
+  static NoteProvider get noteProvider {
+    if (_noteProviderCache != null) return _noteProviderCache!;
+    return _noteProviderCache = NoteProvider(_apiSvc);
   }
 
   const MyApp({super.key});
@@ -35,14 +42,14 @@ class MyApp extends StatelessWidget {
       stream: authProvider.stream,
       initialData: authProvider.lastEvent,
       builder: (_, data) {
-        return FluentApp(
+        return MaterialApp(
           routes: {
             HomePage.route: (_) => const HomePage(),
             LoginPage.route: (_) => const LoginPage(),
             RegisterPage.route: (_) => const RegisterPage(),
           },
-          title: 'Shelf Firebase Auth',
-          theme: FluentThemeData(accentColor: Colors.green),
+          title: 'Notes App',
+          theme: ThemeData(primaryColor: Colors.amber),
           debugShowCheckedModeBanner: false,
         );
       },

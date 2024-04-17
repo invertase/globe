@@ -12,11 +12,9 @@ dependencies:
     sdk: flutter
 
   json_annotation: ^4.8.1
-  fluent_ui: ^4.8.3
 
   firebase_auth: ^4.16.0
 
-  cherry_toast: ^1.6.4
   http: ^1.1.0
   firebase_core: ^2.24.2
   envied: ^0.5.3

@@ -4,12 +4,7 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 
-import 'models/user.dart';
-
-class ApiException extends HttpException {
-  final Iterable<String> errors;
-  ApiException(this.errors) : super(errors.join('\n'));
-}
+import 'models/note.dart';
 
 class ApiService {
   final Uri baseUrl;
@@ -27,30 +22,54 @@ class ApiService {
         if (_authToken != null) HttpHeaders.authorizationHeader: _authToken!
       };
 
-  Uri _getUri(String path) => baseUrl.replace(path: '/api$path');
+  Uri _getUri(String path) => baseUrl.replace(path: path);
 
-  Future<AuthUser> getUser() async {
-    final result = await _runCatching(
-        () => http.get(_getUri('/users/me'), headers: _headers));
+  Future<List<Note>> getNotes() async {
+    final result = await _runCatching(() => http.get(
+          _getUri('/notes'),
+          headers: _headers,
+        ));
 
-    return AuthUser.fromJson(jsonDecode(result.body));
+    return (jsonDecode(result.body) as Iterable)
+        .map((e) => Note.fromJson(e))
+        .toList();
   }
 
-  Future<bool> registerUser(
-    String displayName,
-    String email,
-    String password,
+  Future<Note> createNote(String title, String description) async {
+    final newNoteData = {'title': title, 'description': description};
+
+    final result = await _runCatching(() => http.post(
+          _getUri('/notes'),
+          headers: _headers,
+          body: jsonEncode(newNoteData),
+        ));
+
+    return Note.fromJson(jsonDecode(result.body));
+  }
+
+  Future<Note> updateNote(
+    String noteId,
+    String title,
+    String description,
   ) async {
-    final requestBody = jsonEncode({
-      'name': displayName,
-      'email': email,
-      'password': password,
-    });
+    final newNoteData = {'title': title, 'description': description};
 
-    await _runCatching(() => http.post(_getUri('/auth/register'),
-        headers: _headers, body: requestBody));
+    final result = await _runCatching(() => http.put(
+          _getUri('/notes/$noteId'),
+          headers: _headers,
+          body: jsonEncode(newNoteData),
+        ));
 
-    return true;
+    return Note.fromJson(jsonDecode(result.body));
+  }
+
+  Future<Note> deleteNote(String noteId) async {
+    final result = await _runCatching(() => http.delete(
+          _getUri('/notes/$noteId'),
+          headers: _headers,
+        ));
+
+    return Note.fromJson(jsonDecode(result.body));
   }
 
   Future<http.Response> _runCatching(
@@ -59,12 +78,11 @@ class ApiService {
     try {
       final response = await apiCall.call();
       if (response.statusCode == HttpStatus.ok) return response;
-      final errors = jsonDecode(response.body)['errors'] as List<dynamic>;
-      throw ApiException(errors.map((e) => e.toString()));
-    } on ApiException {
+      throw HttpException(response.body);
+    } on HttpException {
       rethrow;
     } catch (e) {
-      throw ApiException([e.toString()]);
+      throw HttpException(e.toString());
     }
   }
 }
