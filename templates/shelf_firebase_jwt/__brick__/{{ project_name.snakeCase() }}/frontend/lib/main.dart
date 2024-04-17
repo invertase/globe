@@ -49,7 +49,12 @@ class MyApp extends StatelessWidget {
             RegisterPage.route: (_) => const RegisterPage(),
           },
           title: 'Notes App',
-          theme: ThemeData(primaryColor: Colors.amber),
+          theme: ThemeData(
+            primaryColor: Colors.red,
+            floatingActionButtonTheme: const FloatingActionButtonThemeData(
+              backgroundColor: Colors.amber,
+            ),
+          ),
           debugShowCheckedModeBanner: false,
         );
       },

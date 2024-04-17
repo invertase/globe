@@ -1,13 +1,17 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart' show User;
 import 'package:flutter/material.dart';
 import 'package:frontend/main.dart';
 import 'package:frontend/src/data/note_provider.dart';
 
+import '../data/models/note.dart';
 import '../utils/misc.dart';
 import '../utils/state.dart';
 
 import 'auth/login.dart';
 import 'auth/register.dart';
+import 'note_view.dart';
 
 class HomePage extends StatefulWidget {
   static const String route = '/';
@@ -19,6 +23,27 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  StreamSubscription? _authStreamSub;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _authStreamSub = MyApp.authProvider.stream.listen((event) async {
+      if (event.data == null) return;
+
+      await MyApp.noteProvider.fetchNotes();
+      _authStreamSub?.cancel();
+      _authStreamSub = null;
+    });
+  }
+
+  @override
+  void dispose() {
+    _authStreamSub?.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final auth = MyApp.authProvider;
@@ -32,13 +57,7 @@ class _HomePageState extends State<HomePage> {
         final isLoading = event?.state == ProviderState.loading;
 
         if (isLoading) {
-          return const Center(
-            child: SizedBox(
-              height: 20,
-              width: 20,
-              child: CircularProgressIndicator(),
-            ),
-          );
+          return loadingView;
         }
 
         final user = event?.data;
@@ -108,21 +127,69 @@ class _HomePageState extends State<HomePage> {
                   stream: note.stream,
                   builder: (_, snap) {
                     final notesList = snap.data?.data ?? const [];
+                    final themeData = Theme.of(context);
+
+                    if (notesList.isEmpty &&
+                        snap.data?.state == ProviderState.loading) {
+                      return loadingView;
+                    }
+
                     return GridView.builder(
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
+                        crossAxisCount: 3,
+                        childAspectRatio: 1.5,
                       ),
+                      padding: const EdgeInsets.all(16),
                       itemBuilder: (_, index) {
-                        return Container();
+                        final note = notesList[index];
+
+                        return Card(
+                          key: ValueKey(note.id),
+                          child: InkWell(
+                            onTap: () => showNoteView(note: note),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    note.title,
+                                    style: themeData.textTheme.headlineSmall
+                                        ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20),
+                                  ),
+                                  Text(
+                                    note.description,
+                                    style: themeData.textTheme.bodySmall,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
                       },
                       shrinkWrap: true,
                       itemCount: notesList.length,
                     );
                   },
                 ),
+          floatingActionButton: user == null
+              ? null
+              : FloatingActionButton(
+                  onPressed: showNoteView,
+                  child: const Icon(Icons.add),
+                ),
         );
       },
+    );
+  }
+
+  void showNoteView({Note? note}) {
+    showDialog(
+      context: context,
+      builder: (_) => Center(child: NoteView(note: note)),
     );
   }
 }

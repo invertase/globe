@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/main.dart';
 
 import '../../utils/misc.dart';
 import '_layout.dart';
@@ -41,6 +42,8 @@ class _LoginPageState extends State<LoginPage> {
               ..handleErrors(lastEvent);
             return;
           }
+
+          MyApp.noteProvider.fetchNotes();
 
           // ignore: use_build_context_synchronously
           Navigator.of(context).pushNamedAndRemoveUntil(

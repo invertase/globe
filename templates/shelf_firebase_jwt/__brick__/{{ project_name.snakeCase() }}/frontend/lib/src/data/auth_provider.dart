@@ -17,9 +17,14 @@ class AuthProvider extends BaseProvider<User> {
 
   AuthProvider(this._fireAuth, this._apiService) {
     final user = _fireAuth.currentUser;
-    if (user != null) {
-      addEvent(ProviderEvent.success(data: user));
-    }
+    if (user != null) _setUserToken(user);
+  }
+
+  Future<void> _setUserToken(User user) async {
+    final userToken = await user.getIdToken();
+    _apiService.setToken(userToken);
+
+    addEvent(ProviderEvent.success(data: user));
   }
 
   Future<void> login(String email, String password) async {
@@ -29,7 +34,7 @@ class AuthProvider extends BaseProvider<User> {
         password: password,
       );
 
-      addEvent(ProviderEvent.success(data: result.user));
+      await _setUserToken(result.user!);
     } on FirebaseAuthException catch (e) {
       addError(e.message!);
     } catch (e) {

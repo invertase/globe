@@ -17,3 +17,11 @@ final buttonStyle = ButtonStyle(
     ),
   ),
 );
+
+const loadingView = Center(
+  child: SizedBox(
+    height: 20,
+    width: 20,
+    child: CircularProgressIndicator(),
+  ),
+);

@@ -20,9 +20,7 @@ class NoteProvider extends BaseProvider<List<Note>> {
         await safeRun(() => _apiService.createNote(title, description));
     if (note == null) return;
 
-    final notesList = lastEvent?.data ?? const [];
-
-    addEvent(ProviderEvent.success(data: [note, ...notesList]));
+    fetchNotes();
   }
 
   Future<void> updateNote(

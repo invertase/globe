@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dart_firebase_admin/firestore.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 
@@ -17,14 +18,17 @@ Middleware authMiddleware = (innerHandler) {
   return (request) async {
     final userToken =
         request.headers[HttpHeaders.authorizationHeader]?.split(' ').lastOrNull;
-
     if (userToken == null) {
       return Response.unauthorized(null);
     }
 
-    final result = await Firebase.auth.verifyIdToken(userToken);
+    final tokenValue = JwtDecoder.tryDecode(userToken) ?? {};
+    final userId = tokenValue['user_id'];
+    if (userId == null) {
+      return Response.unauthorized(null);
+    }
 
-    return innerHandler(request.withUserId(result.uid));
+    return innerHandler(request.withUserId(userId));
   };
 };
 
@@ -112,5 +116,5 @@ Future<Response> updateNote(Request request, String noteId) async {
 
   await noteReference.update(newNoteData);
 
-  return Response.ok(jsonEncode({...noteData, ...newNoteData}));
+  return Response.ok(jsonEncode({"id": noteId, ...noteData, ...newNoteData}));
 }
