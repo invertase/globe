@@ -12,7 +12,6 @@ import 'src/pages/auth/login.dart';
 import 'src/pages/auth/register.dart';
 import 'src/pages/home.dart';
 
-const primaryColor = Color(0xff0078d4);
 final _apiSvc = ApiService(Uri.parse(Env.apiURL));
 
 void main() async {
@@ -38,26 +37,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<UserEvent?>(
-      stream: authProvider.stream,
-      initialData: authProvider.lastEvent,
-      builder: (_, data) {
-        return MaterialApp(
-          routes: {
-            HomePage.route: (_) => const HomePage(),
-            LoginPage.route: (_) => const LoginPage(),
-            RegisterPage.route: (_) => const RegisterPage(),
-          },
-          title: 'Notes App',
-          theme: ThemeData(
-            primaryColor: Colors.red,
-            floatingActionButtonTheme: const FloatingActionButtonThemeData(
-              backgroundColor: Colors.amber,
-            ),
-          ),
-          debugShowCheckedModeBanner: false,
-        );
+    return MaterialApp(
+      routes: {
+        HomePage.route: (_) => const HomePage(),
+        LoginPage.route: (_) => const LoginPage(),
+        RegisterPage.route: (_) => const RegisterPage(),
       },
+      title: 'Notes App',
+      theme: ThemeData(
+        primaryColor: Colors.red,
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          backgroundColor: Colors.amber,
+        ),
+      ),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
