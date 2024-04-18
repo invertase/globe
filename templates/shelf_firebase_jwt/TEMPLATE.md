@@ -5,7 +5,7 @@ tags: ["firebase", "shelf", "flutter", "firestore"]
 username: Invertase
 ---
 
-# Firebase + JWT Auth + Shelf
+# Flutter + Firebase Auth + Shelf Backend
 
 ## Overview
 
