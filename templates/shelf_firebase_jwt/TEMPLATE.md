@@ -1,7 +1,7 @@
 ---
-name: Firebase + JWT Auth + Shelf
-description: Build an authentication flow using Firebase + JWT with your Backend from a Flutter application.
-tags: ["firebase", "shelf", "authentication", "jwt"]
+name: Flutter + Firebase Auth + Shelf Backend
+description: Build a Notes App using Flutter Web, Firebase Auth and a custom backend using Shelf.
+tags: ["firebase", "shelf", "flutter", "firestore"]
 username: Invertase
 ---
 
@@ -9,14 +9,13 @@ username: Invertase
 
 ## Overview
 
-The example shows how to use Firebase + JWT Authentication in Flutter app & Dart Backend.
+Build a Simple Notes App using Flutter Web, Firebase Auth and Dart for our backend.
 
 ### Features
 
 - [Shelf](https://pub.dev/packages/shelf)
 - [Flutter](https://flutter.dev)
 - [Firebase](https://firebase.google.com/)
-- [JWT Authentication](https://jwt.io/introduction)
 
 ### Getting Started
 
@@ -32,6 +31,12 @@ $ mason make shelf_firebase_jwt
 
 You must create a Firebase account and generate Firebase Admin Service Account and download.
 
+To generate a private key for your service account:
+
+- In the Firebase console, open **Settings** > **[Service Accounts](https://console.firebase.google.com/project/_/settings/serviceaccounts/adminsdk)**
+- Click **Generate New Private Key**, then confirm by clicking **Generate Key**
+- Securely store the JSON file containing the key.
+
 Copy the `project_id`, `private_key`, `client_id`, `client_email` and fill in the `.env` file in the `server` directory.
 
 > We'll only need the `.env` for local development.
@@ -41,6 +46,12 @@ FIREBASE_PROJECT_ID=
 FIREBASE_CLIENT_ID=
 FIREBASE_PRIVATE_KEY=
 FIREBASE_CLIENT_EMAIL=
+```
+
+> After providing values in the `.env` file, Run the `build_runner build` command to generate some typed Env class.
+
+```shell
+dart run build_runner build --delete-conflicting-outputs
 ```
 
 #### Link Frontend with Firebase
@@ -62,8 +73,6 @@ $ dart run bin/server.dart
 #### Frontend
 
 In the frontend directory, run the command below to start the Flutter Web App.
-
-> The current template is setup for Web. You can add additional support for Android, IOS and other flutter supported platforms.
 
 ```shell
 $ flutter run -d chrome
