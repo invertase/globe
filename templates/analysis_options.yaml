@@ -1,3 +1,0 @@
-analyzer:
-  exclude:
-    - shelf_firebase_jwt

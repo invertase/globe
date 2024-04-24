@@ -1,4 +1,4 @@
-name: {{ project_name }}_dev
+name: notes_app_shelf
 
 packages:
   - frontend

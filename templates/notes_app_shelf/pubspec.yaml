@@ -1,4 +1,4 @@
-name: {{ project_name.snakeCase() }}
+name: notes_app_shelf
 
 environment:
   sdk: ^3.2.0
