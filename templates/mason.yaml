@@ -1,0 +1,7 @@
+# Register bricks which can be consumed via the Mason CLI.
+# https://pub.dev/packages/mason
+bricks:
+  # Sample Brick
+  # Run `mason make hello` to try it out.
+  simple_rest_api_dartfrog:
+    path: ./simple_rest_api_dartfrog
