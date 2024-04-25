@@ -1,3 +1,5 @@
-analyzer:
-  exclude:
-    - __brick__
+include: package:lints/recommended.yaml
+
+linter:
+  rules:
+    file_names: false
