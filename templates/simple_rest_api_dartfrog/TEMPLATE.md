@@ -24,7 +24,7 @@ This package comes with
 Simply install `mason`
 
 ```bash
-mason make ... 
+mason make ...
 ```
 
 ### Links
