@@ -1,8 +1,9 @@
 import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
-import '../../services/db_client.dart';
+
 import '../../models/models.dart';
+import '../../services/db_client.dart';
 
 /// {@template session_repository}
 /// Repository which manages sessions.
