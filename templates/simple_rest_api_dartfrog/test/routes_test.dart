@@ -4,37 +4,43 @@ import 'package:dart_frog/dart_frog.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
-import '../routes/index.dart' as route;
-import '../routes/api/[id].dart' as api_route;
+import '../routes/repos.dart' as repos;
+import '../routes/users.dart' as users;
 
 class _MockRequestContext extends Mock implements RequestContext {}
 
 void main() {
   group('DartFrog API', () {
-    test('should response OK for PATH: /', () async {
+    test('should response OK for PATH: /repos', () async {
       final context = _MockRequestContext();
-      final response = route.onRequest(context);
+      final response = repos.onRequest(context);
       expect(response.statusCode, equals(HttpStatus.ok));
 
       expect(
-        response.body(),
-        completion(
-          contains('Welcome to DartFrog REST API!'),
-        ),
+        response.json(),
+        completion(equals([
+          {'name': 'express', 'url': 'https://github.com/expressjs/express'},
+          {'name': 'stylus', 'url': 'https://github.com/learnboost/stylus'},
+          {'name': 'cluster', 'url': 'https://github.com/learnboost/cluster'}
+        ])),
       );
     });
 
-    test('should response OK for PATH: /api/101', () async {
+    test('should response OK for PATH: /users', () async {
       final context = _MockRequestContext();
       final request = Request.get(Uri.parse('http://localhost/'));
       when(() => context.request).thenReturn(request);
 
-      final response = api_route.onRequest(context, '101');
+      final response = users.onRequest(context);
       expect(response.statusCode, equals(HttpStatus.ok));
 
       expect(
-        response.body(),
-        completion(equals('GET request to /101')),
+        response.json(),
+        completion(equals([
+          {'name': 'tobi'},
+          {'name': 'loki'},
+          {'name': 'jane'}
+        ])),
       );
     });
   });
