@@ -1,4 +1,4 @@
-name: dart_frog_rest_api
+name: dart_frog_rest_jwt_auth
 description: Simple DartFrog API
 version: 0.1.0+1
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
