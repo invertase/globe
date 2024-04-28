@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dart_frog/dart_frog.dart';
 
 final users = [
@@ -6,6 +8,9 @@ final users = [
   {"name": 'jane'}
 ];
 
-Response onRequest(RequestContext context) {
-  return Response.json(body: users);
+Future<Response> onRequest(RequestContext context) async {
+  return switch (context.request.method) {
+    HttpMethod.get => Response.json(body: users),
+    _ => Response(statusCode: HttpStatus.notAcceptable),
+  };
 }

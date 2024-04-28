@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:dart_frog/dart_frog.dart';
@@ -9,12 +10,24 @@ var repos = [
   {"name": 'cluster', "url": 'https://github.com/learnboost/cluster'}
 ];
 
-var userRepos = {
+final userRepos = {
   "tobi": [repos[0], repos[1]],
   "loki": [repos[1]],
   "jane": [repos[2]]
 };
 
-Response onRequest(RequestContext context) {
+Future<Response> onRequest(RequestContext context) async {
+  return switch (context.request.method) {
+    HttpMethod.get => _getRepos(context.request),
+    _ => Response(statusCode: HttpStatus.notAcceptable),
+  };
+}
+
+Response _getRepos(Request request) {
+  final username = request.uri.queryParameters['username'];
+  if (username != null) {
+    return Response.json(body: userRepos[username] ?? const []);
+  }
+
   return Response.json(body: repos);
 }
