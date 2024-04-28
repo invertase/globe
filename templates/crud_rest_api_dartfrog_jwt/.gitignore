@@ -10,3 +10,5 @@ dist/
 .dart_tool
 .fvm
 .dart_frog
+
+.env

@@ -2,8 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:dart_frog/dart_frog.dart';
-
-import '../_users.dart';
+import '_middleware.dart';
 
 /// These two objects [_repos] & [userRepos] will serve as our faux database
 final _repos = [
@@ -20,7 +19,7 @@ final userRepos = {
 Future<Response> onRequest(RequestContext context) async {
   return switch (context.request.method) {
     HttpMethod.get => _getRepos(context.request),
-    HttpMethod.post => await _createRepo(context.request),
+    HttpMethod.post => await _createRepo(context),
     _ => Response(statusCode: HttpStatus.forbidden),
   };
 }
@@ -34,18 +33,13 @@ Response _getRepos(Request request) {
   return Response.json(body: _repos);
 }
 
-Future<Response> _createRepo(Request request) async {
-  final username = request.uri.queryParameters['username'];
-  if (username == null) {
-    return Response(statusCode: HttpStatus.badRequest);
-  } else if (!userExists(username)) {
-    return Response(statusCode: HttpStatus.unauthorized);
-  }
+Future<Response> _createRepo(RequestContext context) async {
+  final username = context.read<AuthData>().username;
 
   final {
     "name": String name,
     "url": String url,
-  } = Map<String, dynamic>.from(await request.json());
+  } = Map<String, dynamic>.from(await context.request.json());
 
   final newRepoEntry = {"id": _repos.length, "name": name, "url": url};
   _repos.add(newRepoEntry);

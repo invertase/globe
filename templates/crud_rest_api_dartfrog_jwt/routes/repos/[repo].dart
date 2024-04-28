@@ -3,30 +3,26 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:dart_frog/dart_frog.dart';
 
-import '../_users.dart';
+import '_middleware.dart';
 import 'index.dart';
 
 Future<Response> onRequest(RequestContext context, String id) async {
-  final request = context.request;
+  final username = context.read<AuthData>().username;
+
   final repoId = int.tryParse(id);
   if (repoId == null) {
     return Response(statusCode: HttpStatus.badRequest);
   }
 
-  final username = request.uri.queryParameters['username'];
-  if (username == null || !userExists(username)) {
-    return Response(statusCode: HttpStatus.unauthorized);
-  }
-
   return switch (context.request.method) {
-    HttpMethod.put => await _updateRepo(request, username, repoId),
-    HttpMethod.delete => await _deleteRepo(request, username, repoId),
+    HttpMethod.put => await _updateRepo(context, username, repoId),
+    HttpMethod.delete => await _deleteRepo(context, username, repoId),
     _ => Response(statusCode: HttpStatus.forbidden),
   };
 }
 
 Future<Response> _updateRepo(
-  Request request,
+  RequestContext context,
   String username,
   int repoId,
 ) async {
@@ -39,7 +35,7 @@ Future<Response> _updateRepo(
   final {
     "name": String name,
     "url": String url,
-  } = Map<String, dynamic>.from(await request.json());
+  } = Map<String, dynamic>.from(await context.request.json());
 
   repo.addAll({"name": name, "url": url});
 
@@ -47,10 +43,12 @@ Future<Response> _updateRepo(
 }
 
 Future<Response> _deleteRepo(
-  Request request,
+  RequestContext context,
   String username,
   int repoId,
 ) async {
+  final username = context.read<AuthData>().username;
   userRepos[username]?.removeWhere((repo) => repo['id'] == repoId);
+
   return Response.json(body: userRepos[username]);
 }
