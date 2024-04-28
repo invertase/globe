@@ -5,17 +5,16 @@ import 'package:dart_frog/dart_frog.dart';
 
 import '../users.dart';
 
-/// these two objects will serve as our faux database
-final repos = [
+/// These two objects [_repos] & [userRepos] will serve as our faux database
+final _repos = [
   {"id": 0, "name": 'express', "url": 'github.com/expressjs/express'},
   {"id": 1, "name": 'stylus', "url": 'github.com/learnboost/stylus'},
   {"id": 2, "name": 'cluster', "url": 'github.com/learnboost/cluster'}
 ];
-
 final userRepos = {
-  "tobi": [repos[0], repos[1]],
-  "loki": [repos[1]],
-  "jane": [repos[2]]
+  "tobi": [_repos[0], _repos[1]],
+  "loki": [_repos[1]],
+  "jane": [_repos[2]]
 };
 
 Future<Response> onRequest(RequestContext context) async {
@@ -32,7 +31,7 @@ Response _getRepos(Request request) {
     return Response.json(body: userRepos[username] ?? const []);
   }
 
-  return Response.json(body: repos);
+  return Response.json(body: _repos);
 }
 
 Future<Response> _createRepo(Request request) async {
@@ -48,8 +47,8 @@ Future<Response> _createRepo(Request request) async {
     "url": String url,
   } = Map<String, dynamic>.from(await request.json());
 
-  final newRepoEntry = {"id": repos.length, "name": name, "url": url};
-  repos.add(newRepoEntry);
+  final newRepoEntry = {"id": _repos.length, "name": name, "url": url};
+  _repos.add(newRepoEntry);
 
   final existingRepos = userRepos[username] ?? [];
   userRepos[username] = existingRepos..add(newRepoEntry);
