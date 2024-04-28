@@ -14,3 +14,7 @@ Future<Response> onRequest(RequestContext context) async {
     _ => Response(statusCode: HttpStatus.notAcceptable),
   };
 }
+
+bool userExists(String username) {
+  return users.any((user) => user['name'] == username);
+}
