@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:collection/collection.dart';
+import 'package:crud_rest_api_dartfrog/users.dart';
 import 'package:dart_frog/dart_frog.dart';
 
-import '../_users.dart';
 import 'index.dart';
 
 Future<Response> onRequest(RequestContext context, String id) async {

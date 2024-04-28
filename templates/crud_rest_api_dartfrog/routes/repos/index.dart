@@ -1,9 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:crud_rest_api_dartfrog/users.dart';
 import 'package:dart_frog/dart_frog.dart';
-
-import '../_users.dart';
 
 /// These two objects [_repos] & [userRepos] will serve as our faux database
 final _repos = [
