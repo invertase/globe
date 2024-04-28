@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:dart_frog/dart_frog.dart';
 
-import '../users.dart';
+import '../_users.dart';
 import 'index.dart';
 
 Future<Response> onRequest(RequestContext context, String id) async {

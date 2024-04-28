@@ -7,7 +7,6 @@ import 'package:test/test.dart';
 
 import '../routes/repos/index.dart' as repos;
 import '../routes/repos/[repo].dart' as repo_by_id;
-import '../routes/users.dart' as users;
 
 class _MockRequestContext extends Mock implements RequestContext {}
 
@@ -122,26 +121,6 @@ void main() {
           response.json(),
           completion(equals([
             {'id': 1, 'name': 'shelf', 'url': 'pub.dev/packages/shelf'}
-          ])),
-        );
-      });
-    });
-
-    group('PATH: /users', () {
-      test('should respond OK', () async {
-        final context = _MockRequestContext();
-        final request = Request.get(Uri.parse('http://localhost/'));
-        when(() => context.request).thenReturn(request);
-
-        final response = await users.onRequest(context);
-        expect(response.statusCode, equals(HttpStatus.ok));
-
-        expect(
-          response.json(),
-          completion(equals([
-            {'name': 'tobi'},
-            {'name': 'loki'},
-            {'name': 'jane'}
           ])),
         );
       });
