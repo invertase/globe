@@ -1,6 +1,6 @@
 ---
 name: Simple DartFrog Server
-description: Building a RESTapi backend with DartFrog
+description: Building a simple CRUD REST API backend with DartFrog
 tags: ["dart", "dartfrog", "globe"]
 username: Invertase
 ---
@@ -9,4 +9,84 @@ username: Invertase
 
 ## Overview
 
-Creating a simple RESTApi server. This template helps you to save time to scaffold your Dart backend with DartFrog as quickly as possible.
+Creating a simple CRUD REST API server. This template helps you to save time to scaffold your Dart backend with DartFrog as quickly as possible.
+
+### Getting Started
+
+#### Bootstrap
+
+Initialize your project using the command below
+
+```shell
+$ globe create -t crud_rest_api_dartfrog
+```
+
+#### Start Server
+
+```shell
+$ dart_frog dev --port=3000
+```
+
+### REST Endpoints
+
+- List Repositories
+
+  ```shell
+  curl --request GET --url http://localhost:3000/repos
+  ```
+
+  ```json
+  [
+    { "id": 0, "name": "express", "url": "github.com/expressjs/express" },
+    { "id": 1, "name": "stylus", "url": "github.com/learnboost/stylus" },
+    { "id": 2, "name": "cluster", "url": "github.com/learnboost/cluster" }
+  ]
+  ```
+
+- Create New Repository
+
+  ```shell
+  curl -X POST -H "Content-Type: application/json" -d '{"name": "java", "url": "java.com/env"}' http://localhost:3000/repos\?username\=jane
+  ```
+
+  ```json
+  [
+    { "id": 0, "name": "express", "url": "github.com/expressjs/express" },
+    { "id": 1, "name": "stylus", "url": "github.com/learnboost/stylus" },
+    { "id": 2, "name": "cluster", "url": "github.com/learnboost/cluster" },
+    { "id": 3, "name": "java", "url": "java.com/env" }
+  ]
+  ```
+
+- Update Repository
+
+  ```shell
+  curl -X PUT -H "Content-Type: application/json" -d '{"name": "dart", "url": "dart.dev"}' http://localhost:3000/repos/3\?username\=jane
+  ```
+
+  ```json
+  { "id": 3, "name": "dart", "url": "dart.dev" }
+  ```
+
+- List Repositories for user
+
+  ```shell
+  curl --request GET --url http://localhost:3000/repos\?username\=jane
+  ```
+
+  ```json
+  [
+    { "id": 2, "name": "cluster", "url": "github.com/learnboost/cluster" },
+    { "id": 3, "name": "dart", "url": "dart.dev" }
+  ]
+  ```
+
+- Delete Repository for user
+
+  ```shell
+  curl --request DELETE --url http://localhost:3000/repos/2\?username\=jane
+  ```
+
+  ```json
+  [{ "id": 3, "name": "dart", "url": "dart.dev" }]
+  ```
