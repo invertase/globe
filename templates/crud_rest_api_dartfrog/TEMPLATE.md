@@ -37,23 +37,21 @@ $ dart_frog dev --port=3000
 
   ```json
   [
-    { "id": 0, "name": "express", "url": "github.com/expressjs/express" },
-    { "id": 1, "name": "stylus", "url": "github.com/learnboost/stylus" },
-    { "id": 2, "name": "cluster", "url": "github.com/learnboost/cluster" }
+    { "id": 0, "name": "serverpod", "url": "github.com/serverpod/serverpod" },
+    { "id": 1, "name": "melos", "url": "github.com/invertase/melos" },
+    { "id": 2, "name": "freezed", "url": "github.com/rrousselGit/freezed" }
   ]
   ```
 
 - Create New Repository
 
   ```shell
-  curl -X POST -H "Content-Type: application/json" -d '{"name": "java", "url": "java.com/env"}' http://localhost:3000/repos\?username\=jane
+  curl -X POST -H "Content-Type: application/json" -H "username: jane" -d '{"name": "java", "url": "java.com/env"}' http://localhost:3000/repos
   ```
 
   ```json
   [
-    { "id": 0, "name": "express", "url": "github.com/expressjs/express" },
-    { "id": 1, "name": "stylus", "url": "github.com/learnboost/stylus" },
-    { "id": 2, "name": "cluster", "url": "github.com/learnboost/cluster" },
+    { "id": 2, "name": "freezed", "url": "github.com/rrousselGit/freezed" },
     { "id": 3, "name": "java", "url": "java.com/env" }
   ]
   ```
@@ -61,7 +59,7 @@ $ dart_frog dev --port=3000
 - Update Repository
 
   ```shell
-  curl -X PUT -H "Content-Type: application/json" -d '{"name": "dart", "url": "dart.dev"}' http://localhost:3000/repos/3\?username\=jane
+  curl -X PUT -H "Content-Type: application/json" -H "username: jane" -d '{"name": "dart", "url": "dart.dev"}' http://localhost:3000/repos/3
   ```
 
   ```json
@@ -76,7 +74,7 @@ $ dart_frog dev --port=3000
 
   ```json
   [
-    { "id": 2, "name": "cluster", "url": "github.com/learnboost/cluster" },
+    { "id": 2, "name": "freezed", "url": "github.com/rrousselGit/freezed" },
     { "id": 3, "name": "dart", "url": "dart.dev" }
   ]
   ```
@@ -84,7 +82,7 @@ $ dart_frog dev --port=3000
 - Delete Repository for user
 
   ```shell
-  curl --request DELETE --url http://localhost:3000/repos/2\?username\=jane
+  curl --request DELETE -H "username: jane" http://localhost:3000/repos/2
   ```
 
   ```json
