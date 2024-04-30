@@ -35,10 +35,8 @@ Response _getRepos(Request request) {
 }
 
 Future<Response> _createRepo(Request request) async {
-  final username = request.uri.queryParameters['username'];
-  if (username == null) {
-    return Response(statusCode: HttpStatus.badRequest);
-  } else if (!userExists(username)) {
+  final username = request.headers['username'];
+  if (username == null || !userExists(username)) {
     return Response(statusCode: HttpStatus.unauthorized);
   }
 

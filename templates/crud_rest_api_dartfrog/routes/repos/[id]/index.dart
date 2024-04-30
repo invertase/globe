@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:collection/collection.dart';
-import 'package:crud_rest_api_dartfrog/users.dart';
 import 'package:dart_frog/dart_frog.dart';
 
 import '../index.dart';
@@ -9,11 +8,7 @@ import '../index.dart';
 Future<Response> onRequest(RequestContext context, String id) async {
   final request = context.request;
   final repoId = int.parse(id);
-
-  final username = request.uri.queryParameters['username'];
-  if (username == null || !userExists(username)) {
-    return Response(statusCode: HttpStatus.unauthorized);
-  }
+  final username = request.headers['username']!;
 
   return switch (context.request.method) {
     HttpMethod.put => await _updateRepo(request, username, repoId),

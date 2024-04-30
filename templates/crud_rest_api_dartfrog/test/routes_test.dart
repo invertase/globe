@@ -60,11 +60,16 @@ void main() {
 
       test('should create repo', () async {
         final context = _MockRequestContext();
-        final path = Uri.parse('http://localhost/repos?username=jane');
+        final path = Uri.parse('http://localhost/repos');
 
-        final request = Request.post(path,
-            body: jsonEncode(
-                {"name": "Dart Sdk", "url": "github.com/dart-lang/sdk"}));
+        final request = Request.post(
+          path,
+          body: jsonEncode({
+            "name": "Dart Sdk",
+            "url": "github.com/dart-lang/sdk",
+          }),
+          headers: {'username': 'jane'},
+        );
 
         when(() => context.request).thenReturn(request);
         final response = await repos.onRequest(context);
@@ -87,11 +92,13 @@ void main() {
         final context = _MockRequestContext();
         const repoId = "1";
 
-        final path = Uri.parse('http://localhost/repos/$repoId?username=tobi');
+        final path = Uri.parse('http://localhost/repos/$repoId');
 
-        final request = Request.put(path,
-            body:
-                jsonEncode({"name": "shelf", "url": "pub.dev/packages/shelf"}));
+        final request = Request.put(
+          path,
+          body: jsonEncode({"name": "shelf", "url": "pub.dev/packages/shelf"}),
+          headers: {'username': 'tobi'},
+        );
 
         when(() => context.request).thenReturn(request);
         final response = await repo_by_id.onRequest(context, repoId);
@@ -109,7 +116,8 @@ void main() {
 
       test('should delete repo', () async {
         final context = _MockRequestContext();
-        final path = Uri.parse('http://localhost/repos?username=tobi');
+        final username = 'tobi';
+        final path = Uri.parse('http://localhost/repos?username=$username');
         final request = Request.get(path);
 
         when(() => context.request).thenReturn(request);
@@ -130,7 +138,9 @@ void main() {
         );
 
         /// Verify Repo Deleted
-        when(() => context.request).thenReturn(Request.delete(path));
+        when(() => context.request).thenReturn(
+          Request.delete(path, headers: {'username': username}),
+        );
         response = await repo_by_id.onRequest(context, "0");
         expect(response.statusCode, equals(HttpStatus.ok));
         expect(
