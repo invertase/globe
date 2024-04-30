@@ -1,3 +1,4 @@
+import 'package:dotenv/dotenv.dart';
 import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -7,12 +8,16 @@ import 'firebase_options.dart';
 import 'src/data/api_service.dart';
 import 'src/data/auth_provider.dart';
 
-import 'src/env.dart';
 import 'src/pages/auth/login.dart';
 import 'src/pages/auth/register.dart';
 import 'src/pages/home.dart';
 
-final _apiSvc = ApiService(Uri.parse(Env.apiURL));
+final _env = DotEnv(includePlatformEnvironment: true)..load();
+
+final _apiSvc = ApiService(Uri.parse(_env.getOrElse(
+  'API_URL',
+  () => 'http://localhost:3000',
+)));
 
 void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);

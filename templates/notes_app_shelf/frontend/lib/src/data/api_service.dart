@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 
-import 'models/note.dart';
+import 'note.dart';
 
 class ApiService {
   final Uri baseUrl;
