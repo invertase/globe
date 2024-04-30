@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:dart_frog/dart_frog.dart';
@@ -15,11 +14,10 @@ Future<Response> onRequest(RequestContext context) async {
 }
 
 Future<Response> createTodo(Request req) async {
-  final body = await req.body();
   try {
-    final json = jsonDecode(body) as Map<String, Object>;
+    final body = (await req.json()) as Map<String, Object>;
 
-    if (json case {'title': final title}) {
+    if (body case {'title': final title}) {
       todos.add({
         'id': todos.length,
         'title': title,

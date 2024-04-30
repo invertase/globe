@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:dart_frog/dart_frog.dart';
@@ -31,12 +30,10 @@ Response getById(int id) {
 }
 
 Future<Response> updateById(int id, Request req) async {
-  final body = await req.body();
-
   try {
-    final json = jsonDecode(body) as Map<String, Object>;
+    final body = (await req.json()) as Map<String, Object>;
 
-    if (json case {'title': final title}) {
+    if (body case {'title': final title}) {
       final index = todos.indexWhere((todo) => todo['id'] == id);
       if (index == -1) {
         return Response(statusCode: HttpStatus.notFound);
