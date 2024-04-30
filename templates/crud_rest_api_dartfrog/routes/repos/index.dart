@@ -6,10 +6,11 @@ import 'package:dart_frog/dart_frog.dart';
 
 /// These two objects [_repos] & [userRepos] will serve as our faux database
 final _repos = [
-  {"id": 0, "name": 'express', "url": 'github.com/expressjs/express'},
-  {"id": 1, "name": 'stylus', "url": 'github.com/learnboost/stylus'},
-  {"id": 2, "name": 'cluster', "url": 'github.com/learnboost/cluster'}
+  {"id": 0, "name": 'serverpod', "url": 'github.com/serverpod/serverpod'},
+  {"id": 1, "name": 'melos', "url": 'github.com/invertase/melos'},
+  {"id": 2, "name": 'freezed', "url": 'github.com/rrousselGit/freezed'}
 ];
+
 final userRepos = {
   "tobi": [_repos[0], _repos[1]],
   "loki": [_repos[1]],

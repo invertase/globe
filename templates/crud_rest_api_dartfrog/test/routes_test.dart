@@ -6,7 +6,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 import '../routes/repos/index.dart' as repos;
-import '../routes/repos/[repo].dart' as repo_by_id;
+import '../routes/repos/[id]/index.dart' as repo_by_id;
 
 class _MockRequestContext extends Mock implements RequestContext {}
 
@@ -26,9 +26,17 @@ void main() {
         expect(
           response.json(),
           completion(equals([
-            {'id': 0, 'name': 'express', 'url': 'github.com/expressjs/express'},
-            {'id': 1, 'name': 'stylus', 'url': 'github.com/learnboost/stylus'},
-            {'id': 2, 'name': 'cluster', 'url': 'github.com/learnboost/cluster'}
+            {
+              'id': 0,
+              'name': 'serverpod',
+              'url': 'github.com/serverpod/serverpod'
+            },
+            {'id': 1, 'name': 'melos', 'url': 'github.com/invertase/melos'},
+            {
+              'id': 2,
+              'name': 'freezed',
+              'url': 'github.com/rrousselGit/freezed'
+            }
           ])),
         );
 
@@ -41,7 +49,11 @@ void main() {
         expect(
           response.json(),
           completion(equals([
-            {"id": 2, 'name': 'cluster', 'url': 'github.com/learnboost/cluster'}
+            {
+              'id': 2,
+              'name': 'freezed',
+              'url': 'github.com/rrousselGit/freezed'
+            }
           ])),
         );
       });
@@ -63,8 +75,8 @@ void main() {
           completion(equals([
             {
               'id': 2,
-              'name': 'cluster',
-              'url': 'github.com/learnboost/cluster'
+              'name': 'freezed',
+              'url': 'github.com/rrousselGit/freezed'
             },
             {'id': 3, 'name': 'Dart Sdk', 'url': 'github.com/dart-lang/sdk'},
           ])),
@@ -108,7 +120,11 @@ void main() {
         expect(
           response.json(),
           completion(equals([
-            {'id': 0, 'name': 'express', 'url': 'github.com/expressjs/express'},
+            {
+              'id': 0,
+              'name': 'serverpod',
+              'url': 'github.com/serverpod/serverpod'
+            },
             {'id': 1, 'name': 'shelf', 'url': 'pub.dev/packages/shelf'}
           ])),
         );

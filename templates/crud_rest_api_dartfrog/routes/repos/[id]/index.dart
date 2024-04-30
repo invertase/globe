@@ -4,14 +4,11 @@ import 'package:collection/collection.dart';
 import 'package:crud_rest_api_dartfrog/users.dart';
 import 'package:dart_frog/dart_frog.dart';
 
-import 'index.dart';
+import '../index.dart';
 
 Future<Response> onRequest(RequestContext context, String id) async {
   final request = context.request;
-  final repoId = int.tryParse(id);
-  if (repoId == null) {
-    return Response(statusCode: HttpStatus.badRequest);
-  }
+  final repoId = int.parse(id);
 
   final username = request.uri.queryParameters['username'];
   if (username == null || !userExists(username)) {
