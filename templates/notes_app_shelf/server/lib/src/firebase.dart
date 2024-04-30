@@ -5,19 +5,10 @@ import 'package:dart_firebase_admin/firestore.dart';
 final class Firebase {
   static late FirebaseAdminApp _admin;
 
-  static void init({
-    required String projectId,
-    required String clientId,
-    required String privateKey,
-    required String clientEmail,
-  }) {
+  static void init() {
     _admin = FirebaseAdminApp.initializeApp(
-      projectId,
-      Credential.fromServiceAccountParams(
-        clientId: clientId,
-        privateKey: privateKey,
-        email: clientEmail,
-      ),
+      '',
+      Credential.fromApplicationDefaultCredentials(),
     );
   }
 
