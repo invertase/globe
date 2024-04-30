@@ -5,10 +5,10 @@ import 'package:shelf/shelf_io.dart';
 import 'package:shelf_cors_headers/shelf_cors_headers.dart';
 
 import 'package:server/router.dart';
-import 'package:server/src/firebase.dart';
+import 'package:server/src/firebase.dart' as firebase;
 
 void main(List<String> args) async {
-  Firebase.init();
+  firebase.init();
 
   // Configure a pipeline that logs requests.
   final handler = Pipeline()
@@ -22,10 +22,4 @@ void main(List<String> args) async {
 
   final server = await serve(handler, InternetAddress.anyIPv4, port);
   print('Server listening on port ${server.port}');
-
-  ProcessSignal.sigint.watch().listen((_) async {
-    await Firebase.close();
-    await server.close();
-    exit(0); // Exit the program
-  });
 }
