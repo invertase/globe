@@ -3,7 +3,7 @@ import 'package:frontend/main.dart';
 import 'package:frontend/src/data/note_provider.dart';
 import 'package:frontend/src/utils/state.dart';
 
-import '../data/models/note.dart';
+import '../data/note.dart';
 import '../utils/misc.dart';
 
 class NoteView extends StatefulWidget {

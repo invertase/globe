@@ -4,16 +4,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import '../utils/state.dart';
 import 'api_service.dart';
-import 'models/note.dart';
 
 typedef UserEvent = ProviderEvent<User>;
 
 class AuthProvider extends BaseProvider<User> {
   final FirebaseAuth _fireAuth;
   final ApiService _apiService;
-
-  Note? _customer;
-  Note? get customer => _customer;
 
   AuthProvider(this._fireAuth, this._apiService) {
     final user = _fireAuth.currentUser;

@@ -1,6 +1,6 @@
 import '../utils/state.dart';
 import 'api_service.dart';
-import 'models/note.dart';
+import 'note.dart';
 
 typedef NoteEvent = ProviderEvent<List<Note>>;
 

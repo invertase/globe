@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/main.dart';
 import 'package:frontend/src/data/note_provider.dart';
 
-import '../data/models/note.dart';
+import '../data/note.dart';
 import '../utils/misc.dart';
 import '../utils/state.dart';
 
