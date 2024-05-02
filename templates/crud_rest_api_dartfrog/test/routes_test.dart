@@ -39,23 +39,6 @@ void main() {
             }
           ])),
         );
-
-        /// Verify getting repos for :username
-        request = Request.get(path.replace(query: 'username=jane'));
-        when(() => context.request).thenReturn(request);
-        response = await repos.onRequest(context);
-
-        expect(response.statusCode, equals(HttpStatus.ok));
-        expect(
-          response.json(),
-          completion(equals([
-            {
-              'id': 2,
-              'name': 'freezed',
-              'url': 'github.com/rrousselGit/freezed'
-            }
-          ])),
-        );
       });
 
       test('should create repo', () async {
@@ -68,7 +51,6 @@ void main() {
             "name": "Dart Sdk",
             "url": "github.com/dart-lang/sdk",
           }),
-          headers: {'username': 'jane'},
         );
 
         when(() => context.request).thenReturn(request);
@@ -77,14 +59,11 @@ void main() {
         expect(response.statusCode, equals(HttpStatus.ok));
         expect(
           response.json(),
-          completion(equals([
-            {
-              'id': 2,
-              'name': 'freezed',
-              'url': 'github.com/rrousselGit/freezed'
-            },
-            {'id': 3, 'name': 'Dart Sdk', 'url': 'github.com/dart-lang/sdk'},
-          ])),
+          completion(equals({
+            'id': 3,
+            'name': 'Dart Sdk',
+            'url': 'github.com/dart-lang/sdk',
+          })),
         );
       });
 
@@ -116,38 +95,14 @@ void main() {
 
       test('should delete repo', () async {
         final context = _MockRequestContext();
-        final username = 'tobi';
-        final path = Uri.parse('http://localhost/repos?username=$username');
-        final request = Request.get(path);
+        final path = Uri.parse('http://localhost/repos/0');
+        when(() => context.request).thenReturn(Request.delete(path));
 
-        when(() => context.request).thenReturn(request);
-        var response = await repos.onRequest(context);
-
-        /// Verify Existing Repos
+        final response = await repo_by_id.onRequest(context, "0");
         expect(response.statusCode, equals(HttpStatus.ok));
         expect(
           response.json(),
-          completion(equals([
-            {
-              'id': 0,
-              'name': 'serverpod',
-              'url': 'github.com/serverpod/serverpod'
-            },
-            {'id': 1, 'name': 'shelf', 'url': 'pub.dev/packages/shelf'}
-          ])),
-        );
-
-        /// Verify Repo Deleted
-        when(() => context.request).thenReturn(
-          Request.delete(path, headers: {'username': username}),
-        );
-        response = await repo_by_id.onRequest(context, "0");
-        expect(response.statusCode, equals(HttpStatus.ok));
-        expect(
-          response.json(),
-          completion(equals([
-            {'id': 1, 'name': 'shelf', 'url': 'pub.dev/packages/shelf'}
-          ])),
+          completion(equals({'message': 'Repo 0 successfully deleted.'})),
         );
       });
     });

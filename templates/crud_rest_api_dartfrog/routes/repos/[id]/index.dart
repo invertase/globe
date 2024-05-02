@@ -8,23 +8,17 @@ import '../index.dart';
 Future<Response> onRequest(RequestContext context, String id) async {
   final request = context.request;
   final repoId = int.parse(id);
-  final username = request.headers['username']!;
 
   return switch (context.request.method) {
-    HttpMethod.put => await _updateRepo(request, username, repoId),
-    HttpMethod.delete => await _deleteRepo(request, username, repoId),
+    HttpMethod.put => await _updateRepo(request, repoId),
+    HttpMethod.delete => await _deleteRepo(request, repoId),
     _ => Response(statusCode: HttpStatus.forbidden),
   };
 }
 
-Future<Response> _updateRepo(
-  Request request,
-  String username,
-  int repoId,
-) async {
-  final repo =
-      userRepos[username]?.firstWhereOrNull((repo) => repo['id'] == repoId);
-  if (repo == null) {
+Future<Response> _updateRepo(Request request, int repoId) async {
+  final existinRepo = repos.firstWhereOrNull((repo) => repo['id'] == repoId);
+  if (existinRepo == null) {
     return Response(statusCode: HttpStatus.notFound);
   }
 
@@ -33,16 +27,12 @@ Future<Response> _updateRepo(
     "url": String url,
   } = Map<String, dynamic>.from(await request.json());
 
-  repo.addAll({"name": name, "url": url});
+  existinRepo.addAll({"name": name, "url": url});
 
-  return Response.json(body: repo);
+  return Response.json(body: existinRepo);
 }
 
-Future<Response> _deleteRepo(
-  Request request,
-  String username,
-  int repoId,
-) async {
-  userRepos[username]?.removeWhere((repo) => repo['id'] == repoId);
-  return Response.json(body: userRepos[username]);
+Future<Response> _deleteRepo(Request request, int repoId) async {
+  repos.removeWhere((repo) => repo['id'] == repoId);
+  return Response.json(body: {'message': 'Repo $repoId successfully deleted.'});
 }

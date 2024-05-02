@@ -46,45 +46,29 @@ $ dart_frog dev --port=3000
 - Create New Repository
 
   ```shell
-  curl -X POST -H "Content-Type: application/json" -H "username: jane" -d '{"name": "java", "url": "java.com/env"}' http://localhost:3000/repos
+  curl -X POST -H "Content-Type: application/json" -d '{"name": "java", "url": "java.com/env"}' http://localhost:3000/repos
   ```
 
   ```json
-  [
-    { "id": 2, "name": "freezed", "url": "github.com/rrousselGit/freezed" },
-    { "id": 3, "name": "java", "url": "java.com/env" }
-  ]
+  { "id": 3, "name": "java", "url": "java.com/env" }
   ```
 
 - Update Repository
 
   ```shell
-  curl -X PUT -H "Content-Type: application/json" -H "username: jane" -d '{"name": "dart", "url": "dart.dev"}' http://localhost:3000/repos/3
+  curl -X PUT -H "Content-Type: application/json" -d '{"name": "dart", "url": "dart.dev"}' http://localhost:3000/repos/3
   ```
 
   ```json
   { "id": 3, "name": "dart", "url": "dart.dev" }
   ```
 
-- List Repositories for user
-
-  ```shell
-  curl --request GET --url http://localhost:3000/repos\?username\=jane
-  ```
-
-  ```json
-  [
-    { "id": 2, "name": "freezed", "url": "github.com/rrousselGit/freezed" },
-    { "id": 3, "name": "dart", "url": "dart.dev" }
-  ]
-  ```
-
 - Delete Repository for user
 
   ```shell
-  curl --request DELETE -H "username: jane" http://localhost:3000/repos/2
+  curl --request DELETE http://localhost:3000/repos/2
   ```
 
   ```json
-  [{ "id": 3, "name": "dart", "url": "dart.dev" }]
+  { "message": "Repo 2 successfully deleted." }
   ```
