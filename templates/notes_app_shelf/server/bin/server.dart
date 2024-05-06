@@ -1,25 +1,28 @@
 import 'dart:io';
 
+import 'package:dotenv/dotenv.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart';
 import 'package:shelf_cors_headers/shelf_cors_headers.dart';
 
+import 'package:server/firebase_admin.dart' as firebase_admin;
+import 'package:server/auth_middleware.dart';
 import 'package:server/router.dart';
-import 'package:server/src/firebase.dart' as firebase;
+
+final port = int.tryParse(Platform.environment['PORT'] ?? '3000') ?? 3000;
 
 void main(List<String> args) async {
-  firebase.init();
+  final env = DotEnv(includePlatformEnvironment: true)..load();
+  final projectId = env['FIREBASE_PROJECT_ID']!;
 
-  // Configure a pipeline that logs requests.
+  firebase_admin.init(projectId);
+
   final handler = Pipeline()
       .addMiddleware(logRequests())
       .addMiddleware(corsHeaders())
       .addMiddleware(authMiddleware)
       .addHandler(router);
 
-  // For running in containers, we respect the PORT environment variable.
-  final port = int.parse(Platform.environment['PORT'] ?? '3000');
-
   final server = await serve(handler, InternetAddress.anyIPv4, port);
-  print('Server listening on port ${server.port}');
+  stdout.writeln('Server listening on port ${server.port}');
 }

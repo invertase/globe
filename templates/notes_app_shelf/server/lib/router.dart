@@ -1,120 +1,116 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:dart_firebase_admin/firestore.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 
-import 'src/firebase.dart';
-
-extension on Request {
-  String get userId => context['userId'].toString();
-  Request withUserId(String id) => change(context: {...context, 'userId': id});
-}
-
-Middleware authMiddleware = (innerHandler) {
-  return (request) async {
-    final userToken =
-        request.headers[HttpHeaders.authorizationHeader]?.split(' ').lastOrNull;
-    if (userToken == null) {
-      return Response.unauthorized(null);
-    }
-
-    final tokenValue = JwtDecoder.tryDecode(userToken) ?? {};
-    final userId = tokenValue['user_id'];
-    if (userId == null) {
-      return Response.unauthorized(null);
-    }
-
-    return innerHandler(request.withUserId(userId));
-  };
-};
-
-Router get router => Router()
+final router = Router()
   ..get('/notes', getNotes)
-  ..post('/notes', addNewNote)
+  ..post('/notes', createNote)
   ..get('/notes/<noteId>', getNote)
   ..put('/notes/<noteId>', updateNote)
   ..delete('/notes/<noteId>', deleteNote);
 
-Future<Response> getNotes(Request request) async {
-  final userNotes = await notesCollection
-      .where('userId', WhereFilter.equal, request.userId)
-      .orderBy('updatedAt', descending: true)
-      .get();
+extension on Request {
+  CollectionReference get userNotes {
+    return context['notes'] as CollectionReference;
+  }
+}
 
-  return Response.ok(jsonEncode(
-      userNotes.docs.map((e) => {"id": e.id, ...e.data()}).toList()));
+Future<Response> getNotes(Request request) async {
+  final userNotes =
+      await request.userNotes.orderBy('updatedAt', descending: true).get();
+
+  final body = jsonEncode(
+    userNotes.docs.map((e) => {"id": e.id, ...e.data()}).toList(),
+  );
+
+  return Response.ok(body);
 }
 
 Future<Response> getNote(Request request, String noteId) async {
-  final note = await notesCollection.doc(noteId).get();
+  final note = await request.userNotes.doc(noteId).get();
   final noteData = note.data();
 
-  if (!note.exists || noteData['userId'] != request.userId) {
+  if (!note.exists) {
     return Response.notFound(null);
   }
 
   return Response.ok(jsonEncode({'id': note.id, ...noteData}));
 }
 
-Future<Response> addNewNote(Request request) async {
-  final {
-    'title': title as String,
-    'description': description as String,
-  } = jsonDecode(await request.readAsString());
+Future<Response> createNote(Request request) async {
+  final body = await request.readAsString();
 
-  final now = DateTime.now().toUtc().toIso8601String();
-  final newNoteData = {
-    "title": title,
-    "description": description,
-    "userId": request.userId,
-    "createdAt": now,
-    "updatedAt": now,
-  };
+  try {
+    final decoded = jsonDecode(body);
 
-  final noteReference = notesCollection.doc();
-  await noteReference.create(newNoteData);
+    final (title, description) = switch (decoded) {
+      {'title': final String t, 'description': final String d} => (t, d),
+      _ => throw FormatException(),
+    };
 
-  return Response.ok(jsonEncode({'id': noteReference.id, ...newNoteData}));
+    final now = DateTime.now().toUtc().toIso8601String();
+    final newNoteData = {
+      "title": title,
+      "description": description,
+      "createdAt": now,
+      "updatedAt": now,
+    };
+
+    final noteReference = request.userNotes.doc();
+    await noteReference.create(newNoteData);
+
+    return Response.ok(jsonEncode({'id': noteReference.id, ...newNoteData}));
+  } catch (_) {
+    return Response.badRequest();
+  }
 }
 
 Future<Response> deleteNote(Request request, String noteId) async {
-  final noteReference = notesCollection.doc(noteId);
+  final noteReference = request.userNotes.doc(noteId);
   final note = await noteReference.get();
 
-  if (!note.exists || note.data()['userId'] != request.userId) {
+  if (!note.exists) {
     return Response.notFound(null);
   }
 
   await noteReference.delete();
-
-  return Response.ok('Note deleted successfully.');
+  return Response.ok(jsonEncode({'id': note.id}));
 }
 
 Future<Response> updateNote(Request request, String noteId) async {
-  final {
-    'title': title as String,
-    'description': description as String,
-  } = jsonDecode(await request.readAsString());
+  final body = await request.readAsString();
 
-  final noteReference = notesCollection.doc(noteId);
-  final note = await noteReference.get();
-  final noteData = note.data();
+  try {
+    final decoded = jsonDecode(body);
 
-  if (!note.exists || noteData['userId'] != request.userId) {
-    return Response.notFound(null);
+    final (title, description) = switch (decoded) {
+      {'title': final String? t, 'description': final String? d} => (t, d),
+      _ => throw FormatException(),
+    };
+
+    final noteReference = request.userNotes.doc(noteId);
+    final note = await noteReference.get();
+
+    if (!note.exists) {
+      return Response.notFound(null);
+    }
+
+    final data = note.data();
+
+    final now = DateTime.now().toUtc().toIso8601String();
+    final updatedNoteData = {
+      "title": title ?? data['title'],
+      "description": description ?? data['description'],
+      "updatedAt": now,
+    };
+
+    await noteReference.update(updatedNoteData);
+
+    return Response.ok(jsonEncode({...note.data(), ...updatedNoteData}));
+  } catch (_) {
+    return Response.badRequest();
   }
-
-  final newNoteData = {
-    "title": title,
-    "description": description,
-    "updatedAt": DateTime.now().toUtc().toIso8601String(),
-  };
-
-  await noteReference.update(newNoteData);
-
-  return Response.ok(jsonEncode({"id": noteId, ...noteData, ...newNoteData}));
 }

@@ -9,8 +9,6 @@
 .history
 .svn/
 migrate_working_dir/
-*.g.dart
-.env
 
 # IntelliJ related
 *.iml

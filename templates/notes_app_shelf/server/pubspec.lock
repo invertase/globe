@@ -69,10 +69,10 @@ packages:
     dependency: "direct main"
     description:
       name: dart_firebase_admin
-      sha256: c0daeddffd7f2ee771aba8785a927b751e0e8811387b3815570691ab2f1f0115
+      sha256: "5c09e4fcef4f5b67a7acea5793648d802bf0336b4598e8b0cb2e8b1ac5fce3cd"
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.0"
+    version: "0.3.1"
   dart_jsonwebtoken:
     dependency: transitive
     description:
@@ -81,6 +81,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.13.0"
+  dotenv:
+    dependency: "direct main"
+    description:
+      name: dotenv
+      sha256: "379e64b6fc82d3df29461d349a1796ecd2c436c480d4653f3af6872eccbc90e1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.2.0"
   ed25519_edwards:
     dependency: transitive
     description:
