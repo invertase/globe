@@ -31,6 +31,7 @@ void init(String projectId) {
   }
 
   final admin = FirebaseAdminApp.initializeApp(projectId, cred);
+  if (!kReleaseMode) admin.useEmulator();
 
   firestore = Firestore(admin);
 }
