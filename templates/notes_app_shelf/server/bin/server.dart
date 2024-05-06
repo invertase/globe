@@ -9,10 +9,10 @@ import 'package:server/firebase_admin.dart' as firebase_admin;
 import 'package:server/auth_middleware.dart';
 import 'package:server/router.dart';
 
-final port = int.tryParse(Platform.environment['PORT'] ?? '3000') ?? 3000;
-
 void main(List<String> args) async {
   final env = DotEnv(includePlatformEnvironment: true)..load();
+  final port = int.tryParse(env['PORT'] ?? '3000') ?? 3000;
+
   final projectId = env['FIREBASE_PROJECT_ID']!;
 
   firebase_admin.init(projectId);
