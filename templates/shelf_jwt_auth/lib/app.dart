@@ -12,4 +12,5 @@ typedef UserData = ({
   DateTime createdAt,
 });
 
+// A map of username and userdata eg: { 'john-doe': (id, _, __) }
 final fauxUserDB = <String, UserData>{};
