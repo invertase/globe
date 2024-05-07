@@ -21,6 +21,8 @@ Initialize your project using the command below
 $ globe create -t shelf_jwt_auth
 ```
 
+> For local development, create a `.env` file in the root of your project and provide `JWT_SECRET_KEY` environment variable.
+
 #### Start Server
 
 ```shell
