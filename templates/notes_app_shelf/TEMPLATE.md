@@ -21,10 +21,10 @@ Build a Simple Notes App using Flutter Web, Firebase Auth and Dart for our backe
 
 #### Bootstrap
 
-Initialize your project using the `shelf_firebase_jwt` brick
+Initialize your project using the `notes_app_shelf`
 
 ```shell
-$ mason make shelf_firebase_jwt
+$ globe create -t notes_app_shelf
 ```
 
 #### Setup Firebase Project
@@ -103,7 +103,7 @@ In the `server` directory, run the following command:
   $ globe link
   ```
 
-- Provide project environment variables in project settings
+- Provide project environment variables in project settings on Globe Dashboard
 
   ![Cat](./resources/env-vars.png)
 
