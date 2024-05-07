@@ -114,7 +114,11 @@ Future<Response> _login(Request request) async {
     return Response.unauthorized('Invalid user credentials');
   }
 
-  final jwtToken = JWT({'username': reqBody.username}).sign(jwtSecretKey);
+  // Issue a token valid for a day
+  final jwtToken = JWT({'username': reqBody.username}).sign(
+    jwtSecretKey,
+    expiresIn: const Duration(days: 1),
+  );
 
   return Response.ok(
     jsonEncode({'token': jwtToken}),

@@ -1,0 +1,66 @@
+---
+name: Shelf JWT Auth
+description: Building a simple Shelf Backend with JWT Auth
+tags: ["shelf", "jwt", "authentication"]
+username: Invertase
+---
+
+# Shelf JWT Auth
+
+## Overview
+
+Get started with Shelf JWT Authentication for your backend. Register user with Username/Password & issue JWT tokens for accessing protected routes.
+
+### Getting Started
+
+#### Bootstrap
+
+Initialize your project using the command below
+
+```shell
+$ globe create -t shelf_jwt_auth
+```
+
+#### Start Server
+
+```shell
+$ dart run bin/server
+```
+
+### REST Endpoints
+
+- Register User
+
+  ```shell
+  curl -X POST -H "Content-Type: application/json" -d '{"username": "john", "password": "password123"}' http://localhost:8080/register
+  ```
+
+  ```json
+  User registered
+  ```
+
+- Login User
+
+  ```shell
+  curl -X POST -H "Content-Type: application/json" -d '{"username": "john", "password": "password123"}' http://localhost:8080/login
+  ```
+
+  ```json
+  {
+    "token": "<your-jwt-token>"
+  }
+  ```
+
+- Get Current User
+
+  ```shell
+  curl -H "Authorization: Bearer <your-jwt-token>" http://localhost:8080/me
+  ```
+
+  ```json
+  {
+    "id": "user_id",
+    "username": "john",
+    "createdAt": "2024-05-07T12:30:45Z"
+  }
+  ```
