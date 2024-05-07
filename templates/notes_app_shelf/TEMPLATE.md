@@ -103,7 +103,9 @@ In the `server` directory, run the following command:
   $ globe link
   ```
 
-- Provide project environment variables in project settings on Globe Dashboard
+  ![Cat](./resources/globe-link.png)
+
+- Navigate to your project settings on Globe dashboard and add environment as shown below.
 
   ![Cat](./resources/env-vars.png)
 
