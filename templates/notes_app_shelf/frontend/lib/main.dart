@@ -10,6 +10,10 @@ import 'src/login_page.dart';
 import 'src/new_note_page.dart';
 import 'src/note_page.dart';
 
+const apiUrl = !kReleaseMode
+    ? 'http://localhost:3000'
+    : 'https://your-project.globeapp.dev';
+
 late NotesAPIClient client;
 
 Future<void> main() async {
@@ -20,10 +24,6 @@ Future<void> main() async {
   if (!kReleaseMode) {
     await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
   }
-
-  const apiUrl = !kReleaseMode
-      ? 'http://localhost:3000'
-      : 'https://your-project.globeapp.dev';
 
   client = NotesAPIClient(apiUrl);
 

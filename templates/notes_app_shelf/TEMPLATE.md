@@ -29,7 +29,7 @@ $ mason make shelf_firebase_jwt
 
 #### Setup Firebase Project
 
-You must create a Firebase account and generate Firebase Admin Service Account and download.
+You must create a Firebase account, generate Firebase Admin Service Account and download.
 
 To generate a private key for your service account:
 
@@ -37,22 +37,21 @@ To generate a private key for your service account:
 - Click **Generate New Private Key**, then confirm by clicking **Generate Key**
 - Securely store the JSON file containing the key.
 
-Copy the `project_id`, `private_key`, `client_id`, `client_email` and fill in the `.env` file in the `server` directory.
+#### Setup Local Variables
 
-> We'll only need the `.env` for local development.
+- Run this command with the `PATH` to the service account file.
 
-```
-FIREBASE_PROJECT_ID=
-FIREBASE_CLIENT_ID=
-FIREBASE_PRIVATE_KEY=
-FIREBASE_CLIENT_EMAIL=
-```
+  ```shell
+  export GOOGLE_APPLICATION_CREDENTIALS=$(cat <path-to-service-account-file>.json)
+  ```
 
-> After providing values in the `.env` file, Run the `build_runner build` command to generate some typed Env class.
+- Create a `.env` in the server directory and add the `FIREBASE_PROJECT_ID` variable
 
-```shell
-dart run build_runner build --delete-conflicting-outputs
-```
+  ```.env
+  FIREBASE_PROJECT_ID=
+  ```
+
+  > We'll only need the `.env` file for local development.
 
 #### Link Frontend with Firebase
 
@@ -98,20 +97,30 @@ $ globe login
 
 In the `server` directory, run the following command:
 
-```shell
-$ globe deploy
-```
+- Link Project to Globe
 
-Once this is complete, copy your Deployment URL. Checkout [Deployments](https://docs.globe.dev/deployments) for more details.
+  ```shell
+  $ globe link
+  ```
 
-> Remember to set Environment Variables for your server app on Globe Dashboard and re-deploy your project.
+- Provide project environment variables in project settings
+
+  ![Cat](./resources/env-vars.png)
+
+- Deploy to Globe
+
+  ```shell
+  $ globe deploy
+  ```
+
+  ![Cat](./resources/deployed.png)
 
 #### Deploy Frontend
 
-In the `frontend` directory, run the following command:
+Inside `frontend/lib/main.dart` file, replace `https://your-project.globeapp.dev` with the `Deployment URL` from our server deployment.
+
+Now run this command to deploy your frontend 🚀
 
 ```shell
 $ globe deploy
 ```
-
-> You'll need to add an `API_URL` Environment variable to your project on Globe Dashboard. Then re-deploy your project.
