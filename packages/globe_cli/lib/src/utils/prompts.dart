@@ -55,8 +55,11 @@ Future<ScopeMetadata> linkProject({
       orgId: organization.id,
       projectId: project.id,
     );
+
+    final projectUrl = 'https://globe.dev/${organization.slug}/${project.slug}';
+
     logger.success('''
-  Successfully linked project.
+  Successfully linked project. View your project on Globe: ${cyan.wrap(projectUrl)}',
 ''');
     logger.write(
       '   To unlink this project in the future run: ${cyan.wrap('globe unlink')}\n',
