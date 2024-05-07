@@ -21,7 +21,6 @@ Future<void> main() async {
     await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
   }
 
-  /// TODO:(this should be parsed as env var)
   const apiUrl = !kReleaseMode
       ? 'http://localhost:3000'
       : 'https://your-project.globeapp.dev';

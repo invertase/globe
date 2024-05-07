@@ -13,9 +13,7 @@ void main(List<String> args) async {
   final env = DotEnv(includePlatformEnvironment: true)..load();
   final port = int.tryParse(env['PORT'] ?? '3000') ?? 3000;
 
-  final projectId = env['FIREBASE_PROJECT_ID']!;
-
-  firebase_admin.init(projectId);
+  firebase_admin.init();
 
   final handler = Pipeline()
       .addMiddleware(logRequests())

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:dart_firebase_admin/dart_firebase_admin.dart';
 import 'package:dart_firebase_admin/firestore.dart';
 import 'package:server/env.dart';
@@ -7,27 +5,19 @@ import 'package:server/env.dart';
 late Firestore firestore;
 const kReleaseMode = bool.fromEnvironment('dart.vm.product');
 
-void init(String projectId) {
-  late Credential cred;
+void init() {
+  final cred = Credential.fromApplicationDefaultCredentials();
 
-  if (kReleaseMode) {
-    // GOOGLE_APPLICATION_CREDENTIALS is defined on Platform.environment
-    cred = Credential.fromApplicationDefaultCredentials();
-  } else {
-    // GOOGLE_APPLICATION_CREDENTIALS is defined in .env
-    final serviceAccountString = env['GOOGLE_APPLICATION_CREDENTIALS'];
-
-    if (serviceAccountString == null) {
-      throw Exception('GOOGLE_APPLICATION_CREDENTIALS not found');
-    }
-
-    final json = jsonDecode(serviceAccountString);
-
-    cred = Credential.fromServiceAccountParams(
-      clientId: json['client_id'],
-      privateKey: json['private_key'],
-      email: json['client_email'],
+  // ignore: invalid_use_of_internal_member
+  if (cred.serviceAccountCredentials == null) {
+    throw Exception(
+      'Please provide GOOGLE_SERVICE_ACCOUNT variable in environment.',
     );
+  }
+
+  final projectId = env['FIREBASE_PROJECT_ID'];
+  if (projectId == null) {
+    throw Exception('Please provide FIREBASE_PROJECT_ID in environment,');
   }
 
   final admin = FirebaseAdminApp.initializeApp(projectId, cred);
