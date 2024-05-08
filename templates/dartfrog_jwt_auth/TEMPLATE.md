@@ -5,7 +5,7 @@ tags: ["dart-frog", "jwt", "authentication"]
 username: Invertase
 ---
 
-# Shelf JWT Auth
+# Dart-Frog JWT Auth
 
 ## Overview
 
