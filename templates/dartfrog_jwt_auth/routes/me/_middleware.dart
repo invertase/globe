@@ -12,14 +12,7 @@ final class AuthData {
 
 Handler middleware(Handler handler) {
   return (context) async {
-    final path = context.request.uri.pathSegments;
-    final method = context.request.method;
-
-    /// Ignore 'GET: /repos'
-    if (path.length == 1 && path.last == 'repos' && method == HttpMethod.get) {
-      return handler(context);
-    }
-
+    // Retrieve token from header eg: `Bearer xxxxxx` -> `xxxxxx`
     final bearerToken = context.request.headers[HttpHeaders.authorizationHeader]
         ?.split(' ')
         .lastOrNull;
@@ -27,13 +20,12 @@ Handler middleware(Handler handler) {
       return Response(statusCode: HttpStatus.unauthorized);
     }
 
-    final jwt = JWT.tryVerify(bearerToken, secretKey);
+    final jwt = JWT.tryVerify(bearerToken, jwtSecretKey);
     if (jwt == null) {
       return Response(statusCode: HttpStatus.unauthorized);
     }
 
     final username = jwt.payload['username'] as String;
-
     return await handler(
       context.provide<AuthData>(() => AuthData(username)),
     );
