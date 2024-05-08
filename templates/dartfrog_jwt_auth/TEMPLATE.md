@@ -38,7 +38,7 @@ $ dart_frog dev --port=8080
   ```
 
   ```json
-
+  User registered
   ```
 
 - Login User
