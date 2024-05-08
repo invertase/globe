@@ -39,7 +39,7 @@ To generate a private key for your service account:
 
 #### Setup Local Variables
 
-- Run this command with the `PATH` to the service account file.
+- Run this command with the path to the service account file.
 
   ```shell
   export GOOGLE_APPLICATION_CREDENTIALS=$(cat <path-to-service-account-file>.json)
@@ -50,8 +50,6 @@ To generate a private key for your service account:
   ```.env
   FIREBASE_PROJECT_ID=
   ```
-
-  > We'll only need the `.env` file for local development.
 
 #### Link Frontend with Firebase
 
