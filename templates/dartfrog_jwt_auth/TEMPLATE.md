@@ -37,7 +37,7 @@ $ dart_frog dev --port=8080
   curl -X POST -H "Content-Type: application/json" -d '{"username": "john", "password": "password123"}' http://localhost:8080/register
   ```
 
-  ```json
+  ```
   User registered
   ```
 
