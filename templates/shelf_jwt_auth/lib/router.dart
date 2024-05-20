@@ -9,6 +9,8 @@ import 'package:shelf_router/shelf_router.dart';
 
 import 'app.dart';
 
+final bearerTokenRegExp = RegExp(r'Bearer (?<token>.+)');
+
 final router = Router()
   ..post('/register', _register)
   ..post('/login', _login)
@@ -23,15 +25,15 @@ Middleware authMiddleware = (innerHandler) {
       return innerHandler(request);
     }
 
-    // Retrieve token from header eg: `Bearer xxxxxx` -> `xxxxxx`
-    final authToken =
-        request.headers[HttpHeaders.authorizationHeader]?.split(' ').lastOrNull;
-    if (authToken == null) {
+    final authHeader = request.headers[HttpHeaders.authorizationHeader] ?? '';
+    final match = bearerTokenRegExp.firstMatch(authHeader);
+    final jwt = match?.namedGroup('token');
+    if (jwt == null) {
       return Response.unauthorized(null);
     }
 
     // Verify JWT token using secret key
-    final decodedToken = JWT.tryVerify(authToken, jwtSecretKey);
+    final decodedToken = JWT.tryVerify(jwt, jwtSecretKey);
     if (decodedToken == null) {
       return Response.unauthorized(null);
     }
