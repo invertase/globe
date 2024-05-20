@@ -33,7 +33,7 @@ To generate a private key for your service account:
 
 #### Setup Local Variables
 
-- Add this command to your `.bashrc` or `.zshrc` file.
+- Export `GOOGLE_APPLICATION_CREDENTIALS` env var by adding this line to your `.bashrc` or `.zshrc` file.
 
   ```shell
   export GOOGLE_APPLICATION_CREDENTIALS=$(cat <path-to-service-account-file>.json)
