@@ -59,8 +59,9 @@ class CreateProjectFromTemplate extends BaseGlobeCommand {
 
     final directory = Directory.systemTemp.createTempSync();
 
-    final progress = logger
-        .progress('Creating project using template: ${cyan.wrap(template)}');
+    final progress = logger.progress(
+      'Creating project using template: ${cyan.wrap(template)}',
+    );
 
     try {
       // Initialize a new Git repository
@@ -77,8 +78,9 @@ class CreateProjectFromTemplate extends BaseGlobeCommand {
       );
 
       // Define the sparse checkout paths
-      final sparseCheckoutFile =
-          File(p.join(directory.path, '.git', 'info', 'sparse-checkout'));
+      final sparseCheckoutFile = File(
+        p.join(directory.path, '.git', 'info', 'sparse-checkout'),
+      );
       sparseCheckoutFile.writeAsStringSync('templates/$template/');
 
       // Pull the specific branch or commit
@@ -88,8 +90,9 @@ class CreateProjectFromTemplate extends BaseGlobeCommand {
       );
 
       final clonedRepoPath = directory.path;
-      final templateDir =
-          Directory(p.join(clonedRepoPath, 'templates', template));
+      final templateDir = Directory(
+        p.join(clonedRepoPath, 'templates', template),
+      );
       if (!templateDir.existsSync()) {
         throw Exception('Template: $template does not exist');
       }
