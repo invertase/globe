@@ -5,6 +5,8 @@ import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 
 import '../login.dart';
 
+final bearerTokenRegExp = RegExp(r'Bearer (?<token>.+)');
+
 final class AuthData {
   final String username;
   const AuthData(this.username);
@@ -12,15 +14,15 @@ final class AuthData {
 
 Handler middleware(Handler handler) {
   return (context) async {
-    // Retrieve token from header eg: `Bearer xxxxxx` -> `xxxxxx`
-    final bearerToken = context.request.headers[HttpHeaders.authorizationHeader]
-        ?.split(' ')
-        .lastOrNull;
-    if (bearerToken == null) {
+    final authHeader =
+        context.request.headers[HttpHeaders.authorizationHeader] ?? '';
+    final match = bearerTokenRegExp.firstMatch(authHeader);
+    final token = match?.namedGroup('token');
+    if (token == null) {
       return Response(statusCode: HttpStatus.unauthorized);
     }
 
-    final jwt = JWT.tryVerify(bearerToken, jwtSecretKey);
+    final jwt = JWT.tryVerify(token, jwtSecretKey);
     if (jwt == null) {
       return Response(statusCode: HttpStatus.unauthorized);
     }
