@@ -109,8 +109,9 @@ Future<Response> _login(Request request) async {
   }
 
   final userFromDB = fauxUserDB[reqBody.username];
-  if (userFromDB == null ||
-      !BCrypt.checkpw(reqBody.password, userFromDB.passwordHash)) {
+  final passwordMatches = BCrypt.checkpw(reqBody.password, userFromDB.passwordHash);
+
+  if (userFromDB == null || !passwordMatches) {
     return Response.unauthorized('Invalid user credentials');
   }
 
