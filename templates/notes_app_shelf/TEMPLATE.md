@@ -39,7 +39,7 @@ To generate a private key for your service account:
 
 #### Setup Local Variables
 
-- Run this command with the path to the service account file.
+- Add this command to your `.bashrc` or `.zshrc` file.
 
   ```shell
   export GOOGLE_APPLICATION_CREDENTIALS=$(cat <path-to-service-account-file>.json)
@@ -101,11 +101,11 @@ In the `server` directory, run the following command:
   $ globe link
   ```
 
-  ![Cat](./resources/globe-link.png)
+  ![Globe Link Screenshot](./resources/globe-link.png)
 
 - Navigate to your project settings on Globe dashboard and add environment as shown below.
 
-  ![Cat](./resources/env-vars.png)
+  ![Globe Environment Variables](./resources/env-vars.png)
 
 - Deploy to Globe
 
@@ -113,7 +113,7 @@ In the `server` directory, run the following command:
   $ globe deploy
   ```
 
-  ![Cat](./resources/deployed.png)
+  ![Globe Deployment Success](./resources/deployed.png)
 
 #### Deploy Frontend
 
