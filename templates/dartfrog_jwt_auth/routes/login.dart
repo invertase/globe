@@ -33,8 +33,11 @@ Future<Response> onRequest(RequestContext context) async {
   }
 
   final userFromDB = fauxUserDB[reqBody.username];
-  if (userFromDB == null ||
-      !BCrypt.checkpw(reqBody.password, userFromDB.passwordHash)) {
+  final passwordMatches = userFromDB == null
+      ? false
+      : BCrypt.checkpw(reqBody.password, userFromDB.passwordHash);
+
+  if (!passwordMatches) {
     return Response(
       statusCode: HttpStatus.unauthorized,
       body: 'Invalid user credentials',
