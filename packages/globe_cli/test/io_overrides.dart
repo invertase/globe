@@ -243,4 +243,7 @@ class _StdoutOverride implements Stdout {
 
   @override
   Future<void> close() => Future.value();
+
+  @override
+  String lineTerminator = Platform.lineTerminator;
 }
