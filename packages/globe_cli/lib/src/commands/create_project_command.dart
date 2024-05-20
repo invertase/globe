@@ -59,21 +59,20 @@ class CreateProjectFromTemplate extends BaseGlobeCommand {
 
     final directory = Directory.systemTemp.createTempSync();
 
-    final progress = logger.progress('Creating project');
+    final progress = logger
+        .progress('Creating project using template: ${cyan.wrap(template)}');
 
     try {
       // Initialize a new Git repository
       await _runGitCommand(['init'], processWorkingDir: directory.path);
-
-      // Add the remote repository
       await _runGitCommand(
-        ['remote', 'add', 'origin', 'https://github.com/invertase/globe'],
+        const ['remote', 'add', 'origin', 'https://github.com/invertase/globe'],
         processWorkingDir: directory.path,
       );
 
       // Configure sparse checkout
       await _runGitCommand(
-        ['config', 'core.sparseCheckout', 'true'],
+        const ['config', 'core.sparseCheckout', 'true'],
         processWorkingDir: directory.path,
       );
 
@@ -81,8 +80,6 @@ class CreateProjectFromTemplate extends BaseGlobeCommand {
       final sparseCheckoutFile =
           File(p.join(directory.path, '.git', 'info', 'sparse-checkout'));
       sparseCheckoutFile.writeAsStringSync('templates/$template/');
-
-      progress.update('Checking out template branch');
 
       // Pull the specific branch or commit
       await _runGitCommand(
