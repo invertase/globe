@@ -52,8 +52,6 @@ class DeployCommand extends BaseGlobeCommand {
 
   @override
   Future<int> run() async {
-    requireAuth();
-
     if (argResults?['token'] != null && argResults?['project'] != null) {
       final token = argResults!['token'] as String;
       final project = argResults!['project'] as String;
@@ -70,6 +68,8 @@ class DeployCommand extends BaseGlobeCommand {
       }
 
       scope.setScope(orgId: organizations.first.id, projectId: project);
+    } else {
+      requireAuth();
     }
 
     // If there is no scope, ask the user to link the project.
@@ -78,6 +78,17 @@ class DeployCommand extends BaseGlobeCommand {
     }
 
     final validated = await scope.validate();
+    if (validated.project.paused) {
+      logger
+        ..err('No new deployments can be created for this project.')
+        ..err(
+          '✗ Failed to deploy project: ${cyan.wrap(validated.project.slug)} is paused.',
+        )
+        ..info(
+          'Use ${lightCyan.wrap('globe project resume')} to re-enable deployments.',
+        );
+      return ExitCode.software.code;
+    }
 
     final deployProgress = logger.progress(
       'Deploying to ${styleBold.wrap('${validated.organization.slug}/${validated.project.slug}')}${environment == DeploymentEnvironment.production ? ' (production)' : ''}',
@@ -188,6 +199,7 @@ class DeployCommand extends BaseGlobeCommand {
             orgId: validated.organization.id,
             projectId: validated.project.id,
             deploymentId: deployment.id,
+            buildId: update.buildId!,
           );
 
           unawaited(
@@ -198,10 +210,10 @@ class DeployCommand extends BaseGlobeCommand {
 
           unawaited(
             logs!.firstWhere((element) {
-              if (element case LogsBuildLogEvent(done: final done)) return done;
+              if (element case BuildLogs(done: final done)) return done;
               return false;
             }).then((_) {
-              status = logger.progress('Deploying...');
+              status = logger.progress('Deploying');
             }),
           );
 

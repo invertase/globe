@@ -18,11 +18,11 @@ Cron jobs can be created via the `globe.yaml` file in the root of your applicati
 ```yaml
 crons:
   - id: refresh_auth_token
-    schedule: '0/45 * * * *'
+    schedule: '*/45 * * * *'
     path: '/auth/refresh'
 ```
 
-In the above example, the cron job will be executed every 45 minutes.
+In the above example, the cron job will be executed every 45 minutes. For more details on cron code, see the [unix-cron documentation](https://man7.org/linux/man-pages/man5/crontab.5.html).
 
 Whenever a new production deployment is successful, the cron jobs will be synchronized and shown in the dashboard.
 

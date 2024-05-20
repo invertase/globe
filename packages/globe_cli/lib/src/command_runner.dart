@@ -7,6 +7,7 @@ import 'package:pub_updater/pub_updater.dart';
 
 import 'commands/build_logs_command.dart';
 import 'commands/commands.dart';
+import 'commands/project_command.dart';
 import 'commands/update.dart';
 import 'package_info.dart' as package_info;
 import 'utils/api.dart';
@@ -51,6 +52,7 @@ class GlobeCliCommandRunner extends CompletionCommandRunner<int> {
     addCommand(UnlinkCommand());
     addCommand(BuildLogsCommand());
     addCommand(TokenCommand());
+    addCommand(ProjectCommand());
   }
 
   final Logger _logger;

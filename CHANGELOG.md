@@ -3,6 +3,221 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2024-04-03
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`globe_cli` - `v0.0.10`](#globe_cli---v0010)
+
+---
+
+#### `globe_cli` - `v0.0.10`
+
+ - **FEAT**(globe_cli): paused project handle for deploy and build log ([#75](https://github.com/invertase/globe/issues/75)). ([f8e0c8de](https://github.com/invertase/globe/commit/f8e0c8de47c4570b609ebc7626c935dc8fdbd710))
+
+
+## 2024-03-30
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`globe_cli` - `v0.0.9+6`](#globe_cli---v0096)
+
+---
+
+#### `globe_cli` - `v0.0.9+6`
+
+ - **FIX**(globe_cli): Auth required before token checked bug ([#72](https://github.com/invertase/globe/issues/72)). ([d91b86c9](https://github.com/invertase/globe/commit/d91b86c93f74762f677499a4cc801951b536b258))
+ - **FIX**: Rework gitignore matching ([#71](https://github.com/invertase/globe/issues/71)). ([75b6b744](https://github.com/invertase/globe/commit/75b6b744f08d080a4a5541666d7732579f21a6c7))
+
+
+## 2024-03-26
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`globe_cli` - `v0.0.9+5`](#globe_cli---v0095)
+
+---
+
+#### `globe_cli` - `v0.0.9+5`
+
+ - **REFACTOR**: Migrate to the latest realtime API ([#70](https://github.com/invertase/globe/issues/70)). ([6d4285a6](https://github.com/invertase/globe/commit/6d4285a6c79dafffd27c7f3ab5a9c4b12e9e0ef1))
+
+
+## 2024-03-26
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`globe_cli` - `v0.0.9+4`](#globe_cli---v0094)
+
+---
+
+#### `globe_cli` - `v0.0.9+4`
+
+ - **REFACTOR**: Add select all projects option ([#66](https://github.com/invertase/globe/issues/66)). ([c2e786ff](https://github.com/invertase/globe/commit/c2e786ffbb84ec6ee0747efbca4cfa9b7a8239af))
+ - **REFACTOR**: Add default expiry date ([#65](https://github.com/invertase/globe/issues/65)). ([1d7274d4](https://github.com/invertase/globe/commit/1d7274d47fcda809f9f2022426b923151a39e263))
+
+
+## 2024-03-07
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`globe_cli` - `v0.0.9+3`](#globe_cli---v0093)
+
+---
+
+#### `globe_cli` - `v0.0.9+3`
+
+ - **FIX**(globe_cli): Changed local base url to localhost from 127.0.0.1 ([#62](https://github.com/invertase/globe/issues/62)). ([5467d63f](https://github.com/invertase/globe/commit/5467d63ff510ebdb22748fbe95ed95b99ea2393b))
+ - **FIX**: Improve archiver gitignore matching ([#60](https://github.com/invertase/globe/issues/60)). ([c36b29c5](https://github.com/invertase/globe/commit/c36b29c59e63dacfc158dd3329237c1206954b3b))
+
+
+## 2024-03-01
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`globe_cli` - `v0.0.9+2`](#globe_cli---v0092)
+
+---
+
+#### `globe_cli` - `v0.0.9+2`
+
+ - **FIX**: Stream build logs over WS ([#55](https://github.com/invertase/globe/issues/55)). ([52fabbcb](https://github.com/invertase/globe/commit/52fabbcb7bb8119a1305eca8ed7791cad2ff0571))
+
+
+## 2024-02-28
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`globe_cli` - `v0.0.9+1`](#globe_cli---v0091)
+
+---
+
+#### `globe_cli` - `v0.0.9+1`
+
+ - **FIX**: Correctly handle windows path separators ([#52](https://github.com/invertase/globe/issues/52)). ([80750097](https://github.com/invertase/globe/commit/80750097ecc2a6ab472a982b5aa9eee63737d57e))
+
+
+## 2024-02-28
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`globe_cli` - `v0.0.9`](#globe_cli---v009)
+
+Packages graduated to a stable release (see pre-releases prior to the stable version for changelog entries):
+
+ - `globe_cli` - `v0.0.9`
+
+---
+
+#### `globe_cli` - `v0.0.9`
+
+
+## 2024-02-27
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`globe_cli` - `v0.0.9-dev.1`](#globe_cli---v009-dev1)
+
+---
+
+#### `globe_cli` - `v0.0.9-dev.1`
+
+ - **FIX**: correctly join paths on windows. ([72e82463](https://github.com/invertase/globe/commit/72e824631d5a50386dcb4e59c23007e30f8dd8ab))
+
+
+## 2024-02-26
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`globe_cli` - `v0.0.9-dev.0+1`](#globe_cli---v009-dev01)
+
+---
+
+#### `globe_cli` - `v0.0.9-dev.0+1`
+
+ - **FIX**: correctly handle windows path separators. ([e9bcd44b](https://github.com/invertase/globe/commit/e9bcd44ba9dce8c6b7ea49d266a1c9a6cf68f59d))
+
+
 ## 2024-02-26
 
 ### Changes

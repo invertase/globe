@@ -151,6 +151,30 @@ class GlobeApi {
     return Project.fromJson(response);
   }
 
+  Future<void> pauseProject({
+    required String orgId,
+    required String projectId,
+  }) async {
+    final url = '/orgs/$orgId/projects/$projectId/pause';
+    logger.detail('API Request: PUT $url');
+    final request = http.Request('PUT', _buildUri(url));
+    request.headers.addAll(headers);
+
+    _handleResponse(await request.send().then(http.Response.fromStream));
+  }
+
+  Future<void> resumeProject({
+    required String orgId,
+    required String projectId,
+  }) async {
+    final url = '/orgs/$orgId/projects/$projectId/resume';
+    logger.detail('API Request: PUT $url');
+    final request = http.Request('PUT', _buildUri(url));
+    request.headers.addAll(headers);
+
+    _handleResponse(await request.send().then(http.Response.fromStream));
+  }
+
   Future<FrameworkPresetOptions?> discoverPreset(String pubspecContent) async {
     const path = '/preset-discovery';
     logger.detail('API Request: POST $path');
@@ -243,15 +267,7 @@ class GlobeApi {
     )! as Map<String, Object?>;
     final token = Token.fromJson(response);
 
-    final generateTokenPath = '/orgs/$orgId/api-tokens/${token.uuid}/generate';
-    logger.detail('API Request: GET $generateTokenPath');
-
-    // get token value
-    final tokenValue = _handleResponse(
-      await http.get(_buildUri(generateTokenPath), headers: headers),
-    )! as String;
-
-    return (id: token.uuid, value: tokenValue);
+    return (id: token.uuid, value: token.value!);
   }
 
   Future<List<Token>> listTokens({
@@ -440,12 +456,29 @@ class Project {
     required this.id,
     required this.orgId,
     required this.slug,
+    required this.paused,
     required this.createdAt,
     required this.updatedAt,
   });
 
   factory Project.fromJson(Map<dynamic, dynamic> json) {
     return switch (json) {
+      {
+        'id': final String id,
+        'organizationId': final String organizationId,
+        'slug': final String slug,
+        'paused': final bool paused,
+        'createdAt': final String createdAt,
+        'updatedAt': final String updatedAt,
+      } =>
+        Project._(
+          id: id,
+          orgId: organizationId,
+          slug: slug,
+          paused: paused,
+          createdAt: DateTime.parse(createdAt),
+          updatedAt: DateTime.parse(updatedAt),
+        ),
       {
         'id': final String id,
         'organizationId': final String organizationId,
@@ -457,6 +490,7 @@ class Project {
           id: id,
           orgId: organizationId,
           slug: slug,
+          paused: false,
           createdAt: DateTime.parse(createdAt),
           updatedAt: DateTime.parse(updatedAt),
         ),
@@ -467,6 +501,7 @@ class Project {
   final String id;
   final String orgId;
   final String slug;
+  final bool paused;
   final DateTime createdAt;
   final DateTime updatedAt;
 }
@@ -484,6 +519,7 @@ class Deployment {
     required this.active,
     required this.createdAt,
     required this.updatedAt,
+    required this.buildId,
   });
 
   factory Deployment.fromJson(Map<dynamic, dynamic> json) {
@@ -500,6 +536,7 @@ class Deployment {
         'active': final bool active,
         'createdAt': final String createdAt,
         'updatedAt': final String updatedAt,
+        'buildId': final String? buildId,
       } =>
         Deployment._(
           id: id,
@@ -519,6 +556,7 @@ class Deployment {
           active: active,
           createdAt: DateTime.parse(createdAt),
           updatedAt: DateTime.parse(updatedAt),
+          buildId: buildId,
         ),
       _ => throw const FormatException('Deployment'),
     };
@@ -535,6 +573,7 @@ class Deployment {
   final bool active;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? buildId;
 }
 
 enum DeploymentState {
@@ -637,6 +676,7 @@ class Token {
   final String organizationUuid;
   final DateTime expiresAt;
   final List<String> cliTokenClaimProject;
+  final String? value;
 
   const Token._({
     required this.uuid,
@@ -644,6 +684,7 @@ class Token {
     required this.organizationUuid,
     required this.expiresAt,
     required this.cliTokenClaimProject,
+    required this.value,
   });
 
   factory Token.fromJson(Map<String, dynamic> json) {
@@ -654,6 +695,7 @@ class Token {
         'organizationUuid': final String organizationUuid,
         'expiresAt': final String expiresAt,
         'projects': final List<dynamic> projects,
+        'value': final String? value,
       } =>
         Token._(
           uuid: uuid,
@@ -663,6 +705,7 @@ class Token {
           cliTokenClaimProject: projects
               .map((e) => (e as Map)['projectUuid'].toString())
               .toList(),
+          value: value,
         ),
       _ => throw const FormatException('Token'),
     };

@@ -193,14 +193,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.5"
-  eventsource:
-    dependency: "direct main"
-    description:
-      name: eventsource
-      sha256: e21d60cd2320df8c8c303ebe11c80aa96b10928f411a12be31215062d8091be0
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.4.0"
   file:
     dependency: "direct dev"
     description:
@@ -544,14 +536,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
-  sync:
-    dependency: transitive
-    description:
-      name: sync
-      sha256: f2ebb89eac969abb02b498562a35c4da63d6843396c4fe81948cd06a76845fce
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.3.0"
   term_glyph:
     dependency: transitive
     description:
