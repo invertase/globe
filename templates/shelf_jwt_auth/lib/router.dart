@@ -95,8 +95,8 @@ Future<Response> _login(Request request) async {
   ({String username, String password}) reqBody;
 
   try {
-    final body =
-        await json.decode(await request.readAsString()) as Map<String, dynamic>;
+    final bodyString = await request.readAsString();
+    final body = json.decode(bodyString) as Map<String, dynamic>;
     reqBody = switch (body) {
       {'username': String username, 'password': String password} => (
           username: username,
