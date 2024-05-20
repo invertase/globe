@@ -11,12 +11,6 @@ username: Invertase
 
 Build a Simple Notes App using Flutter Web, Firebase Auth and Dart for our backend.
 
-### Features
-
-- [Shelf](https://pub.dev/packages/shelf)
-- [Flutter](https://flutter.dev)
-- [Firebase](https://firebase.google.com/)
-
 ### Getting Started
 
 #### Bootstrap
