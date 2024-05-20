@@ -79,8 +79,7 @@ Future<Response> _register(Request request) async {
     return Response.badRequest(body: 'Username already taken.');
   }
 
-  final String hashedPassword =
-      BCrypt.hashpw(reqBody.password, BCrypt.gensalt());
+  final hashedPassword = BCrypt.hashpw(reqBody.password, BCrypt.gensalt());
   final now = DateTime.now().toUtc();
   fauxUserDB[reqBody.username] = (
     passwordHash: hashedPassword,
@@ -109,9 +108,11 @@ Future<Response> _login(Request request) async {
   }
 
   final userFromDB = fauxUserDB[reqBody.username];
-  final passwordMatches = BCrypt.checkpw(reqBody.password, userFromDB.passwordHash);
 
-  if (userFromDB == null || !passwordMatches) {
+  final passwordMatches = userFromDB == null
+      ? false
+      : BCrypt.checkpw(reqBody.password, userFromDB.passwordHash);
+  if (!passwordMatches) {
     return Response.unauthorized('Invalid user credentials');
   }
 
