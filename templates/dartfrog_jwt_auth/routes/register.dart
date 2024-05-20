@@ -39,8 +39,7 @@ Future<Response> onRequest(RequestContext context) async {
     );
   }
 
-  final String hashedPassword =
-      BCrypt.hashpw(reqBody.password, BCrypt.gensalt());
+  final hashedPassword = BCrypt.hashpw(reqBody.password, BCrypt.gensalt());
   final now = DateTime.now().toUtc();
   fauxUserDB[reqBody.username] = (
     passwordHash: hashedPassword,
