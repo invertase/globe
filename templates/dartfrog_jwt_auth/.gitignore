@@ -1,0 +1,14 @@
+.DS_Store
+node_modules/
+npm-debug.log
+dist/
+.vscode/
+.wrangler
+.nvim.lua
+.idea
+*.iml
+.dart_tool
+.fvm
+.dart_frog
+
+.env
