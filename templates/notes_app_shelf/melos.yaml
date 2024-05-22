@@ -1,0 +1,12 @@
+name: notes_app_shelf
+
+packages:
+  - frontend
+  - server
+
+scripts:
+  test: melos exec -c 1  -- "dart test" --fail-fast
+
+  format: melos exec -- "dart format ."
+
+  analyze: melos exec -- "dart analyze . --fatal-infos --no-fatal-warnings"
