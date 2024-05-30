@@ -1,3 +1,8 @@
+## 0.0.11
+
+ - **FEAT**: Create project from CLI ([#87](https://github.com/invertase/globe/issues/87)). ([6214014d](https://github.com/invertase/globe/commit/6214014d01fb1aec04adbd2bd6b84e01b2c8478b))
+ - **FEAT**: Pause & resume project from CLI ([#76](https://github.com/invertase/globe/issues/76)). ([42371f1a](https://github.com/invertase/globe/commit/42371f1a2744cdab8e39ef8c14e3e87d5069f253))
+
 ## 0.0.10
 
  - **FEAT**(globe_cli): paused project handle for deploy and build log ([#75](https://github.com/invertase/globe/issues/75)). ([f8e0c8de](https://github.com/invertase/globe/commit/f8e0c8de47c4570b609ebc7626c935dc8fdbd710))
