@@ -1,7 +1,7 @@
 ---
 name: Simple DartFrog Server
 description: Building a simple CRUD REST API backend with DartFrog
-tags: ["dart", "dartfrog", "globe"]
+tags: ["dart", "dart-frog"]
 username: Invertase
 ---
 
