@@ -38,6 +38,8 @@ sidebar:
       - "/cli/commands/logout"
     - - Update
       - "/cli/commands/update"
+    - - Create
+      - "/cli/commands/create"
 - - Deployments
   - - - Overview
       - "/deployments"
