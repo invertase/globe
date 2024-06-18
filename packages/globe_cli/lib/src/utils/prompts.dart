@@ -56,7 +56,9 @@ Future<ScopeMetadata> linkProject({
       projectId: project.id,
     );
 
-    final projectUrl = 'https://globe.dev/${organization.slug}/${project.slug}';
+    final projectUrl = Uri.parse(api.metadata.endpoint)
+        .replace(path: '/${organization.slug}/${project.slug}')
+        .toString();
 
     logger.success('''
   Successfully linked project. View your project on Globe: ${cyan.wrap(projectUrl)}',
