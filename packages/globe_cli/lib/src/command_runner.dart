@@ -36,9 +36,9 @@ class GlobeCliCommandRunner extends CompletionCommandRunner<int> {
         'verbose',
         help: 'Enables verbose logging.',
       )
-      ..addFlag(
-        'local',
-        help: 'Switches the CLI to use a locally running API.',
+      ..addOption(
+        'api',
+        help: 'Switches the CLI to use a different running API.',
         hide: true,
       );
 
@@ -72,11 +72,19 @@ class GlobeCliCommandRunner extends CompletionCommandRunner<int> {
         _logger.level = Level.verbose;
         _logger.detail('Verbose logging enabled.');
       }
-      if (topLevelResults['local'] == true) {
+      if (topLevelResults['api'] != null) {
+        final apiUrl = topLevelResults['api'].toString();
+
         _logger.warn(
-          'You are using a local API. Remove the --local flag to use the production API.',
+          'You are using a different API. Remove the --api flag to use the production API.',
         );
-        metadata = GlobeMetadata.local;
+
+        metadata = apiUrl == 'local'
+            ? GlobeMetadata.local
+            : GlobeMetadata(
+                endpoint: apiUrl,
+                isLocal: apiUrl.contains('localhost'),
+              );
       } else {
         metadata = GlobeMetadata.remote;
       }
