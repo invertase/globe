@@ -32,3 +32,4 @@ scripts:
     description: Run `dart format` checks for all packages.
 
   test: melos exec --no-flutter --dir-exists="test" -- "dart test ."
+  
