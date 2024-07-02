@@ -17,9 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: dart-lang/setup-dart@v1.3
-        with:
-          sdk: "3.3.1"
+      - uses: subosito/flutter-action@v2
       - uses: bluefireteam/melos-action@v3
       - run: |
           cd ./examples/shelf/
