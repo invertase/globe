@@ -9,7 +9,7 @@ on:
       - main
 
 env:
-  GLOBE: "dart run packages/globe_cli/bin/globe.dart"
+  GLOBE: "dart run /packages/globe_cli/bin/globe.dart"
 
 jobs:
   deploy_dart:
