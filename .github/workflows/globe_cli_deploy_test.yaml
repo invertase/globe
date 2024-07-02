@@ -28,7 +28,7 @@ jobs:
     name: Deploy Flutter with CLI
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3clear
+      - uses: actions/checkout@v3
       - uses: subosito/flutter-action@v2
       - run: |
           ${{ env.GLOBE }} deploy --token=${{ secrets.GLOBE_TEST_DEPLOY_TOKEN }} --project="1c73e6b9-6ce4-4a2f-a0a3-1f096d6bc1e5"
