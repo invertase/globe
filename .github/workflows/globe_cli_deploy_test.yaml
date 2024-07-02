@@ -20,9 +20,10 @@ jobs:
       - uses: dart-lang/setup-dart@v1.3
         with:
           sdk: "3.3.1"
+      - uses: bluefireteam/melos-action@v3
       - run: |
+          cd ./examples/shelf/
           ${{ env.GLOBE }} deploy --token=${{ secrets.GLOBE_TEST_DEPLOY_TOKEN }} --project="e2e2581f-11ab-40dc-862c-ad1d1fdac4ad"
-        working-directory: ./examples/shelf/
 
   deploy_flutter:
     name: Deploy Flutter with CLI
@@ -30,5 +31,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: subosito/flutter-action@v2
+      - uses: bluefireteam/melos-action@v3
       - run: |
           ${{ env.GLOBE }} deploy --token=${{ secrets.GLOBE_TEST_DEPLOY_TOKEN }} --project="1c73e6b9-6ce4-4a2f-a0a3-1f096d6bc1e5"
