@@ -1,0 +1,34 @@
+name: Test Globe CLI Deploy
+
+
+on:
+  pull_request:
+    paths:
+      - 'packages/globe_cli/**'
+    branches:
+      - main
+
+env:
+  GLOBE: "dart run packages/globe_cli/bin/globe.dart"
+
+jobs:
+  deploy_dart:
+    name: Deploy Dart with CLI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dart-lang/setup-dart@v1.3
+        with:
+          sdk: "3.3.1"
+      - run: |
+          ${{ env.GLOBE }} deploy --token=${{ secrets.GLOBE_TEST_DEPLOY_TOKEN }} --project="e2e2581f-11ab-40dc-862c-ad1d1fdac4ad"
+        working-directory: ./examples/shelf/
+
+  deploy_flutter:
+    name: Deploy Flutter with CLI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3clear
+      - uses: subosito/flutter-action@v2
+      - run: |
+          ${{ env.GLOBE }} deploy --token=${{ secrets.GLOBE_TEST_DEPLOY_TOKEN }} --project="1c73e6b9-6ce4-4a2f-a0a3-1f096d6bc1e5"
