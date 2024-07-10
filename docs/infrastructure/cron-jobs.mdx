@@ -3,15 +3,11 @@ title: Cron Jobs
 ---
 
 # Cron Jobs
-
 <Warning>
-  Currently, Cron Jobs are an experimental feature and not recommended for
-  production use. The api is actively being worked on and may change at any
-  time.
+Currently, Cron Jobs are an experimental feature and not recommended for production use. The api is actively being worked on and may change at any time.
 </Warning>
 
-Cron jobs can be used to periodically perform an HTTP request to your production
-Globe deployment. You can specify the cron schedule and the path to request.
+Cron jobs can be used to periodically perform an HTTP request to your production Globe deployment. You can specify the cron schedule and the path to request.
 
 Cron jobs only work with **production** deployments. If your project does not have a production deployment, the cron execution will be ignored and no events will be shown.
 
@@ -22,8 +18,8 @@ Cron jobs can be created via the `globe.yaml` file in the root of your applicati
 ```yaml
 crons:
   - id: refresh_auth_token
-    schedule: "*/45 * * * *"
-    path: "/auth/refresh"
+    schedule: '*/45 * * * *'
+    path: '/auth/refresh'
 ```
 
 In the above example, the cron job will be executed every 45 minutes. For more details on cron code, see the [unix-cron documentation](https://man7.org/linux/man-pages/man5/crontab.5.html).
