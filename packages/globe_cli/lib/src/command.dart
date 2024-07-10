@@ -37,7 +37,7 @@ abstract class BaseGlobeCommand extends Command<int> {
         ..err('Please login to deploy a project.')
         ..err('Run `globe login` to login.');
 
-      exitOverride(0);
+      exitOverride(1);
     }
 
     // TODO(ehesp): Check for JWT expiry and refresh if needed?
