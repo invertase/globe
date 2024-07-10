@@ -81,6 +81,9 @@ class CreateProjectFromTemplate extends BaseGlobeCommand {
       final sparseCheckoutFile = File(
         p.join(directory.path, '.git', 'info', 'sparse-checkout'),
       );
+      if (!sparseCheckoutFile.existsSync()) {
+        sparseCheckoutFile.createSync(recursive: true);
+      }
       sparseCheckoutFile.writeAsStringSync('templates/$template/');
 
       // Pull the specific branch or commit
