@@ -1,3 +1,9 @@
+## 0.0.12
+
+ - **FIX**: PathNotFoundException when using templates ([#98](https://github.com/invertase/globe/issues/98)). ([a4d5e8f2](https://github.com/invertase/globe/commit/a4d5e8f2df97cfa0d7ea968b3e8ca5c7077ef3f9))
+ - **FEAT**: Create project from CLI ([#87](https://github.com/invertase/globe/issues/87)). ([6214014d](https://github.com/invertase/globe/commit/6214014d01fb1aec04adbd2bd6b84e01b2c8478b))
+ - **FEAT**: Pause & resume project from CLI ([#76](https://github.com/invertase/globe/issues/76)). ([42371f1a](https://github.com/invertase/globe/commit/42371f1a2744cdab8e39ef8c14e3e87d5069f253))
+
 ## 0.0.11
 
  - **FEAT**: Create project from CLI ([#87](https://github.com/invertase/globe/issues/87)). ([6214014d](https://github.com/invertase/globe/commit/6214014d01fb1aec04adbd2bd6b84e01b2c8478b))

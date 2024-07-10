@@ -3,6 +3,40 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2024-07-10
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`crud_rest_api_dartfrog` - `v0.1.1`](#crud_rest_api_dartfrog---v011)
+ - [`dartfrog_jwt_auth` - `v0.1.1`](#dartfrog_jwt_auth---v011)
+ - [`globe_cli` - `v0.0.12`](#globe_cli---v0012)
+
+---
+
+#### `crud_rest_api_dartfrog` - `v0.1.1`
+
+ - **FIX**: tags ([#89](https://github.com/invertase/globe/issues/89)). ([4d66462d](https://github.com/invertase/globe/commit/4d66462da721167295d3518f01470e5344c6b831))
+ - **FEAT**: Add Simple DartFrog Rest-API Template ([#79](https://github.com/invertase/globe/issues/79)). ([b2a2b873](https://github.com/invertase/globe/commit/b2a2b8731135843b0afe62fba075b371dd7e6de5))
+
+#### `dartfrog_jwt_auth` - `v0.1.1`
+
+ - **FEAT**: Add DartFrog JWT-Auth Example ([#82](https://github.com/invertase/globe/issues/82)). ([18f69867](https://github.com/invertase/globe/commit/18f69867a4c1b3ba7f61b20095a9e3cf63962f16))
+
+#### `globe_cli` - `v0.0.12`
+
+ - **FIX**: PathNotFoundException when using templates ([#98](https://github.com/invertase/globe/issues/98)). ([a4d5e8f2](https://github.com/invertase/globe/commit/a4d5e8f2df97cfa0d7ea968b3e8ca5c7077ef3f9))
+ - **FEAT**: Create project from CLI ([#87](https://github.com/invertase/globe/issues/87)). ([6214014d](https://github.com/invertase/globe/commit/6214014d01fb1aec04adbd2bd6b84e01b2c8478b))
+ - **FEAT**: Pause & resume project from CLI ([#76](https://github.com/invertase/globe/issues/76)). ([42371f1a](https://github.com/invertase/globe/commit/42371f1a2744cdab8e39ef8c14e3e87d5069f253))
+
+
 ## 2024-05-31
 
 ### Changes

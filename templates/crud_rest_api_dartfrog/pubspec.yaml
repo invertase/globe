@@ -1,6 +1,6 @@
 name: crud_rest_api_dartfrog
 description: A simple dart frog project
-version: 0.1.0+1
+version: 0.1.1
 environment:
   sdk: '>=3.0.0'
 
