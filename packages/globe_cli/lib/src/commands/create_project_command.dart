@@ -25,6 +25,12 @@ class CreateProjectFromTemplate extends BaseGlobeCommand {
     List<String> args, {
     String? processWorkingDir,
   }) async {
+    final command = 'git ${args.join(' ')}';
+
+    var info = 'Executing command: $command';
+    if (processWorkingDir != null) info += ' in dir: $processWorkingDir';
+    logger.detail(info);
+
     final result = await Process.run(
       'git',
       args,
