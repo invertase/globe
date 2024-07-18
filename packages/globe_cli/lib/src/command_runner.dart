@@ -2,7 +2,6 @@ import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
 import 'package:cli_completion/cli_completion.dart';
 import 'package:get_it/get_it.dart';
-import 'package:globe_cli/src/get_it.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:pub_updater/pub_updater.dart';
 
@@ -11,6 +10,7 @@ import 'commands/commands.dart';
 import 'commands/create_project_command.dart';
 import 'commands/project_command.dart';
 import 'commands/update.dart';
+import './get_it.dart';
 import 'package_info.dart' as package_info;
 import 'utils/api.dart';
 import 'utils/auth.dart';

@@ -2,13 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:globe_cli/src/utils/prompts.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
 
 import '../exit.dart';
 import 'api.dart';
+import './prompts.dart';
 import 'metadata.dart';
 
 /// A utility class for managing the user's local project.
@@ -64,7 +64,7 @@ class GlobeScope {
     return organizations.firstWhere(
       (org) => org.id == orgId,
       orElse: () => throw Exception(
-        'Organization #${orgId} not found. '
+        'Organization #$orgId not found. '
         'Either that organization does not exists or you do not have permission to access to it.',
       ),
     );
@@ -76,14 +76,15 @@ class GlobeScope {
   ) async {
     final projectId = argResults?['project'] ?? current?.projectId;
 
-    if (projectId is! String)
+    if (projectId is! String) {
       return selectProject(org, logger: logger, api: api);
+    }
 
     final projects = await api.getProjects(org: org.id);
     return projects.firstWhere(
       (project) => project.id == projectId,
       orElse: () => throw Exception(
-        'Project #${projectId} not found. '
+        'Project #$projectId not found. '
         'Either that project does not exists or you do not have permission to access to it.',
       ),
     );

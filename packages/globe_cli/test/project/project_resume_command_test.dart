@@ -4,10 +4,10 @@ import 'package:mason_logger/mason_logger.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
+import '../../bin/globe.dart' as globe;
 import '../mocks.dart';
 import '../test_utils.dart';
 import '../workspace.dart';
-import '../../bin/globe.dart' as globe;
 
 void main() {
   setUp(() => GetIt.I.reset());
@@ -27,7 +27,7 @@ void main() {
             slug: 'bar',
             updatedAt: DateTime.now(),
             type: OrganizationType.personal,
-          )
+          ),
         ];
       });
       when(api.getProjects(org: 'bar')).thenAnswer((i) async {
@@ -39,7 +39,7 @@ void main() {
             paused: false,
             orgId: 'bar',
             updatedAt: DateTime.now(),
-          )
+          ),
         ];
       });
 
