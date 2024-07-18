@@ -31,13 +31,9 @@ class DeployCommand extends BaseGlobeCommand {
         'token',
         abbr: 't',
         help: 'Set the API token for deployment. Also needs --project',
-      )
-      ..addOption(
-        'project',
-        abbr: 'p',
-        help:
-            'Set the project for deployment with API token. Used with --token',
       );
+
+    _validator = declareScopeArguments();
   }
 
   @override
@@ -49,6 +45,8 @@ class DeployCommand extends BaseGlobeCommand {
   DeploymentEnvironment get environment => argResults!['prod'] as bool
       ? DeploymentEnvironment.production
       : DeploymentEnvironment.preview;
+
+  late final ScopeValidator _validator;
 
   @override
   Future<int> run() async {
@@ -77,7 +75,7 @@ class DeployCommand extends BaseGlobeCommand {
       await linkProject(logger: logger, api: api);
     }
 
-    final validated = await scope.validate();
+    final validated = await _validator();
     if (validated.project.paused) {
       logger
         ..err('No new deployments can be created for this project.')

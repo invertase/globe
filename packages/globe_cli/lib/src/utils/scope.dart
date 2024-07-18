@@ -1,7 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:args/args.dart';
+import 'package:globe_cli/src/utils/prompts.dart';
 import 'package:mason_logger/mason_logger.dart';
+import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
 
 import '../exit.dart';
@@ -26,6 +29,9 @@ class GlobeScope {
   }
 
   /// The current project metadata, or `null` if the project has not been setup.
+  ///
+  /// Use [validate] instead if you're looking to read the current project metadata.
+  @protected
   ScopeMetadata? get current => _current;
   ScopeMetadata? _current;
 
@@ -49,50 +55,58 @@ class GlobeScope {
     return current != null;
   }
 
-  Future<ScopeValidation> validate() async {
-    final metadata = current;
+  Future<Organization> _findOrg(ArgResults? argResults) async {
+    final orgId = argResults?['org'] ?? current?.orgId;
 
-    if (metadata == null) {
-      logger.err('Unable to validate project, no project metadata found.');
-      exitOverride(1);
-    }
+    if (orgId is! String) return selectOrganization(logger: logger, api: api);
 
-    final Organization organization;
-    final Project project;
+    final organizations = await api.getOrganizations();
+    return organizations.firstWhere(
+      (org) => org.id == orgId,
+      orElse: () => throw Exception(
+        'Organization #${orgId} not found. '
+        'Either that organization does not exists or you do not have permission to access to it.',
+      ),
+    );
+  }
 
+  Future<Project> _findProject(
+    ArgResults? argResults,
+    Organization org,
+  ) async {
+    final projectId = argResults?['project'] ?? current?.projectId;
+
+    if (projectId is! String)
+      return selectProject(org, logger: logger, api: api);
+
+    final projects = await api.getProjects(org: org.id);
+    return projects.firstWhere(
+      (project) => project.id == projectId,
+      orElse: () => throw Exception(
+        'Project #${projectId} not found. '
+        'Either that project does not exists or you do not have permission to access to it.',
+      ),
+    );
+  }
+
+  Future<ScopeValidation> validate(ArgResults? argResults) async {
     try {
-      final organizations = await api.getOrganizations();
-      organization = organizations.firstWhere(
-        (org) => org.id == metadata.orgId,
-        orElse: () => throw Exception(
-          'Organization #${metadata.orgId} not found. '
-          'Either that organization does not exists or you do not have permission to access to it.',
-        ),
-      );
+      final organization = await _findOrg(argResults);
+      final project = await _findProject(argResults, organization);
 
-      final projects = await api.getProjects(org: organization.id);
-      project = projects.firstWhere(
-        (project) => project.id == metadata.projectId,
-        orElse: () => throw Exception(
-          'Project #${metadata.projectId} not found. '
-          'Either that project does not exists or you do not have permission to access to it.',
-        ),
+      logger.detail('Validated scope: ${organization.slug}/${project.slug}');
+
+      return ScopeValidation(
+        organization: organization,
+        project: project,
       );
     } on ApiException catch (e) {
       logger.err(e.message);
       exitOverride(1);
-      // TODO(rrousselGit) why do we catch Exceptions but not Errors?
-    } on Exception catch (e) {
+    } catch (e) {
       logger.err(e.toString());
       exitOverride(1);
     }
-
-    logger.detail('Validated scope: ${organization.slug}/${project.slug}');
-
-    return ScopeValidation(
-      organization: organization,
-      project: project,
-    );
   }
 
   /// Clears the current project metadata.

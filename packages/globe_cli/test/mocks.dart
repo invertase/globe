@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:globe_cli/src/utils/api.dart';
 import 'package:globe_cli/src/utils/http_server.dart';
 import 'package:globe_cli/src/utils/open_url.dart';
 import 'package:mason_logger/mason_logger.dart';
@@ -101,5 +102,30 @@ class HttpClientMock extends Mock with MockMixin implements HttpClient {
   @override
   Future<HttpClientRequest> openUrl(String? method, Uri? url) {
     return mockFuture(Invocation.method(#openUrl, [method, url]));
+  }
+}
+
+class GlobeApiMock extends Mock with MockMixin implements GlobeApi {
+  @override
+  Future<List<Organization>> getOrganizations() {
+    return mockFuture(Invocation.method(#getOrganizations, []));
+  }
+
+  @override
+  Future<List<Project>> getProjects({required String? org}) {
+    return mockFuture(Invocation.method(#getProjects, [], {#org: org}));
+  }
+
+  @override
+  Future<void> resumeProject({
+    required String? orgId,
+    required String? projectId,
+  }) {
+    return mockFuture(
+      Invocation.method(#resumeProject, [], {
+        #orgId: orgId,
+        #projectId: projectId,
+      }),
+    );
   }
 }

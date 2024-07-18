@@ -6,21 +6,23 @@ import '../../command.dart';
 import '../../utils/api.dart';
 
 class ProjectResumeCommand extends BaseGlobeCommand {
+  ProjectResumeCommand() {
+    _validator = declareScopeArguments();
+  }
+
   @override
   String get description => 'Resume the current globe project';
 
   @override
   String get name => 'resume';
 
+  late final ScopeValidator _validator;
+
   @override
   FutureOr<int> run() async {
     requireAuth();
 
-    if (!scope.hasScope()) {
-      logger.err('Not a Globe project.');
-    }
-
-    final validated = await scope.validate();
+    final validated = await _validator();
     final projectSlug = validated.project.slug;
     final pauseProjectProgress =
         logger.progress('Resuming project: ${cyan.wrap(projectSlug)}');

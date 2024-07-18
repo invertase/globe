@@ -22,6 +22,8 @@ typedef RunProcess = Future<ProcessResult> Function(
   bool runInShell,
 });
 
+typedef ScopeValidator = Future<ScopeValidation> Function();
+
 abstract class BaseGlobeCommand extends Command<int> {
   GlobeAuth get auth => GetIt.I();
   GlobeApi get api => GetIt.I();
@@ -41,5 +43,23 @@ abstract class BaseGlobeCommand extends Command<int> {
     }
 
     // TODO(ehesp): Check for JWT expiry and refresh if needed?
+  }
+
+  ScopeValidator declareScopeArguments() {
+    argParser
+      ..addOption(
+        'org',
+        abbr: 'o',
+        help: 'The organization ID used by this command. '
+            'Defaults to what was previously linked using `globe link`.',
+      )
+      ..addOption(
+        'project',
+        abbr: 'p',
+        help: 'The Project ID used by this command. '
+            'Defaults to what was previously linked using `globe link`.',
+      );
+
+    return () => scope.validate(argResults);
   }
 }

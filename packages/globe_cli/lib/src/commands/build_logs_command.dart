@@ -10,7 +10,10 @@ class BuildLogsCommand extends BaseGlobeCommand {
       abbr: 'd',
       help: 'Deployment ID.',
     );
+    _validator = declareScopeArguments();
   }
+
+  late final ScopeValidator _validator;
 
   @override
   String get description => 'View build logs for a given deployment ID.';
@@ -22,11 +25,7 @@ class BuildLogsCommand extends BaseGlobeCommand {
   Future<int> run() async {
     requireAuth();
 
-    if (!scope.hasScope()) {
-      logger.err('Not a Globe project.');
-    }
-
-    final validated = await scope.validate();
+    final validated = await _validator();
     final deploymentId = argResults!['deployment'] as String?;
 
     if (deploymentId == null) {

@@ -408,7 +408,7 @@ class SettingsConnection {
 }
 
 class Organization {
-  Organization._({
+  Organization({
     required this.id,
     required this.name,
     required this.slug,
@@ -429,7 +429,7 @@ class Organization {
         'createdAt': final String createdAt,
         'updatedAt': final String updatedAt,
       } =>
-        Organization._(
+        Organization(
           id: id,
           name: name,
           slug: slug,
@@ -452,7 +452,7 @@ class Organization {
 }
 
 class Project {
-  Project._({
+  Project({
     required this.id,
     required this.orgId,
     required this.slug,
@@ -471,7 +471,7 @@ class Project {
         'createdAt': final String createdAt,
         'updatedAt': final String updatedAt,
       } =>
-        Project._(
+        Project(
           id: id,
           orgId: organizationId,
           slug: slug,
@@ -486,7 +486,7 @@ class Project {
         'createdAt': final String createdAt,
         'updatedAt': final String updatedAt,
       } =>
-        Project._(
+        Project(
           id: id,
           orgId: organizationId,
           slug: slug,
