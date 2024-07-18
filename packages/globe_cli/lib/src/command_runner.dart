@@ -10,7 +10,7 @@ import 'commands/commands.dart';
 import 'commands/create_project_command.dart';
 import 'commands/project_command.dart';
 import 'commands/update.dart';
-import './get_it.dart';
+import 'get_it.dart';
 import 'package_info.dart' as package_info;
 import 'utils/api.dart';
 import 'utils/auth.dart';
