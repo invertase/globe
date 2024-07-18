@@ -8,8 +8,8 @@ import 'package:path/path.dart' as p;
 
 import '../exit.dart';
 import 'api.dart';
-import 'prompts.dart';
 import 'metadata.dart';
+import 'prompts.dart';
 
 /// A utility class for managing the user's local project.
 class GlobeScope {
