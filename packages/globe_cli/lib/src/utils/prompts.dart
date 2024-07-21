@@ -48,7 +48,6 @@ Future<ScopeMetadata> linkProject({
       organization,
       logger: logger,
       api: api,
-      scope: scope,
     );
 
     final result = scope.setScope(
@@ -119,7 +118,6 @@ Future<Project> selectProject(
   Organization organization, {
   required Logger logger,
   required GlobeApi api,
-  required GlobeScope scope,
 }) async {
   logger.detail('Fetching organization projects');
   final projects = await api.getProjects(org: organization.id);

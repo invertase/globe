@@ -10,6 +10,7 @@ import 'commands/commands.dart';
 import 'commands/create_project_command.dart';
 import 'commands/project_command.dart';
 import 'commands/update.dart';
+import 'get_it.dart';
 import 'package_info.dart' as package_info;
 import 'utils/api.dart';
 import 'utils/auth.dart';
@@ -93,19 +94,18 @@ class GlobeCliCommandRunner extends CompletionCommandRunner<int> {
         await _checkForUpdates();
       }
 
-      final auth = GlobeAuth(metadata);
-      final api = GlobeApi(
-        metadata: metadata,
-        auth: auth,
-        logger: _logger,
+      final auth = GetIt.instance.singletonPutIfAbsent<GlobeAuth>(
+        () => GlobeAuth(metadata),
       );
+      final api = GetIt.instance.singletonPutIfAbsent<GlobeApi>(() {
+        return GlobeApi(metadata: metadata, auth: auth, logger: _logger);
+      });
       final scope = GlobeScope(
         api: api,
         metadata: metadata,
         logger: _logger,
       );
-      GetIt.instance.registerSingleton<GlobeAuth>(auth);
-      GetIt.instance.registerSingleton<GlobeApi>(api);
+
       GetIt.instance.registerSingleton<GlobeMetadata>(metadata);
       GetIt.instance.registerSingleton<GlobeScope>(scope);
 

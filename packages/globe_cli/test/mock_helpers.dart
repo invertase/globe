@@ -8,14 +8,18 @@ extension on Invocation {
 
 mixin MockMixin on Mock {
   Future<T> mockFuture<T>(Invocation invocation) async {
+    final voidFuture = Future<void>.value();
+
     return super.noSuchMethod(
       invocation,
-      returnValue:
-          Future<T>.error('Missing stub for ${invocation.getDisplayString()}')
-            ..ignore(),
-      returnValueForMissingStub:
-          Future<T>.error('Missing stub for ${invocation.getDisplayString()}')
-            ..ignore(),
+      returnValue: (voidFuture is Future<T>)
+          ? voidFuture
+          : Future<T>.error('Missing stub for ${invocation.getDisplayString()}')
+        ..ignore(),
+      returnValueForMissingStub: (voidFuture is Future<T>)
+          ? voidFuture
+          : Future<T>.error('Missing stub for ${invocation.getDisplayString()}')
+        ..ignore(),
     ) as Future<T>;
   }
 }
