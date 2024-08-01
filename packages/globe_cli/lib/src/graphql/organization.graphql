@@ -28,5 +28,4 @@ type Organization {
 
 extend type Query {
   organization(slug: String!): Organization
-  organizations: [Organization!]
 }
