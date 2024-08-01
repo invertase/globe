@@ -1,0 +1,94 @@
+enum BillingProductTypeEnum {
+  subscription
+}
+
+enum BillingProductDataDurationEnum {
+  once
+  day
+  week
+  month
+  year
+}
+
+enum BillingProductUsageTypeEnum {
+  request
+  bandwidth
+}
+
+type BillingProduct {
+  id: ID!
+  name: String!
+  """
+  Admin Only
+  """
+  providerId: String! @isAdmin
+  type: BillingProductTypeEnum!
+  isActive: Boolean!
+  items: [BillingProductItem!]!
+}
+
+type BillingProductItem {
+  id: ID!
+  """
+  Admin Only
+  """
+  providerId: String! @isAdmin
+  name: String!
+  data: BillingProductItemData!
+  isActive: Boolean!
+}
+
+input BillingProductItemInput {
+  providerId: String!
+  name: String!
+  usages: [BillingProductItemUsageInput!]!
+}
+
+type BillingProductItemUsage {
+  usageType: BillingProductUsageTypeEnum!
+  usageLimit: Int!
+}
+
+input BillingProductItemUsageInput {
+  usageType: BillingProductUsageTypeEnum!
+  usageLimit: Int!
+}
+
+type BillingProductItemData {
+  price: Float!
+  currency: String!
+  description: String
+  duration: BillingProductDataDurationEnum
+}
+
+extend type Query {
+  billingProducts(type: BillingProductTypeEnum!): [BillingProduct!]!
+}
+
+extend type Mutation {
+  createBillingProduct(
+    name: String!
+    providerId: String!
+    type: BillingProductTypeEnum!
+    items: [BillingProductItemInput!]!
+  ): SuccessResponse! @isAdmin
+  updateBillingProduct(
+    id: ID!
+    name: String
+    providerId: String
+    type: BillingProductTypeEnum
+  ): SuccessResponse! @isAdmin
+  deleteBillingProduct(id: ID!): SuccessResponse! @isAdmin
+  updateBillingProductItem(
+    id: ID!
+    name: String
+    providerId: String
+  ): SuccessResponse! @isAdmin
+  deleteBillingProductItem(id: ID!): SuccessResponse! @isAdmin
+  updateBillingProductItemUsage(
+    id: Int!
+    usageType: BillingProductUsageTypeEnum
+    usageLimit: Int
+  ): SuccessResponse! @isAdmin
+  deleteBillingProductItemUsage(id: Int!): SuccessResponse! @isAdmin
+}

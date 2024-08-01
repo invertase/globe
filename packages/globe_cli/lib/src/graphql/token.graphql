@@ -1,0 +1,43 @@
+interface IToken {
+  uuid: String!
+  name: String!
+  organizationUuid: String!
+  createdAt: DateTime!
+  expiresAt: DateTime!
+  projects: [String!]!
+}
+
+type Token implements IToken {
+  uuid: String!
+  name: String!
+  organizationUuid: String!
+  createdAt: DateTime!
+  expiresAt: DateTime!
+  projects: [String!]!
+}
+
+type TokenWithValue implements IToken {
+  uuid: String!
+  name: String!
+  organizationUuid: String!
+  createdAt: DateTime!
+  expiresAt: DateTime!
+  projects: [String!]!
+  value: String!
+}
+
+extend type Query {
+  token(orgSlug: String!, uuid: String!): Token!
+  tokens(orgSlug: String!, projects: [String!]): [Token!]!
+}
+
+extend type Mutation {
+  createToken(
+    orgSlug: String!
+    name: String!
+    expiresAt: DateTime!
+    projects: [String!]!
+  ): TokenWithValue!
+  updateToken(orgSlug: String!, uuid: String!, projects: [String!]!): Token!
+  deleteToken(orgSlug: String!, uuid: String!): SuccessResponse!
+}
