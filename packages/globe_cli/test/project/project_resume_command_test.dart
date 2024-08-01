@@ -19,28 +19,10 @@ void main() {
       final api = GlobeApiMock();
 
       when(api.getOrganizations()).thenAnswer((i) async {
-        return [
-          Organization(
-            createdAt: DateTime.now(),
-            id: 'bar',
-            name: 'bar',
-            slug: 'bar',
-            updatedAt: DateTime.now(),
-            type: OrganizationType.personal,
-          ),
-        ];
+        return [Organization(id: 'bar', name: 'bar', slug: 'bar')];
       });
       when(api.getProjects(org: 'bar')).thenAnswer((i) async {
-        return [
-          Project(
-            createdAt: DateTime.now(),
-            id: 'foo',
-            slug: 'foo',
-            paused: false,
-            orgId: 'bar',
-            updatedAt: DateTime.now(),
-          ),
-        ];
+        return [Project(id: 'foo', slug: 'foo', paused: false)];
       });
 
       GetIt.I.registerSingleton<GlobeApi>(api);

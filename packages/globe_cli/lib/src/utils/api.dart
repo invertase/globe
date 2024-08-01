@@ -1,11 +1,16 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:graphql/client.dart';
 import 'package:http/http.dart' as http;
 import 'package:mason_logger/mason_logger.dart';
 import 'package:path/path.dart';
 
+import '../commands/organizations.graphql.dart';
+import '../commands/project/project.graphql.dart';
+import '../commands/token/token.graphql.dart';
 import '../exit.dart';
+import '../graphql/project.graphql.dart';
 import '../package_info.dart' as package_info;
 import 'auth.dart';
 import 'metadata.dart';
@@ -44,10 +49,67 @@ class GlobeApi {
   final GlobeAuth auth;
   final Logger logger;
 
+  late final GraphQLClient _client = GraphQLClient(
+    link: Link.route(
+      (request) {
+        final buffer = StringBuffer();
+
+        if (request.isMutation) {
+          buffer.write('MUTATION');
+        } else {
+          buffer.write('QUERY');
+        }
+
+        if (request.operation.operationName case final name?) {
+          buffer.write(' ($name)');
+        }
+
+        if (request.variables.isNotEmpty) {
+          try {
+            buffer.write(', Variables ${jsonEncode(request.variables)}');
+          } catch (error, stackTrace) {
+            buffer.write(
+              ', Variables: <Unable to encode>'
+              '\n$error'
+              '\n$stackTrace',
+            );
+          }
+        }
+
+        logger.detail(buffer.toString());
+
+        return HttpLink(
+          '${metadata.endpoint}/graphql',
+          defaultHeaders: {
+            if (auth.currentSession?.jwt case final jwt?)
+              'Authorization': 'Bearer $jwt',
+            // 'Cookie': 'auth_session=zeg83dxa9kvzjosxglzkt2npc2jypab5380kyjzi'
+          },
+        );
+      },
+    ),
+    cache: GraphQLCache(),
+  );
+
   /// Creates a [Uri] from the given [path], using the [GlobeMetadata.endpoint] as the base.
   Uri _buildUri(String path) {
     assert(path.startsWith('/'), 'path must start with a /.');
     return Uri.parse('${metadata.endpoint}/api$path');
+  }
+
+  Future<T> _handleGraphql<T>(
+    Future<QueryResult<T>> Function() cb,
+  ) async {
+    final result = await cb();
+
+    if (result.hasException) {
+      throw ApiException._(
+        500,
+        'An error occurred while calling the Globe API.\n$result',
+      );
+    }
+
+    return result.parsedData as T;
   }
 
   /// Handles an [http.Response], throwing an [ApiException] if the response
@@ -110,15 +172,19 @@ class GlobeApi {
   /// Gets all of the organizations that the current user is a member of.
   Future<List<Organization>> getOrganizations() async {
     requireAuth();
-    logger.detail('API Request: GET /user/orgs');
-    final response = _handleResponse(
-      await http.get(_buildUri('/user/orgs'), headers: headers),
-    )! as List<Object?>;
 
-    return response
-        .cast<Map<String, Object?>>()
-        .map(Organization.fromJson)
-        .toList();
+    final response = await _handleGraphql(
+      () => _client.query$Organizations(Options$Query$Organizations()),
+    );
+
+    return [
+      for (final org in response.organizations!)
+        Organization(
+          id: org.id,
+          name: org.name,
+          slug: org.slug,
+        ),
+    ];
   }
 
   /// Gets all of the projects that the current user is a member of.
@@ -126,53 +192,78 @@ class GlobeApi {
     required String org,
   }) async {
     requireAuth();
-    logger.detail('API Request: GET /orgs/$org/projects');
-    final response = _handleResponse(
-      await http.get(_buildUri('/orgs/$org/projects'), headers: headers),
-    )! as List<Object?>;
-    return response.cast<Map<String, Object?>>().map(Project.fromJson).toList();
+
+    final response = await _handleGraphql(
+      () => _client.query$Projects(
+        Options$Query$Projects(
+          variables: Variables$Query$Projects(orgSlug: org),
+        ),
+      ),
+    );
+
+    return [
+      for (final project in response.projects)
+        Project(
+          id: project.id,
+          slug: project.slug,
+          paused: project.status == Enum$ProjectStatus.paused,
+        ),
+    ];
   }
 
   /// Creates a new project and returns it.
   Future<Project> createProject({
-    required String orgId,
+    required String orgSlug,
     required String name,
   }) async {
-    logger.detail('API Request: POST /orgs/$orgId/projects');
-    final request = http.Request('POST', _buildUri('/orgs/$orgId/projects'));
-    request.headers.addAll(headers);
+    final response = await _handleGraphql(
+      () => _client.mutate$CreateProject(
+        Options$Mutation$CreateProject(
+          variables: Variables$Mutation$CreateProject(
+            orgSlug: orgSlug,
+            name: name,
+          ),
+        ),
+      ),
+    );
 
-    request.body = jsonEncode({'name': name});
-
-    final response = _handleResponse(
-      await request.send().then(http.Response.fromStream),
-    )! as Map<Object?, Object?>;
-
-    return Project.fromJson(response);
+    return Project(
+      id: response.createProject.id,
+      slug: response.createProject.slug,
+      paused: response.createProject.status == Enum$ProjectStatus.paused,
+    );
   }
 
   Future<void> pauseProject({
-    required String orgId,
-    required String projectId,
+    required String orgSlug,
+    required String projectSlug,
   }) async {
-    final url = '/orgs/$orgId/projects/$projectId/pause';
-    logger.detail('API Request: PUT $url');
-    final request = http.Request('PUT', _buildUri(url));
-    request.headers.addAll(headers);
-
-    _handleResponse(await request.send().then(http.Response.fromStream));
+    await _handleGraphql(
+      () => _client.mutate$Pause(
+        Options$Mutation$Pause(
+          variables: Variables$Mutation$Pause(
+            orgSlug: orgSlug,
+            projectId: projectSlug,
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> resumeProject({
-    required String orgId,
-    required String projectId,
+    required String orgSlug,
+    required String projectSlug,
   }) async {
-    final url = '/orgs/$orgId/projects/$projectId/resume';
-    logger.detail('API Request: PUT $url');
-    final request = http.Request('PUT', _buildUri(url));
-    request.headers.addAll(headers);
-
-    _handleResponse(await request.send().then(http.Response.fromStream));
+    await _handleGraphql(
+      () => _client.mutate$Resume(
+        Options$Mutation$Resume(
+          variables: Variables$Mutation$Resume(
+            orgSlug: orgSlug,
+            projectId: projectSlug,
+          ),
+        ),
+      ),
+    );
   }
 
   Future<FrameworkPresetOptions?> discoverPreset(String pubspecContent) async {
@@ -245,61 +336,68 @@ class GlobeApi {
   }
 
   Future<({String id, String value})> createToken({
-    required String orgId,
+    required String orgSlug,
     required String name,
     required List<String> projectUuids,
     required DateTime expiresAt,
   }) async {
     requireAuth();
 
-    final createTokenPath = '/orgs/$orgId/api-tokens';
-    logger.detail('API Request: POST $createTokenPath');
+    final response = await _handleGraphql(
+      () => _client.mutate$CreateToken(
+        Options$Mutation$CreateToken(
+          variables: Variables$Mutation$CreateToken(
+            orgSlug: orgSlug,
+            name: name,
+            projects: projectUuids,
+            expiresAt: expiresAt.toUtc().toIso8601String(),
+          ),
+        ),
+      ),
+    );
 
-    final body = json.encode({
-      'name': name,
-      'projectUuids': projectUuids,
-      'expiresAt': expiresAt.toUtc().toIso8601String(),
-    });
-
-    // create token
-    final response = _handleResponse(
-      await http.post(_buildUri(createTokenPath), headers: headers, body: body),
-    )! as Map<String, Object?>;
-    final token = Token.fromJson(response);
-
-    return (id: token.uuid, value: token.value!);
+    return (
+      id: response.createToken.uuid,
+      value: response.createToken.value,
+    );
   }
 
-  Future<List<Token>> listTokens({
-    required String orgId,
+  Future<List<Query$ListTokens$tokens>> listTokens({
+    required String orgSlug,
     required List<String> projectUuids,
   }) async {
     requireAuth();
 
-    final fullUri = _buildUri('/orgs/$orgId/api-tokens')
-        .replace(queryParameters: {'projects': projectUuids});
+    final response = await _handleGraphql(
+      () => _client.query$ListTokens(
+        Options$Query$ListTokens(
+          variables: Variables$Query$ListTokens(
+            orgSlug: orgSlug,
+            projects: projectUuids,
+          ),
+        ),
+      ),
+    );
 
-    logger.detail('API Request: GET /orgs/$orgId/api-tokens');
-    final response = _handleResponse(await http.get(fullUri, headers: headers))!
-        as List<dynamic>;
-
-    return response
-        .map((e) => Token.fromJson(e as Map<String, dynamic>))
-        .toList();
+    return response.tokens;
   }
 
   Future<void> deleteToken({
-    required String orgId,
+    required String orgSlug,
     required String tokenId,
   }) async {
     requireAuth();
 
-    final deleteTokenPath = '/orgs/$orgId/api-tokens/$tokenId';
-    logger.detail('API Request: DELETE $deleteTokenPath');
-
-    _handleResponse(
-      await http.delete(_buildUri(deleteTokenPath), headers: headers),
-    )! as Map<String, Object?>;
+    await _handleGraphql(
+      () => _client.mutate$DeleteToken(
+        Options$Mutation$DeleteToken(
+          variables: Variables$Mutation$DeleteToken(
+            orgSlug: orgSlug,
+            tokenUuid: tokenId,
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -412,98 +510,23 @@ class Organization {
     required this.id,
     required this.name,
     required this.slug,
-    required this.type,
-    // required this.role,
-    required this.createdAt,
-    required this.updatedAt,
   });
-
-  factory Organization.fromJson(Map<dynamic, dynamic> json) {
-    return switch (json) {
-      {
-        'id': final String id,
-        'name': final String name,
-        'type': final String type,
-        // 'role': final String role,
-        'slug': final String slug,
-        'createdAt': final String createdAt,
-        'updatedAt': final String updatedAt,
-      } =>
-        Organization(
-          id: id,
-          name: name,
-          slug: slug,
-          type: OrganizationType.fromString(type),
-          // role: Role.fromString(role),
-          createdAt: DateTime.parse(createdAt),
-          updatedAt: DateTime.parse(updatedAt),
-        ),
-      _ => throw const FormatException('Organization'),
-    };
-  }
 
   final String id;
   final String name;
   final String slug;
-  final OrganizationType type;
-  // final Role role;
-  final DateTime createdAt;
-  final DateTime updatedAt;
 }
 
 class Project {
   Project({
     required this.id,
-    required this.orgId,
     required this.slug,
     required this.paused,
-    required this.createdAt,
-    required this.updatedAt,
   });
 
-  factory Project.fromJson(Map<dynamic, dynamic> json) {
-    return switch (json) {
-      {
-        'id': final String id,
-        'organizationId': final String organizationId,
-        'slug': final String slug,
-        'paused': final bool paused,
-        'createdAt': final String createdAt,
-        'updatedAt': final String updatedAt,
-      } =>
-        Project(
-          id: id,
-          orgId: organizationId,
-          slug: slug,
-          paused: paused,
-          createdAt: DateTime.parse(createdAt),
-          updatedAt: DateTime.parse(updatedAt),
-        ),
-      {
-        'id': final String id,
-        'organizationId': final String organizationId,
-        'slug': final String slug,
-        'createdAt': final String createdAt,
-        'updatedAt': final String updatedAt,
-      } =>
-        Project(
-          id: id,
-          orgId: organizationId,
-          slug: slug,
-          paused: false,
-          createdAt: DateTime.parse(createdAt),
-          updatedAt: DateTime.parse(updatedAt),
-        ),
-      _ => throw const FormatException('Project'),
-    };
-  }
-
   final String id;
-  final String orgId;
   final String slug;
   final bool paused;
-  final DateTime createdAt;
-  final DateTime updatedAt;
 }
 
 class Deployment {
@@ -670,44 +693,6 @@ enum OrganizationType {
   }
 }
 
-class Token {
-  final String uuid;
-  final String name;
-  final String organizationUuid;
-  final DateTime expiresAt;
-  final List<String> cliTokenClaimProject;
-  final String? value;
-
-  const Token._({
-    required this.uuid,
-    required this.name,
-    required this.organizationUuid,
-    required this.expiresAt,
-    required this.cliTokenClaimProject,
-    required this.value,
-  });
-
-  factory Token.fromJson(Map<String, dynamic> json) {
-    return switch (json) {
-      {
-        'uuid': final String uuid,
-        'name': final String name,
-        'organizationUuid': final String organizationUuid,
-        'expiresAt': final String expiresAt,
-        'projects': final List<dynamic> projects,
-        'value': final String? value,
-      } =>
-        Token._(
-          uuid: uuid,
-          name: name,
-          organizationUuid: organizationUuid,
-          expiresAt: DateTime.parse(expiresAt),
-          cliTokenClaimProject: projects
-              .map((e) => (e as Map)['projectUuid'].toString())
-              .toList(),
-          value: value,
-        ),
-      _ => throw const FormatException('Token'),
-    };
-  }
+extension Query$ListTokens$tokensX on Query$ListTokens$tokens {
+  DateTime get expiresAtTime => DateTime.parse(expiresAt);
 }
