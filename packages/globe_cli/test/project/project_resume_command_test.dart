@@ -31,16 +31,7 @@ void main() {
         ];
       });
       when(api.getProjects(org: 'bar')).thenAnswer((i) async {
-        return [
-          Project(
-            createdAt: DateTime.now(),
-            id: 'foo',
-            slug: 'foo',
-            paused: false,
-            orgId: 'bar',
-            updatedAt: DateTime.now(),
-          ),
-        ];
+        return [Project(id: 'foo', slug: 'foo', paused: false)];
       });
 
       GetIt.I.registerSingleton<GlobeApi>(api);

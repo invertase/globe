@@ -1,0 +1,93 @@
+enum FrameworkPreset {
+  dart_frog
+  flutter
+  serverpod
+}
+
+enum ProjectStatus {
+  active
+  paused
+  marked_for_deletion
+  deletion_in_progress
+}
+
+type Project {
+  id: String!
+  slug: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  status: ProjectStatus!
+  settings: ProjectSettings
+}
+
+type ProjectSettings {
+  preset: FrameworkPreset
+  presetVersion: String
+  presetBuildCommand: String
+  buildImage: String
+  buildCommand: String
+  entrypoint: String
+  rootDirectory: String
+  melosDetection: Boolean
+  melosCommand: String
+  melosVersion: String
+  buildRunnerDetection: Boolean
+  buildRunnerCommand: String
+  preferredRegions: [String!]
+  flutterWebResourcesCdn: Boolean
+}
+
+input ProjectSettingsInput {
+  preset: FrameworkPreset
+  presetVersion: String
+  presetBuildCommand: String
+  buildImage: String
+  buildCommand: String
+  entrypoint: String
+  rootDirectory: String
+  melosDetection: Boolean
+  melosCommand: String
+  melosVersion: String
+  buildRunnerDetection: Boolean
+  buildRunnerCommand: String
+  preferredRegions: [String!]
+  flutterWebResourcesCdn: Boolean
+}
+
+input ProjectConnectionInput {
+  provider: String!
+  owner: String!
+  repository: String!
+  installationId: Int!
+  repositoryId: Int!
+  branch: String!
+}
+
+input CreateProjectInput {
+  orgSlug: String!
+  slug: String!
+  settings: ProjectSettingsInput
+  connection: ProjectConnectionInput
+}
+
+input UpdateProjectSlugInput {
+  orgSlug: String!
+  slug: String!
+}
+
+extend type Query {
+  projects(offset: Int, limit: Int, orgSlug: String!): [Project!]!
+  project(orgSlug: String!, slug: String!): Project
+}
+
+extend type Mutation {
+  createProject(input: CreateProjectInput!): Project!
+  updateProjectSlug(id: String!, input: UpdateProjectSlugInput!): SuccessResponse!
+  pauseProject(orgSlug: String!, projectId: String!): SuccessResponse!
+  resumeProject(orgSlug: String!, projectId: String!): SuccessResponse!
+}
+
+extend type Mutation {
+  pauseProject(orgSlug: String!, projectId: String!): SuccessResponse!
+  resumeProject(orgSlug: String!, projectId: String!): SuccessResponse!
+}

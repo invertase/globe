@@ -1,0 +1,43 @@
+enum DeploymentStatus {
+  triggered
+  build_api_error
+  github_api_error
+  queue_api_error
+  deployed
+  pending
+  queued
+  working
+  success
+  status_unknown
+  failure
+  internal_error
+  timeout
+  cancelled
+  expired
+}
+
+enum DeploymentState {
+  pending
+  working
+  deploying
+  success
+  error
+  cancelled
+}
+
+enum DeploymentEnvironment {
+  production
+  preview
+}
+
+type Deployment {
+  id: String!
+  uuid: String!
+  status: DeploymentStatus!
+  state: DeploymentState!
+  buildId: String
+  url: String!
+  environment: DeploymentEnvironment!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}

@@ -24,13 +24,14 @@ class ProjectPauseCommand extends BaseGlobeCommand {
 
     final validated = await _validator();
     final projectSlug = validated.project.slug;
-    final pauseProjectProgress =
-        logger.progress('Pausing project: ${cyan.wrap(projectSlug)}');
+    final pauseProjectProgress = logger.progress(
+      'Pausing project: ${cyan.wrap(projectSlug)}',
+    );
 
     try {
       await api.pauseProject(
-        orgId: validated.organization.id,
-        projectId: validated.project.id,
+        orgSlug: validated.organization.slug,
+        projectSlug: validated.project.slug,
       );
 
       pauseProjectProgress

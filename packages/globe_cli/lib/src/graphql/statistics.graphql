@@ -1,0 +1,34 @@
+enum Interval {
+  Day
+  Week
+  Month
+}
+
+type DataPoint {
+  date: DateTime!
+  count: Int!
+}
+
+type DeploymentStat {
+  date: DateTime!
+  success: Int!
+  """
+  This combines pending, working & deploying deployment states.
+  """
+  pending: Int!
+  error: Int!
+}
+
+extend type Query {
+  userSignupStats(
+    startDate: DateTime!
+    endDate: DateTime!
+    interval: Interval = Month
+  ): [DataPoint!]! @isAdmin
+
+  latestDeploymentStats(
+    startDate: DateTime!
+    endDate: DateTime!
+    interval: Interval = Month
+  ): [DeploymentStat!]! @isAdmin
+}

@@ -68,7 +68,7 @@ class TokenCreateCommand extends BaseGlobeCommand {
 
     try {
       final token = await api.createToken(
-        orgId: organization.id,
+        orgSlug: organization.slug,
         name: name,
         projectUuids: projects.map((e) => e.id).toList(),
         expiresAt: expiry,

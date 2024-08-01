@@ -1,0 +1,17 @@
+union Entity = Project | Organization | Deployment | GlobeUser
+
+enum EntityType {
+  Organization
+  Deployment
+  Project
+  UserId
+  BuildId
+}
+
+type Admin {
+  searchId(type: EntityType!, id: String!): Entity @isAdmin
+}
+
+extend type Query {
+  admin: Admin @isAdmin
+}

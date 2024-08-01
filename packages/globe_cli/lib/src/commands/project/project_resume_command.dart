@@ -29,8 +29,8 @@ class ProjectResumeCommand extends BaseGlobeCommand {
 
     try {
       await api.resumeProject(
-        orgId: validated.organization.id,
-        projectId: validated.project.id,
+        orgSlug: validated.organization.slug,
+        projectSlug: validated.project.slug,
       );
 
       pauseProjectProgress

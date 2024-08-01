@@ -5,6 +5,7 @@ import 'package:mason_logger/mason_logger.dart';
 import '../../command.dart';
 import '../../utils/api.dart';
 import '../../utils/prompts.dart';
+import 'token.graphql.dart';
 
 class TokenListCommand extends BaseGlobeCommand {
   TokenListCommand() {
@@ -40,7 +41,7 @@ class TokenListCommand extends BaseGlobeCommand {
 
     try {
       final tokens = await api.listTokens(
-        orgId: organization.id,
+        orgSlug: organization.slug,
         projectUuids: projects.map((e) => e.id).toList(),
       );
       if (tokens.isEmpty) {
@@ -48,11 +49,11 @@ class TokenListCommand extends BaseGlobeCommand {
         return ExitCode.success.code;
       }
 
-      String tokenLog(Token token) => '''
+      String tokenLog(Query$ListTokens$tokens token) => '''
 ----------------------------------
   ID:       ${cyan.wrap(token.uuid)}
   Name:     ${token.name}
-  Expiry:   ${token.expiresAt.toLocal()}''';
+  Expiry:   ${token.expiresAtTime.toLocal()}''';
 
       listTokenProgress.complete(
         'Tokens for $projectNames\n${tokens.map(tokenLog).join('\n')}',

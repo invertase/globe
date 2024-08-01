@@ -1,0 +1,38 @@
+interface User {
+  id: String!
+  email: String!
+  emailVerified: Boolean!
+  imageUrl: String!
+  name: String!
+  admin: Boolean!
+  updatedAt: DateTime!
+  createdAt: DateTime!
+}
+
+type Me implements User {
+  id: String!
+  email: String!
+  emailVerified: Boolean!
+  imageUrl: String!
+  name: String!
+  admin: Boolean!
+  updatedAt: DateTime!
+  createdAt: DateTime!
+  organizations: [Organization!]
+}
+
+type GlobeUser implements User {
+  id: String!
+  email: String!
+  emailVerified: Boolean!
+  imageUrl: String!
+  name: String!
+  admin: Boolean!
+  updatedAt: DateTime!
+  createdAt: DateTime!
+  organizations: [Organization!]
+}
+
+extend type Query {
+  me: Me
+}

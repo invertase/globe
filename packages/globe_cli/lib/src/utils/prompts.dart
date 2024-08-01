@@ -266,13 +266,13 @@ Future<Project> selectProject(
     }
 
     final project = await api.createProject(
-      orgId: organization.id,
+      orgSlug: organization.slug,
       name: name,
     );
 
     await api.updateSettings(
       projectId: project.id,
-      orgId: project.orgId,
+      orgId: organization.id,
       settings: ProjectSettings(
         rootDirectory: rootDirectory == './' ? null : rootDirectory,
         preset: discoveredPreset?.id,
@@ -311,9 +311,7 @@ Future<Project> selectProject(
   );
 
   // If the user selected to create a new project, prompt to create one.
-  if (selectedProject == createSymbol) {
-    return createProject();
-  }
+  if (selectedProject == createSymbol) return createProject();
 
   return projects.firstWhere((p) => p.id == selectedProject);
 }
