@@ -83,7 +83,6 @@ class GlobeApi {
           defaultHeaders: {
             if (auth.currentSession?.jwt case final jwt?)
               'Authorization': 'Bearer $jwt',
-            // 'Cookie': 'auth_session=zeg83dxa9kvzjosxglzkt2npc2jypab5380kyjzi'
           },
         );
       },
