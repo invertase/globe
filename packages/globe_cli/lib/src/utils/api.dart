@@ -6,7 +6,6 @@ import 'package:http/http.dart' as http;
 import 'package:mason_logger/mason_logger.dart';
 import 'package:path/path.dart';
 
-import '../commands/organizations.graphql.dart';
 import '../commands/project/project.graphql.dart';
 import '../commands/token/token.graphql.dart';
 import '../exit.dart';
@@ -171,19 +170,15 @@ class GlobeApi {
   /// Gets all of the organizations that the current user is a member of.
   Future<List<Organization>> getOrganizations() async {
     requireAuth();
+    logger.detail('API Request: GET /user/orgs');
+    final response = _handleResponse(
+      await http.get(_buildUri('/user/orgs'), headers: headers),
+    )! as List<Object?>;
 
-    final response = await _handleGraphql(
-      () => _client.query$Organizations(Options$Query$Organizations()),
-    );
-
-    return [
-      for (final org in response.organizations!)
-        Organization(
-          id: org.id,
-          name: org.name,
-          slug: org.slug,
-        ),
-    ];
+    return response
+        .cast<Map<String, Object?>>()
+        .map(Organization.fromJson)
+        .toList();
   }
 
   /// Gets all of the projects that the current user is a member of.
@@ -509,11 +504,43 @@ class Organization {
     required this.id,
     required this.name,
     required this.slug,
+    required this.type,
+    // required this.role,
+    required this.createdAt,
+    required this.updatedAt,
   });
+
+  factory Organization.fromJson(Map<dynamic, dynamic> json) {
+    return switch (json) {
+      {
+        'id': final String id,
+        'name': final String name,
+        'type': final String type,
+        // 'role': final String role,
+        'slug': final String slug,
+        'createdAt': final String createdAt,
+        'updatedAt': final String updatedAt,
+      } =>
+        Organization(
+          id: id,
+          name: name,
+          slug: slug,
+          type: OrganizationType.fromString(type),
+          // role: Role.fromString(role),
+          createdAt: DateTime.parse(createdAt),
+          updatedAt: DateTime.parse(updatedAt),
+        ),
+      _ => throw const FormatException('Organization'),
+    };
+  }
 
   final String id;
   final String name;
   final String slug;
+  final OrganizationType type;
+  // final Role role;
+  final DateTime createdAt;
+  final DateTime updatedAt;
 }
 
 class Project {
