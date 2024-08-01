@@ -19,7 +19,16 @@ void main() {
       final api = GlobeApiMock();
 
       when(api.getOrganizations()).thenAnswer((i) async {
-        return [Organization(id: 'bar', name: 'bar', slug: 'bar')];
+        return [
+          Organization(
+            createdAt: DateTime.now(),
+            id: 'bar',
+            name: 'bar',
+            slug: 'bar',
+            updatedAt: DateTime.now(),
+            type: OrganizationType.personal,
+          ),
+        ];
       });
       when(api.getProjects(org: 'bar')).thenAnswer((i) async {
         return [Project(id: 'foo', slug: 'foo', paused: false)];
