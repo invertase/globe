@@ -1,0 +1,111 @@
+{
+  "name": "Globe",
+  "description": "Build once, deploy everywhere.",
+  "favicon": "/assets/globe-logo.png",
+  "logo": {
+    "light": "/assets/globe-logo.png",
+    "dark": "/assets/globe-logo.png"
+  },
+  "theme": {
+    "primary": "#9140E6"
+  },
+  "header": {
+    "links": [
+      {
+        "title": "Dashboard",
+        "href": "https://globe.dev",
+        "cta": true
+      }
+    ]
+  },
+  "social": {
+    "x": "dart_globe",
+    "website": "https://globe.dev",
+    "discord": "UCcCYjDaTy"
+  },
+  "tabs": [
+    {
+      "id": "root",
+      "title": "Documentation",
+      "href": "/"
+    },
+    {
+      "id": "cli",
+      "title": "CLI",
+      "href": "/cli"
+    },
+    {
+      "id": "infrastructure",
+      "title": "Infrastructure",
+      "href": "/infrastructure"
+    }
+  ],
+  "sidebar": [
+    {
+      "group": "Getting Started",
+      "tab": "root",
+      "pages": [
+        { "title": "Overview", "href": "/" },
+        { "title": "Getting Started", "href": "/getting-started" },
+        { "title": "Shelf Server", "href": "/getting-started/shelf-server" },
+        { "title": "Flutter Web", "href": "/getting-started/flutter-web" }
+      ]
+    },
+    {
+      "group": "Deployments",
+      "tab": "root",
+      "pages": [
+        { "title": "Overview", "href": "/deployments" },
+        { "title": "Build Settings", "href": "/deployments/build-settings" },
+        { "title": "Domains", "href": "/deployments/domains" },
+        {
+          "title": "Environment Variables",
+          "href": "/deployments/environment-variables"
+        },
+        {
+          "title": "GitHub Integration",
+          "href": "/deployments/github-integration"
+        },
+        { "title": "Hooks", "href": "/deployments/hooks" }
+      ]
+    },
+    {
+      "group": "Frameworks",
+      "tab": "root",
+      "pages": [
+        { "title": "Overview", "href": "/frameworks" },
+        { "title": "Dart Frog", "href": "/frameworks/dart-frog" },
+        { "title": "Flutter Web", "href": "/frameworks/flutter-web" }
+      ]
+    },
+    {
+      "group": "CLI",
+      "tab": "cli",
+      "pages": [
+        { "title": "Overview", "href": "/cli" },
+        { "title": "Deploy", "href": "/cli/commands/deploy" },
+        { "title": "Build Logs", "href": "/cli/commands/build-logs" },
+        { "title": "Link", "href": "/cli/commands/link" },
+        { "title": "Unlink", "href": "/cli/commands/unlink" },
+        { "title": "Login", "href": "/cli/commands/login" },
+        { "title": "Token", "href": "/cli/commands/token" },
+        { "title": "Logout", "href": "/cli/commands/logout" },
+        { "title": "Update", "href": "/cli/commands/update" },
+        { "title": "Create", "href": "/cli/commands/create" }
+      ]
+    },
+    {
+      "group": "Infrastructure",
+      "tab": "infrastructure",
+      "pages": [
+        { "title": "Overview", "href": "/infrastructure" },
+        { "title": "Limits", "href": "/infrastructure/limits" },
+        { "title": "Cold Starts", "href": "/infrastructure/cold-starts" },
+        { "title": "Cron Jobs", "href": "/infrastructure/cron-jobs" },
+        { "title": "Headers", "href": "/infrastructure/headers" },
+        { "title": "Regions", "href": "/infrastructure/regions" },
+        { "title": "Web Sockets", "href": "/infrastructure/websockets" }
+      ]
+    }
+  ]
+}
