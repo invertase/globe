@@ -84,7 +84,7 @@
       "pages": [
         { "title": "Overview", "href": "/cli" },
         { "title": "Deploy", "href": "/cli/commands/deploy" },
-        { "title": "Build Logs", "href": "/cli/commands/deploy" },
+        { "title": "Build Logs", "href": "/cli/commands/build-logs" },
         { "title": "Link", "href": "/cli/commands/link" },
         { "title": "Unlink", "href": "/cli/commands/unlink" },
         { "title": "Login", "href": "/cli/commands/login" },
