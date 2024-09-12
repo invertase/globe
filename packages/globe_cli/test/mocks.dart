@@ -118,13 +118,13 @@ class GlobeApiMock extends Mock with MockMixin implements GlobeApi {
 
   @override
   Future<void> resumeProject({
-    required String? orgId,
-    required String? projectId,
+    required String? orgSlug,
+    required String? projectSlug,
   }) {
     return mockFuture(
       Invocation.method(#resumeProject, [], {
-        #orgId: orgId,
-        #projectId: projectId,
+        #orgId: orgSlug,
+        #projectId: projectSlug,
       }),
     );
   }

@@ -1,0 +1,30 @@
+mutation CreateToken(
+  $orgSlug: String!
+  $name: String!
+  $expiresAt: DateTime!
+  $projects: [String!]!
+) {
+  createToken(
+    orgSlug: $orgSlug
+    name: $name
+    expiresAt: $expiresAt
+    projects: $projects
+  ) {
+    uuid
+    value
+  }
+}
+
+mutation DeleteToken($orgSlug: String!, $tokenUuid: String!) {
+  deleteToken(uuid: $tokenUuid, orgSlug: $orgSlug) {
+    message
+  }
+}
+
+query ListTokens($orgSlug: String!, $projects: [String!]!) {
+  tokens(orgSlug: $orgSlug, projects: $projects) {
+    uuid
+    name
+    expiresAt
+  }
+}

@@ -1,0 +1,31 @@
+enum OrganizationType {
+  personal
+  organization
+}
+
+type OrganizationMember implements User {
+  id: String!
+  email: String!
+  emailVerified: Boolean!
+  imageUrl: String!
+  name: String!
+  admin: Boolean!
+  updatedAt: DateTime!
+  createdAt: DateTime!
+  role: String!
+}
+
+type Organization {
+  id: String!
+  name: String!
+  slug: String!
+  imageUrl: String
+  type: OrganizationType!
+  updatedAt: DateTime!
+  createdAt: DateTime!
+  members: [OrganizationMember!]
+}
+
+extend type Query {
+  organization(slug: String!): Organization
+}

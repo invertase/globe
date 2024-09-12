@@ -1,0 +1,10 @@
+# build.yaml
+
+targets:
+  $default:
+    builders:
+      graphql_codegen:
+        options:
+          generatedFileHeader: "// ignore_for_file: type=lint\n"
+          clients:
+            - graphql

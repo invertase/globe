@@ -1,0 +1,16 @@
+type Query
+type Mutation
+
+type SuccessResponse {
+  message: String!
+}
+
+enum GlobeApiErrorCode {
+  INTERNAL_SERVER_ERROR
+  UNAUTHORIZED
+  FORBIDDEN
+  NOT_FOUND
+  BAD_REQUEST
+}
+
+directive @isAdmin on OBJECT | FIELD_DEFINITION

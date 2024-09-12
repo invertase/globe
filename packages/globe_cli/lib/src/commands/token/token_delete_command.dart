@@ -33,7 +33,7 @@ class TokenDeleteCommand extends BaseGlobeCommand {
 
     try {
       await api.deleteToken(
-        orgId: organization.id,
+        orgSlug: organization.slug,
         tokenId: tokenId,
       );
       deleteTokenProgress.complete('Token deleted');

@@ -1,0 +1,27 @@
+mutation Pause($orgSlug: String!, $projectId: String!) {
+  pauseProject(orgSlug: $orgSlug, projectId: $projectId) {
+    message
+  }
+}
+
+mutation Resume($orgSlug: String!, $projectId: String!) {
+  resumeProject(orgSlug: $orgSlug, projectId: $projectId) {
+    message
+  }
+}
+
+mutation CreateProject($orgSlug: String!, $name: String!) {
+  createProject(input: { slug: $name, orgSlug: $orgSlug }) {
+    id
+    slug
+    status
+  }
+}
+
+query Projects($orgSlug: String!) {
+  projects(orgSlug: $orgSlug) {
+    id
+    slug
+    status
+  }
+}
