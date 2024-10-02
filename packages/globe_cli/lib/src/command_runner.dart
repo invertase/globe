@@ -41,6 +41,11 @@ class GlobeCliCommandRunner extends CompletionCommandRunner<int> {
         'api',
         help: 'Switches the CLI to use a different running API.',
         hide: true,
+      )
+      ..addOption(
+        'token',
+        abbr: 't',
+        help: 'Set the API token for cli',
       );
 
     // Register singleton utils.
@@ -67,6 +72,7 @@ class GlobeCliCommandRunner extends CompletionCommandRunner<int> {
   @override
   Future<int> run(Iterable<String> args) async {
     final GlobeMetadata metadata;
+
     try {
       final topLevelResults = parse(args);
       if (topLevelResults['verbose'] == true) {
@@ -108,6 +114,21 @@ class GlobeCliCommandRunner extends CompletionCommandRunner<int> {
 
       GetIt.instance.registerSingleton<GlobeMetadata>(metadata);
       GetIt.instance.registerSingleton<GlobeScope>(scope);
+
+      final maybeToken = topLevelResults['token'];
+      if (maybeToken != null) {
+        api.auth.loginWithApiToken(jwt: maybeToken as String);
+
+        final organizations = await api.getOrganizations();
+        _logger.detail('Found ${organizations.length} organizations');
+
+        if (organizations.isEmpty) {
+          _logger.err(
+            'API Token provided is invalid or is not associated with any organizations.',
+          );
+          return ExitCode.usage.code;
+        }
+      }
 
       // Load the current project scope.
       scope.loadScope();
