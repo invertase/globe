@@ -16,6 +16,7 @@ import 'utils/api.dart';
 import 'utils/auth.dart';
 import 'utils/http_server.dart';
 import 'utils/metadata.dart';
+import 'utils/prompts.dart';
 import 'utils/scope.dart';
 
 class GlobeCliCommandRunner extends CompletionCommandRunner<int> {
@@ -45,7 +46,12 @@ class GlobeCliCommandRunner extends CompletionCommandRunner<int> {
       ..addOption(
         'token',
         abbr: 't',
-        help: 'Set the API token for cli',
+        help: 'Set the API token for cli.',
+      )
+      ..addOption(
+        'project',
+        abbr: 'p',
+        help: 'Set the Project ID used by this command.',
       );
 
     // Register singleton utils.
@@ -116,17 +122,24 @@ class GlobeCliCommandRunner extends CompletionCommandRunner<int> {
       GetIt.instance.registerSingleton<GlobeScope>(scope);
 
       final maybeToken = topLevelResults['token'];
+      final maybeProjectId = topLevelResults['project'];
+
       if (maybeToken != null) {
         api.auth.loginWithApiToken(jwt: maybeToken as String);
 
-        final organizations = await api.getOrganizations();
-        _logger.detail('Found ${organizations.length} organizations');
-
-        if (organizations.isEmpty) {
-          _logger.err(
+        final org = await selectOrganization(
+          logger: _logger,
+          api: api,
+          onNoOrganizationsError: () => _logger.err(
             'API Token provided is invalid or is not associated with any organizations.',
-          );
-          return ExitCode.usage.code;
+          ),
+        );
+        if (maybeProjectId != null) {
+          final projects = await api.getProjects(org: org.id);
+          if (!projects.any((project) => project.id == maybeProjectId)) {
+            throw Exception('Project #$maybeProjectId not found.');
+          }
+          scope.setScope(orgId: org.id, projectId: maybeProjectId as String);
         }
       }
 
