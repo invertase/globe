@@ -46,20 +46,6 @@ abstract class BaseGlobeCommand extends Command<int> {
   }
 
   ScopeValidator declareScopeArguments() {
-    argParser
-      ..addOption(
-        'org',
-        abbr: 'o',
-        help: 'The organization ID used by this command. '
-            'Defaults to what was previously linked using `globe link`.',
-      )
-      ..addOption(
-        'project',
-        abbr: 'p',
-        help: 'The Project ID used by this command. '
-            'Defaults to what was previously linked using `globe link`.',
-      );
-
     return () => scope.validate(argResults);
   }
 }

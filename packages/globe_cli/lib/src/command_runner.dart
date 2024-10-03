@@ -16,6 +16,7 @@ import 'utils/api.dart';
 import 'utils/auth.dart';
 import 'utils/http_server.dart';
 import 'utils/metadata.dart';
+import 'utils/prompts.dart';
 import 'utils/scope.dart';
 
 class GlobeCliCommandRunner extends CompletionCommandRunner<int> {
@@ -41,6 +42,23 @@ class GlobeCliCommandRunner extends CompletionCommandRunner<int> {
         'api',
         help: 'Switches the CLI to use a different running API.',
         hide: true,
+      )
+      ..addOption(
+        'token',
+        abbr: 't',
+        help: 'Set the API token for cli.',
+      )
+      ..addOption(
+        'project',
+        abbr: 'p',
+        help: 'Set the Project ID used by this command. '
+            'Defaults to what was previously linked using `globe link`.',
+      )
+      ..addOption(
+        'org',
+        abbr: 'o',
+        help: 'Set the Organization ID used by this command. '
+            'Defaults to what was previously linked using `globe link`.',
       );
 
     // Register singleton utils.
@@ -67,6 +85,7 @@ class GlobeCliCommandRunner extends CompletionCommandRunner<int> {
   @override
   Future<int> run(Iterable<String> args) async {
     final GlobeMetadata metadata;
+
     try {
       final topLevelResults = parse(args);
       if (topLevelResults['verbose'] == true) {
@@ -109,9 +128,53 @@ class GlobeCliCommandRunner extends CompletionCommandRunner<int> {
       GetIt.instance.registerSingleton<GlobeMetadata>(metadata);
       GetIt.instance.registerSingleton<GlobeScope>(scope);
 
+      final maybeToken = topLevelResults['token'];
+      final maybeProjectId = topLevelResults['project'];
+      final maybeOrgId = topLevelResults['org'];
+
+      Organization? org;
+      Project? project;
+
+      if (maybeToken != null) {
+        api.auth.loginWithApiToken(jwt: maybeToken as String);
+        org = await selectOrganization(
+          logger: _logger,
+          api: api,
+          onNoOrganizationsError: () => _logger.err(
+            'API Token provided is invalid or is not associated with any organizations.',
+          ),
+        );
+      }
+
       // Load the current project scope.
       scope.loadScope();
       auth.loadSession();
+
+      final currentSession = auth.currentSession;
+
+      if (maybeOrgId != null) {
+        if (currentSession == null) throw Exception('Auth required.');
+        final orgs = await api.getOrganizations();
+        org = orgs.firstWhere(
+          (org) => org.id == maybeOrgId,
+          orElse: () => throw Exception('Project #$maybeProjectId not found.'),
+        );
+      }
+
+      if (maybeProjectId != null) {
+        if (currentSession == null) throw Exception('Auth required.');
+        if (org == null) throw Exception('Organization not found.');
+
+        final projects = await api.getProjects(org: org.id);
+        project = projects.firstWhere(
+          (project) => project.id == maybeProjectId,
+          orElse: () => throw Exception('Project #$maybeProjectId not found.'),
+        );
+      }
+
+      if (org != null && project != null) {
+        scope.setScope(orgId: org.id, projectId: project.id);
+      }
 
       return await runCommand(topLevelResults) ?? ExitCode.success.code;
       // TODO(rrousselGit) why are we checking FormatExceptions here?
@@ -132,6 +195,9 @@ class GlobeCliCommandRunner extends CompletionCommandRunner<int> {
         ..info('')
         ..info(e.usage);
       return ExitCode.usage.code;
+    } on Exception catch (e) {
+      _logger.err(e.toString());
+      return ExitCode.software.code;
     }
   }
 

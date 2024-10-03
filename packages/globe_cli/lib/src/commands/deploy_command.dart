@@ -26,11 +26,6 @@ class DeployCommand extends BaseGlobeCommand {
       ..addFlag(
         'logs',
         help: 'Shows build logs for the deployment.',
-      )
-      ..addOption(
-        'token',
-        abbr: 't',
-        help: 'Set the API token for deployment. Also needs --project',
       );
 
     _validator = declareScopeArguments();
@@ -50,26 +45,6 @@ class DeployCommand extends BaseGlobeCommand {
 
   @override
   Future<int> run() async {
-    if (argResults?['token'] != null && argResults?['project'] != null) {
-      final token = argResults!['token'] as String;
-      final project = argResults!['project'] as String;
-      api.auth.loginWithApiToken(jwt: token);
-
-      final organizations = await api.getOrganizations();
-      logger.detail('Found ${organizations.length} organizations');
-
-      if (organizations.isEmpty) {
-        logger.err(
-          'API Token provided is invalid or is not associated with any organizations.',
-        );
-        return ExitCode.usage.code;
-      }
-
-      scope.setScope(orgId: organizations.first.id, projectId: project);
-    } else {
-      requireAuth();
-    }
-
     // If there is no scope, ask the user to link the project.
     if (!scope.hasScope()) {
       await linkProject(logger: logger, api: api);

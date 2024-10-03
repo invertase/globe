@@ -695,7 +695,6 @@ class Token {
         'organizationUuid': final String organizationUuid,
         'expiresAt': final String expiresAt,
         'projects': final List<dynamic> projects,
-        'value': final String? value,
       } =>
         Token._(
           uuid: uuid,
@@ -705,7 +704,7 @@ class Token {
           cliTokenClaimProject: projects
               .map((e) => (e as Map)['projectUuid'].toString())
               .toList(),
-          value: value,
+          value: json['value']?.toString(),
         ),
       _ => throw const FormatException('Token'),
     };

@@ -55,9 +55,8 @@ class GlobeScope {
     return current != null;
   }
 
-  Future<Organization> _findOrg(ArgResults? argResults) async {
-    final orgId = argResults?['org'] ?? current?.orgId;
-
+  Future<Organization> _findOrg() async {
+    final orgId = current?.orgId;
     if (orgId is! String) return selectOrganization(logger: logger, api: api);
 
     final organizations = await api.getOrganizations();
@@ -70,12 +69,8 @@ class GlobeScope {
     );
   }
 
-  Future<Project> _findProject(
-    ArgResults? argResults,
-    Organization org,
-  ) async {
-    final projectId = argResults?['project'] ?? current?.projectId;
-
+  Future<Project> _findProject(Organization org) async {
+    final projectId = current?.projectId;
     if (projectId is! String) {
       return selectProject(org, logger: logger, api: api);
     }
@@ -92,8 +87,8 @@ class GlobeScope {
 
   Future<ScopeValidation> validate(ArgResults? argResults) async {
     try {
-      final organization = await _findOrg(argResults);
-      final project = await _findProject(argResults, organization);
+      final organization = await _findOrg();
+      final project = await _findProject(organization);
 
       logger.detail('Validated scope: ${organization.slug}/${project.slug}');
 

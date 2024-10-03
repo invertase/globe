@@ -82,16 +82,21 @@ Future<ScopeMetadata> linkProject({
 Future<Organization> selectOrganization({
   required Logger logger,
   required GlobeApi api,
+  void Function()? onNoOrganizationsError,
 }) async {
   logger.detail('Fetching user organizations');
   final organizations = await api.getOrganizations();
   logger.detail('Found ${organizations.length} organizations');
 
   if (organizations.isEmpty) {
-    logger.detail(
-      'No organizations found, this is likely a new account which is still being setup. Please try again in a few seconds.',
-    );
-    logger.err('Your account is still being setup, please try again.');
+    if (onNoOrganizationsError == null) {
+      logger.detail(
+        'No organizations found, this is likely a new account which is still being setup. Please try again in a few seconds.',
+      );
+      logger.err('Your account is still being setup, please try again.');
+    } else {
+      onNoOrganizationsError.call();
+    }
     exitOverride(1);
   }
 
