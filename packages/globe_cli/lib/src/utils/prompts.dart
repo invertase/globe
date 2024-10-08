@@ -188,7 +188,7 @@ Future<Project> selectProject(
     if (entryPoints.isNotEmpty) {
       entrypoint = switch (entryPoints.length) {
         1 => entryPoints.first,
-        > 1 => entrypoint = logger.chooseOne(
+        > 1 => logger.chooseOne(
             '❓ Choose Dart entrypoint file:',
             choices: entryPoints,
           ),
