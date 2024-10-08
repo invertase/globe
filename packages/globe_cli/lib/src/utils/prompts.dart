@@ -29,13 +29,6 @@ Future<ScopeMetadata> linkProject({
     )) {
       exitOverride(0);
     }
-  } else {
-    if (!logger.confirm(
-      '❓ Link this project to Globe ${cyan.wrap('"${Directory.current.path}"')}?',
-      defaultValue: true,
-    )) {
-      exitOverride(0);
-    }
   }
 
   try {
@@ -184,52 +177,53 @@ Future<Project> selectProject(
       defaultValue: parsed.name,
     );
 
-    final discoveredPreset = await api.discoverPreset(pubspecContent);
+    final (discoveredPreset, entryPoints) = await (
+      api.discoverPreset(pubspecContent),
+      findMainEntryPoint(rootDirectoryDir)
+    ).wait;
 
     String? buildCommand;
     String? entrypoint;
 
+    if (entryPoints.isNotEmpty) {
+      entrypoint = switch (entryPoints.length) {
+        1 => entryPoints.first,
+        > 1 => logger.chooseOne(
+            '❓ Choose Dart entrypoint file:',
+            choices: entryPoints,
+          ),
+        _ => null,
+      };
+      logger.detail('Using entry point in `$entrypoint`');
+    }
+
     if (discoveredPreset != null) {
-      final useDefaultSettings = logger.confirm(
-        '❓ Detected "${discoveredPreset.name}" preset, would you like to use the default build settings?',
-        defaultValue: true,
-      );
-
-      if (!useDefaultSettings) {
-        buildCommand = logger.prompt(
-          '❓ Enter a build command:',
-          defaultValue: discoveredPreset.buildCommand,
-        );
-
-        entrypoint = logger.prompt(
-          '❓ Enter a Dart entrypoint file:',
-          defaultValue: discoveredPreset.entrypoint,
-        );
-
-        // If it's the same as the preset, don't send it.
-        buildCommand =
-            buildCommand == discoveredPreset.buildCommand ? null : buildCommand;
-        entrypoint =
-            entrypoint == discoveredPreset.entrypoint ? null : entrypoint;
+      logger.detail('Detected "${discoveredPreset.name}" preset');
+      if (discoveredPreset.buildCommand != null) {
+        buildCommand = discoveredPreset.buildCommand;
+        logger.detail('Using preset build command: `$buildCommand`');
       }
-    } else {
+
+      if (discoveredPreset.entrypoint.isNotEmpty && entrypoint == null) {
+        entrypoint = discoveredPreset.entrypoint;
+        logger.detail('Using preset entry point: `$entrypoint`');
+      }
+    }
+
+    // Check if project has build_runner, if not skip.
+    const buildRunner = 'build_runner';
+    if (parsed.devDependencies.keys.any((p) => p == buildRunner) ||
+        parsed.dependencies.keys.any((p) => p == buildRunner)) {
       if (logger.confirm('❓ Would you like to run a custom build command?')) {
         buildCommand = logger.prompt(
           '❓ Enter a build command:',
+          defaultValue: buildCommand,
         );
       }
-
-      entrypoint = logger.prompt(
-        '❓ Enter a Dart entrypoint file:',
-        defaultValue: 'lib/main.dart',
-      );
     }
 
     final envVarFile = File(
-      p.join(
-        rootDirectoryDir.absolute.path,
-        '.env',
-      ),
+      p.join(rootDirectoryDir.absolute.path, '.env'),
     );
 
     Map<String, String>? environmentVariables;
@@ -391,4 +385,29 @@ Future<List<Project>> selectProjects(
   }
 
   return selections.map((e) => projectsBySlug[e]!).toList();
+}
+
+/// Asynchronously finds the main entry point of a Dart project.
+Future<List<String>> findMainEntryPoint(Directory rootDir) async {
+  final dartFiles = rootDir.list(recursive: true).where((entity) {
+    if (entity is! File) return false;
+
+    final relativePath = p.relative(entity.path, from: rootDir.path);
+    final segments = p.split(relativePath);
+
+    return p.extension(entity.path) == '.dart' &&
+        !segments.contains('.dart_tool') &&
+        !segments.contains('test') &&
+        !p.basename(entity.path).startsWith('test_');
+  });
+  final entryPoints = <String>[];
+
+  await for (final (entity as File) in dartFiles) {
+    final contents = await entity.readAsString();
+    if (RegExp(r'\bmain\s*\([^)]*\)').hasMatch(contents)) {
+      entryPoints.add(p.relative(entity.path));
+    }
+  }
+
+  return entryPoints;
 }
