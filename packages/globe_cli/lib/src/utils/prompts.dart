@@ -396,7 +396,7 @@ Future<List<String>> findMainEntryPoint(Directory rootDir) async {
 
   await for (final (entity as File) in dartFiles) {
     final contents = await entity.readAsString();
-    if (contents.contains(RegExp(r'\bvoid\s+main\s*\('))) {
+    if (RegExp(r'\bmain\s*\([^)]*\)').hasMatch(contents)) {
       entryPoints.add(p.relative(entity.path));
     }
   }
