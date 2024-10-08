@@ -389,9 +389,11 @@ Future<List<Project>> selectProjects(
 
 /// Asynchronously finds the main entry point of a Dart project.
 Future<List<String>> findMainEntryPoint(Directory rootDir) async {
-  final dartFiles = rootDir
-      .list(recursive: true)
-      .where((entity) => entity is File && p.extension(entity.path) == '.dart');
+  final dartFiles = rootDir.list(recursive: true).where((entity) {
+    return entity is File &&
+        p.extension(entity.path) == '.dart' &&
+        !p.basename(entity.path).contains('test');
+  });
   final entryPoints = <String>[];
 
   await for (final (entity as File) in dartFiles) {
