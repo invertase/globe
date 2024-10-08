@@ -604,8 +604,8 @@ class FrameworkPresetOptions {
       {
         'id': final String id,
         'name': final String name,
-        'buildCommand': final String buildCommand,
         'entrypoint': final String entrypoint,
+        'buildCommand': final String? buildCommand,
       } =>
         FrameworkPresetOptions(
           id: id,
@@ -628,7 +628,7 @@ class FrameworkPresetOptions {
 
   final String id;
   final String name;
-  final String buildCommand;
+  final String? buildCommand;
   final String entrypoint;
 }
 
