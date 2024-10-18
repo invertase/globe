@@ -141,7 +141,7 @@ Future<LatestSdkRelease> getLatestFlutterRelease() async {
   );
 }
 
-Future<List<_DockerImage>> _getDockerDartImageTags({String? filter}) async {
+Future<List<_DockerImage>> _getDockerDartImageTags() async {
   final url = Uri.parse(
     'https://hub.docker.com/v2/repositories/library/dart/tags?name=&ordering=last_updated&page=1&page_size=100',
   );
