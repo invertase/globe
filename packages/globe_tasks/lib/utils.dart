@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:collection/collection.dart';
@@ -212,11 +213,12 @@ Future<void> triggerWorkflow(
       'Authorization': 'Bearer $token',
       'X-GitHub-Api-Version': '2022-11-28',
     },
-    body: json.encode({
-      'ref': 'chore/add-scripts-for-provisioning-dart-flutter-images',
-      'inputs': flow.input(release),
-    }),
+    body: json.encode({'ref': 'main', 'inputs': flow.input(release)}),
   );
 
   print(result.body);
+
+  if (result.statusCode != 200) {
+    exit(1);
+  }
 }
