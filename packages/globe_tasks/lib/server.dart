@@ -14,6 +14,12 @@ String get _githubToken => dotEnv['GITHUB_API_TOKEN']!;
 
 // Configure routes.
 final _router = Router()
+  ..get('/', (req) {
+    const headers = {
+      HttpHeaders.contentTypeHeader: 'text/plain; charset=utf-8'
+    };
+    return Response.ok('Okay 🚀', headers: headers);
+  })
   ..get('/tasks/check-dart-version', _checkDartVersion)
   ..get('/tasks/check-flutter-version', _checkFlutterVersion);
 
