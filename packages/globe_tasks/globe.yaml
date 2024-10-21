@@ -1,0 +1,7 @@
+crons:
+  - id: check_flutter_version
+    schedule: '0 */5 * * *'
+    path: '/tasks/check-flutter-version'
+  - id: check_dart_version
+    schedule: '0 */5 * * *'
+    path: '/tasks/check-dart-version'
