@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2024-10-22
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`globe_cli` - `v0.0.13`](#globe_cli---v0013)
+
+---
+
+#### `globe_cli` - `v0.0.13`
+
+ - **FEAT**: Add `--project` and `--org` options on commands that depend on "scope". ([#100](https://github.com/invertase/globe/issues/100)). ([a11ec775](https://github.com/invertase/globe/commit/a11ec775152c20e90b5979245baccdeb97dd9dc6))
+
+
 ## 2024-07-10
 
 ### Changes
