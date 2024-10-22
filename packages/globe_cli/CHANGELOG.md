@@ -1,3 +1,7 @@
+## 0.0.13
+
+ - **FEAT**: Add `--project` and `--org` options on commands that depend on "scope". ([#100](https://github.com/invertase/globe/issues/100)). ([a11ec775](https://github.com/invertase/globe/commit/a11ec775152c20e90b5979245baccdeb97dd9dc6))
+
 ## 0.0.12
 
  - **FIX**: PathNotFoundException when using templates ([#98](https://github.com/invertase/globe/issues/98)). ([a4d5e8f2](https://github.com/invertase/globe/commit/a4d5e8f2df97cfa0d7ea968b3e8ca5c7077ef3f9))
