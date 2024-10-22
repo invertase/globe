@@ -20,8 +20,8 @@ final _router = Router()
     };
     return Response.ok('Okay 🚀', headers: headers);
   })
-  ..get('/tasks/check-dart-version', _checkDartVersion)
-  ..get('/tasks/check-flutter-version', _checkFlutterVersion);
+  ..post('/tasks/check-dart-version', _checkDartVersion)
+  ..post('/tasks/check-flutter-version', _checkFlutterVersion);
 
 void main(List<String> args) async {
   final port = int.parse(Platform.environment['PORT'] ?? '8080');
