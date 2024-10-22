@@ -1,5 +1,5 @@
 name: globe_cli
-description: Globe CLI
+description: The global deployment platform for Dart & Flutter applications.
 version: 0.0.13
 repository: https://github.com/invertase/globe
 
