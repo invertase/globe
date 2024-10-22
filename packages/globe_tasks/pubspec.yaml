@@ -1,6 +1,7 @@
 name: globe_tasks
 description: Periodic checker for new Flutter/Dart versions.
 version: 1.0.0
+publish_to: none
 
 environment:
   sdk: ^3.5.0
