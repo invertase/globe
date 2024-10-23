@@ -218,7 +218,7 @@ Future<void> triggerWorkflow(
 
   print(result.body);
 
-  if (result.statusCode != 200) {
+  if (result.statusCode != 204) {
     exit(1);
   }
 }
