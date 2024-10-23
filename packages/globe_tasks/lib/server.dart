@@ -49,29 +49,7 @@ Future<Response> _checkDartVersion(Request request) async {
     tasks.add(() => _triggerDartWorkflow(devRelease));
   }
 
-  if (tasks.isEmpty) {
-    return Response.ok('Already has latest images.');
-  }
-
   return await _execTasks(tasks);
-}
-
-Future<Response> _execTasks(List<Task> tasks) async {
-  try {
-    await tasks.map((task) => task.call()).wait;
-
-    return Response.ok(
-      'Completed.',
-      headers: {HttpHeaders.contentTypeHeader: 'text/plain'},
-    );
-  } catch (e, trace) {
-    print(e);
-    print(trace);
-    return Response.ok(
-      'An error occurred while triggering tasks',
-      headers: {HttpHeaders.contentTypeHeader: 'text/plain'},
-    );
-  }
 }
 
 Future<Response> _checkFlutterVersion(Request request) async {
@@ -92,14 +70,38 @@ Future<Response> _checkFlutterVersion(Request request) async {
     tasks.add(() => _triggerFlutterWorkflow(flutterReleases.beta));
   }
 
+  return await _execTasks(tasks);
+}
+
+Future<void> _triggerDartWorkflow(SdkRelease release) => triggerWorkflow(
+      _githubToken,
+      Workflow.dart,
+      release,
+    );
+Future<void> _triggerFlutterWorkflow(SdkRelease release) => triggerWorkflow(
+      _githubToken,
+      Workflow.flutter,
+      release,
+    );
+
+Future<Response> _execTasks(List<Task> tasks) async {
   if (tasks.isEmpty) {
     return Response.ok('Already has latest images.');
   }
 
-  return await _execTasks(tasks);
-}
+  try {
+    await tasks.map((task) => task.call()).wait;
 
-Future<void> _triggerDartWorkflow(SdkRelease release) =>
-    triggerWorkflow(_githubToken, Workflow.dart, release);
-Future<void> _triggerFlutterWorkflow(SdkRelease release) =>
-    triggerWorkflow(_githubToken, Workflow.flutter, release);
+    return Response.ok(
+      'Completed.',
+      headers: {HttpHeaders.contentTypeHeader: 'text/plain'},
+    );
+  } catch (e, trace) {
+    print(e);
+    print(trace);
+    return Response.ok(
+      'An error occurred while triggering tasks',
+      headers: {HttpHeaders.contentTypeHeader: 'text/plain'},
+    );
+  }
+}
