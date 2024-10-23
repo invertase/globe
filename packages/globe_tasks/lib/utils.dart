@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:collection/collection.dart';
@@ -216,9 +215,7 @@ Future<void> triggerWorkflow(
     body: json.encode({'ref': 'main', 'inputs': flow.input(release)}),
   );
 
-  print(result.body);
-
-  if (result.statusCode != 200) {
-    exit(1);
+  if (result.statusCode != 204) {
+    throw Exception(result.body);
   }
 }

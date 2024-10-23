@@ -12,14 +12,10 @@ final dotEnv = DotEnv(includePlatformEnvironment: true, quiet: true)..load();
 String get _globeAPIToken => dotEnv['GLOBE_API_TOKEN']!;
 String get _githubToken => dotEnv['GITHUB_API_TOKEN']!;
 
+typedef Task = Future<void> Function();
+
 // Configure routes.
 final _router = Router()
-  ..get('/', (req) {
-    const headers = {
-      HttpHeaders.contentTypeHeader: 'text/plain; charset=utf-8'
-    };
-    return Response.ok('Okay 🚀', headers: headers);
-  })
   ..post('/tasks/check-dart-version', _checkDartVersion)
   ..post('/tasks/check-flutter-version', _checkFlutterVersion);
 
@@ -38,7 +34,7 @@ Future<Response> _checkDartVersion(Request request) async {
     getLatestDartReleases(),
   ).wait;
 
-  final tasks = <Future<void> Function()>[];
+  final tasks = <Task>[];
 
   if (globeImages.stable != dartReleases.stable) {
     tasks.add(() => _triggerDartWorkflow(dartReleases.stable));
@@ -53,13 +49,7 @@ Future<Response> _checkDartVersion(Request request) async {
     tasks.add(() => _triggerDartWorkflow(devRelease));
   }
 
-  if (tasks.isEmpty) {
-    return Response.ok('Already has latest images.');
-  }
-
-  await tasks.map((task) => task.call()).wait;
-
-  return Response.ok('Completed.');
+  return await _execTasks(tasks);
 }
 
 Future<Response> _checkFlutterVersion(Request request) async {
@@ -68,7 +58,7 @@ Future<Response> _checkFlutterVersion(Request request) async {
     getLatestFlutterRelease(),
   ).wait;
 
-  final tasks = <Future<void> Function()>[];
+  final tasks = <Task>[];
 
   if (globeImages.stable != flutterReleases.stable) {
     print('Add Flutter ${flutterReleases.stable}');
@@ -80,16 +70,38 @@ Future<Response> _checkFlutterVersion(Request request) async {
     tasks.add(() => _triggerFlutterWorkflow(flutterReleases.beta));
   }
 
+  return await _execTasks(tasks);
+}
+
+Future<void> _triggerDartWorkflow(SdkRelease release) => triggerWorkflow(
+      _githubToken,
+      Workflow.dart,
+      release,
+    );
+Future<void> _triggerFlutterWorkflow(SdkRelease release) => triggerWorkflow(
+      _githubToken,
+      Workflow.flutter,
+      release,
+    );
+
+Future<Response> _execTasks(List<Task> tasks) async {
   if (tasks.isEmpty) {
     return Response.ok('Already has latest images.');
   }
 
-  await tasks.map((task) => task.call()).wait;
+  try {
+    await tasks.map((task) => task.call()).wait;
 
-  return Response.ok('Completed.');
+    return Response.ok(
+      'Completed.',
+      headers: {HttpHeaders.contentTypeHeader: 'text/plain'},
+    );
+  } catch (e, trace) {
+    print(e);
+    print(trace);
+    return Response.ok(
+      'An error occurred while triggering tasks',
+      headers: {HttpHeaders.contentTypeHeader: 'text/plain'},
+    );
+  }
 }
-
-Future<void> _triggerDartWorkflow(SdkRelease release) =>
-    triggerWorkflow(_githubToken, Workflow.dart, release);
-Future<void> _triggerFlutterWorkflow(SdkRelease release) =>
-    triggerWorkflow(_githubToken, Workflow.flutter, release);
