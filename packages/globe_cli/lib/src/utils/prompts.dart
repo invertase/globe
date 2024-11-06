@@ -396,8 +396,7 @@ Future<List<String>> findMainEntryPoint(Directory rootDir) async {
     final segments = p.split(relativePath);
 
     return p.extension(entity.path) == '.dart' &&
-        !segments.contains('.dart_tool') &&
-        !segments.contains('test') &&
+        !<String>['.dart_tool', '.fvm', 'test'].any(segments.contains) &&
         !p.basename(entity.path).startsWith('test_');
   });
   final entryPoints = <String>[];
