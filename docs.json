@@ -38,6 +38,11 @@
       "id": "infrastructure",
       "title": "Infrastructure",
       "href": "/infrastructure"
+    },
+    {
+      "id": "releases",
+      "title": "Releases",
+      "href": "/releases"
     }
   ],
   "sidebar": [
@@ -105,6 +110,42 @@
         { "title": "Headers", "href": "/infrastructure/headers" },
         { "title": "Regions", "href": "/infrastructure/regions" },
         { "title": "Web Sockets", "href": "/infrastructure/websockets" }
+      ]
+    },
+    {
+      "group": "Release Notes",
+      "tab": "releases",
+      "pages": [
+        { "title": "Releases", "href": "/releases" },
+        { "title": "Known Bugs", "href": "/releases/known-bugs" },
+        {
+          "group": "Version History",
+          "pages": [
+            { "title": "0.9.0 (Oct 24)", "href": "/releases/v/0.9.0" },
+            { "title": "0.8.0 (Sep 24)", "href": "/releases/v/0.8.0" },
+            { "title": "0.7.0 (Aug 24)", "href": "/releases/v/0.7.0" },
+            { "title": "0.6.0 (Jul 24)", "href": "/releases/v/0.6.0" },
+            { "title": "0.5.0 (Jun 24)", "href": "/releases/v/0.5.0" },
+            { "title": "0.4.0 (May 24)", "href": "/releases/v/0.4.0" },
+            { "title": "0.3.0 (Apr 24)", "href": "/releases/v/0.3.0" },
+            {
+              "title": "Initial Release",
+              "href": "/releases/v/initial"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "group": "Public Roadmap",
+      "tab": "releases",
+      "pages": [
+        { "title": "Roadmap", "href": "/releases/roadmap" },
+        { "title": "Ideas", "href": "/releases/roadmap/ideas" },
+        {
+          "title": "Feature Request",
+          "href": "/releases/roadmap/feature-request"
+        }
       ]
     }
   ]
