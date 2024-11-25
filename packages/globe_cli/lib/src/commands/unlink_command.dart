@@ -15,10 +15,24 @@ class UnlinkCommand extends BaseGlobeCommand {
   @override
   Future<int> run() async {
     requireAuth();
-    scope.clear();
-    logger.success(
-      'Project unlinked successfully. To link this project again, run ${cyan.wrap('globe link')}.',
-    );
-    return ExitCode.success.code;
+
+    if (scope.hasScope()) {
+      scope.clear();
+      logger.success(
+        'Project unlinked successfully. To link this project again, run ${cyan.wrap('globe link')}.',
+      );
+      return ExitCode.success.code;
+    }
+
+    if (scope.workspace.isNotEmpty) {
+      final selected = await scope.selectScopeOrLinkNewScope(canLinkNew: false);
+      scope.removeScope(selected);
+      logger.success(
+        'Project unlinked successfully. To link this project again, run ${cyan.wrap('globe link')}.',
+      );
+      return ExitCode.success.code;
+    }
+
+    return ExitCode.software.code;
   }
 }

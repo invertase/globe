@@ -128,52 +128,19 @@ class GlobeCliCommandRunner extends CompletionCommandRunner<int> {
       GetIt.instance.registerSingleton<GlobeMetadata>(metadata);
       GetIt.instance.registerSingleton<GlobeScope>(scope);
 
-      final maybeToken = topLevelResults['token'];
-      final maybeProjectId = topLevelResults['project'];
-      final maybeOrgId = topLevelResults['org'];
-
-      Organization? org;
-      Project? project;
-
-      if (maybeToken != null) {
-        api.auth.loginWithApiToken(jwt: maybeToken as String);
-        org = await selectOrganization(
-          logger: _logger,
-          api: api,
-          onNoOrganizationsError: () => _logger.err(
-            'API Token provided is invalid or is not associated with any organizations.',
-          ),
-        );
-      }
+      final maybeProjectId = topLevelResults['project'] as String?;
+      final maybeToken = topLevelResults['token'] as String?;
 
       // Load the current project scope.
-      scope.loadScope();
       auth.loadSession();
+      scope.loadScope(projectId: maybeProjectId);
 
-      final currentSession = auth.currentSession;
-
-      if (maybeOrgId != null) {
-        if (currentSession == null) throw Exception('Auth required.');
-        final orgs = await api.getOrganizations();
-        org = orgs.firstWhere(
-          (org) => org.id == maybeOrgId,
-          orElse: () => throw Exception('Project #$maybeProjectId not found.'),
-        );
+      if (maybeProjectId != null && !scope.hasScope()) {
+        throw Exception('Project #$maybeProjectId not found.');
       }
 
-      if (maybeProjectId != null) {
-        if (currentSession == null) throw Exception('Auth required.');
-        if (org == null) throw Exception('Organization not found.');
-
-        final projects = await api.getProjects(org: org.id);
-        project = projects.firstWhere(
-          (project) => project.id == maybeProjectId,
-          orElse: () => throw Exception('Project #$maybeProjectId not found.'),
-        );
-      }
-
-      if (org != null && project != null) {
-        scope.setScope(orgId: org.id, projectId: project.id);
+      if (maybeToken != null) {
+        api.auth.loginWithApiToken(jwt: maybeToken);
       }
 
       return await runCommand(topLevelResults) ?? ExitCode.success.code;

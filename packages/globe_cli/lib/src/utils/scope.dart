@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:args/args.dart';
+import 'package:collection/collection.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
@@ -28,6 +29,8 @@ class GlobeScope {
     );
   }
 
+  late final List<ScopeMetadata> workspace;
+
   /// The current project metadata, or `null` if the project has not been setup.
   ///
   /// Use [validate] instead if you're looking to read the current project metadata.
@@ -42,17 +45,79 @@ class GlobeScope {
   final GlobeApi api;
   final GlobeMetadata metadata;
 
-  /// Sets the current project scope.
-  ScopeMetadata setScope({required String orgId, required String projectId}) {
-    final result = _current = ScopeMetadata(orgId: orgId, projectId: projectId);
-    _projectFile.createSync(recursive: true);
-    _projectFile.writeAsStringSync(json.encode(_current!.toJson()));
+  ScopeMetadata? _findScope(String projectId, {String? orgId}) {
+    return workspace.firstWhereOrNull(
+      (e) {
+        if (orgId == null) return e.projectId == projectId;
+        return e.projectId == projectId && e.orgId == orgId;
+      },
+    );
+  }
 
-    return result;
+  void _writeWorkspaceToFile() {
+    _projectFile
+      ..createSync(recursive: true)
+      ..writeAsStringSync(const JsonEncoder.withIndent(' ').convert(workspace));
+  }
+
+  /// Sets the current project scope.
+  ScopeMetadata setScope(ScopeMetadata scope) {
+    final existing = _findScope(scope.projectId, orgId: scope.orgId);
+    if (existing != null) return _current = existing;
+
+    workspace.add(scope);
+    _writeWorkspaceToFile();
+
+    return _current = scope;
+  }
+
+  void removeScope(ScopeMetadata scope) {
+    if (workspace.isEmpty) return;
+    workspace.removeWhere(
+      (e) => e.orgId == scope.orgId && e.projectId == scope.projectId,
+    );
+
+    _writeWorkspaceToFile();
   }
 
   bool hasScope() {
     return current != null;
+  }
+
+  Future<ScopeMetadata> selectScopeOrLinkNewScope({
+    bool canLinkNew = true,
+  }) async {
+    if (hasScope()) return current!;
+
+    final selectOrg = await selectOrganization(logger: logger, api: api);
+    const linkNewProjectSymbol = '__LINK_NEW_PROJECT';
+
+    final scopes = workspace.where((p) => p.orgId == selectOrg.id);
+    var selectedProject = linkNewProjectSymbol;
+
+    if (scopes.length > 1) {
+      selectedProject = logger.chooseOne(
+        '🔺 Select project:',
+        choices: [
+          ...scopes.map((o) => o.projectId),
+          if (canLinkNew) linkNewProjectSymbol,
+        ],
+        display: (choice) {
+          if (choice == linkNewProjectSymbol) {
+            return lightYellow.wrap('link new project +')!;
+          }
+          return scopes.firstWhere((o) => o.projectId == choice).projectSlug;
+        },
+      );
+    }
+
+    if (selectedProject != linkNewProjectSymbol) {
+      return setScope(
+        scopes.firstWhere((scope) => scope.projectId == selectedProject),
+      );
+    }
+
+    return linkProject(logger: logger, api: api);
   }
 
   Future<Organization> _findOrg() async {
@@ -108,22 +173,38 @@ class GlobeScope {
   /// Clears the current project metadata.
   void clear() {
     _current = null;
+    workspace.clear();
     if (_projectFile.existsSync()) {
       _projectFile.deleteSync(recursive: true);
     }
   }
 
   /// Sets the current scope metadata.
-  void loadScope() {
-    if (_projectFile.existsSync()) {
-      try {
-        final contents = _projectFile.readAsStringSync();
-        _current = ScopeMetadata.fromJson(
-          json.decode(contents) as Map<String, dynamic>,
-        );
-      } catch (_) {
-        // TODO(rrousselGit) why are we catching and ignoring errors?
-      }
+  void loadScope({String? projectId}) {
+    if (!_projectFile.existsSync()) {
+      workspace = [];
+      return;
+    }
+
+    final contents = _projectFile.readAsStringSync();
+    if (contents.trim().isEmpty) {
+      workspace = [];
+      return;
+    }
+
+    final jsonContent = json.decode(contents);
+    workspace = switch (jsonContent) {
+      Map<String, dynamic>() => [ScopeMetadata.fromJson(jsonContent)],
+      List<dynamic>() => jsonContent
+          .map((e) => ScopeMetadata.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      _ => throw StateError('Invalid workspace schema'),
+    };
+
+    if (projectId != null) {
+      _current = _findScope(projectId);
+    } else if (workspace.length == 1) {
+      _current = workspace[0];
     }
   }
 }
@@ -144,6 +225,7 @@ class ScopeMetadata {
   const ScopeMetadata({
     required this.orgId,
     required this.projectId,
+    required this.projectSlug,
   });
 
   /// Creates a new [ScopeMetadata] instance from the given [json].
@@ -151,6 +233,7 @@ class ScopeMetadata {
     return ScopeMetadata(
       orgId: json['orgId'] as String,
       projectId: json['projectId'] as String,
+      projectSlug: json['projectSlug'] as String,
     );
   }
 
@@ -160,6 +243,13 @@ class ScopeMetadata {
   /// The project ID, which belongs to the org.
   final String projectId;
 
+  /// The project Slug,
+  final String projectSlug;
+
   /// Converts this [ScopeMetadata] instance to a JSON map.
-  Map<String, dynamic> toJson() => {'orgId': orgId, 'projectId': projectId};
+  Map<String, dynamic> toJson() => {
+        'orgId': orgId,
+        'projectId': projectId,
+        'projectSlug': projectSlug,
+      };
 }
