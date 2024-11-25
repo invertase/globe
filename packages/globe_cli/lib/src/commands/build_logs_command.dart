@@ -25,6 +25,8 @@ class BuildLogsCommand extends BaseGlobeCommand {
   Future<int> run() async {
     requireAuth();
 
+    await scope.selectScopeOrLinkNewScope();
+
     final validated = await _validator();
     final deploymentId = argResults!['deployment'] as String?;
 

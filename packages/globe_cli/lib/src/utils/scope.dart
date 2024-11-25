@@ -45,11 +45,14 @@ class GlobeScope {
   final GlobeApi api;
   final GlobeMetadata metadata;
 
-  ScopeMetadata? _findScope(String projectId, {String? orgId}) {
+  ScopeMetadata? _findScope(String projectIdOrSlug, {String? orgId}) {
     return workspace.firstWhereOrNull(
       (e) {
-        if (orgId == null) return e.projectId == projectId;
-        return e.projectId == projectId && e.orgId == orgId;
+        final hasIdOrSlug =
+            e.projectId == projectIdOrSlug || e.projectSlug == projectIdOrSlug;
+        if (orgId == null) return hasIdOrSlug;
+
+        return hasIdOrSlug && e.orgId == orgId;
       },
     );
   }
@@ -184,16 +187,14 @@ class GlobeScope {
   }
 
   /// Clears the current project metadata.
-  void clear() {
+  void unlink() {
+    if (_current == null) return;
+    removeScope(_current!);
     _current = null;
-    workspace.clear();
-    if (_projectFile.existsSync()) {
-      _projectFile.deleteSync(recursive: true);
-    }
   }
 
   /// Sets the current scope metadata.
-  void loadScope({String? projectId}) {
+  void loadScope({String? projectIdOrSlug}) {
     if (!_projectFile.existsSync()) {
       workspace = [];
       return;
@@ -216,8 +217,8 @@ class GlobeScope {
       _ => throw StateError('Invalid workspace schema'),
     };
 
-    if (projectId != null) {
-      _current = _findScope(projectId);
+    if (projectIdOrSlug != null) {
+      _current = _findScope(projectIdOrSlug);
     } else if (workspace.length == 1) {
       _current = workspace[0];
     }

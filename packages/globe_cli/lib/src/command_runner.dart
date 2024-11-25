@@ -16,6 +16,7 @@ import 'utils/api.dart';
 import 'utils/auth.dart';
 import 'utils/http_server.dart';
 import 'utils/metadata.dart';
+import 'utils/prompts.dart';
 import 'utils/scope.dart';
 
 class GlobeCliCommandRunner extends CompletionCommandRunner<int> {
@@ -127,19 +128,35 @@ class GlobeCliCommandRunner extends CompletionCommandRunner<int> {
       GetIt.instance.registerSingleton<GlobeMetadata>(metadata);
       GetIt.instance.registerSingleton<GlobeScope>(scope);
 
-      final maybeProjectId = topLevelResults['project'] as String?;
+      final maybeProjectIdOrSlug = topLevelResults['project'] as String?;
       final maybeToken = topLevelResults['token'] as String?;
 
       // Load the current project scope.
       auth.loadSession();
-      scope.loadScope(projectId: maybeProjectId);
-
-      if (maybeProjectId != null && !scope.hasScope()) {
-        throw Exception('Project #$maybeProjectId not found.');
-      }
+      scope.loadScope(projectIdOrSlug: maybeProjectIdOrSlug);
 
       if (maybeToken != null) {
         api.auth.loginWithApiToken(jwt: maybeToken);
+      }
+
+      if (maybeProjectIdOrSlug != null && !scope.hasScope()) {
+        final org = await selectOrganization(logger: _logger, api: api);
+        final projects = await api.getProjects(org: org.id);
+
+        final selectedProject = projects.firstWhere(
+          (project) =>
+              project.id == maybeProjectIdOrSlug ||
+              project.slug == maybeProjectIdOrSlug,
+          orElse: () =>
+              throw Exception('Project #$maybeProjectIdOrSlug not found.'),
+        );
+        scope.setScope(
+          ScopeMetadata(
+            orgId: org.id,
+            projectId: selectedProject.id,
+            projectSlug: selectedProject.slug,
+          ),
+        );
       }
 
       return await runCommand(topLevelResults) ?? ExitCode.success.code;

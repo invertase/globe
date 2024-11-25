@@ -17,7 +17,7 @@ class UnlinkCommand extends BaseGlobeCommand {
     requireAuth();
 
     if (scope.hasScope()) {
-      scope.clear();
+      scope.unlink();
       logger.success(
         'Project unlinked successfully. To link this project again, run ${cyan.wrap('globe link')}.',
       );
