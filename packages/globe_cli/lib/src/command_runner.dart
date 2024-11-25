@@ -16,7 +16,6 @@ import 'utils/api.dart';
 import 'utils/auth.dart';
 import 'utils/http_server.dart';
 import 'utils/metadata.dart';
-import 'utils/prompts.dart';
 import 'utils/scope.dart';
 
 class GlobeCliCommandRunner extends CompletionCommandRunner<int> {

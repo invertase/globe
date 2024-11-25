@@ -7,7 +7,6 @@ import '../command.dart';
 import '../utils/api.dart';
 import '../utils/archiver.dart';
 import '../utils/logs.dart';
-import '../utils/prompts.dart';
 
 /// `globe deploy`
 ///
