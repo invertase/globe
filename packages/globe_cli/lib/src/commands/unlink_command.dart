@@ -18,21 +18,14 @@ class UnlinkCommand extends BaseGlobeCommand {
 
     if (scope.hasScope()) {
       scope.unlink();
-      logger.success(
-        'Project unlinked successfully. To link this project again, run ${cyan.wrap('globe link')}.',
-      );
-      return ExitCode.success.code;
-    }
-
-    if (scope.workspace.isNotEmpty) {
+    } else if (scope.workspace.isNotEmpty) {
       final selected = await scope.selectScopeOrLinkNewScope(canLinkNew: false);
       scope.removeScope(selected);
-      logger.success(
-        'Project unlinked successfully. To link this project again, run ${cyan.wrap('globe link')}.',
-      );
-      return ExitCode.success.code;
     }
 
-    return ExitCode.software.code;
+    logger.success(
+      'Project unlinked successfully. To link this project again, run ${cyan.wrap('globe link')}.',
+    );
+    return ExitCode.success.code;
   }
 }
