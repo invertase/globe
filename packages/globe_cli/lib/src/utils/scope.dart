@@ -76,7 +76,7 @@ class GlobeScope {
     return _current = scope;
   }
 
-  void removeScope(ScopeMetadata scope) {
+  void unlinkScope(ScopeMetadata scope) {
     if (workspace.isEmpty) return;
     workspace.removeWhere(
       (e) => e.orgId == scope.orgId && e.projectId == scope.projectId,
@@ -189,7 +189,7 @@ class GlobeScope {
   /// Clears the current project metadata.
   void unlink() {
     if (_current == null) return;
-    removeScope(_current!);
+    unlinkScope(_current!);
     _current = null;
   }
 
