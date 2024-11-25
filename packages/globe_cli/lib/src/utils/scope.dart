@@ -62,10 +62,12 @@ class GlobeScope {
 
   /// Sets the current project scope.
   ScopeMetadata setScope(ScopeMetadata scope) {
-    final existing = _findScope(scope.projectId, orgId: scope.orgId);
-    if (existing != null) return _current = existing;
+    workspace
+      ..removeWhere((e) {
+        return e.projectId == scope.projectId && e.orgId == scope.orgId;
+      })
+      ..add(scope);
 
-    workspace.add(scope);
     _writeWorkspaceToFile();
 
     return _current = scope;
@@ -155,6 +157,17 @@ class GlobeScope {
       final organization = await _findOrg();
       final project = await _findProject(organization);
 
+      // if name not matching, update the name locally
+      if (current!.projectSlug != project.slug) {
+        setScope(
+          ScopeMetadata(
+            orgId: organization.id,
+            projectId: project.id,
+            projectSlug: project.slug,
+          ),
+        );
+      }
+
       logger.detail('Validated scope: ${organization.slug}/${project.slug}');
 
       return ScopeValidation(
@@ -194,7 +207,9 @@ class GlobeScope {
 
     final jsonContent = json.decode(contents);
     workspace = switch (jsonContent) {
-      Map<String, dynamic>() => [ScopeMetadata.fromJson(jsonContent)],
+      Map<String, dynamic>() => [
+          ScopeMetadata.fromJson({...jsonContent, 'projectSlug': ''}),
+        ],
       List<dynamic>() => jsonContent
           .map((e) => ScopeMetadata.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -205,6 +220,11 @@ class GlobeScope {
       _current = _findScope(projectId);
     } else if (workspace.length == 1) {
       _current = workspace[0];
+    }
+
+    // migrate old schema to new schema
+    if (jsonContent is Map<String, dynamic>) {
+      _writeWorkspaceToFile();
     }
   }
 }
