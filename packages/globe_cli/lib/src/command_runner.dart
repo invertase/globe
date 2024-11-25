@@ -135,12 +135,21 @@ class GlobeCliCommandRunner extends CompletionCommandRunner<int> {
       auth.loadSession();
       scope.loadScope(projectIdOrSlug: maybeProjectIdOrSlug);
 
+      Organization? org;
+
       if (maybeToken != null) {
         api.auth.loginWithApiToken(jwt: maybeToken);
+        org = await selectOrganization(
+          logger: _logger,
+          api: api,
+          onNoOrganizationsError: () => _logger.err(
+            'API Token provided is invalid or is not associated with any organizations.',
+          ),
+        );
       }
 
       if (maybeProjectIdOrSlug != null && !scope.hasScope()) {
-        final org = await selectOrganization(logger: _logger, api: api);
+        org ??= await selectOrganization(logger: _logger, api: api);
         final projects = await api.getProjects(org: org.id);
 
         final selectedProject = projects.firstWhere(
