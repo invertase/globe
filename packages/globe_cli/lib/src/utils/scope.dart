@@ -89,7 +89,7 @@ class GlobeScope {
     return current != null;
   }
 
-  Future<ScopeMetadata> selectScopeOrLinkNewScope({
+  Future<ScopeMetadata> selectOrLinkNewScope({
     bool canLinkNew = true,
   }) async {
     if (hasScope()) return current!;

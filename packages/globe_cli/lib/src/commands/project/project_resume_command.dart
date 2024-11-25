@@ -22,7 +22,7 @@ class ProjectResumeCommand extends BaseGlobeCommand {
   FutureOr<int> run() async {
     requireAuth();
 
-    await scope.selectScopeOrLinkNewScope();
+    await scope.selectOrLinkNewScope();
 
     final validated = await _validator();
     final projectSlug = validated.project.slug;

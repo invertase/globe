@@ -19,7 +19,7 @@ class UnlinkCommand extends BaseGlobeCommand {
     if (scope.hasScope()) {
       scope.unlink();
     } else if (scope.workspace.isNotEmpty) {
-      final selected = await scope.selectScopeOrLinkNewScope(canLinkNew: false);
+      final selected = await scope.selectOrLinkNewScope(canLinkNew: false);
       scope.removeScope(selected);
     }
 

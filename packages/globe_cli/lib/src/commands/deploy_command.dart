@@ -44,7 +44,7 @@ class DeployCommand extends BaseGlobeCommand {
 
   @override
   Future<int> run() async {
-    await scope.selectScopeOrLinkNewScope();
+    await scope.selectOrLinkNewScope();
 
     final validated = await _validator();
     if (validated.project.paused) {
