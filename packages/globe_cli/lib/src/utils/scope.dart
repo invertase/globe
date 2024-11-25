@@ -114,6 +114,8 @@ class GlobeScope {
           return scopes.firstWhere((o) => o.projectId == choice).projectSlug;
         },
       );
+    } else if (scopes.length == 1) {
+      return setScope(scopes.first);
     }
 
     if (selectedProject != linkNewProjectSymbol) {
