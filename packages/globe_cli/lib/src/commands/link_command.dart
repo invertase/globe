@@ -9,7 +9,11 @@ import '../utils/prompts.dart';
 /// Links the local project to a Globe project.
 class LinkCommand extends BaseGlobeCommand {
   LinkCommand() {
-    argParser.addFlag('show-all', help: 'Show all linked projects');
+    argParser.addFlag(
+      'show-all',
+      help: 'Show all linked projects',
+      negatable: false,
+    );
   }
 
   @override
