@@ -16,6 +16,9 @@ class ApiException implements Exception {
 
   final int statusCode;
   final String message;
+
+  @override
+  String toString() => 'ApiException: [$statusCode] $message';
 }
 
 class GlobeApi {
