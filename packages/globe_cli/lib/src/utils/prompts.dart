@@ -20,17 +20,6 @@ Future<ScopeMetadata> linkProject({
   required Logger logger,
   required GlobeApi api,
 }) async {
-  // TODO inject as function parameter
-  final scope = GetIt.I<GlobeScope>();
-
-  if (scope.hasScope()) {
-    if (!logger.confirm(
-      '❓ Project already linked, would you like to link to a different project?',
-    )) {
-      exitOverride(0);
-    }
-  }
-
   try {
     final organization = await selectOrganization(
       logger: logger,
@@ -43,9 +32,12 @@ Future<ScopeMetadata> linkProject({
       api: api,
     );
 
-    final result = scope.setScope(
-      orgId: organization.id,
-      projectId: project.id,
+    final result = GetIt.I<GlobeScope>().setScope(
+      ScopeMetadata(
+        orgId: organization.id,
+        projectId: project.id,
+        projectSlug: project.slug,
+      ),
     );
 
     final projectUrl = Uri.parse(api.metadata.endpoint)
@@ -116,6 +108,7 @@ Future<Project> selectProject(
   Organization organization, {
   required Logger logger,
   required GlobeApi api,
+  String message = '❓ Please select a project you want to link:',
 }) async {
   logger.detail('Fetching organization projects');
   final projects = await api.getProjects(org: organization.id);
@@ -293,7 +286,7 @@ Future<Project> selectProject(
 
   // Select a project or create a new one.
   final selectedProject = logger.chooseOne(
-    '❓ Please select a project you want to deploy to:',
+    message,
     choices: [
       if (api.auth.currentSession?.authenticationMethod !=
           AuthenticationMethod.apiToken)

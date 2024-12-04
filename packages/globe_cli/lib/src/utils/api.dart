@@ -16,6 +16,9 @@ class ApiException implements Exception {
 
   final int statusCode;
   final String message;
+
+  @override
+  String toString() => 'ApiException: [$statusCode] $message';
 }
 
 class GlobeApi {
@@ -108,29 +111,43 @@ class GlobeApi {
   }
 
   /// Gets all of the organizations that the current user is a member of.
+  List<Organization>? _orgsCache;
   Future<List<Organization>> getOrganizations() async {
+    if (_orgsCache != null && _orgsCache!.isNotEmpty) {
+      logger.detail('Cached API Request: GET /user/orgs');
+      return _orgsCache!;
+    }
+
     requireAuth();
     logger.detail('API Request: GET /user/orgs');
     final response = _handleResponse(
       await http.get(_buildUri('/user/orgs'), headers: headers),
     )! as List<Object?>;
 
-    return response
+    return _orgsCache = response
         .cast<Map<String, Object?>>()
         .map(Organization.fromJson)
         .toList();
   }
 
   /// Gets all of the projects that the current user is a member of.
+  List<Project>? _projectsCache;
   Future<List<Project>> getProjects({
     required String org,
   }) async {
+    if (_projectsCache != null && _projectsCache!.isNotEmpty) {
+      logger.detail('Cached API Request: GET /orgs/$org/projects');
+      return _projectsCache!;
+    }
+
     requireAuth();
     logger.detail('API Request: GET /orgs/$org/projects');
     final response = _handleResponse(
       await http.get(_buildUri('/orgs/$org/projects'), headers: headers),
     )! as List<Object?>;
-    return response.cast<Map<String, Object?>>().map(Project.fromJson).toList();
+
+    return _projectsCache =
+        response.cast<Map<String, Object?>>().map(Project.fromJson).toList();
   }
 
   /// Creates a new project and returns it.

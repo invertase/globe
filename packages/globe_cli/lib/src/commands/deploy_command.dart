@@ -7,7 +7,6 @@ import '../command.dart';
 import '../utils/api.dart';
 import '../utils/archiver.dart';
 import '../utils/logs.dart';
-import '../utils/prompts.dart';
 
 /// `globe deploy`
 ///
@@ -45,10 +44,7 @@ class DeployCommand extends BaseGlobeCommand {
 
   @override
   Future<int> run() async {
-    // If there is no scope, ask the user to link the project.
-    if (!scope.hasScope()) {
-      await linkProject(logger: logger, api: api);
-    }
+    await scope.selectOrLinkNewScope();
 
     final validated = await _validator();
     if (validated.project.paused) {

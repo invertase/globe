@@ -1,18 +1,12 @@
 import 'dart:async';
 
+import 'package:cli_table/cli_table.dart';
 import 'package:mason_logger/mason_logger.dart';
 
 import '../../command.dart';
 import '../../utils/api.dart';
-import '../../utils/prompts.dart';
 
 class TokenListCommand extends BaseGlobeCommand {
-  TokenListCommand() {
-    argParser.addMultiOption(
-      'project',
-      help: 'Specify projects(s) to list token for.',
-    );
-  }
   @override
   String get description => 'List globe auth tokens for project(s)';
 
@@ -22,41 +16,48 @@ class TokenListCommand extends BaseGlobeCommand {
   @override
   FutureOr<int>? run() async {
     requireAuth();
+    await scope.selectOrLinkNewScope();
 
-    final organization = await selectOrganization(logger: logger, api: api);
-    final projects = await selectProjects(
-      'Select projects to list tokens for:',
-      organization,
-      logger: logger,
-      api: api,
-      scope: scope,
-      ids: argResults?['project'] as List<String>?,
-    );
-
-    final projectNames = projects.map((e) => cyan.wrap(e.slug)).join(', ');
-    final listTokenProgress = logger.progress(
-      'Listing Tokens for $projectNames',
-    );
+    final projectName = scope.current!.projectSlug;
+    final listTokenProgress =
+        logger.progress('Listing tokens for $projectName');
 
     try {
       final tokens = await api.listTokens(
-        orgId: organization.id,
-        projectUuids: projects.map((e) => e.id).toList(),
+        orgId: scope.current!.orgId,
+        projectUuids: [scope.current!.projectId],
       );
       if (tokens.isEmpty) {
-        listTokenProgress.fail('No Tokens found for $projectNames');
+        listTokenProgress.fail('No Tokens found for $projectName');
         return ExitCode.success.code;
       }
 
-      String tokenLog(Token token) => '''
-----------------------------------
-  ID:       ${cyan.wrap(token.uuid)}
-  Name:     ${token.name}
-  Expiry:   ${token.expiresAt.toLocal()}''';
+      final table = Table(
+        header: [
+          cyan.wrap('ID'),
+          cyan.wrap('Name'),
+          cyan.wrap('Expiry'),
+        ],
+        columnWidths: [
+          tokens.first.uuid.length + 2,
+          tokens.first.name.length + 2,
+          25,
+        ],
+      );
+
+      for (final token in tokens) {
+        table.add([
+          token.uuid,
+          token.name,
+          token.expiresAt.toLocal().toIso8601String(),
+        ]);
+      }
 
       listTokenProgress.complete(
-        'Tokens for $projectNames\n${tokens.map(tokenLog).join('\n')}',
+        'Found ${tokens.length} ${tokens.length > 1 ? 'tokens' : 'token'}',
       );
+
+      logger.info(table.toString());
 
       return ExitCode.success.code;
     } on ApiException catch (e) {
