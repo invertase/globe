@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:collection/collection.dart';
 import 'package:mason_logger/mason_logger.dart';
-import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
 
 import '../exit.dart';
@@ -31,10 +30,6 @@ class GlobeScope {
 
   late final List<ScopeMetadata> workspace;
 
-  /// The current project metadata, or `null` if the project has not been setup.
-  ///
-  /// Use [validate] instead if you're looking to read the current project metadata.
-  @protected
   ScopeMetadata? get current => _current;
   ScopeMetadata? _current;
 
