@@ -43,6 +43,11 @@
       "id": "releases",
       "title": "Releases",
       "href": "/releases"
+    },
+    {
+      "id": "terms-privacy",
+      "title": "Terms & Privacy'",
+      "href": "/terms-privacy"
     }
   ],
   "sidebar": [
@@ -142,6 +147,17 @@
           "title": "Feature Request",
           "href": "/releases/roadmap/feature-request"
         }
+      ]
+    },
+    {
+      "group": "Terms & Privacy",
+      "tab": "terms-privacy",
+      "pages": [
+        {
+          "title": "Terms of Service",
+          "href": "/terms-privacy/terms-of-service"
+        },
+        { "title": "Privacy Policy", "href": "/terms-privacy/privacy-policy" }
       ]
     }
   ]
