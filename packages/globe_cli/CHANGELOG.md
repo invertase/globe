@@ -1,3 +1,8 @@
+## 0.0.14
+
+ - **FIX**: Use actual package name ([#121](https://github.com/invertase/globe/issues/121)). ([5f2b5a2a](https://github.com/invertase/globe/commit/5f2b5a2ad1ba03798a27bd271001749627b6499c))
+ - **FEAT**: Multi project linking via CLI ([#117](https://github.com/invertase/globe/issues/117)). ([42a8799b](https://github.com/invertase/globe/commit/42a8799be0fc70ef9d98229d57fc5d80c67c2a2a))
+
 ## 0.0.13
 
  - **FEAT**: Add `--project` and `--org` options on commands that depend on "scope". ([#100](https://github.com/invertase/globe/issues/100)). ([a11ec775](https://github.com/invertase/globe/commit/a11ec775152c20e90b5979245baccdeb97dd9dc6))
