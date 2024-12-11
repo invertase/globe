@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2024-12-11
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`globe_cli` - `v0.0.14`](#globe_cli---v0014)
+
+---
+
+#### `globe_cli` - `v0.0.14`
+
+ - **FIX**: Use actual package name ([#121](https://github.com/invertase/globe/issues/121)). ([5f2b5a2a](https://github.com/invertase/globe/commit/5f2b5a2ad1ba03798a27bd271001749627b6499c))
+ - **FEAT**: Multi project linking via CLI ([#117](https://github.com/invertase/globe/issues/117)). ([42a8799b](https://github.com/invertase/globe/commit/42a8799be0fc70ef9d98229d57fc5d80c67c2a2a))
+
+
 ## 2024-10-22
 
 ### Changes
