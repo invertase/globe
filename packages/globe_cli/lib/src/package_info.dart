@@ -5,3 +5,4 @@ const version = '0.0.13';
 const description =
     'The global deployment platform for Dart & Flutter applications.';
 const executable = 'globe';
+const packageName = 'globe_cli';
