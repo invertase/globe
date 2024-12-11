@@ -20,7 +20,7 @@ class UpdateCommand extends BaseGlobeCommand {
   @override
   FutureOr<int>? run() async {
     final isUpToDate = await updater.isUpToDate(
-      packageName: package_info.packageName,
+      packageName: package_info.name,
       currentVersion: package_info.version,
     );
 

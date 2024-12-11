@@ -26,7 +26,7 @@ class GlobeCliCommandRunner extends CompletionCommandRunner<int> {
     GlobeHttpServer? httpServer,
   })  : _logger = logger ?? Logger(),
         _pubUpdater = pubUpdater ?? PubUpdater(),
-        super(package_info.name, package_info.description) {
+        super(package_info.executable, package_info.description) {
     argParser
       ..addFlag(
         'version',
