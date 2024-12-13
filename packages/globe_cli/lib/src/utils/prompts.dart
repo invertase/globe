@@ -380,24 +380,26 @@ Future<List<Project>> selectProjects(
   return selections.map((e) => projectsBySlug[e]!).toList();
 }
 
-/// Asynchronously finds the main entry point of a Dart project.
+/// Asynchronously finds the main entry points of a Dart project.
+/// Returns a list of entry points relative to [rootDir].
 Future<List<String>> findMainEntryPoint(Directory rootDir) async {
-  final dartFiles = rootDir.list(recursive: true).where((entity) {
-    if (entity is! File) return false;
+  final entryPoints = <String>[];
+
+  await for (final entity in rootDir.list(recursive: true)) {
+    if (entity is! File) continue;
 
     final relativePath = p.relative(entity.path, from: rootDir.path);
     final segments = p.split(relativePath);
 
-    return p.extension(entity.path) == '.dart' &&
-        !<String>['.dart_tool', '.fvm', 'test'].any(segments.contains) &&
-        !p.basename(entity.path).startsWith('test_');
-  });
-  final entryPoints = <String>[];
+    if (p.extension(entity.path) != '.dart' ||
+        ['.dart_tool', '.fvm', 'test'].any(segments.contains) ||
+        p.basename(entity.path).startsWith('test_')) {
+      continue;
+    }
 
-  await for (final (entity as File) in dartFiles) {
     final contents = await entity.readAsString();
     if (RegExp(r'\bmain\s*\([^)]*\)').hasMatch(contents)) {
-      entryPoints.add(p.relative(entity.path));
+      entryPoints.add(relativePath);
     }
   }
 

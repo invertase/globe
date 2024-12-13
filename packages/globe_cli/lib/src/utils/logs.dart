@@ -45,8 +45,6 @@ sealed class BuildLogEvent {
         return BuildLogs([], done: true);
       case ErrorResponse(error: final error):
         return BuildLogsError(error: '[${error.code}]: ${error.message}');
-      default:
-        throw Exception('Unknown response type');
     }
   }
   BuildLogEventType get type;
