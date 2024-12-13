@@ -1,3 +1,7 @@
+## 0.0.14-dev.0+1
+
+ - **FIX**: Resolve main entry path relative to project directory ([#123](https://github.com/invertase/globe/issues/123)). ([01d29783](https://github.com/invertase/globe/commit/01d29783f35dac33ac53235eb4adcd3d8b46ab99))
+
 ## 0.0.14
 
  - **FIX**: Use actual package name ([#121](https://github.com/invertase/globe/issues/121)). ([5f2b5a2a](https://github.com/invertase/globe/commit/5f2b5a2ad1ba03798a27bd271001749627b6499c))
