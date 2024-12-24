@@ -19,12 +19,11 @@ import 'scope.dart';
 Future<ScopeMetadata> linkProject({
   required Logger logger,
   required GlobeApi api,
+  Organization? org,
 }) async {
   try {
-    final organization = await selectOrganization(
-      logger: logger,
-      api: api,
-    );
+    final organization =
+        org ?? await selectOrganization(logger: logger, api: api);
 
     final project = await selectProject(
       organization,
@@ -111,6 +110,7 @@ Future<Project> selectProject(
   String message = '❓ Please select a project you want to link:',
 }) async {
   logger.detail('Fetching organization projects');
+
   final projects = await api.getProjects(org: organization.id);
   logger.detail('Found ${projects.length} projects');
 
