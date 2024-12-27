@@ -89,37 +89,40 @@ class GlobeScope {
   }) async {
     if (hasScope()) return current!;
 
-    final selectOrg = await selectOrganization(logger: logger, api: api);
-    const linkNewProjectSymbol = '__LINK_NEW_PROJECT';
+    final selectedOrg = await selectOrganization(logger: logger, api: api);
 
-    final scopes = workspace.where((p) => p.orgId == selectOrg.id);
-    var selectedProject = linkNewProjectSymbol;
+    if (workspace.isNotEmpty) {
+      const linkNewProjectSymbol = '__LINK_NEW_PROJECT';
 
-    if (scopes.length > 1) {
-      selectedProject = logger.chooseOne(
-        '🔺 Select project:',
-        choices: [
-          ...scopes.map((o) => o.projectId),
-          if (canLinkNew) linkNewProjectSymbol,
-        ],
-        display: (choice) {
-          if (choice == linkNewProjectSymbol) {
-            return lightYellow.wrap('link new project +')!;
-          }
-          return scopes.firstWhere((o) => o.projectId == choice).projectSlug;
-        },
-      );
-    } else if (scopes.length == 1) {
-      return setScope(scopes.first);
+      final scopes = workspace.where((p) => p.orgId == selectedOrg.id);
+      var selectedProject = linkNewProjectSymbol;
+
+      if (scopes.length > 1) {
+        selectedProject = logger.chooseOne(
+          '🔺 Select project:',
+          choices: [
+            ...scopes.map((o) => o.projectId),
+            if (canLinkNew) linkNewProjectSymbol,
+          ],
+          display: (choice) {
+            if (choice == linkNewProjectSymbol) {
+              return lightYellow.wrap('link new project +')!;
+            }
+            return scopes.firstWhere((o) => o.projectId == choice).projectSlug;
+          },
+        );
+      } else if (scopes.length == 1) {
+        return setScope(scopes.first);
+      }
+
+      if (selectedProject != linkNewProjectSymbol) {
+        return setScope(
+          scopes.firstWhere((scope) => scope.projectId == selectedProject),
+        );
+      }
     }
 
-    if (selectedProject != linkNewProjectSymbol) {
-      return setScope(
-        scopes.firstWhere((scope) => scope.projectId == selectedProject),
-      );
-    }
-
-    return linkProject(logger: logger, api: api);
+    return linkProject(logger: logger, api: api, org: selectedOrg);
   }
 
   Future<Organization> _findOrg() async {
