@@ -1,0 +1,4 @@
+debug/
+release/
+.rustc_info.json
+!*.so
