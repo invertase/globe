@@ -5,9 +5,10 @@ This project demonstrates how to integrate Rust with Dart using the Foreign Func
 ## Getting Started
 
 Requirements
-• Dart SDK
-• Rust (with the [`cross`](https://github.com/cross-rs/cross) tool for cross-compilation)
-• Globe CLI
+
+- Dart SDK
+- Rust (with the [`cross`](https://github.com/cross-rs/cross) tool for cross-compilation)
+- Globe CLI
 
 ## Project Structure
 
