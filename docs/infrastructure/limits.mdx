@@ -40,4 +40,11 @@ You should only rely on the file system for temporary storage such as processing
 
 ### FFI
 
-Usage of FFI (via `dart:ffi`) is not currently supported. We are working on providing this in the future.
+Usage of FFI (via dart:ffi) is supported. Any native code used must be compiled for the x86_64 architecture to ensure compatibility with Globe’s infrastructure.
+
+When using FFI, you must list the required native libraries in your `globe.yaml` file, similar to how Flutter assets are specified. For example:
+
+```yaml
+assets:
+  - lib_hello/target/x86_64-unknown-linux-gnu/release/lib_hello_library.so:static/lib_hello_library.so
+```
