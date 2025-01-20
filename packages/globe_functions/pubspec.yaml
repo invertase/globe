@@ -1,0 +1,21 @@
+name: globe_functions
+description: A starting point for Dart libraries or applications.
+version: 1.0.0
+# repository: https://github.com/my_org/my_repo
+
+environment:
+  sdk: ^3.7.0-323.0.dev
+
+# Add regular dependencies here.
+dependencies:
+  analyzer:
+  build_runner: ^2.4.14
+  build: ^2.4.2
+  source_gen: ^2.0.0
+  glob: ^2.1.2
+  path:
+  shelf:
+
+dev_dependencies:
+  lints: ^5.0.0
+  test: ^1.24.0

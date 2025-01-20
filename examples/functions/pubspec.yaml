@@ -1,0 +1,18 @@
+name: functions
+description: A sample command-line application.
+version: 1.0.0
+# repository: https://github.com/my_org/my_repo
+
+environment:
+  sdk: ^3.7.0-323.0.dev
+
+# Add regular dependencies here.
+dependencies:
+  build_runner:
+  globe_functions:
+    path: ../../packages/globe_functions
+  http: ^1.2.2
+
+dev_dependencies:
+  lints: ^5.0.0
+  test: ^1.24.0

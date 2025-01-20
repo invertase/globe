@@ -1,0 +1,39 @@
+builders:
+  source_functions:
+    import: "package:globe_functions/builders.dart"
+    builder_factories: ["sourceFunctionsBuilder"]
+    build_extensions:
+      { "$package$": [".dart_tool/functions_spec.dart", ".dart_tool/functions_spec.json"] }
+    auto_apply: root_package
+    build_to: source
+    target: ":source_functions"
+    # defaults:
+    #   generate_for: ["lib/api/**"]
+
+  create_entrypoint:
+    import: "package:globe_functions/builders.dart"
+    builder_factories: ["createEntrypointBuilder"]
+    build_extensions:
+      { "$package$": [".dart_tool/entrypoint.dart"] }
+    auto_apply: root_package
+    build_to: source
+    target: ":create_entrypoint"
+    required_inputs: [".dart_tool/functions_spec.dart"]
+
+  create_rpc_client:
+    import: "package:globe_functions/builders.dart"
+    builder_factories: ["createRpcClientBuilder"]
+    build_extensions:
+      { "$package$": ["lib/rpc_client.g.dart"] }
+    auto_apply: root_package
+    build_to: source
+    target: ":create_rpc_client"
+    required_inputs: [".dart_tool/functions_spec.dart"]
+
+targets:
+  $default:
+    builders:
+      globe_functions|source_functions:
+        enabled: true
+      globe_functions|create_entrypoint:
+        enabled: true

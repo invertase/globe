@@ -1,0 +1,4 @@
+# melos_managed_dependency_overrides: globe_functions
+dependency_overrides:
+  globe_functions:
+    path: ../../packages/globe_functions
