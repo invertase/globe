@@ -1,15 +1,11 @@
-import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/type.dart';
+import 'package:globe_functions/src/build/serializer.dart';
 
 class SourcedFunction {
-  // factory SourcedFunction.fromFunctionElement(FunctionElement element) {
-  //   return SourcedFunction(functionName: element.name, uri: element.source.uri);
-  // }
-
   SourcedFunction({
     required this.functionName,
     required this.uri,
     required this.returnType,
-    required this.isFutureReturnType,
     required this.parameters,
   });
 
@@ -19,11 +15,8 @@ class SourcedFunction {
   /// The URI of the file containing the function.
   final Uri uri;
 
-  /// The return type of the function (as a string).
-  final String returnType;
-
-  /// Whether the function returns a Future.
-  final bool isFutureReturnType;
+  /// The return type details.
+  final SourcedType returnType;
 
   /// The parameters of the function.
   final List<SourcedFunctionParameter> parameters;
@@ -47,8 +40,7 @@ class SourcedFunction {
     return SourcedFunction(
       functionName: json['functionName'] as String,
       uri: Uri.parse(json['uri'] as String),
-      returnType: json['returnType'] as String,
-      isFutureReturnType: json['isFutureReturnType'] as bool,
+      returnType: SourcedType.fromJson(json['returnType']),
       parameters:
           (json['parameters'] as List<dynamic>)
               .map((p) => SourcedFunctionParameter.fromJson(p))
@@ -60,8 +52,7 @@ class SourcedFunction {
     return {
       'functionName': functionName,
       'uri': uri.toString(),
-      'returnType': returnType,
-      'isFutureReturnType': isFutureReturnType,
+      'returnType': returnType.toJson(),
       'parameters': parameters.map((p) => p.toJson()).toList(),
     };
   }
@@ -71,6 +62,7 @@ class SourcedFunctionParameter {
   SourcedFunctionParameter({
     required this.name,
     required this.type,
+    required this.defaultValue,
     required this.isNamed,
     required this.isPositional,
     required this.isOptional,
@@ -81,8 +73,11 @@ class SourcedFunctionParameter {
   /// The name of the parameter.
   final String name;
 
-  /// The type of the parameter (as a string).
-  final String type;
+  /// The type of the parameter.
+  final SourcedType type;
+
+  /// The default value of the parameter.
+  final String? defaultValue;
 
   /// Whether the parameter is named.
   final bool isNamed;
@@ -102,7 +97,8 @@ class SourcedFunctionParameter {
   factory SourcedFunctionParameter.fromJson(Map<String, dynamic> json) {
     return SourcedFunctionParameter(
       name: json['name'] as String,
-      type: json['type'] as String,
+      type: SourcedType.fromJson(json['type'] as Map<String, dynamic>),
+      defaultValue: json['defaultValue'] as String?,
       isNamed: json['isNamed'] as bool,
       isPositional: json['isPositional'] as bool,
       isOptional: json['isOptional'] as bool,
@@ -114,12 +110,55 @@ class SourcedFunctionParameter {
   Map<String, dynamic> toJson() {
     return {
       'name': name,
-      'type': type,
+      'type': type.toJson(),
+      'defaultValue': defaultValue,
       'isNamed': isNamed,
       'isPositional': isPositional,
       'isOptional': isOptional,
       'isRequired': isRequired,
       'isRequestContext': isRequestContext,
     };
+  }
+}
+
+class SourcedType {
+  final String type;
+  final SerializerType serializerType;
+  final Uri? uri;
+  final bool isFuture;
+
+  SourcedType.fromDartType({
+    required DartType type,
+    required this.serializerType,
+    required this.isFuture,
+  }) : type = type.toString(),
+       uri =
+           serializerType == SerializerType.clazz
+               ? type.element?.library?.source.uri
+               : null;
+
+  SourcedType({
+    required this.type,
+    required this.serializerType,
+    required this.uri,
+    required this.isFuture,
+  });
+
+  Map<String, dynamic> toJson() => {
+    'type': type,
+    'serializerType': serializerType.name,
+    'uri': uri?.toString(),
+    'isFuture': isFuture,
+  };
+
+  factory SourcedType.fromJson(Map<String, dynamic> json) {
+    return SourcedType(
+      type: json['type'] as String,
+      serializerType: SerializerType.values.byName(
+        json['serializerType'] as String,
+      ),
+      uri: json['uri'] != null ? Uri.parse(json['uri'] as String) : null,
+      isFuture: json['isFuture'] as bool,
+    );
   }
 }

@@ -5,6 +5,7 @@ import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:glob/glob.dart';
 import 'package:globe_functions/src/annotations.dart';
+import 'package:globe_functions/src/build/serializer.dart';
 import 'package:globe_functions/src/build/sourced_function.dart';
 import 'package:globe_functions/src/server/request_context.dart';
 import 'package:source_gen/source_gen.dart';
@@ -60,51 +61,72 @@ class SourceFunctionsBuilder extends Builder {
                 ? (element.returnType as InterfaceType).typeArguments.first
                 : element.returnType;
 
-        // Check if the return type is a serializable type.
-        final isSerializableType = _isSerializableType(returnType);
+        final serializedReturnType = serializerTypeFromDartType(returnType);
 
-        // If it's not a serializable type, check if it has a toJson/fromJson method.
-        if (!isSerializableType) {
-          final clazz = returnType as InterfaceType;
-          final toJson = clazz.getMethod('toJson');
-          final fromJson = clazz.lookUpConstructor('fromJson', library);
-
-          if (toJson == null || fromJson == null) {
-            throw InvalidGenerationSourceError(
-              'Function return type must be a serializable type.',
-              element: element,
-            );
-          }
-
-          // TODO: Add further checks (no required parameters, etc.)
-        }
-
-        final parameters = <SourcedFunctionParameter>[];
-
-        for (final parameter in element.parameters) {
-          parameters.add(
-            SourcedFunctionParameter(
-              name: parameter.name,
-              type: parameter.type.toString(),
-              isNamed: parameter.isNamed,
-              isPositional: parameter.isPositional,
-              isOptional:
-                  parameter.isOptionalNamed || parameter.isOptionalPositional,
-              isRequired:
-                  parameter.isRequiredNamed || parameter.isRequiredPositional,
-              isRequestContext: _requestContextType.isExactlyType(
-                parameter.type,
-              ),
-            ),
+        if (serializedReturnType == null) {
+          throw InvalidGenerationSourceError(
+            'Unsupported type: ${returnType.toString()}',
+            element: element,
           );
         }
+
+        // If the return type is a serializable class, we need to check
+        // it has a toJson method and a fromJson constructor.
+        if (serializedReturnType == SerializerType.clazz) {
+          assertIsSerializableClass(returnType as InterfaceType, library);
+        }
+
+        final parameters =
+            element.parameters.map((parameter) {
+              print('parameter: ${parameter.name}');
+              print(parameter.type);
+              final serializedType = serializerTypeFromDartType(parameter.type);
+
+              if (serializedType == null) {
+                throw InvalidGenerationSourceError(
+                  'Unsupported type: ${parameter.type.toString()}',
+                  element: element,
+                );
+              }
+
+              // If the parameter type is a serializable class, we need to check
+              // it has a toJson method and a fromJson constructor.
+              if (serializedType == SerializerType.clazz) {
+                assertIsSerializableClass(
+                  parameter.type as InterfaceType,
+                  library,
+                );
+              }
+
+              return SourcedFunctionParameter(
+                name: parameter.name,
+                type: SourcedType.fromDartType(
+                  type: parameter.type,
+                  serializerType: serializedType,
+                  isFuture: false,
+                ),
+                defaultValue: parameter.defaultValueCode,
+                isNamed: parameter.isNamed,
+                isPositional: parameter.isPositional,
+                isOptional:
+                    parameter.isOptionalNamed || parameter.isOptionalPositional,
+                isRequired:
+                    parameter.isRequiredNamed || parameter.isRequiredPositional,
+                isRequestContext: _requestContextType.isExactlyType(
+                  parameter.type,
+                ),
+              );
+            }).toList();
 
         _functions.add(
           SourcedFunction(
             functionName: element.name,
             uri: element.source.uri,
-            returnType: returnType.toString(),
-            isFutureReturnType: isFutureReturnType,
+            returnType: SourcedType.fromDartType(
+              type: returnType,
+              serializerType: serializedReturnType,
+              isFuture: isFutureReturnType,
+            ),
             parameters: parameters,
           ),
         );

@@ -42,7 +42,7 @@ final class GlobeFunctions {
       final applied = Function.apply(function, positional, namedArgs);
 
       final result = await applied;
-      return json(result);
+      return json({'result': result});
     });
   }
 }
