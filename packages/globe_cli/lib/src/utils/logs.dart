@@ -175,6 +175,26 @@ Future<void> printLogs(Logger logger, Stream<BuildLogEvent> logs) async {
   }
 }
 
+Future<void> showBuildLogs({
+  required GlobeApi api,
+  required Logger logger,
+  //
+  required String orgId,
+  required String projectId,
+  required String deploymentId,
+  required String buildId,
+}) async {
+  final logs = await streamBuildLogs(
+    api: api,
+    orgId: orgId,
+    projectId: projectId,
+    deploymentId: deploymentId,
+    buildId: buildId,
+  );
+
+  await printLogs(logger, logs);
+}
+
 void printLog(Logger logger, BuildLogEvent log) {
   switch (log) {
     case BuildLogsError(error: final error):

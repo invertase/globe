@@ -48,15 +48,14 @@ class BuildLogsCommand extends BaseGlobeCommand {
       return ExitCode.software.code;
     }
 
-    final logs = await streamBuildLogs(
+    await showBuildLogs(
       api: api,
+      logger: logger,
       orgId: validated.organization.id,
       projectId: validated.project.id,
       deploymentId: deploymentId,
       buildId: deployment.buildId!,
     );
-
-    await printLogs(logger, logs);
 
     return ExitCode.success.code;
   }
