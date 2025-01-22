@@ -28,6 +28,9 @@ class GlobeApi {
     required this.logger,
   });
 
+  List<Project>? _projectsCache;
+  List<Organization>? _orgsCache;
+
   Map<String, String> get headers {
     final currentSession = auth.currentSession;
 
@@ -111,7 +114,6 @@ class GlobeApi {
   }
 
   /// Gets all of the organizations that the current user is a member of.
-  List<Organization>? _orgsCache;
   Future<List<Organization>> getOrganizations() async {
     if (_orgsCache != null && _orgsCache!.isNotEmpty) {
       logger.detail('Cached API Request: GET /user/orgs');
@@ -131,7 +133,6 @@ class GlobeApi {
   }
 
   /// Gets all of the projects that the current user is a member of.
-  List<Project>? _projectsCache;
   Future<List<Project>> getProjects({
     required String org,
   }) async {
@@ -164,6 +165,9 @@ class GlobeApi {
     final response = _handleResponse(
       await request.send().then(http.Response.fromStream),
     )! as Map<Object?, Object?>;
+
+    _projectsCache = null;
+    _orgsCache = null;
 
     return Project.fromJson(response);
   }

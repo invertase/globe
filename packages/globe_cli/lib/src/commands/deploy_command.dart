@@ -88,9 +88,11 @@ class DeployCommand extends BaseGlobeCommand {
       );
 
       var status = logger.progress(deployment.state.message);
-      final completer = Completer<void>();
+      final completer = Completer<Deployment>();
 
-      if (!(argResults!['logs'] as bool)) {
+      final shouldShowLogs = argResults!['logs'] as bool;
+
+      if (!shouldShowLogs) {
         Timer.periodic(const Duration(seconds: 2), (timer) async {
           try {
             final update = await api.getDeployment(
@@ -114,19 +116,16 @@ class DeployCommand extends BaseGlobeCommand {
                   '${lightGreen.wrap('✓')} Deployment URL: https://${update.url}',
                 );
                 timer.cancel();
-                completer.complete();
+                completer.complete(update);
               case DeploymentState.error:
                 status.fail(update.state.message);
-                logger.info(
-                  'Use ${lightCyan.wrap('globe build-logs --deployment="${deployment.id}"')} to view the build logs',
-                );
                 timer.cancel();
-                completer.complete();
+                completer.complete(update);
               case DeploymentState.cancelled:
                 status.complete();
                 logger.info('Deployment cancelled');
                 timer.cancel();
-                completer.complete();
+                completer.complete(update);
               case DeploymentState.invalid:
                 status.fail('Invalid Deployment State Received.');
                 timer.cancel();
@@ -139,7 +138,20 @@ class DeployCommand extends BaseGlobeCommand {
         });
 
         try {
-          await completer.future;
+          final deployment = await completer.future;
+
+          // Immediately show error if deployment failed
+          if (deployment.state == DeploymentState.error) {
+            await showBuildLogs(
+              api: api,
+              logger: logger,
+              orgId: validated.organization.id,
+              projectId: validated.project.id,
+              deploymentId: deployment.id,
+              buildId: deployment.buildId!,
+            );
+          }
+
           return ExitCode.success.code;
         } catch (_) {
           return ExitCode.software.code;
@@ -220,7 +232,7 @@ class DeployCommand extends BaseGlobeCommand {
             update.state == DeploymentState.cancelled ||
             update.state == DeploymentState.error) {
           timer.cancel();
-          completer.complete();
+          completer.complete(update);
         }
       });
 
