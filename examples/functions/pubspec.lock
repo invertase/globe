@@ -253,6 +253,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.1"
+  json:
+    dependency: transitive
+    description:
+      name: json
+      sha256: "8708a43b61848f50dbe952131fa60af35e15164ddb275d14ef8b7994ffd492ae"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.20.4"
   json_annotation:
     dependency: transitive
     description:

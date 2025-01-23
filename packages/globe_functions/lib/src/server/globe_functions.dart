@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:globe_functions/src/spec/serializer.dart';
 import 'package:shelf/shelf.dart' as shelf;
 import 'package:globe_functions/src/build/sourced_function.dart';
 
@@ -7,7 +8,7 @@ final class GlobeFunctions {
   GlobeFunctions({required this.sourced, required this.handlers});
 
   final List<SourcedFunction> sourced;
-  final Map<String, Function> handlers;
+  final Map<int, Function> handlers;
 
   shelf.Handler getShelfHandler() {
     return const shelf.Pipeline().addHandler((request) async {
@@ -23,26 +24,45 @@ final class GlobeFunctions {
         return json({'error': 'Invalid JSON body'}, 400);
       }
 
-      final function = handlers[request.url.path];
+      final sourcedFunction = sourced.firstWhere(
+        (e) => e.pathname == request.url.path,
+        orElse:
+            () => throw Exception('Function not found: ${request.url.path}'),
+      );
 
-      if (function == null) {
-        print('Function not found: ${request.url.path}');
-        return json({'error': 'Function not found'}, 404);
-      }
+      final handler = handlers[sourcedFunction.id]!;
 
-      final positional = body['positional'] as List<dynamic>? ?? [];
-      final named = body['named'] as Map<String, dynamic>? ?? {};
+      print(body);
+      final positional =
+          ((body['positional'] as List<dynamic>?) ?? [])
+              .map(
+                (e) =>
+                    Serializer.fromJson(
+                      e as Map<String, dynamic>,
+                    ).deserialize(),
+              )
+              .toList();
+
+      final named = (body['named'] as Map<String, dynamic>? ?? {}).map(
+        (k, v) => MapEntry(Symbol(k), Serializer.fromJson(v).deserialize()),
+      );
 
       // Convert named arguments to a map of Symbols to values.
       final namedArgs = <Symbol, dynamic>{};
       for (final param in named.entries) {
-        namedArgs[Symbol(param.key)] = param.value;
+        namedArgs[param.key] = param.value;
       }
 
-      final applied = Function.apply(function, positional, namedArgs);
+      final applied = Function.apply(handler, positional, namedArgs);
 
       final result = await applied;
-      return json({'result': result});
+
+      return json({
+        'result': Serializer.serialize(
+          sourcedFunction.returnType.serializerType,
+          result,
+        ),
+      });
     });
   }
 }
