@@ -1,3 +1,7 @@
+## 0.0.14+1
+
+- **FIX**: Major CLI Improvements ([#135])(https://github.com/invertase/globe/pull/134)
+
 ## 0.0.14-dev.0+1
 
  - **FIX**: Resolve main entry path relative to project directory ([#123](https://github.com/invertase/globe/issues/123)). ([01d29783](https://github.com/invertase/globe/commit/01d29783f35dac33ac53235eb4adcd3d8b46ab99))
