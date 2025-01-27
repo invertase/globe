@@ -1,12 +1,12 @@
 ---
-title: Link a project to Globe
+title: Link Projects to Globe
 ---
 
 The `link` command links a local Dart project to a Globe project. Linking is required to deploy a project to Globe.
 
 Project linking is carried out automatically if the project is not yet linked when running the [`deploy`](/cli/commands/deploy) command.
 
-## Usage
+## Link a Single Project
 
 ```bash
 globe link
@@ -19,9 +19,74 @@ The `link` command will first prompt, asking whether you wish to continue linkin
 
 Upon completion, the local project will be linked to your Globe account and you will be able to deploy it.
 
-## How it works
+## How It Works
 
 A linked project stores metadata about the project in the local `.dart_tool/dart_globe` directory on your machine. This metadata is used to identify the project when deploying to Globe. If not already,
 the `.dart_tool` directory should not be committed to your Git repository. You can add this directory to your `.gitignore` file to ensure it is not committed.
 
 If you accidentally delete this directory or run the [`unlink`](/cli/commands/unlink) command, you will need to re-link the project before you can deploy again.
+
+
+## Link Multiple Projects (e.g., Mono-Repos)
+For directories containing multiple projects, the link command supports linking and managing multiple Globe projects. This is especially useful for mono-repos or shared workspaces.
+
+Run the following command in your workspace directory:
+
+```bash
+globe link
+```
+The CLI displays a list of projects in the directory:
+```bash
+❓ Please select a project you want to link:  
+❯ ◉  Create a new project  
+  ◯  blog-frontend  
+  ◯  blog-backend-369d  
+  ◯  newsapi 
+  ```
+  
+Select an existing project to link or create a new one.
+
+## Viewing Linked Projects
+
+To view all projects linked in the workspace, run:
+```bash
+globe link --show-all   
+```
+
+This displays a table of all linked projects:
+
+```bash
+┌──────────────────────────────┬──────────────────────────────┬──────────────────────────────┐  
+│ Project                      │ Project ID                   │ Organization ID              │  
+├──────────────────────────────┼──────────────────────────────┼──────────────────────────────┤  
+│ blog-backend-369d            │ bd239097-1b68-43e6-a887-466… │ eecbc0fb-ee17-4d87-9b74-0ce… │  
+├──────────────────────────────┼──────────────────────────────┼──────────────────────────────┤  
+│ blog-frontend                │ 2e8e0149-db61-4883-b734-4d6… │ eecbc0fb-ee17-4d87-9b74-0ce… │  
+└──────────────────────────────┴──────────────────────────────┴──────────────────────────────┘  
+```
+
+### Project-Specific Commands
+
+In multi-project setups, you can also run commands specific to a single project by passing its **ID** or **Slug** as an argument.
+
+#### Examples
+
+Deploy a specific project:
+
+```bash
+globe deploy --project="blog-frontend"
+```
+
+```bash
+globe deploy --project="2e8e0149-db61-4883-b734-4d6832824ca5""
+```
+
+#### Check tokens for a specific project
+
+Alternatively, if no project is specified, the CLI may prompt you to select a project interactively.
+
+```bash
+glober token list --project="blog-backend-369d"
+```
+
+
