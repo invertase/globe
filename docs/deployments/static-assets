@@ -1,0 +1,42 @@
+---
+title: Static Assets
+---
+
+#### **Overview**
+
+Globe now offers built-in support for serving static files like images, HTML templates, and branding assets directly from your application. It works seamlessly with middleware's like `shelf_static` Shelf and Dart Frog.
+
+#### **Defining Assets**
+
+You can specify directories or files using the syntax below in `globe.yaml`, similar to Flutter asset definition:
+
+```yaml
+assets:
+  - public/
+  - some-file.png
+```
+
+![](/.png)
+
+##### **More examples**
+
+- Use glob-like `*.png` to include matching files.
+
+```yaml
+- public/*.png
+```
+
+- Use `source_path:destination_path` to map files into Globe Runtime.
+
+```yaml
+- fake_lib_rust/target/fake_library.so:public/fake_library.so
+```
+#### **Using Static Assets**
+
+Static asset serving is ideal for:
+
+* Hosting HTML templates for your application  
+* Serving static resources such as images or documents.
+
+![](/.png)
+
