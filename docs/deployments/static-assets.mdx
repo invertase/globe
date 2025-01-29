@@ -4,7 +4,7 @@ title: Static Assets
 
 #### **Overview**
 
-Globe now offers built-in support for serving static files like images, HTML templates, and branding assets directly from your application. It works seamlessly with middleware's like `shelf_static` Shelf and Dart Frog.
+Globe offers built-in support for serving static files like images, HTML templates, and branding assets directly from your application. It works seamlessly with middleware's like `shelf_static` Shelf and Dart Frog.
 
 #### **Defining Assets**
 
@@ -16,27 +16,27 @@ assets:
   - some-file.png
 ```
 
-![](/.png)
+![Deployment Process](/deployment-process-terminal.png)
 
-##### **More examples**
+*The image above shows the deployment process of a website built with Dart using Globe CLI. The terminal logs key steps, including queuing, in-progress status, and a final deployment URL.*
 
-- Use glob-like `*.png` to include matching files.
+
+##### **Examples*
+
+- **Glob patterns**: You can use glob-like `*.png` to include matching files. For example, this configuration includes all .png files in the public/ directory:
 
 ```yaml
 - public/*.png
 ```
 
-- Use `source_path:destination_path` to map files into Globe Runtime.
+- **Mapping source and destination paths**: You can use `source_path:destination_path` to map files into Globe Runtime. This is useful for renaming or organising files when serving them:
 
 ```yaml
 - fake_lib_rust/target/fake_library.so:public/fake_library.so
 ```
-#### **Using Static Assets**
+- **Dart’s shelf_static library**: The code below demonstrates how to use Dart’s shelf_static library to serve static files from a directory. This is useful for setting up a simple HTTP server to host your static assets:
+![Dart Code for Static Server](/dart-static-server-code.png)
 
-Static asset serving is ideal for:
+- **Hosting HTML templates**: An HTML file in the public/ directory can be served as the main entry point for your static website. Here’s an example that uses Tailwind CSS for styling: 
 
-* Hosting HTML templates for your application  
-* Serving static resources such as images or documents.
-
-![](/.png)
-
+![HTML Example](/html-template-example.png)
