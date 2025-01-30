@@ -2,26 +2,33 @@
 title: Static Assets
 ---
 
-#### **Overview**
+Globe offers built-in support for serving **Static Files** like images, HTML templates, and branding assets directly from your application. It works seamlessly with middleware's like `shelf_static` Shelf and Dart Frog.
 
-Globe offers built-in support for serving static files like images, HTML templates, and branding assets directly from your application. It works seamlessly with middleware's like `shelf_static` Shelf and Dart Frog.
+## Specifying assets
 
-#### **Defining Assets**
+You can specify directories or files using the syntax below in `globe.yaml` config file similar to [Flutter Asset Definition](https://docs.flutter.dev/ui/assets/assets-and-images) in your project directory.
 
-You can specify directories or files using the syntax below in `globe.yaml`, similar to Flutter asset definition:
+Here is an example:
 
 ```yaml
 assets:
-  - public/
-  - some-file.png
+  - assets/my_icon.png
+  - assets/background.png
 ```
 
-![Deployment Process](/deployment-process-terminal.png)
+To include all assets under a directory, specify the directory name with the / character at the end:
 
-*The image above shows the deployment process of a website built with Dart using Globe CLI. The terminal logs key steps, including queuing, in-progress status, and a final deployment URL.*
+```yaml
+assets:
+  - directory/
+  - directory/subdirectory/
+```
 
-
-##### **Examples*
+<Info>
+  Globe will automatically detect common directories for frameworks such as
+  `public/`, `static/`, `assets`. eg: For *Serverpod*, `config/`, `migrations/`
+  and `web/* directories are automatically bundled.
+</Info>
 
 - **Glob patterns**: You can use glob-like `*.png` to include matching files. For example, this configuration includes all .png files in the public/ directory:
 
@@ -34,9 +41,14 @@ assets:
 ```yaml
 - fake_lib_rust/target/fake_library.so:public/fake_library.so
 ```
-- **Dart’s shelf_static library**: The code below demonstrates how to use Dart’s shelf_static library to serve static files from a directory. This is useful for setting up a simple HTTP server to host your static assets:
-![Dart Code for Static Server](/dart-static-server-code.png)
 
-- **Hosting HTML templates**: An HTML file in the public/ directory can be served as the main entry point for your static website. Here’s an example that uses Tailwind CSS for styling: 
+![Deployment Process](/deployment-process-terminal.png)
+
+_The image above shows the deployment process of a website built with Dart using Globe CLI. The terminal logs key steps, including queuing, in-progress status, and a final deployment URL._
+
+- **Dart’s shelf_static library**: The code below demonstrates how to use Dart’s shelf_static library to serve static files from a directory. This is useful for setting up a simple HTTP server to host your static assets:
+  ![Dart Code for Static Server](/dart-static-server-code.png)
+
+- **Hosting HTML templates**: An HTML file in the public/ directory can be served as the main entry point for your static website. Here’s an example that uses Tailwind CSS for styling:
 
 ![HTML Example](/html-template-example.png)
