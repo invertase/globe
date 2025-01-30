@@ -44,13 +44,19 @@ assets:
   - fake_lib_rust/target/fake_library.so:public/fake_library.so
 ```
 
-![Deployment Process](/deployment-process-terminal.png)
+## Examples
 
-_The image above shows the deployment process of a website built with Dart using Globe CLI. The terminal logs key steps, including queuing, in-progress status, and a final deployment URL._
+### Shelf + `shelf_static`
 
-- **Dart’s shelf_static library**: The code below demonstrates how to use Dart’s shelf_static library to serve static files from a directory. This is useful for setting up a simple HTTP server to host your static assets:
-  ![Dart Code for Static Server](/dart-static-server-code.png)
+The code below demonstrates how to use Dart’s [shelf](https://pub.dev/packages/shelf) and [shelf_static](https://pub.dev/packages/shelf_static) middleware to serve static a simple `index.html` file:
+![Dart Code for Static Server](/assets/dart-serve-static-code.png)
 
-- **Hosting HTML templates**: An HTML file in the public/ directory can be served as the main entry point for your static website. Here’s an example that uses Tailwind CSS for styling:
+Below is what our `index.html` file looks like:
 
 ![HTML Example](/html-template-example.png)
+
+And now we deploy using `globe deploy`
+
+![Deployment Process](/assets/deployment-process-terminal.png)
+
+_The image above shows the deployment process of a website built with Dart using Globe CLI. The terminal logs key steps, including queuing, in-progress status, and a final deployment URL._
