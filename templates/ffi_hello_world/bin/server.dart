@@ -33,7 +33,10 @@ String greetHuman(String name) {
 void main(List<String> args) async {
   final handler = Pipeline().addMiddleware(logRequests()).addHandler((request) {
     final name = request.url.queryParameters['name'] ?? 'FFI Works 🚀';
-    return Response.ok(greetHuman(name));
+    return Response.ok(
+      greetHuman(name),
+      headers: {'Content-Type': 'text/plain'},
+    );
   });
 
   final port = int.parse(Platform.environment['PORT'] ?? '8080');
