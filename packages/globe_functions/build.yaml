@@ -1,39 +1,29 @@
 builders:
-  source_functions:
+  source_rpc:
     import: "package:globe_functions/builders.dart"
-    builder_factories: ["sourceFunctionsBuilder"]
+    builder_factories: ["sourceRpcBuilder"]
     build_extensions:
-      { "$package$": [".dart_tool/functions_spec.dart", ".dart_tool/functions_spec.json"] }
+      { ".dart": [".server.dart", ".client.dart"] }
     auto_apply: root_package
     build_to: source
-    target: ":source_functions"
-    # defaults:
-    #   generate_for: ["lib/api/**"]
 
-  create_entrypoint:
-    import: "package:globe_functions/builders.dart"
-    builder_factories: ["createEntrypointBuilder"]
-    build_extensions:
-      { "$package$": [".dart_tool/entrypoint.dart"] }
-    auto_apply: root_package
-    build_to: source
-    target: ":create_entrypoint"
-    required_inputs: [".dart_tool/functions_spec.dart"]
+  # create_rpc_pipeline:
+  #   import: "package:globe_functions/builders.dart"
+  #   builder_factories: ["createRpcPipelineBuilder"]
+  #   build_extensions:
+  #     ".shelf_rpc_spec.json": [".server.dart"]
+  #   auto_apply: root_package
+  #   build_to: source
+  #   target: ":create_rpc_pipeline"
+  #   required_inputs: [".shelf_rpc_spec.json"]
 
-  create_rpc_client:
-    import: "package:globe_functions/builders.dart"
-    builder_factories: ["createRpcClientBuilder"]
-    build_extensions:
-      { "$package$": ["lib/rpc_client.g.dart"] }
-    auto_apply: root_package
-    build_to: source
-    target: ":create_rpc_client"
-    required_inputs: [".dart_tool/functions_spec.dart"]
+  # create_rpc_client:
+  #   import: "package:globe_functions/builders.dart"
+  #   builder_factories: ["createRpcClientBuilder"]
+  #   build_extensions:
+  #     ".shelf_rpc_spec.json": [".client.dart"]
+  #   auto_apply: root_package
+  #   build_to: source
+  #   target: ":create_rpc_client"
+  #   required_inputs: [".shelf_rpc_spec.json"]
 
-targets:
-  $default:
-    builders:
-      globe_functions|source_functions:
-        enabled: true
-      globe_functions|create_entrypoint:
-        enabled: true

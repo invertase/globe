@@ -1,32 +1,76 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
-import 'package:globe_functions/src/spec/serializers/big_int_serializer.dart';
-import 'package:globe_functions/src/spec/serializers/core_serializer.dart';
-import 'package:globe_functions/src/spec/serializers/date_time_serializer.dart';
-import 'package:globe_functions/src/spec/serializers/duration_serializer.dart';
-import 'package:globe_functions/src/spec/serializers/regexp_serializer.dart';
-import 'package:globe_functions/src/spec/serializers/uint8list_serialzier.dart';
-import 'package:globe_functions/src/spec/serializers/uri_data_serializer.dart';
-import 'package:globe_functions/src/spec/serializers/uri_serializer.dart';
+import 'package:globe_functions/src/spec/serializers/list_serializer.dart';
+import 'package:globe_functions/src/spec/serializers/map_serializer.dart';
+import 'package:globe_functions/src/spec/serializers/set_serializer.dart';
 import 'package:source_gen/source_gen.dart';
 
-abstract class Serializer<T> {
+abstract class Serializer<T extends Object?> {
   const Serializer();
 
+  /// Creates a new serializer with the given serialize and deserialize functions
+  static Serializer<T> create<T extends Object?, W extends Object?>({
+    required Object? Function(T value) serialize,
+    required T Function(W value) deserialize,
+  }) => _FunctionSerializer<T, W>(
+    serializeFn: serialize,
+    deserializeFn: deserialize,
+  );
+
   /// Serializes [value] to a JSON-compatible type
-  Object? toWire(T value);
+  /// If T is nullable, value may be null
+  Object? serialize(T value);
 
   /// Deserializes [value] from a JSON-compatible type
-  T fromWire(Object? value);
+  /// If value is null and T is nullable, returns null
+  /// If value is null and T is non-nullable, throws an error
+  T deserialize(Object? value);
 
   /// Helper to verify wire type and throw clear errors
-  W assertType<W>(Object? value) {
-    if (value is! W) {
-      throw Exception('Expected $W but got ${value.runtimeType}');
+  W assertWireType<W>(Object? value) {
+    if (value == null) {
+      if (null is T) {
+        throw Exception('Cannot convert null to wire type $W for $runtimeType');
+      }
+      throw Exception(
+        'Cannot deserialize null to non-nullable type ${T} for $runtimeType',
+      );
     }
-    return value;
+    if (value is! W) {
+      throw Exception(
+        'Expected wire type $W but got ${value.runtimeType} for $runtimeType',
+      );
+    }
+    return value as W;
+  }
+}
+
+class _FunctionSerializer<T extends Object?, W extends Object?>
+    extends Serializer<T> {
+  const _FunctionSerializer({
+    required this.serializeFn,
+    required this.deserializeFn,
+  });
+
+  final Object? Function(T value) serializeFn;
+  final T Function(W value) deserializeFn;
+
+  @override
+  Object? serialize(T value) => value == null ? null : serializeFn(value);
+
+  @override
+  T deserialize(Object? value) {
+    if (value == null) {
+      if (null is T) {
+        return null as T;
+      }
+      throw Exception(
+        'Cannot deserialize null to non-nullable type ${T} for $runtimeType',
+      );
+    }
+    return deserializeFn(assertWireType<W>(value));
   }
 }
 
@@ -45,73 +89,126 @@ class Serializers {
   static const map = TypeChecker.fromRuntime(Map);
 
   final _serializers = <Type, Serializer>{};
-
-  static bool isSerializableInterface(
-    InterfaceType type,
-    LibraryElement library,
-  ) {
-    final toJson = type.lookUpMethod2('toJson', library);
-    final fromJson = type.lookUpConstructor('fromJson', library);
-    return toJson != null && fromJson != null;
-  }
-
-  Serializer<T>? getFromType<T>(DartType type) {
-    return switch (type) {
-          DartType _ when type.isDartCoreString => get<String>(),
-          DartType _ when type.isDartCoreInt => get<int>(),
-          DartType _ when type.isDartCoreDouble => get<double>(),
-          DartType _ when type.isDartCoreBool => get<bool>(),
-          DartType _ when type.isDartCoreMap => get<Map>(),
-          DartType _ when dateTime.isExactlyType(type) => get<DateTime>(),
-          DartType _ when uri.isExactlyType(type) => get<Uri>(),
-          DartType _ when uriData.isExactlyType(type) => get<UriData>(),
-          DartType _ when list.isExactlyType(type) => get<List>(),
-          DartType _ when duration.isExactlyType(type) => get<Duration>(),
-          DartType _ when bigInt.isExactlyType(type) => get<BigInt>(),
-          DartType _ when regExp.isExactlyType(type) => get<RegExp>(),
-          DartType _ when uint8List.isExactlyType(type) => get<Uint8List>(),
-          _ => null,
-        }
-        as Serializer<T>?;
-  }
+  final _typeTokenSerializers = <String, Serializer>{};
 
   Serializers._() {
     // Register built-in serializers
-    register(const CoreSerializer<String>());
-    register(const CoreSerializer<int>());
-    register(const CoreSerializer<double>());
-    register(const CoreSerializer<bool>());
-    register(const CoreSerializer<List>());
-    register(const CoreSerializer<Map>());
-    register(const BigIntSerializer());
-    register(const DateTimeSerializer());
-    register(const DurationSerializer());
-    register(const RegExpSerializer());
-    register(const Uint8ListSerializer());
-    register(const UriDataSerializer());
-    register(const UriSerializer());
+    register(
+      Serializer.create<String, String>(
+        serialize: (v) => v,
+        deserialize: (v) => v,
+      ),
+    );
+    register(
+      Serializer.create<int, num>(
+        serialize: (v) => v,
+        deserialize: (v) => v.toInt(),
+      ),
+    );
+    register(
+      Serializer.create<double, num>(
+        serialize: (v) => v,
+        deserialize: (v) => v.toDouble(),
+      ),
+    );
+    register(
+      Serializer.create<bool, bool>(serialize: (v) => v, deserialize: (v) => v),
+    );
+    register(
+      Serializer.create<BigInt, String>(
+        serialize: (v) => v.toString(),
+        deserialize: (v) => BigInt.parse(v),
+      ),
+    );
+    register(
+      Serializer.create<DateTime, String>(
+        serialize: (v) => v.toIso8601String(),
+        deserialize: (v) => DateTime.parse(v),
+      ),
+    );
+    register(
+      Serializer.create<Duration, String>(
+        serialize: (v) => v.inMicroseconds.toString(),
+        deserialize: (v) => Duration(microseconds: int.parse(v)),
+      ),
+    );
+    register(
+      Serializer.create<RegExp, String>(
+        serialize: (v) => v.pattern,
+        deserialize: (v) => RegExp(v),
+      ),
+    );
+    register(
+      Serializer.create<Uri, String>(
+        serialize: (v) => v.toString(),
+        deserialize: (v) => Uri.parse(v),
+      ),
+    );
+    register(
+      Serializer.create<UriData, String>(
+        serialize: (v) => v.toString(),
+        deserialize: (v) => UriData.parse(v),
+      ),
+    );
+    register(
+      Serializer.create<Uint8List, String>(
+        serialize: (v) => base64.encode(v),
+        deserialize: (v) => v.isEmpty ? Uint8List(0) : base64.decode(v),
+      ),
+    );
+    register(const MapSerializer());
+    register(const ListSerializer());
+    register(const SetSerializer());
   }
 
   void register<T>(Serializer<T> serializer) {
     _serializers[T] = serializer;
+    // Also register with type token for generic types
+    _typeTokenSerializers['$T'] = serializer;
+  }
+
+  Serializer<T>? getFromType<T>(DartType type) {
+    final serializer = switch (type) {
+      DartType _ when type.isDartCoreString => get<String>(),
+      DartType _ when type.isDartCoreInt => get<int>(),
+      DartType _ when type.isDartCoreDouble => get<double>(),
+      DartType _ when type.isDartCoreBool => get<bool>(),
+      DartType _ when type.isDartCoreMap => get<Map>(),
+      DartType _ when type.isDartCoreList => get<List>(),
+      DartType _ when type.isDartCoreSet => get<Set>(),
+      DartType _ when type.isDartAsyncFuture => null,
+      DartType _ when type.isDartAsyncStream => null,
+      DartType _ when type.isDartCoreIterable => null,
+      _ => _typeTokenSerializers[type.getDisplayString(withNullability: true)],
+    };
+    return serializer as Serializer<T>?;
   }
 
   Serializer<T> get<T>() {
-    final serializer = _serializers[T];
+    // Handle collection types by falling back to base type
+    if (T.toString().startsWith('Map<') ||
+        T.toString().startsWith('List<') ||
+        T.toString().startsWith('Set<')) {
+      final baseType = switch (T.toString().split('<').first) {
+        'Map' => Map,
+        'List' => List,
+        'Set' => Set,
+        _ => throw Exception('Unsupported collection type: $T'),
+      };
+      final serializer = _serializers[baseType];
+      if (serializer == null) {
+        throw Exception('No serializer registered for type $baseType');
+      }
+      return serializer as Serializer<T>;
+    }
+
+    final serializer = _serializers[T] ?? _typeTokenSerializers['$T'];
     if (serializer == null) {
       throw Exception('No serializer registered for type $T');
     }
     return serializer as Serializer<T>;
   }
 
-  T deserialize<T>(Object? value) => get<T>().fromWire(value);
-  Object? serialize<T>(T value) => get<T>().toWire(value);
+  T deserialize<T>(Object? value) => get<T>().deserialize(value);
+  Object? serialize<T>(T value) => get<T>().serialize(value);
 }
-
-// Example built-in serializer:
-
-// Usage:
-// final serializers = Serializers.instance;
-// serializers.register(const DateTimeSerializer());
-// final date = serializers.deserialize<DateTime>("2024-03-14");
-// final wire = serializers.serialize(date);

@@ -12,6 +12,7 @@ dependencies:
   globe_functions:
     path: ../../packages/globe_functions
   http: ^1.2.2
+  shelf_cors_headers: ^0.1.5
 
 dev_dependencies:
   lints: ^5.0.0

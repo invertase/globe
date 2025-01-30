@@ -1,13 +1,7 @@
-abstract class GlobeFunction {
-  const GlobeFunction();
+import 'package:shelf/shelf.dart' show Middleware, Pipeline;
+
+class ShelfRpcRegistry {
+  const ShelfRpcRegistry();
 }
 
-class RpcFunction extends GlobeFunction {
-  const RpcFunction();
-}
-
-class HttpFunction extends GlobeFunction {
-  const HttpFunction();
-}
-
-enum GlobeFunctionType { rpc, http }
+const registerRpcEntry = ShelfRpcRegistry();
