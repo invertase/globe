@@ -26,18 +26,22 @@ assets:
 
 <Info>
   Globe will automatically detect common directories for frameworks such as
-  `public/`, `static/`, `assets`. eg: For *Serverpod*, `config/`, `migrations/`
-  and `web/*` are automatically bundled.
+  `public/`, `static/`, `assets`. eg: For **Serverpod**, `config/`,
+  `migrations/` and `web/` are automatically bundled.
 </Info>
 
-- **Glob patterns**: You can use glob-like `*.png` to include matching files. For example, this configuration includes all .png files in the public/ directory:
+### Glob patterns
+
+You can use glob-like `*.png` to include matching files. For example, this configuration includes all .png files in the public/ directory:
 
 ```yaml
 assets:
   - public/*.png
 ```
 
-- **Mapping source and destination paths**: You can use `source_path:destination_path` to map files into Globe Runtime. This is useful for renaming or organising files when serving them:
+### Mapping source and destination paths
+
+You can use `source_path:destination_path` to map files into Globe Runtime. This is useful for renaming or organising files when serving them:
 
 ```yaml
 assets:
@@ -48,12 +52,12 @@ assets:
 
 ### Shelf + `shelf_static`
 
-The code below demonstrates how to use Dart’s [shelf](https://pub.dev/packages/shelf) and [shelf_static](https://pub.dev/packages/shelf_static) middleware to serve static a simple `index.html` file:
+The code below demonstrates how to use Dart’s [shelf](https://pub.dev/packages/shelf) and [shelf_static](https://pub.dev/packages/shelf_static) middleware to serve a simple `index.html` file:
 ![Dart Code for Static Server](/assets/dart-serve-static-code.png)
 
 Below is what our `index.html` file looks like:
 
-![HTML Example](/html-template-example.png)
+![HTML Example](/assets/dart-serve-static-html-code.png)
 
 And now we deploy using `globe deploy`
 
