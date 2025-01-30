@@ -11,6 +11,14 @@ username: Invertase
 
 This project shows how to integrate **Dart** with **Rust** using the [Foreign Function Interface](https://dart.dev/interop/c-interop) (FFI). The Rust code has to be compiled for the `x86_64` architecture to ensure compatibility with the Globe runtime.
 
+## Bootstrap
+
+Initialize the project using the command below
+
+```shell
+$ globe create -t ffi_hello_world
+```
+
 ## Project Structure
 
 ```
