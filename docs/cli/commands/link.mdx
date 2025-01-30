@@ -73,7 +73,11 @@ This displays a table of all linked projects:
 
 In multi-project setups, you can run commands specific to a project by passing either **project name** or **ID** as argument.
 
-### Deploy a specific project:
+Alternatively, if no argument is specified, the CLI will prompt you to select a project interactively.
+
+### Examples
+
+- Deploy a specific project:
 
 ```bash
 globe deploy --project="blog-frontend"
@@ -83,10 +87,20 @@ globe deploy --project="blog-frontend"
 globe deploy --project="2e8e0149-db61-4883-b734-4d6832824ca5""
 ```
 
-### Check tokens for a specific project
+- Check tokens for a specific project
 
 Alternatively, if no project is specified, the CLI will prompt you to select a project interactively.
 
 ```bash
 glober token list --project="blog-backend-369d"
+```
+
+- Deploy project interactively
+
+```
+ ~/Projects/OpenSource/website  globe deploy          ok
+🔺 Select project:
+❯ ◉  blog-backend-369d
+  ◯  blog-frontend
+  ◯  link new project +
 ```
