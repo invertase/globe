@@ -1,14 +1,15 @@
-# Dart + Rust FFI Project
+---
+name: Dart + Rust FFI
+description: Building a simple Dart+FFI API backend
+tags: ["dart", "dart-ffi"]
+username: Invertase
+---
 
-This project demonstrates how to integrate Rust with Dart using the Foreign Function Interface (FFI). The Rust code has to be compiled for the x86_64 architecture to ensure compatibility with the Globe runtime.
+# Dart + Rust FFI
 
-## Getting Started
+## Overview
 
-Requirements
-
-- Dart SDK
-- Rust (with the [`cross`](https://github.com/cross-rs/cross) tool for cross-compilation)
-- Globe CLI
+This project shows how to integrate **Dart** with **Rust** using the [Foreign Function Interface](https://dart.dev/interop/c-interop) (FFI). The Rust code has to be compiled for the `x86_64` architecture to ensure compatibility with the Globe runtime.
 
 ## Project Structure
 
@@ -37,7 +38,7 @@ cargo install cross
 
 2. Compile for `x86_64-unknown-linux-gnu`
 
-Navigate to the rust_library directory and run:
+Navigate to the `native_hello` directory and run:
 
 ```sh
 cross build --release --target x86_64-unknown-linux-gnu

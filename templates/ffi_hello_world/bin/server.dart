@@ -10,7 +10,7 @@ const kReleaseMode = bool.fromEnvironment('dart.vm.product');
 String get libPath {
   final p = kReleaseMode
       ? 'static/libnative_hello.so'
-      : 'native_hello/target/debug/libnative_hello.dylib';
+      : 'native_hello/target/debug/libnative_hello.${Platform.isMacOS ? 'dylib' : 'so'}';
   return path.join(Directory.current.path, p);
 }
 
