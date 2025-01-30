@@ -33,13 +33,15 @@ assets:
 - **Glob patterns**: You can use glob-like `*.png` to include matching files. For example, this configuration includes all .png files in the public/ directory:
 
 ```yaml
-- public/*.png
+assets:
+  - public/*.png
 ```
 
 - **Mapping source and destination paths**: You can use `source_path:destination_path` to map files into Globe Runtime. This is useful for renaming or organising files when serving them:
 
 ```yaml
-- fake_lib_rust/target/fake_library.so:public/fake_library.so
+assets:
+  - fake_lib_rust/target/fake_library.so:public/fake_library.so
 ```
 
 ![Deployment Process](/deployment-process-terminal.png)
