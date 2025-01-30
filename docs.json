@@ -67,6 +67,7 @@
       "pages": [
         { "title": "Overview", "href": "/deployments" },
         { "title": "Build Settings", "href": "/deployments/build-settings" },
+        { "title": "Static Assets", "href": "/deployments/static-assets" },
         { "title": "Domains", "href": "/deployments/domains" },
         {
           "title": "Environment Variables",
