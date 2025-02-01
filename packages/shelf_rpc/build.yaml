@@ -1,0 +1,8 @@
+builders:
+  shelf_rpc_builder:
+    import: "package:shelf_rpc/builders.dart"
+    builder_factories: ["shelfRpcBuilder"]
+    build_extensions:
+      { ".dart": [".server.dart", ".client.dart"] }
+    auto_apply: root_package
+    build_to: source

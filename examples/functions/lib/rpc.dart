@@ -37,6 +37,7 @@ Future<User> dynamicFunction() async => User(name: 'Bob');
 // Use shelf middleware directly
 final r = ShelfRpc().use(logRequests());
 final publicProcedure = r.procedure().use(corsHeaders());
+
 @registerRpcEntry
 final api = r.router({
   // #voidReturn: r.procedure().exec(() {}),
