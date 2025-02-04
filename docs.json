@@ -127,6 +127,9 @@
         {
           "group": "Version History",
           "pages": [
+            { "title": "0.9.0 (Oct 24)", "href": "/releases/v/0.12.0" },
+            { "title": "0.9.0 (Oct 24)", "href": "/releases/v/0.11.0" },
+            { "title": "0.9.0 (Oct 24)", "href": "/releases/v/0.10.0" },
             { "title": "0.9.0 (Oct 24)", "href": "/releases/v/0.9.0" },
             { "title": "0.8.0 (Sep 24)", "href": "/releases/v/0.8.0" },
             { "title": "0.7.0 (Aug 24)", "href": "/releases/v/0.7.0" },
