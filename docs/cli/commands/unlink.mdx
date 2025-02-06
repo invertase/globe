@@ -1,10 +1,10 @@
 ---
-title: Unlink a project from Globe
+title: Unlink Projects from Globe
 ---
 
 The `unlink` command removes any previously linked projects from the current local project. This will prevent you from deploying the project to Globe.
 
-## Usage
+## Unlinking a Single Project
 
 ```bash
 globe unlink
@@ -13,3 +13,48 @@ globe unlink
 ## How it works
 
 The command removes the `.dart_tool/dart_globe` directory from the local project. This directory stores metadata about the project, which is used to identify the project when deploying to Globe.
+
+## Unlinking Multiple Projects (e.g., Mono-Repos)
+In multi-project setups, the unlink command allows you to select which project to unlink from the workspace.
+
+Run the same command in your workspace directory:
+```bash
+globe unlink
+```
+
+The CLI displays a list of linked projects for you to select:
+```bash
+🔺 Select project:  
+❯ ◉  blog-backend-369d  
+  ◯  blog-frontend  
+``` 
+
+### Examples
+```bash
+globe unlink --project="blog-frontend"  
+```
+
+```bash
+globe unlink --project="blog-backend-369d"  
+```
+
+Alternatively, you can select a project interactively:
+
+```bash
+ ~/Projects/OpenSource/dart-blog | on main >1 !3 ?1  globe unlink  
+🔺 Select project:  
+❯ ◉  blog-backend-369d  
+  ◯  blog-frontend  
+  ```
+
+  ### Project-Specific Commands
+
+In multi-project setups, you can also run commands specific to a single project by passing its **ID** or **Slug** as an argument.
+
+#### Examples
+
+Unlink a specific project:
+
+```bash
+globe unlink --project="blog-frontend"
+```
