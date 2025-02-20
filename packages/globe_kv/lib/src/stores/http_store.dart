@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:globe_kv/globe_kv.dart';
 import 'package:globe_kv/src/globe_kv.dart';
 import 'package:http/http.dart' as http;
 
