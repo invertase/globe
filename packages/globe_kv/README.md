@@ -43,6 +43,14 @@ import 'package:globe_kv/globe_kv.dart';
 final kv = GlobeKV('namespace-id');
 ```
 
+In development, GlobeKV will use in-memory storage so your data will be lost when the Dart app is restarted. To persist data to your local filesystem, use the `GlobeFileStore` instance:
+
+```dart
+final kv = GlobeKV('namespace-id', store: GlobeFileStore());
+```
+
+In production, the `store` will be ignored and fallback to the production GlobeKV datastore.
+
 ### Storing and Retrieving Data
 
 ```dart
