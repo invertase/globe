@@ -5,6 +5,29 @@ import 'package:globe_kv/globe_kv.dart';
 void main() async {
   final kv = GlobeKV.inmemory('test');
 
+  final untyped = await kv.get('test');
+
+  switch (untyped) {
+    case KvString r:
+      print('key is string');
+      print(r.value);
+      break;
+    case KvNumber r:
+      print('key is number');
+      print(r.value);
+      break;
+    case KvBoolean r:
+      print('key is boolean');
+      print(r.value);
+      break;
+    case KvBinary r:
+      print('key is binary');
+      print(r.value);
+      break;
+    case null:
+      print('key is null');
+      break;
+  }
   final value = await kv.get<int>('test');
   final str = await kv.getString('test');
   final number = await kv.getNumber('test');
