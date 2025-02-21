@@ -6,7 +6,7 @@ void main() {
     late GlobeKV kv;
 
     setUp(() {
-      kv = GlobeKV('test');
+      kv = GlobeKV.init('test');
     });
 
     test('set and get string value', () async {

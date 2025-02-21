@@ -15,48 +15,32 @@ String _globeLocalPath(String namespace) =>
     p.join('.dart_tool', 'globe_ds', 'kv', '$namespace.json');
 
 final class GlobeKV {
-  final String namespace;
-  final bool persistent;
-  late final GlobeKvStore store;
+  late final GlobeKvStore _store;
 
-  GlobeKV.inmemory(this.namespace) : persistent = false {
-    store = GlobeMemoryStore();
-  }
+  GlobeKV.inmemory() : _store = GlobeMemoryStore();
 
-  GlobeKV.file(this.namespace, {String? path}) : persistent = true {
-    path ??= _globeLocalPath(namespace);
-    store = GlobeFileStore(path);
-  }
+  GlobeKV.file(String namespace)
+      : _store = GlobeFileStore(_globeLocalPath(namespace));
 
-  GlobeKV(
-    this.namespace, {
-    http.Client? client,
-    this.persistent = false,
-  }) {
+  GlobeKV.init(String namespace, {GlobeKvStore? store}) {
     if (Platform.environment['GLOBE'] == '1') {
-      final baseUrl =
-          Platform.environment['GLOBE_KV_API'] ?? 'http://localhost';
+      final baseUrl = Platform.environment['GLOBE_KV_API'] ??
+          (throw StateError('GLOBE_KV_API is not set'));
 
-      store = GlobeHttpStore(
-        namespace,
-        baseUrl,
-        client ?? http.Client(),
-      );
+      _store = store ?? GlobeHttpStore(namespace, baseUrl, http.Client());
     } else {
-      store = persistent
-          ? GlobeFileStore(_globeLocalPath(namespace))
-          : GlobeMemoryStore();
+      _store = store ?? GlobeMemoryStore();
     }
   }
 
   Future<KvValue<T>?> get<T extends Object>(String key, {int? ttl}) async {
     assertKey(key);
-    return store.get<T>(key, ttl: ttl);
+    return _store.get<T>(key, ttl: ttl);
   }
 
   Future<T?> _getTyped<T extends Object>(String key, {int? ttl}) async {
     assertKey(key);
-    final result = await store.get<T>(key, ttl: ttl);
+    final result = await _store.get<T>(key, ttl: ttl);
     if (result == null) return null;
     return result.value;
   }
@@ -84,12 +68,12 @@ final class GlobeKV {
     int? ttl,
   }) async {
     assertKey(key);
-    await store.set(key, KvValue.from(value), expires: expires, ttl: ttl);
+    await _store.set(key, KvValue.from(value), expires: expires, ttl: ttl);
   }
 
   Future<void> delete(String key) async {
     assertKey(key);
-    await store.delete(key);
+    await _store.delete(key);
   }
 
   Future<KVListResult> list({
@@ -97,6 +81,6 @@ final class GlobeKV {
     String? cursor,
     int? limit,
   }) async {
-    return store.list(prefix: prefix, cursor: cursor, limit: limit);
+    return _store.list(prefix: prefix, cursor: cursor, limit: limit);
   }
 }

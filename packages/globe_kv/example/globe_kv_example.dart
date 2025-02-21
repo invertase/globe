@@ -3,7 +3,7 @@
 import 'package:globe_kv/globe_kv.dart';
 
 void main() async {
-  final kv = GlobeKV.inmemory('test');
+  final kv = GlobeKV.inmemory();
 
   final untyped = await kv.get('test');
 
