@@ -1,6 +1,6 @@
 # 🌍 GlobeKV - Key-Value Storage for Dart Applications, backed by [Globe](https://globe.dev).
 
-GlobeKV is a data storage system for storing and retrieving data from a global datastore, designed for high-reads at low latency. 
+GlobeKV is an eventually-consistent data storage system for storing and retrieving data from a global datastore, designed for high-reads at low latency. 
 
 GlobeKV features:
 
@@ -145,17 +145,23 @@ switch (result) {
 
 ## Hot vs Cold Reads
 
-When data is fetched from KV, the data is stored on the [POP](https://en.wikipedia.org/wiki/Point_of_presence) closest to the caller. This means that subsequent requests will be served from the local POP, reducing latency (a "hot" read). When the data is fetched from a POP which does not have the data, the data will be fetched from the global KV datastore and stored on the POP (a "cold" read).
+When reading data from KV, the [POP](https://en.wikipedia.org/wiki/Point_of_presence) (edge location) handling your request may not have this data cached locally, and has to read the value from the closest global datastore. This adds a small amount of latency to reading the data, also called a "cold read". 
 
-By default, the data is stored on the POP for 60 seconds (the lowest possible TTL). If you have data which is not frequently updated, you can set a longer TTL to reduce the number of "cold" reads.
+Once that POP has read your data, by defaut it will cache it for 60 seconds. Subsequent reads from that same POP will result in a fast, low-latency read - a "hot read".
+
+## Eventual Consistency
+
+When updating a KV value, it may take up to 60 seconds for all users of your application to see these changes globally. This makes KV perfect for reading data which does not need to be fully consistent, such as caching, but not suitable for data which requires integtrity, such as financial transactions.
+
+If your data is not updated frequently, you can instruct KV to cache the data on a POP for a longer duration resulting in more hot reads. This can be achived by providing the `ttl` argument to the `get` method, where `ttl` is the number of seconds to cache on a POP. This value can not be less than the default of `60`:
 
 ```dart
 await kv.get('user:123', 'User 123', ttl: 60 * 60 * 24); // Cache for 24 hours
 ``` 
 
-Subsequent requests within the 24 hour period on the same POP will be served as a "hot" read with very-low latency.
+In this example, subsequent requests within the 24 hour period on the same POP will be served as a "hot" read with very-low latency.
 
-If you get data from KV and set a long `ttl` value, but later realise you need data to be updated more frequently, you can use call `get` with a new `ttl` value to override the previous value.
+If you set a long `ttl`, but later realise you require fresher data with a lower `ttl`, you can use call `get` with a new `ttl` value to override the previous value.
 
 ## 🧪 Running Tests
 
