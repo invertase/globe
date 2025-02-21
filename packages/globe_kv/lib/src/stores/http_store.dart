@@ -33,7 +33,7 @@ class GlobeHttpStore implements GlobeKvStore {
         'namespace': namespace,
         'key': key,
         'value': value.value,
-        'type': value.type,
+        'type': value.type.name,
         if (expires != null) 'expires': expires.millisecondsSinceEpoch ~/ 1000,
         if (ttl != null) 'ttl': ttl,
       }),
