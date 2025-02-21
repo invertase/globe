@@ -24,8 +24,8 @@ final class GlobeKV {
 
   GlobeKV.init(String namespace, {GlobeKvStore? store}) {
     if (Platform.environment['GLOBE'] == '1') {
-      final baseUrl = Platform.environment['GLOBE_KV_API'] ??
-          (throw StateError('GLOBE_KV_API is not set'));
+      final baseUrl = Platform.environment['GLOBE_DS_API'] ??
+          (throw StateError('GLOBE_DS_API is not set'));
 
       _store = store ?? GlobeHttpStore(namespace, baseUrl, http.Client());
     } else {
