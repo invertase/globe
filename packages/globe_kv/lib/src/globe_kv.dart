@@ -17,17 +17,11 @@ String _globeLocalPath(String namespace) =>
 final class GlobeKV {
   late final GlobeKvStore _store;
 
-  GlobeKV.inmemory() : _store = GlobeMemoryStore();
-
-  GlobeKV.file(String namespace)
-      : _store = GlobeFileStore(_globeLocalPath(namespace));
-
-  GlobeKV.init(String namespace, {GlobeKvStore? store}) {
+  GlobeKV(String namespace, {GlobeKvStore? store}) {
     if (Platform.environment['GLOBE'] == '1') {
       final baseUrl = Platform.environment['GLOBE_DS_API'] ??
           (throw StateError('GLOBE_DS_API is not set'));
-
-      _store = store ?? GlobeHttpStore(namespace, baseUrl, http.Client());
+      _store = GlobeHttpStore(namespace, baseUrl, http.Client());
     } else {
       _store = store ?? GlobeMemoryStore();
     }

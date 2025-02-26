@@ -5,9 +5,7 @@ void main() {
   group('GlobeKV Memory Storage', () {
     late GlobeKV kv;
 
-    setUp(() {
-      kv = GlobeKV.init('test');
-    });
+    setUp(() => kv = GlobeKV('test'));
 
     test('set and get string value', () async {
       await kv.set('key1', 'value1');
