@@ -13,7 +13,7 @@ class GlobeHttpStore implements GlobeKvStore {
     final data = jsonDecode(response.body) as Map<String, dynamic>;
 
     if (response.statusCode != 200) {
-      throw Exception(data['message']);
+      throw Exception(data['error']);
     }
 
     return data;
