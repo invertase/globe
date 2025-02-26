@@ -47,9 +47,8 @@ sealed class KvValue<T> {
   @internal
   static KvValue<T> fromJson<T extends Object>(Map<String, dynamic> json) {
     final value = json['value'];
-    final type = KvValueType.values
-        .firstWhereOrNull((t) => t.toString() == json['type']);
-
+    final type =
+        KvValueType.values.firstWhereOrNull((t) => t.name == json['type']);
     if (type == null) {
       throw ArgumentError(
         'KV value type not found: Type:${json['type']} Value:$value',
