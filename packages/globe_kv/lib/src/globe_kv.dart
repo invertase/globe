@@ -1,18 +1,13 @@
 import 'dart:io';
 
 import 'package:globe_kv/src/asserts.dart';
-import 'package:globe_kv/src/stores/file_store.dart';
 import 'package:globe_kv/src/stores/http_store.dart';
 import 'package:globe_kv/src/stores/memory_store.dart';
 import 'package:http/http.dart' as http;
-import 'package:path/path.dart' as p;
 import 'package:meta/meta.dart';
 import 'package:collection/collection.dart';
 
 part 'globe_kv_store.dart';
-
-String _globeLocalPath(String namespace) =>
-    p.join('.dart_tool', 'globe_ds', 'kv', '$namespace.json');
 
 final class GlobeKV {
   late final GlobeKvStore _store;
@@ -21,7 +16,7 @@ final class GlobeKV {
     if (Platform.environment['GLOBE'] == '1') {
       final baseUrl = Platform.environment['GLOBE_DS_API'] ??
           (throw StateError('GLOBE_DS_API is not set'));
-      _store = GlobeHttpStore(namespace, baseUrl, http.Client());
+      _store = GlobeHttpStore(namespace, Uri.parse(baseUrl), http.Client());
     } else {
       _store = store ?? GlobeMemoryStore();
     }

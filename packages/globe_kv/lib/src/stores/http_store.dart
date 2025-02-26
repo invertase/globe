@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 
 class GlobeHttpStore implements GlobeKvStore {
   final String namespace;
-  final String baseUrl;
+  final Uri baseUrl;
   final http.Client client;
 
   GlobeHttpStore(this.namespace, this.baseUrl, this.client);
@@ -27,7 +27,7 @@ class GlobeHttpStore implements GlobeKvStore {
     int? ttl,
   }) async {
     final response = await client.post(
-      Uri.parse('$baseUrl/set'),
+      baseUrl.replace(path: '/kv/set'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'namespace': namespace,
@@ -45,7 +45,7 @@ class GlobeHttpStore implements GlobeKvStore {
   @override
   Future<void> delete(String key) async {
     final response = await client.delete(
-      Uri.parse('$baseUrl/delete'),
+      baseUrl.replace(path: '/kv/delete'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'namespace': namespace,
@@ -59,7 +59,7 @@ class GlobeHttpStore implements GlobeKvStore {
   @override
   Future<KvValue<T>?> get<T extends Object>(String key, {int? ttl}) async {
     final response = await client.post(
-      Uri.parse('$baseUrl/get'),
+      baseUrl.replace(path: '/kv/get'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'namespace': namespace,
@@ -81,7 +81,7 @@ class GlobeHttpStore implements GlobeKvStore {
     int? limit,
   }) async {
     final response = await client.post(
-      Uri.parse('$baseUrl/list'),
+      baseUrl.replace(path: '/kv/list'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'namespace': namespace,
