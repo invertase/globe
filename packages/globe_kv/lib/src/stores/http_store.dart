@@ -28,7 +28,6 @@ class GlobeHttpStore implements GlobeKvStore {
   }) async {
     final response = await client.post(
       baseUrl.replace(path: '/kv/set'),
-      headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'namespace': namespace,
         'key': key,
@@ -46,11 +45,7 @@ class GlobeHttpStore implements GlobeKvStore {
   Future<void> delete(String key) async {
     final response = await client.delete(
       baseUrl.replace(path: '/kv/delete'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'namespace': namespace,
-        'key': key,
-      }),
+      body: jsonEncode({'namespace': namespace, 'key': key}),
     );
 
     _parseResponse(response);
@@ -60,7 +55,6 @@ class GlobeHttpStore implements GlobeKvStore {
   Future<KvValue<T>?> get<T extends Object>(String key, {int? ttl}) async {
     final response = await client.post(
       baseUrl.replace(path: '/kv/get'),
-      headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'namespace': namespace,
         'key': key,
@@ -82,7 +76,6 @@ class GlobeHttpStore implements GlobeKvStore {
   }) async {
     final response = await client.post(
       baseUrl.replace(path: '/kv/list'),
-      headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'namespace': namespace,
         if (prefix != null) 'prefix': prefix,
