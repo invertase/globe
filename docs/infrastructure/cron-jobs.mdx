@@ -21,6 +21,16 @@ crons:
     path: '/auth/refresh'
 ```
 
+When specifiying a path to your application to handle, Globe will automatically prevent unauthorized requests to this endpoint, only allowing internal cron events to trigger it. To disable this behaviour, set the `private` key to `false`:
+
+```yaml
+crons:
+  - id: refresh_auth_token
+    schedule: '*/45 * * * *'
+    path: '/auth/refresh'
+    private: false # warning - /auth/refresh is now publically accessible 
+```
+
 In the above example, the cron job will be executed every 45 minutes. For more details on cron code, see the [unix-cron documentation](https://man7.org/linux/man-pages/man5/crontab.5.html).
 
 Whenever a new production deployment is successful, the cron jobs will be synchronized and shown in the dashboard.
