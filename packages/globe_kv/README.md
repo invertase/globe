@@ -171,10 +171,6 @@ To run the test suite:
 dart test
 ```
 
-## 📜 License
-
-MIT License. See `LICENSE` for details.
-
 ---
 
 🚀 **GlobeKV** - Simple, efficient key-value storage for Dart!
