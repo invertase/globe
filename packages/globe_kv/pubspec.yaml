@@ -1,5 +1,6 @@
 name: globe_kv
 description: A starting point for Dart libraries or applications.
+repository: https://github.com/invertase/globe
 version: 1.0.0
 
 environment:
