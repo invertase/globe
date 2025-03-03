@@ -34,7 +34,7 @@ final class GlobeKV {
   /// [key] The key to look up.
   /// [ttl] Optional time-to-live in seconds to consider the cached value valid.
   ///
-  /// Returns a Future that resolves to a KvValue<T> object or null if the
+  /// Returns a Future that resolves to a `KvValue<T>` object or null if the
   /// key doesn't exist or has expired.
   Future<KvValue<T>?> get<T extends Object>(String key, {int? ttl}) async {
     assertKey(key);
@@ -86,7 +86,7 @@ final class GlobeKV {
   /// [key] The key to look up.
   /// [ttl] Optional time-to-live in seconds to consider the cached value valid.
   ///
-  /// Returns a Future that resolves to a List<int> or null if the key doesn't
+  /// Returns a Future that resolves to a `List<int>` or null if the key doesn't
   /// exist or has expired.
   Future<List<int>?> getBinary(String key, {int? ttl}) {
     return _getTyped<List<int>>(key, ttl: ttl);
