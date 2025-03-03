@@ -65,7 +65,7 @@ class GlobeHttpStore implements GlobeKvStore {
     final json = _parseResponse(response);
     if (json['value'] == null) return null;
 
-    return KvValue.fromJson(json);
+    return KvValue.fromJson<T>(json);
   }
 
   @override

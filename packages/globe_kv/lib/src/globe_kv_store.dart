@@ -27,12 +27,32 @@ enum KvValueType {
 
   const KvValueType();
 
+  static KvValueType typeOf(Object value) {
+    return switch (value.runtimeType) {
+      const (String) => KvValueType.string,
+      const (num) => KvValueType.number,
+      const (bool) => KvValueType.boolean,
+      const (List<int>) => KvValueType.binary,
+      _ => throw ArgumentError('Invalid type: $value'),
+    };
+  }
+
   bool isValid(Object value) => switch (this) {
         KvValueType.string => value is String,
         KvValueType.number => value is num,
         KvValueType.boolean => value is bool,
         KvValueType.binary => value is List<int>,
       };
+
+  KvValue value(Object value) {
+    final result = switch (this) {
+      KvValueType.string => KvString(value as String),
+      KvValueType.number => KvNumber(value as num),
+      KvValueType.boolean => KvBoolean(value as bool),
+      KvValueType.binary => KvBinary(value as List<int>),
+    };
+    return result as KvValue;
+  }
 }
 
 sealed class KvValue<T> {
@@ -41,7 +61,7 @@ sealed class KvValue<T> {
 
   @internal
   static KvValue from(Object object) {
-    return ensureValidType(object);
+    return KvValueType.typeOf(object).value(object);
   }
 
   @internal
@@ -50,12 +70,10 @@ sealed class KvValue<T> {
     final type =
         KvValueType.values.firstWhereOrNull((t) => t.name == json['type']);
     if (type == null) {
-      throw ArgumentError(
-        'KV value type not found: Type:${json['type']} Value:$value',
-      );
+      throw ArgumentError('KV value type not found: Type:${json['type']}');
     }
 
-    return ensureValidType<T>(value);
+    return type.value(value) as KvValue<T>;
   }
 
   KvValueType get type {
