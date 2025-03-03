@@ -30,9 +30,9 @@ enum KvValueType {
   static KvValueType typeOf(Object value) {
     return switch (value.runtimeType) {
       const (String) => KvValueType.string,
-      const (num) => KvValueType.number,
       const (bool) => KvValueType.boolean,
       const (List<int>) => KvValueType.binary,
+      const (num) || const (double) || const (int) => KvValueType.number,
       _ => throw ArgumentError('Invalid type: $value'),
     };
   }
