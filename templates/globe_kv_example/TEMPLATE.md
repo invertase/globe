@@ -1,49 +1,30 @@
-A server app built using [Shelf](https://pub.dev/packages/shelf),
-configured to enable running with [Docker](https://www.docker.com/).
+---
+name: GlobeKV + Dart Shelf
+description: Building a simple key-value storage API backend using GlobeKV
+tags: ["dart", "shelf", "globe_kv"]
+username: Invertase
+---
 
-This sample code handles HTTP GET requests to `/` and `/echo/<message>`
+# GlobeKV + Dart Shelf
 
-# Running the sample
+## Overview
 
-## Running with the Dart SDK
+This project shows how to use GlobeKV (an eventually-consistent data storage system for storing and retrieving data from a global datastore).
 
-You can run the example with the [Dart SDK](https://dart.dev/get-dart)
-like this:
+## Bootstrap
 
-```
-$ dart run bin/server.dart
-Server listening on port 8080
-```
+Initialize the project using the command below
 
-And then from a second terminal:
-```
-$ curl http://0.0.0.0:8080
-Hello, World!
-$ curl http://0.0.0.0:8080/echo/I_love_Dart
-I_love_Dart
+```shell
+$ globe create -t globe_kv_example
 ```
 
-## Running with Docker
+## Creating a namespace
 
-If you have [Docker Desktop](https://www.docker.com/get-started) installed, you
-can build and run with the `docker` command:
+TODO(codekeyz): complete this section
 
-```
-$ docker build . -t myserver
-$ docker run -it -p 8080:8080 myserver
-Server listening on port 8080
-```
+## Deployment
 
-And then from a second terminal:
-```
-$ curl http://0.0.0.0:8080
-Hello, World!
-$ curl http://0.0.0.0:8080/echo/I_love_Dart
-I_love_Dart
-```
-
-You should see the logging printed in the first terminal:
-```
-2021-05-06T15:47:04.620417  0:00:00.000158 GET     [200] /
-2021-05-06T15:47:08.392928  0:00:00.001216 GET     [200] /echo/I_love_Dart
+```sh
+globe deploy
 ```
