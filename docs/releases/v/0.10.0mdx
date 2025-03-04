@@ -1,0 +1,19 @@
+---
+title: Version 0.10.0 (November 2024)
+---
+
+| Feature | Release Date |
+| :---- | ----- | 
+| Created a user interface for approving Terms of Service and Privacy Policy | 29/11/2024 |
+| Added sidebar alerts for usage limit thresholds to keep users informed | 29/11/2024 |
+| Added support for linking multiple projects via the CLI | 29/11/2024 |
+| Standardised button loading states across all actions for consistency | 29/11/2024 |
+| Enabled a standardised method to deploy static assets to CDNs | 29/11/2024 |
+| Optimised the project list view to improve loading performance | 29/11/2024 |
+| Resolved an issue where project deletion failed for paused projects | 29/11/2024 |
+| Introduced terms and conditions and privacy policy documentation | 20/11/2024 |
+| Added functionality to ignore sdkPath entries in melos.yaml | 20/11/2024 |
+
+---
+
+**Need help?** Join our [Discord](https://invertase.link/globe-discord) community! 
