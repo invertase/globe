@@ -1,7 +1,7 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:get_it/get_it.dart';
-import 'package:graphql/client.dart';
 import 'package:mason_logger/mason_logger.dart';
 
 import '../command.dart';
@@ -57,6 +57,32 @@ class WhoamiCommand extends BaseGlobeCommand {
         ..info('  ${lightCyan.wrap('Email:')}     ${user.email}')
         ..info('  ${lightCyan.wrap('Created:')}   ${user.createdAt.toLocal()}')
         ..info('');
+
+      // Display linked projects information
+      final linkedProjects = scope.workspace;
+      if (linkedProjects.isNotEmpty) {
+        logger
+          ..info('Linked Projects:')
+          ..info('');
+
+        for (final project in linkedProjects) {
+          final orgName = user.organizations
+              ?.firstWhereOrNull((org) => org.id == project.orgId)
+              ?.name;
+
+          logger
+              .info('  ${lightCyan.wrap('Project:')}   ${project.projectSlug}');
+          logger.info(
+            '  ${lightCyan.wrap('Org:')}       ${orgName ?? project.orgId}',
+          );
+          logger.info('');
+        }
+      } else {
+        logger
+          ..info('No linked projects.')
+          ..info('  Run ${cyan.wrap('globe link')} to link a project.')
+          ..info('');
+      }
 
       return ExitCode.success.code;
     } catch (e) {

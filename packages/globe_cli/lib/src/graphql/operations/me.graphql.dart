@@ -175,6 +175,35 @@ const documentNodeQueryMe = DocumentNode(definitions: [
             selectionSet: null,
           ),
           FieldNode(
+            name: NameNode(value: 'organizations'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FieldNode(
+                name: NameNode(value: 'id'),
+                alias: null,
+                arguments: [],
+                directives: [],
+                selectionSet: null,
+              ),
+              FieldNode(
+                name: NameNode(value: 'name'),
+                alias: null,
+                arguments: [],
+                directives: [],
+                selectionSet: null,
+              ),
+              FieldNode(
+                name: NameNode(value: '__typename'),
+                alias: null,
+                arguments: [],
+                directives: [],
+                selectionSet: null,
+              ),
+            ]),
+          ),
+          FieldNode(
             name: NameNode(value: '__typename'),
             alias: null,
             arguments: [],
@@ -313,6 +342,7 @@ class Query$Me$me {
     required this.name,
     required this.email,
     required this.createdAt,
+    this.organizations,
     this.$__typename = 'Me',
   });
 
@@ -321,12 +351,17 @@ class Query$Me$me {
     final l$name = json['name'];
     final l$email = json['email'];
     final l$createdAt = json['createdAt'];
+    final l$organizations = json['organizations'];
     final l$$__typename = json['__typename'];
     return Query$Me$me(
       id: (l$id as String),
       name: (l$name as String),
       email: (l$email as String),
       createdAt: DateTime.parse((l$createdAt as String)),
+      organizations: (l$organizations as List<dynamic>?)
+          ?.map((e) =>
+              Query$Me$me$organizations.fromJson((e as Map<String, dynamic>)))
+          .toList(),
       $__typename: (l$$__typename as String),
     );
   }
@@ -338,6 +373,8 @@ class Query$Me$me {
   final String email;
 
   final DateTime createdAt;
+
+  final List<Query$Me$me$organizations>? organizations;
 
   final String $__typename;
 
@@ -351,6 +388,9 @@ class Query$Me$me {
     _resultData['email'] = l$email;
     final l$createdAt = createdAt;
     _resultData['createdAt'] = l$createdAt.toIso8601String();
+    final l$organizations = organizations;
+    _resultData['organizations'] =
+        l$organizations?.map((e) => e.toJson()).toList();
     final l$$__typename = $__typename;
     _resultData['__typename'] = l$$__typename;
     return _resultData;
@@ -362,12 +402,16 @@ class Query$Me$me {
     final l$name = name;
     final l$email = email;
     final l$createdAt = createdAt;
+    final l$organizations = organizations;
     final l$$__typename = $__typename;
     return Object.hashAll([
       l$id,
       l$name,
       l$email,
       l$createdAt,
+      l$organizations == null
+          ? null
+          : Object.hashAll(l$organizations.map((v) => v)),
       l$$__typename,
     ]);
   }
@@ -400,6 +444,22 @@ class Query$Me$me {
     if (l$createdAt != lOther$createdAt) {
       return false;
     }
+    final l$organizations = organizations;
+    final lOther$organizations = other.organizations;
+    if (l$organizations != null && lOther$organizations != null) {
+      if (l$organizations.length != lOther$organizations.length) {
+        return false;
+      }
+      for (int i = 0; i < l$organizations.length; i++) {
+        final l$organizations$entry = l$organizations[i];
+        final lOther$organizations$entry = lOther$organizations[i];
+        if (l$organizations$entry != lOther$organizations$entry) {
+          return false;
+        }
+      }
+    } else if (l$organizations != lOther$organizations) {
+      return false;
+    }
     final l$$__typename = $__typename;
     final lOther$$__typename = other.$__typename;
     if (l$$__typename != lOther$$__typename) {
@@ -429,8 +489,15 @@ abstract class CopyWith$Query$Me$me<TRes> {
     String? name,
     String? email,
     DateTime? createdAt,
+    List<Query$Me$me$organizations>? organizations,
     String? $__typename,
   });
+  TRes organizations(
+      Iterable<Query$Me$me$organizations>? Function(
+              Iterable<
+                  CopyWith$Query$Me$me$organizations<
+                      Query$Me$me$organizations>>?)
+          _fn);
 }
 
 class _CopyWithImpl$Query$Me$me<TRes> implements CopyWith$Query$Me$me<TRes> {
@@ -450,6 +517,7 @@ class _CopyWithImpl$Query$Me$me<TRes> implements CopyWith$Query$Me$me<TRes> {
     Object? name = _undefined,
     Object? email = _undefined,
     Object? createdAt = _undefined,
+    Object? organizations = _undefined,
     Object? $__typename = _undefined,
   }) =>
       _then(Query$Me$me(
@@ -463,10 +531,26 @@ class _CopyWithImpl$Query$Me$me<TRes> implements CopyWith$Query$Me$me<TRes> {
         createdAt: createdAt == _undefined || createdAt == null
             ? _instance.createdAt
             : (createdAt as DateTime),
+        organizations: organizations == _undefined
+            ? _instance.organizations
+            : (organizations as List<Query$Me$me$organizations>?),
         $__typename: $__typename == _undefined || $__typename == null
             ? _instance.$__typename
             : ($__typename as String),
       ));
+
+  TRes organizations(
+          Iterable<Query$Me$me$organizations>? Function(
+                  Iterable<
+                      CopyWith$Query$Me$me$organizations<
+                          Query$Me$me$organizations>>?)
+              _fn) =>
+      call(
+          organizations: _fn(_instance.organizations
+              ?.map((e) => CopyWith$Query$Me$me$organizations(
+                    e,
+                    (i) => i,
+                  )))?.toList());
 }
 
 class _CopyWithStubImpl$Query$Me$me<TRes>
@@ -480,6 +564,152 @@ class _CopyWithStubImpl$Query$Me$me<TRes>
     String? name,
     String? email,
     DateTime? createdAt,
+    List<Query$Me$me$organizations>? organizations,
+    String? $__typename,
+  }) =>
+      _res;
+
+  organizations(_fn) => _res;
+}
+
+class Query$Me$me$organizations {
+  Query$Me$me$organizations({
+    required this.id,
+    required this.name,
+    this.$__typename = 'Organization',
+  });
+
+  factory Query$Me$me$organizations.fromJson(Map<String, dynamic> json) {
+    final l$id = json['id'];
+    final l$name = json['name'];
+    final l$$__typename = json['__typename'];
+    return Query$Me$me$organizations(
+      id: (l$id as String),
+      name: (l$name as String),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final String id;
+
+  final String name;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$id = id;
+    _resultData['id'] = l$id;
+    final l$name = name;
+    _resultData['name'] = l$name;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$id = id;
+    final l$name = name;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$id,
+      l$name,
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (other is! Query$Me$me$organizations ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$id = id;
+    final lOther$id = other.id;
+    if (l$id != lOther$id) {
+      return false;
+    }
+    final l$name = name;
+    final lOther$name = other.name;
+    if (l$name != lOther$name) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Query$Me$me$organizations
+    on Query$Me$me$organizations {
+  CopyWith$Query$Me$me$organizations<Query$Me$me$organizations> get copyWith =>
+      CopyWith$Query$Me$me$organizations(
+        this,
+        (i) => i,
+      );
+}
+
+abstract class CopyWith$Query$Me$me$organizations<TRes> {
+  factory CopyWith$Query$Me$me$organizations(
+    Query$Me$me$organizations instance,
+    TRes Function(Query$Me$me$organizations) then,
+  ) = _CopyWithImpl$Query$Me$me$organizations;
+
+  factory CopyWith$Query$Me$me$organizations.stub(TRes res) =
+      _CopyWithStubImpl$Query$Me$me$organizations;
+
+  TRes call({
+    String? id,
+    String? name,
+    String? $__typename,
+  });
+}
+
+class _CopyWithImpl$Query$Me$me$organizations<TRes>
+    implements CopyWith$Query$Me$me$organizations<TRes> {
+  _CopyWithImpl$Query$Me$me$organizations(
+    this._instance,
+    this._then,
+  );
+
+  final Query$Me$me$organizations _instance;
+
+  final TRes Function(Query$Me$me$organizations) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({
+    Object? id = _undefined,
+    Object? name = _undefined,
+    Object? $__typename = _undefined,
+  }) =>
+      _then(Query$Me$me$organizations(
+        id: id == _undefined || id == null ? _instance.id : (id as String),
+        name: name == _undefined || name == null
+            ? _instance.name
+            : (name as String),
+        $__typename: $__typename == _undefined || $__typename == null
+            ? _instance.$__typename
+            : ($__typename as String),
+      ));
+}
+
+class _CopyWithStubImpl$Query$Me$me$organizations<TRes>
+    implements CopyWith$Query$Me$me$organizations<TRes> {
+  _CopyWithStubImpl$Query$Me$me$organizations(this._res);
+
+  TRes _res;
+
+  call({
+    String? id,
+    String? name,
     String? $__typename,
   }) =>
       _res;

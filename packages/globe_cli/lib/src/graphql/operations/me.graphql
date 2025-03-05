@@ -4,5 +4,9 @@ query Me {
     name
     email
     createdAt
+    organizations {
+      id
+      name
+    }
   }
 }

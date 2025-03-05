@@ -29,17 +29,18 @@ class GlobeGraphQLClient {
     );
 
     final authLink = AuthLink(
+      headerKey: switch (auth.currentSession?.authenticationMethod) {
+        AuthenticationMethod.apiToken => 'x-api-token',
+        AuthenticationMethod.jwt => 'Authorization',
+        _ => 'Authorization',
+      },
       getToken: () {
-        final session = auth.currentSession;
-        if (session == null) {
+        final currentSession = auth.currentSession;
+        if (currentSession == null) {
           return null;
         }
 
-        if (session.authenticationMethod == AuthenticationMethod.jwt) {
-          return 'Bearer ${session.jwt}';
-        } else {
-          return session.jwt;
-        }
+        return 'Bearer ${currentSession.jwt}';
       },
     );
 
