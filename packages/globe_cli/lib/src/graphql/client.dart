@@ -1,5 +1,4 @@
 import 'package:graphql/client.dart';
-import 'package:meta/meta.dart';
 
 import '../utils/auth.dart';
 import '../utils/metadata.dart';
@@ -24,7 +23,6 @@ class GlobeGraphQLClient {
   late final GraphQLClient client;
 
   /// Initialize the GraphQL client
-  @visibleForTesting
   void _initClient() {
     final httpLink = HttpLink(
       '${metadata.endpoint}/graphql',

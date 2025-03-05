@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:get_it/get_it.dart';
+import 'package:graphql/client.dart';
 import 'package:mason_logger/mason_logger.dart';
 
 import '../command.dart';
