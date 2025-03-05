@@ -34,5 +34,7 @@ scripts:
   test: melos exec --no-flutter --dir-exists="test" -- "dart test ."
 
   download-schema:
-    run: cd packages/globe_cli && dart run lib/src/graphql/download_schema.dart
+    exec: dart run lib/src/graphql/download_schema.dart
+    packageFilters:
+      fileExists: lib/src/graphql/download_schema.dart
     description: Download the GraphQL schema from the specified endpoint.

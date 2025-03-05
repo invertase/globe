@@ -11,6 +11,7 @@ import 'commands/create_project_command.dart';
 import 'commands/project_command.dart';
 import 'commands/update.dart';
 import 'get_it.dart';
+import 'graphql/client.dart';
 import 'package_info.dart' as package_info;
 import 'utils/api.dart';
 import 'utils/auth.dart';
@@ -18,8 +19,6 @@ import 'utils/http_server.dart';
 import 'utils/metadata.dart';
 import 'utils/prompts.dart';
 import 'utils/scope.dart';
-import 'graphql/client.dart';
-import 'graphql/service.dart';
 
 class GlobeCliCommandRunner extends CompletionCommandRunner<int> {
   GlobeCliCommandRunner({
@@ -137,9 +136,6 @@ class GlobeCliCommandRunner extends CompletionCommandRunner<int> {
         metadata: metadata,
       );
       GetIt.instance.registerSingleton<GlobeGraphQLClient>(graphqlClient);
-      GetIt.instance.registerSingleton<GlobeGraphQLService>(
-        GlobeGraphQLService(graphqlClient),
-      );
 
       final maybeProjectIdOrSlug = topLevelResults['project'] as String?;
       final maybeToken = topLevelResults['token'] as String?;

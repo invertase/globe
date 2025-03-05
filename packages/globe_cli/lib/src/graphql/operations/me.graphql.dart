@@ -1,7 +1,6 @@
 // ignore_for_file: type=lint
 // ignore_for_file: deprecated_member_use, deprecated_member_use_from_same_package
 import 'dart:async';
-import 'dart:core';
 import 'package:gql/ast.dart';
 import 'package:graphql/client.dart' as graphql;
 
@@ -311,10 +310,10 @@ extension ClientExtension$Query$Me on graphql.GraphQLClient {
 class Query$Me$me {
   Query$Me$me({
     required this.id,
-    this.name,
+    required this.name,
     required this.email,
     required this.createdAt,
-    this.$__typename = 'User',
+    this.$__typename = 'Me',
   });
 
   factory Query$Me$me.fromJson(Map<String, dynamic> json) {
@@ -325,16 +324,16 @@ class Query$Me$me {
     final l$$__typename = json['__typename'];
     return Query$Me$me(
       id: (l$id as String),
-      name: (l$name as String?),
+      name: (l$name as String),
       email: (l$email as String),
-      createdAt: DateTime.parse(l$createdAt),
+      createdAt: DateTime.parse((l$createdAt as String)),
       $__typename: (l$$__typename as String),
     );
   }
 
   final String id;
 
-  final String? name;
+  final String name;
 
   final String email;
 
@@ -351,7 +350,7 @@ class Query$Me$me {
     final l$email = email;
     _resultData['email'] = l$email;
     final l$createdAt = createdAt;
-    _resultData['createdAt'] = toString(l$createdAt);
+    _resultData['createdAt'] = l$createdAt.toIso8601String();
     final l$$__typename = $__typename;
     _resultData['__typename'] = l$$__typename;
     return _resultData;
@@ -455,7 +454,9 @@ class _CopyWithImpl$Query$Me$me<TRes> implements CopyWith$Query$Me$me<TRes> {
   }) =>
       _then(Query$Me$me(
         id: id == _undefined || id == null ? _instance.id : (id as String),
-        name: name == _undefined ? _instance.name : (name as String?),
+        name: name == _undefined || name == null
+            ? _instance.name
+            : (name as String),
         email: email == _undefined || email == null
             ? _instance.email
             : (email as String),

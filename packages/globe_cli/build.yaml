@@ -14,11 +14,3 @@ targets:
           scalars:
             DateTime:
               type: DateTime
-              fromJsonFunctionName: "DateTime.parse"
-              toJsonFunctionName: "toString"
-              import: "dart:core"
-            JSON:
-              type: Map<String, dynamic>
-              fromJsonFunctionName: "_identity"
-              toJsonFunctionName: "_identity"
-              import: "package:globe_cli/src/graphql/scalars.dart"
