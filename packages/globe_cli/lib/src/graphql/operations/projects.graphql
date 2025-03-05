@@ -1,0 +1,9 @@
+query Projects($organizationId: ID!) {
+  projects(organizationId: $organizationId) {
+    id
+    name
+    slug
+    organizationId
+    createdAt
+  }
+}

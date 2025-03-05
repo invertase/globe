@@ -1,0 +1,8 @@
+query Organizations {
+  organizations {
+    id
+    name
+    slug
+    createdAt
+  }
+}
