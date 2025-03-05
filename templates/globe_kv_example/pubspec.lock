@@ -21,11 +21,11 @@ packages:
     dependency: "direct main"
     description:
       path: "packages/globe_kv"
-      ref: HEAD
-      resolved-ref: "8b8720a870e56b6e3af37d616c32cbfddf6e57de"
+      ref: "chore/add-shelf-globe-kv-template"
+      resolved-ref: ce350afc1fbd52c8e8c0511a2b10f5f1bcb714ba
       url: "https://github.com/invertase/globe.git"
     source: git
-    version: "1.0.0"
+    version: "1.0.1"
   http:
     dependency: transitive
     description:

@@ -11,6 +11,7 @@ dependencies:
     git:
       url: https://github.com/invertase/globe.git
       path: packages/globe_kv
+      ref: chore/add-shelf-globe-kv-template
   shelf: ^1.4.0
   shelf_router: ^1.1.0
   
