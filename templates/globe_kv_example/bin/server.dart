@@ -6,7 +6,7 @@ import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart';
 import 'package:shelf_router/shelf_router.dart';
 
-final globeKv = GlobeKV('1dd01f766be2bf5f');
+final globeKv = GlobeKV('2e4abb57ae5df3d0', debug: true);
 
 // Configure routes.
 final _router = Router()
@@ -34,7 +34,14 @@ Future<Response> _handleSetKey(Request request) async {
   final key = request.params['key']!;
   final body = await request.readAsString();
 
-  await globeKv.set(key, body);
+  try {
+    await globeKv.set(key, body);
+  } catch (e) {
+    return Response.internalServerError(
+      body: jsonEncode({'error': e.toString(), 'key': key}),
+      headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+    );
+  }
 
   return Response.ok('Key set: $key');
 }
