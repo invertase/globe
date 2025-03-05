@@ -1,7 +1,7 @@
 name: globe_kv
 description: GlobeKV is an eventually-consistent data storage system for storing and retrieving data from a global datastore, designed for high-reads at low latency. 
 repository: https://github.com/invertase/globe
-version: 1.0.0
+version: 1.0.1
 
 environment:
   sdk: ^3.0.0
