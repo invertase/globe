@@ -1,0 +1,693 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Admin {
+  searchId(type: EntityType!, id: String!): Entity
+}
+
+"""
+The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
+"""
+scalar String
+
+type AdminMutation implements OrganizationOperations {
+  createOrganization(input: CreateOrganizationInput!): Organization!
+  addUserToOrganization(orgId: String!, userId: String!, admin: Boolean = false): SuccessResponse!
+  removeUserFromOrganization(orgId: String!, userId: String!): SuccessResponse!
+}
+
+"""
+The `Boolean` scalar type represents `true` or `false`.
+"""
+scalar Boolean
+
+type BillingCustomerSubscription {
+  id: ID!
+  cancellation: BillingCustomerSubscriptionCancellation!
+  items: [BillingProductItem!]!
+  managementUrl: BillingManagementUrls
+}
+
+"""
+The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
+"""
+scalar ID
+
+type BillingCustomerSubscriptionCancellation {
+  isCancelled: Boolean!
+  cancelAt: DateTime
+}
+
+type BillingManagementUrls {
+  updatePaymentMethod: String!
+  cancelSubscription: String!
+}
+
+type BillingOrganizationProductItem {
+  id: ID!
+  """
+  Admin Only
+  """
+  providerId: String!
+  name: String!
+}
+
+input BillingPagination {
+  perPage: Int!
+  next: String
+}
+
+"""
+The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
+"""
+scalar Int
+
+type BillingProduct {
+  id: ID!
+  name: String!
+  """
+  Admin Only
+  """
+  providerId: String!
+  type: BillingProductTypeEnum!
+  isActive: Boolean!
+  items: [BillingProductItem!]!
+}
+
+enum BillingProductDataDurationEnum {
+  once
+  day
+  week
+  month
+  year
+}
+
+type BillingProductItem {
+  id: ID!
+  """
+  Admin Only
+  """
+  providerId: String!
+  name: String!
+  info: BillingProductItemInfo!
+  data: BillingProductItemData!
+  isActive: Boolean!
+}
+
+type BillingProductItemData {
+  price: Float!
+  currency: String!
+  description: String
+  duration: BillingProductDataDurationEnum
+}
+
+"""
+The `Float` scalar type represents signed double-precision fractional values as specified by [IEEE 754](https://en.wikipedia.org/wiki/IEEE_floating_point).
+"""
+scalar Float
+
+type BillingProductItemInfo {
+  features: [BillingProductItemInfoFeatures!]!
+}
+
+type BillingProductItemInfoFeatures {
+  body: String!
+  checked: Boolean!
+}
+
+input BillingProductItemInfoFeaturesInput {
+  body: String!
+  checked: Boolean!
+}
+
+input BillingProductItemInfoInput {
+  features: [BillingProductItemInfoFeaturesInput!]!
+}
+
+input BillingProductItemInput {
+  providerId: String!
+  name: String!
+  usages: [BillingProductItemUsageInput!]!
+  info: BillingProductItemInfoInput!
+}
+
+type BillingProductItemUsage {
+  usageType: BillingProductUsageTypeEnum!
+  usageLimit: BigInt!
+}
+
+input BillingProductItemUsageInput {
+  usageType: BillingProductUsageTypeEnum!
+  usageLimit: Int!
+}
+
+type BillingProductItemsResponse {
+  item: BillingProductItem!
+  type: BillingProductTypeEnum!
+}
+
+enum BillingProductTypeEnum {
+  subscription
+}
+
+enum BillingProductUsageTypeEnum {
+  REQUESTS
+  BANDWIDTH
+}
+
+type BillingRequestPagination {
+  perPage: Int!
+  next: String
+  hasMore: Boolean!
+  estimatedTotal: Int!
+}
+
+input BillingTransactionFilterInput {
+  startDate: DateTime
+  endDate: DateTime
+}
+
+type BillingTransactionHistory {
+  paymentMethod: BillingTransactionPayment
+  data: [BillingTransactionInvoice!]!
+  pagination: BillingRequestPagination!
+}
+
+type BillingTransactionInvoice {
+  id: ID!
+  status: String!
+  items: [BillingTransactionSubscriptionItem!]!
+  billingPeriod: TransactionBillingPeriod
+  price: BillingTransactionPriceBreakdown!
+  payments: [BillingTransactionPayment!]!
+  currency: String!
+  createdAt: DateTime
+  updatedAt: DateTime
+  billedAt: DateTime
+  capturedAt: DateTime
+}
+
+type BillingTransactionPayment {
+  status: String!
+  errorCode: String
+  methodDetails: String!
+  card: BillingTransactionPaymentCard
+  createdAt: DateTime!
+  capturedAt: DateTime
+}
+
+type BillingTransactionPaymentCard {
+  type: String!
+  last4: String!
+  expiryMonth: Int!
+  expiryYear: Int!
+  cardholderName: String!
+}
+
+type BillingTransactionPriceBreakdown {
+  subtotal: Float!
+  tax: Float!
+  discount: Float!
+  total: Float!
+}
+
+type BillingTransactionSubscriptionItem {
+  name: String!
+  description: String!
+  totals: BillingTransactionPriceBreakdown!
+  taxRate: Float!
+  quantity: Int!
+  unitTotals: BillingTransactionPriceBreakdown!
+}
+
+type BillingUsage {
+  subscription: BillingUsageSubscription!
+  usages: [BillingUsageDetails!]!
+  cta: BillingUsageCta!
+}
+
+type BillingUsageCta {
+  upgradeToPro: Boolean!
+}
+
+type BillingUsageDetails {
+  limitValue: BillingProductItemUsage!
+  usedValue: BigInt!
+}
+
+type BillingUsageSubscription {
+  type: BillingUsageSubscriptionEnum!
+  item: BillingOrganizationProductItem
+}
+
+enum BillingUsageSubscriptionEnum {
+  free
+  paid
+  enterprise
+}
+
+type CliDeploymentSource {
+  type: DeploymentSourceTypeCLI!
+}
+
+input CliDeploymentSourceInput {
+  type: DeploymentSourceTypeCLI!
+}
+
+input CreateDeploymentInput {
+  environment: DeploymentEnvironment!
+  source: DeploymentSourceInput!
+}
+
+input CreateOrganizationInput {
+  type: OrganizationType!
+  name: String!
+  user: CreateUserInput!
+}
+
+input CreateProjectInput {
+  orgSlug: String!
+  slug: String!
+  settings: ProjectSettingsInput
+  connection: ProjectConnectionInput
+}
+
+input CreateUserInput {
+  email: String!
+  name: String!
+}
+
+type DataPoint {
+  date: DateTime!
+  count: Int!
+}
+
+"""
+A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar DateTime
+
+type Deployment {
+  id: String!
+  uuid: String!
+  status: DeploymentStatus!
+  state: DeploymentState!
+  buildId: String
+  url: String!
+  environment: DeploymentEnvironment!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  source: DeploymentSource!
+  hash: String!
+  message: String
+  active: Boolean!
+}
+
+enum DeploymentEnvironment {
+  production
+  preview
+}
+
+union DeploymentSource = CliDeploymentSource | RedeployDeploymentSource | GitHubDeploymentSource
+
+input DeploymentSourceInput {
+  cli: CliDeploymentSourceInput
+  redeploy: RedeployDeploymentSourceInput
+  github: GitHubDeploymentSourceInput
+}
+
+scalar DeploymentSourceTypeCLI
+
+scalar DeploymentSourceTypeGitHub
+
+scalar DeploymentSourceTypeRedeploy
+
+type DeploymentStat {
+  date: DateTime!
+  success: Int!
+  """
+  This combines pending, working & deploying deployment states.
+  """
+  pending: Int!
+  error: Int!
+}
+
+enum DeploymentState {
+  pending
+  working
+  deploying
+  success
+  error
+  cancelled
+}
+
+enum DeploymentStatus {
+  triggered
+  build_api_error
+  github_api_error
+  queue_api_error
+  deployed
+  pending
+  queued
+  working
+  success
+  status_unknown
+  failure
+  internal_error
+  timeout
+  cancelled
+  expired
+}
+
+union Entity = Project | Organization | Deployment | GlobeUser
+
+enum EntityType {
+  Organization
+  Deployment
+  Project
+  UserId
+  BuildId
+}
+
+enum FrameworkPreset {
+  dart_frog
+  flutter
+  serverpod
+}
+
+type GitHubDeploymentSource {
+  type: DeploymentSourceTypeGitHub!
+  github: GitHubDeploymentSourceDetails!
+}
+
+type GitHubDeploymentSourceDetails {
+  owner: String!
+  repository: String!
+  repositoryId: Int
+  ref: String!
+  commit: String
+  message: String
+}
+
+input GitHubDeploymentSourceInput {
+  type: DeploymentSourceTypeGitHub!
+  owner: String!
+  repository: String!
+  repositoryId: Int!
+  ref: String!
+  commit: String!
+  message: String!
+  installationId: Int!
+}
+
+enum GlobeApiErrorCode {
+  INTERNAL_SERVER_ERROR
+  UNAUTHORIZED
+  FORBIDDEN
+  NOT_FOUND
+  BAD_REQUEST
+}
+
+type GlobeUser implements User {
+  id: String!
+  email: String!
+  emailVerified: Boolean!
+  imageUrl: String!
+  name: String!
+  admin: Boolean!
+  updatedAt: DateTime!
+  createdAt: DateTime!
+  organizations: [Organization!]
+}
+
+interface IToken {
+  uuid: String!
+  name: String!
+  organizationUuid: String!
+  createdAt: DateTime!
+  expiresAt: DateTime!
+  projects: [String!]!
+}
+
+enum Interval {
+  Day
+  Week
+  Month
+}
+
+type KV {
+  getOrganizationMetrics(orgSlug: String!, refresh: Boolean): [NamespaceMetrics!]!
+}
+
+type KVMutation {
+  createOrganizationNamespace(orgSlug: String!, namespace: String!): NamespaceMetrics!
+}
+
+"""
+The `BigInt` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt
+
+type Me implements User {
+  id: String!
+  email: String!
+  emailVerified: Boolean!
+  imageUrl: String!
+  name: String!
+  admin: Boolean!
+  updatedAt: DateTime!
+  createdAt: DateTime!
+  organizations: [Organization!]
+}
+
+type Mutation {
+  admin: AdminMutation
+  cancelSubscription(orgSlug: String!, subscriptionId: ID!): BillingCustomerSubscription!
+  createBillingProduct(name: String!, providerId: String!, type: BillingProductTypeEnum!, items: [BillingProductItemInput!]!): SuccessResponse!
+  createDeployment(projectId: String!, input: CreateDeploymentInput!): Deployment!
+  createProject(input: CreateProjectInput!): Project!
+  createToken(orgSlug: String!, name: String!, expiresAt: DateTime!, projects: [String!]!): TokenWithValue!
+  deleteBillingProduct(id: ID!): SuccessResponse!
+  deleteBillingProductItem(id: ID!): SuccessResponse!
+  deleteBillingProductItemUsage(id: Int!): SuccessResponse!
+  deleteToken(orgSlug: String!, uuid: String!): SuccessResponse!
+  kv: KVMutation!
+  pauseProject(orgSlug: String!, projectId: String!): SuccessResponse!
+  restoreSubscription(orgSlug: String!, subscriptionId: ID!): BillingCustomerSubscription!
+  resumeProject(orgSlug: String!, projectId: String!): SuccessResponse!
+  updateBillingProduct(id: ID!, name: String, providerId: String, type: BillingProductTypeEnum): SuccessResponse!
+  updateBillingProductItem(id: ID!, name: String, providerId: String, info: BillingProductItemInfoInput): SuccessResponse!
+  updateBillingProductItemUsage(id: Int!, usageType: BillingProductUsageTypeEnum, usageLimit: Int): SuccessResponse!
+  updateProjectSlug(id: String!, input: UpdateProjectSlugInput!): SuccessResponse!
+  updateToken(orgSlug: String!, uuid: String!, projects: [String!]!): Token!
+}
+
+type NamespaceMetrics {
+  id: String!
+  name: String!
+  storedBytes: Int!
+  actualBytes: Int!
+  totalKeys: Int!
+  createdAt: DateTime!
+}
+
+type Organization {
+  id: String!
+  name: String!
+  slug: String!
+  imageUrl: String
+  type: OrganizationType!
+  updatedAt: DateTime!
+  createdAt: DateTime!
+  members(paginate: PaginatedQueryInput!): [OrganizationMember!]!
+}
+
+type OrganizationMember implements User {
+  id: String!
+  email: String!
+  emailVerified: Boolean!
+  imageUrl: String!
+  name: String!
+  admin: Boolean!
+  updatedAt: DateTime!
+  createdAt: DateTime!
+  role: String!
+}
+
+interface OrganizationOperations {
+  addUserToOrganization: SuccessResponse!
+  removeUserFromOrganization: SuccessResponse!
+}
+
+enum OrganizationType {
+  personal
+  organization
+}
+
+input PaddleCheckoutBillingItemInput {
+  billingProductItemId: String!
+  quantity: Int!
+}
+
+type PaddleCheckoutData {
+  customerId: String!
+  frontendApiKey: String!
+  items: [PaddleCheckoutItem!]!
+}
+
+type PaddleCheckoutItem {
+  priceId: String!
+  quantity: Int!
+}
+
+input PaginatedQueryInput {
+  limit: Int!
+  offset: Int!
+}
+
+type Project {
+  id: String!
+  slug: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  status: ProjectStatus!
+  settings: ProjectSettings
+}
+
+input ProjectConnectionInput {
+  provider: String!
+  owner: String!
+  repository: String!
+  installationId: Int!
+  repositoryId: Int!
+  branch: String!
+}
+
+type ProjectSettings {
+  preset: FrameworkPreset
+  presetVersion: String
+  presetBuildCommand: String
+  buildImage: String
+  buildCommand: String
+  entrypoint: String
+  rootDirectory: String
+  melosDetection: Boolean
+  melosCommand: String
+  melosVersion: String
+  buildRunnerDetection: Boolean
+  buildRunnerCommand: String
+  preferredRegions: [String!]
+  flutterWebResourcesCdn: Boolean
+}
+
+input ProjectSettingsInput {
+  preset: FrameworkPreset
+  presetVersion: String
+  presetBuildCommand: String
+  buildImage: String
+  buildCommand: String
+  entrypoint: String
+  rootDirectory: String
+  melosDetection: Boolean
+  melosCommand: String
+  melosVersion: String
+  buildRunnerDetection: Boolean
+  buildRunnerCommand: String
+  preferredRegions: [String!]
+  flutterWebResourcesCdn: Boolean
+}
+
+enum ProjectStatus {
+  active
+  paused
+  marked_for_deletion
+  deletion_in_progress
+}
+
+type Query {
+  admin: Admin
+  billingOrganizationProductItems(orgSlug: String!): [BillingOrganizationProductItem!]!
+  billingProductItems(ids: [ID!]!): [BillingProductItemsResponse!]!
+  billingProducts(type: BillingProductTypeEnum!): [BillingProduct!]!
+  billingSubscriptionProducts(orgSlug: String!): [BillingProduct!]!
+  billingSubscriptions(orgSlug: String!): [BillingCustomerSubscription!]!
+  billingTransactionsHistory(orgSlug: String!, filter: BillingTransactionFilterInput, pagination: BillingPagination): BillingTransactionHistory!
+  billingUsage(orgSlug: String!): BillingUsage!
+  kv: KV!
+  latestDeploymentStats(startDate: DateTime!, endDate: DateTime!, interval: Interval = Month): [DeploymentStat!]!
+  me: Me
+  organization(slug: String!): Organization
+  paddleBillingCheckout(orgSlug: String!, items: [PaddleCheckoutBillingItemInput!]!): PaddleCheckoutData!
+  project(orgSlug: String!, slug: String!): Project
+  projects(offset: Int, limit: Int, orgSlug: String!): [Project!]!
+  token(orgSlug: String!, uuid: String!): Token!
+  tokens(orgSlug: String!, projects: [String!]): [Token!]!
+  userSignupStats(startDate: DateTime!, endDate: DateTime!, interval: Interval = Month): [DataPoint!]!
+}
+
+type RedeployDeploymentSource {
+  type: DeploymentSourceTypeRedeploy!
+  redeploy: RedeployDeploymentSourceDetails!
+}
+
+type RedeployDeploymentSourceDetails {
+  deploymentId: String!
+  deploymentHash: String!
+  usesBuildCache: Boolean!
+  usesSettings: Boolean!
+}
+
+input RedeployDeploymentSourceInput {
+  type: DeploymentSourceTypeRedeploy!
+  deploymentId: String!
+  deploymentHash: String!
+  usesBuildCache: Boolean!
+  usesSettings: Boolean!
+}
+
+type SuccessResponse {
+  message: String!
+}
+
+type Token implements IToken {
+  uuid: String!
+  name: String!
+  organizationUuid: String!
+  createdAt: DateTime!
+  expiresAt: DateTime!
+  projects: [String!]!
+}
+
+type TokenWithValue implements IToken {
+  uuid: String!
+  name: String!
+  organizationUuid: String!
+  createdAt: DateTime!
+  expiresAt: DateTime!
+  projects: [String!]!
+  value: String!
+}
+
+type TransactionBillingPeriod {
+  startDate: DateTime
+  endDate: DateTime
+}
+
+input UpdateProjectSlugInput {
+  orgSlug: String!
+  slug: String!
+}
+
+interface User {
+  id: String!
+  email: String!
+  emailVerified: Boolean!
+  imageUrl: String!
+  name: String!
+  admin: Boolean!
+  updatedAt: DateTime!
+  createdAt: DateTime!
+}
+

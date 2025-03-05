@@ -4,3 +4,4 @@ export 'login_command.dart';
 export 'logout_command.dart';
 export 'token_command.dart';
 export 'unlink_command.dart';
+export 'whoami_command.dart';
