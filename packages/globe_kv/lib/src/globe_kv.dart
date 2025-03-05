@@ -19,11 +19,16 @@ final class GlobeKV {
   /// Otherwise, it uses the provided [store] or defaults to GlobeMemoryStore.
   ///
   /// Throws StateError if GLOBE is set but GLOBE_DS_API is not defined.
-  GlobeKV(String namespace, {GlobeKvStore? store}) {
+  GlobeKV(String namespace, {GlobeKvStore? store, bool debug = false}) {
     if (Platform.environment['GLOBE'] == '1') {
       final baseUrl = Platform.environment['GLOBE_DS_API'] ??
           (throw StateError('GLOBE_DS_API is not set'));
-      _store = GlobeHttpStore(namespace, Uri.parse(baseUrl), http.Client());
+      _store = GlobeHttpStore(
+        namespace,
+        Uri.parse(baseUrl),
+        http.Client(),
+        enableLogging: debug,
+      );
     } else {
       _store = store ?? GlobeMemoryStore();
     }
