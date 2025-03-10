@@ -123,7 +123,7 @@ class GlobeHttpStore implements GlobeKvStore {
 
     final json = _parseResponse(response);
 
-    final results = (json['results'] as List).map((item) {
+    final results = (json['list'] as List).map((item) {
       final itemMap = item as Map<String, dynamic>;
       return KvListResultItem(
         itemMap['key'],
