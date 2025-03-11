@@ -68,7 +68,7 @@ class GlobeHttpStore implements GlobeKvStore {
       stdout.writeln('DELETE: ${_jsonEncoder.convert(payload)}');
     }
 
-    final response = await client.delete(
+    final response = await client.post(
       baseUrl.replace(path: '/kv/delete'),
       body: jsonEncode(payload),
     );
@@ -127,7 +127,7 @@ class GlobeHttpStore implements GlobeKvStore {
       final itemMap = item as Map<String, dynamic>;
       return KvListResultItem(
         itemMap['key'],
-        KvValueType.values.firstWhere((t) => t.toString() == itemMap['type']),
+        KvValueType.values.firstWhere((t) => t.name == itemMap['type']),
         itemMap['expiration'] != null
             ? DateTime.fromMillisecondsSinceEpoch(itemMap['expiration'] * 1000)
             : null,
@@ -136,7 +136,7 @@ class GlobeHttpStore implements GlobeKvStore {
 
     return KVListResult(
       results: results,
-      complete: json['complete'] as bool,
+      complete: json['completed'] as bool,
       cursor: json['cursor'] as String?,
     );
   }
