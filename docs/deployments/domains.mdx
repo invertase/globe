@@ -2,14 +2,116 @@
 title: Domains
 ---
 
-A domain is the address of your deployment.
+A domain is the address used to access your Globe-hosted project. By default, each project is assigned a unique domain, which you can use to access your deployment.
 
-Each deployment, production or preview gets assigned a unique domain that directly points to the specific deployment. If the deployment is not yet ready or successful, visiting a domain will redirect you to the dashboard for that deployment.
+## Production Domains
 
-## Production domains
+Each project gets assigned a unique domain when created (e.g., your-project.globe.com). Whenever you successfully deploy to the production environment, the production domain will be updated to point to the latest deployment.
 
-Each project gets assigned a unique domain when it is created. Whenever you successfully deploy to the production environment, the production domain will be updated to point to the latest deployment.
+If the deployment is unsuccessful or still in progress, visiting the domain will redirect you to the deployment’s dashboard.
 
-### Custom Domains
+## Custom Domains
 
-Custom domains are not yet supported. We are working on it.
+Custom domains allow you to connect your branded URL (e.g., your-company.com) to your Globe-hosted project. This provides a more professional appearance for your project, allowing you to serve it on a domain of your choice.
+
+### How It Works
+
+1. You register a domain with an external provider (e.g., Namecheap, GoDaddy, Google Domains).
+2. You configure your domain’s DNS settings to point to Globe.
+3. You verify ownership in the Globe Dashboard.
+4. Cloudflare manages DNS and security in the background, including automatic SSL (HTTPS).
+
+Currently, each Globe project can have only one custom domain. To add a new domain, you must remove the existing one first. We will be adding support for multiple domains soon.
+
+## Setting Up Your Custom Domain
+
+### Step 1: Configure DNS with Your Registrar
+
+Before adding a custom domain to Globe, you must configure it with your registrar (e.g., GoDaddy, Google Domains, Cloudflare). To do this:
+
+Log in to your domain provider and update your DNS records as follows:
+
+| Record Type | Name                   | Value (Points to) |
+| ----------- | ---------------------- | ----------------- |
+| CNAME       | `@` (or `example.com`) | Provided by Globe |
+| CNAME       | `www`                  | Provided by Globe |
+
+If your provider does not support CNAME flattening for apex domains (example.com), use an [A record](https://www.cloudflare.com/learning/dns/dns-records/dns-a-record/) instead.
+
+Once updated, proceed to the Globe Dashboard to verify the domain.
+
+### Step 2: Adding Your Domain in Globe
+
+1. Go to the Globe Dashboard.
+2. Select your project and navigate to "Domains".
+3. Click "Add Custom Domain".
+4. Enter your domain name (e.g., `example.com`).
+5. Click "Verify".
+
+#### What Happens Next?
+
+- If verification succeeds, the domain is linked, and SSL is issued automatically.
+- If verification fails, an error message will appear (see troubleshooting below).
+
+### Step 3: Understanding Domain Status
+
+After adding your domain, Globe will display one of the following statuses:
+
+| Status                  | Meaning                                                                 | Action Required?                     |
+| ----------------------- | ----------------------------------------------------------------------- | ------------------------------------ |
+| **Active**              | The domain is linked, and SSL is enabled.                               | No action needed.                    |
+| **Pending**             | The domain setup is incomplete or waiting for DNS changes to propagate. | Wait up to 24 hours and check again. |
+| **Verification Failed** | DNS records are incorrect or missing.                                   | Fix DNS settings and retry.          |
+| **Expired**             | (Draft: Does this mean the user removed the domain or the SSL expired?) | Check if renewal is needed.          |
+| **Error**               | A problem occurred during setup (see error messages below).             | Follow the troubleshooting steps.    |
+
+## Troubleshooting Common Issues
+
+If your domain verification fails, Globe will display an error message. Below are possible errors and how to fix them:
+
+### "DNS Records Not Found"
+
+**Cause**: Your DNS provider has not propagated the CNAME record yet.
+
+**Fix**:
+
+- Wait up to 24 hours for DNS changes to take effect.
+- Use Google’s Dig tool to check if your CNAME record is active.
+- Ensure the correct values were entered.
+
+### "Domain Already in Use"
+
+**Cause**: The domain is linked to another Globe project.
+
+**Fix**: Remove it from the previous project before adding it to a new one.
+
+### "Invalid Domain Format"
+
+**Cause**: The domain was entered incorrectly (e.g., missing .com).
+
+**Fix**: Double-check the domain spelling.
+
+### "SSL Certificate Not Issued"
+
+**Cause**: SSL provisioning failed due to misconfigured CAA records.
+
+### "Expired Domain" (Draft: Confirm exact error wording)
+
+**Cause**: The domain may have been removed from Globe or expired in the registrar.
+
+**Fix**:
+
+- Check if the domain is still registered with your provider.
+- If removed from Globe, re-add it through the Dashboard.
+
+## Removing or Changing a Domain
+
+Since each project can only have one domain currently, you must remove the existing domain before adding a new one.
+
+### To remove a domain:
+
+1. Go to the Globe Dashboard → Domains.
+2. Click on the existing domain.
+3. Click "Remove Domain".
+
+Once removed, you can add a new custom domain following the setup steps above.
