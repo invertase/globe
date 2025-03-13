@@ -1,3 +1,4 @@
+import 'package:get_it/get_it.dart';
 import 'package:graphql/client.dart';
 
 import '../utils/auth.dart';
@@ -6,18 +7,15 @@ import '../utils/metadata.dart';
 /// A GraphQL client for the Globe API
 class GlobeGraphQLClient {
   /// Creates a new GraphQL client for the Globe API
-  GlobeGraphQLClient({
-    required this.auth,
-    required this.metadata,
-  }) {
+  GlobeGraphQLClient() {
     _initClient();
   }
 
   /// The authentication service
-  final GlobeAuth auth;
+  GlobeAuth get _auth => GetIt.instance.get();
 
   /// The metadata service
-  final GlobeMetadata metadata;
+  GlobeMetadata get metadata => GetIt.instance.get();
 
   /// The GraphQL client
   late final GraphQLClient client;
@@ -27,17 +25,14 @@ class GlobeGraphQLClient {
     final httpLink = HttpLink('${metadata.endpoint}/graphql');
 
     final authLink = AuthLink(
-      headerKey: switch (auth.currentSession?.authenticationMethod) {
+      headerKey: switch (_auth.currentSession?.authenticationMethod) {
         AuthenticationMethod.apiToken => 'x-api-token',
         _ => 'Authorization',
       },
-      getToken: () {
-        final currentSession = auth.currentSession;
-        if (currentSession == null) {
-          return null;
-        }
-
-        return 'Bearer ${currentSession.jwt}';
+      getToken: () => switch (_auth.currentSession?.authenticationMethod) {
+        AuthenticationMethod.apiToken => _auth.currentSession!.jwt,
+        AuthenticationMethod.jwt => 'Bearer ${_auth.currentSession!.jwt}',
+        _ => null,
       },
     );
 

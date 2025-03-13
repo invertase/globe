@@ -10,7 +10,6 @@ import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
 import 'io_overrides.dart';
-import 'mocks.dart';
 
 class FakeProcessResult {
   FakeProcessResult._({
@@ -47,8 +46,12 @@ class FakeProcessResult {
 }
 
 class _HttpOverrides extends Fake implements HttpOverrides {
+  final HttpClient _client;
+
+  _HttpOverrides(this._client);
+
   @override
-  HttpClient createHttpClient(SecurityContext? context) => HttpClientMock();
+  HttpClient createHttpClient(SecurityContext? context) => _client;
 }
 
 /// Replaces the implementation of [exit] while executing [testFn].
@@ -58,6 +61,7 @@ class _HttpOverrides extends Fake implements HttpOverrides {
 FakeProcessResult runWithIOOverrides(
   FutureOr<void> Function() testFn, {
   FileSystem? fs,
+  HttpClient? client,
   // Disable ANSI by default to disable things like spinners & such, we are
   // hell to test.
   bool? supportaAnsiEscapes = false,
@@ -92,7 +96,7 @@ FakeProcessResult runWithIOOverrides(
     supportsAnsiEscapes: supportaAnsiEscapes,
   );
   addTearDown(ioOverride.close);
-  final httpOverride = _HttpOverrides();
+  final httpOverride = _HttpOverrides(client ?? HttpClient());
 
   return runZoned(
     zoneValues: {

@@ -127,15 +127,9 @@ class GlobeCliCommandRunner extends CompletionCommandRunner<int> {
         logger: _logger,
       );
 
-      GetIt.instance.registerSingleton<GlobeMetadata>(metadata);
-      GetIt.instance.registerSingleton<GlobeScope>(scope);
-
-      // Register GraphQL client and service
-      final graphqlClient = GlobeGraphQLClient(
-        auth: auth,
-        metadata: metadata,
-      );
-      GetIt.instance.registerSingleton<GlobeGraphQLClient>(graphqlClient);
+      GetIt.instance
+        ..registerSingleton<GlobeScope>(scope)
+        ..registerSingleton<GlobeMetadata>(metadata);
 
       final maybeProjectIdOrSlug = topLevelResults['project'] as String?;
       final maybeToken = topLevelResults['token'] as String?;
@@ -147,7 +141,7 @@ class GlobeCliCommandRunner extends CompletionCommandRunner<int> {
       Organization? org;
 
       if (maybeToken != null) {
-        api.auth.loginWithApiToken(jwt: maybeToken);
+        auth.loginWithApiToken(jwt: maybeToken);
         org = await selectOrganization(
           logger: _logger,
           api: api,
@@ -176,6 +170,9 @@ class GlobeCliCommandRunner extends CompletionCommandRunner<int> {
           ),
         );
       }
+
+      GetIt.instance
+          .registerSingleton<GlobeGraphQLClient>(GlobeGraphQLClient());
 
       return await runCommand(topLevelResults) ?? ExitCode.success.code;
       // TODO(rrousselGit) why are we checking FormatExceptions here?
