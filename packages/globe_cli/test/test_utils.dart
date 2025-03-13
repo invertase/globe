@@ -10,6 +10,7 @@ import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
 import 'io_overrides.dart';
+import 'mocks.dart';
 
 class FakeProcessResult {
   FakeProcessResult._({
@@ -45,7 +46,10 @@ class FakeProcessResult {
   }).transform(const LineSplitter());
 }
 
-class _HttpOverrides extends Fake implements HttpOverrides {}
+class _HttpOverrides extends Fake implements HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) => HttpClientMock();
+}
 
 /// Replaces the implementation of [exit] while executing [testFn].
 ///
