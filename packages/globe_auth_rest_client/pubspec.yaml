@@ -1,0 +1,21 @@
+name: globe_auth_rest_client
+description: A generated rest client for Globe Auth.
+version: 0.1.0
+repository: https://github.com/invertae/globe
+
+environment:
+  sdk: '>=3.7.0-323.0.dev <4.0.0'
+
+# Add regular dependencies here.
+dependencies:
+  retrofit: ^4.4.2
+  json_annotation: ^4.9.0
+
+dev_dependencies:
+  test: ^1.25.15
+  dio: ^5.8.0+1
+  build_runner: ^2.4.15
+  carapacik_lints: ^1.10.0
+  json_serializable: ^6.9.4
+  swagger_parser: ^1.21.4
+  retrofit_generator: ^9.1.9
