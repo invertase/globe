@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_dynamic_calls
+
 import 'dart:io';
 import 'package:args/args.dart';
 import 'package:graphql/client.dart';
@@ -41,7 +43,7 @@ Future<void> main(List<String> arguments) async {
     final url = results['url'] as String;
     final outputPath = results['output'] as String;
 
-    print('Downloading GraphQL schema from $url...');
+    stdout.writeln('Downloading GraphQL schema from $url...');
 
     final link = HttpLink(url);
     final client = GraphQLClient(
@@ -71,17 +73,19 @@ Future<void> main(List<String> arguments) async {
     // Write the schema to the file
     await File(outputPath).writeAsString(schemaString);
 
-    print('Schema successfully saved to $outputPath');
+    stdout.writeln('Schema successfully saved to $outputPath');
   } catch (e) {
-    print('Error: $e');
+    stderr.writeln('Error: $e');
     _printUsage(parser);
     exitCode = 1;
   }
 }
 
 void _printUsage(ArgParser parser) {
-  print('Usage: dart run lib/src/graphql/download_schema.dart [options]');
-  print(parser.usage);
+  stdout.writeln(
+    'Usage: dart run lib/src/graphql/download_schema.dart [options]',
+  );
+  stdout.writeln(parser.usage);
 }
 
 /// Converts the introspection result to a GraphQL schema string.
@@ -100,8 +104,9 @@ String _processIntrospectionResult(Map<String, dynamic> data) {
   schema.writeln('schema {');
   if (queryType != null) schema.writeln('  query: $queryType');
   if (mutationType != null) schema.writeln('  mutation: $mutationType');
-  if (subscriptionType != null)
+  if (subscriptionType != null) {
     schema.writeln('  subscription: $subscriptionType');
+  }
   schema.writeln('}');
   schema.writeln();
 
@@ -153,14 +158,16 @@ String _processIntrospectionResult(Map<String, dynamic> data) {
           final args = field['args'] as List<dynamic>;
           if (args.isNotEmpty) {
             schema.write('(');
-            schema.write(args.map((arg) {
-              final argName = arg['name'] as String;
-              final argType =
-                  _processTypeRef(arg['type'] as Map<String, dynamic>);
-              final defaultValue = arg['defaultValue'] as String?;
+            schema.write(
+              args.map((arg) {
+                final argName = arg['name'] as String;
+                final argType =
+                    _processTypeRef(arg['type'] as Map<String, dynamic>);
+                final defaultValue = arg['defaultValue'] as String?;
 
-              return '$argName: $argType${defaultValue != null ? ' = $defaultValue' : ''}';
-            }).join(', '));
+                return '$argName: $argType${defaultValue != null ? ' = $defaultValue' : ''}';
+              }).join(', '),
+            );
             schema.write(')');
           }
 
@@ -171,7 +178,6 @@ String _processIntrospectionResult(Map<String, dynamic> data) {
         }
 
         schema.writeln('}');
-        break;
 
       case 'INTERFACE':
         schema.writeln('interface $typeName {');
@@ -186,7 +192,6 @@ String _processIntrospectionResult(Map<String, dynamic> data) {
         }
 
         schema.writeln('}');
-        break;
 
       case 'ENUM':
         schema.writeln('enum $typeName {');
@@ -199,7 +204,6 @@ String _processIntrospectionResult(Map<String, dynamic> data) {
         }
 
         schema.writeln('}');
-        break;
 
       case 'INPUT_OBJECT':
         schema.writeln('input $typeName {');
@@ -214,12 +218,9 @@ String _processIntrospectionResult(Map<String, dynamic> data) {
         }
 
         schema.writeln('}');
-        break;
 
       case 'SCALAR':
         schema.writeln('scalar $typeName');
-        break;
-
       case 'UNION':
         schema.write('union $typeName = ');
 
@@ -227,7 +228,6 @@ String _processIntrospectionResult(Map<String, dynamic> data) {
         final possibleTypes = type['possibleTypes'] as List<dynamic>;
         schema
             .writeln(possibleTypes.map((t) => t['name'] as String).join(' | '));
-        break;
     }
 
     schema.writeln();
