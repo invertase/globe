@@ -130,7 +130,7 @@ class GlobeCliCommandRunner extends CompletionCommandRunner<int> {
       GetIt.instance.registerSingleton<GlobeMetadata>(metadata);
       GetIt.instance.registerSingleton<GlobeScope>(scope);
 
-      // // Register GraphQL client and service
+      // Register GraphQL client and service
       final graphqlClient = GlobeGraphQLClient(
         auth: auth,
         metadata: metadata,
