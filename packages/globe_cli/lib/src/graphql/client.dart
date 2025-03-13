@@ -24,14 +24,11 @@ class GlobeGraphQLClient {
 
   /// Initialize the GraphQL client
   void _initClient() {
-    final httpLink = HttpLink(
-      '${metadata.endpoint}/graphql',
-    );
+    final httpLink = HttpLink('${metadata.endpoint}/graphql');
 
     final authLink = AuthLink(
       headerKey: switch (auth.currentSession?.authenticationMethod) {
         AuthenticationMethod.apiToken => 'x-api-token',
-        AuthenticationMethod.jwt => 'Authorization',
         _ => 'Authorization',
       },
       getToken: () {
