@@ -8,14 +8,7 @@ environment:
 
 # Add regular dependencies here.
 dependencies:
-  retrofit: ^4.4.2
-  json_annotation: ^4.9.0
+  http:
 
 dev_dependencies:
   test: ^1.25.15
-  dio: ^5.8.0+1
-  build_runner: ^2.4.15
-  carapacik_lints: ^1.10.0
-  json_serializable: ^6.9.4
-  swagger_parser: ^1.21.4
-  retrofit_generator: ^9.1.9
