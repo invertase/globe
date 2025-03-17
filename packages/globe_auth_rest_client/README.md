@@ -1,30 +1,34 @@
 # Globe Auth Rest Client
 
-This is a generated HTTP rest client for Globe.
-
-This client is not intended to be used standalone.
-
-## Generating
-
-To regenerate the library, run:
-
-```
-./generate
-```
+A HTTP REST client for interacting with the Globe Auth API.
 
 ## Usage
 
-Import the client and call a method.
+Create a new `GlobeAuthRestClient` instance:
 
 ```dart
 import 'package:globe_auth_rest_client/globe_auth_rest_client.dart';
-import 'package:dio/dio.dart';
+import 'package:http/http.dart' as http;
 
 void main() async {
-  final client = GlobeAuthRestClient(Dio(
-    BaseOptions(baseUrl: 'https://auth-server.com'),
-  ));
-  final response = await client.root.getOk();
-  print(response.ok);
+  final client = GlobeAuthRestClient(
+    baseUrl: 'https://auth.globe.dev', // optional base url of the auth instance (e.g. change to localhost for testing)
+    client: GlobeHttpClient(
+      http.Client(), // base http client to use
+      projectId: '...', // globe project id for the auth instance
+      publicKey: '...', // public JWT for the auth instance from the dashboard
+      getAccessToken: () async {
+        // custom implementation to get the user's access token
+        // e.g. on Flutter, use shared prefs / key-chain etc
+        // on web, it will use cookies by default
+      },
+      setAccessToken: (token) async {
+        // store the access token
+      }
+    ),
+  );
+
+  // Call the Auth API
+  await client.ok();
 }
 ```

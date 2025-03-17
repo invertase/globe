@@ -15,6 +15,7 @@ class GlobeHttpClient extends http.BaseClient {
     required this.setAccessToken,
   });
 
+  @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     try {
       // Attach required headers.

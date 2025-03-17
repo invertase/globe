@@ -1,7 +1,7 @@
 name: globe_auth_rest_client
-description: A generated rest client for Globe Auth.
+description: A HTTP REST client for interacting with the Globe Auth API.
 version: 0.1.0
-repository: https://github.com/invertae/globe
+repository: https://github.com/invertase/globe
 
 environment:
   sdk: '>=3.7.0-323.0.dev <4.0.0'

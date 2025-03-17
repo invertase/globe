@@ -17,8 +17,18 @@ void main() {
 class MyApp extends StatelessWidget {
   MyApp({super.key}) {
     auth.state.listen((state) {
-      // Auth state changed
-      print(state);
+      switch (state) {
+        case GlobeAuthStateLoading():
+          break;
+        case GlobeAuthStateUnauthenticated():
+          break;
+        case GlobeAuthStateAuthenticated():
+          print(state.user);
+          print(state.session);
+          break;
+        case GlobeAuthStateLoaded():
+          throw UnimplementedError();
+      }
     });
   }
 
@@ -47,6 +57,9 @@ class MyApp extends StatelessWidget {
       ),
       home: SignInScreen(
         auth: auth,
+        onSignIn: (user) {
+          // ...
+        },
       ),
     );
   }

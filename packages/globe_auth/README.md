@@ -1,39 +1,48 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# Globe Auth
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/tools/pub/writing-package-pages).
-
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/to/develop-packages).
--->
-
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
-
-## Features
-
-TODO: List what your package can do. Maybe include images, gifs, or videos.
-
-## Getting started
-
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+Drop in auth for Flutter.
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
+Create a new `GlobeAuth` instance using your project ID and public key:
 
 ```dart
-const like = 'sample';
+final auth = GlobeAuth.project(
+  '...',
+  publicKey: '...',
+);
 ```
 
-## Additional information
+Next, use one of the pre-built sign in screens:
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+```dart
+home: SignInScreen(
+  auth: auth,
+  onSignIn: (user) {
+    // navigate, snack-bar etc
+  },
+),
+```
+
+Subscribe to the users auth state:
+
+```dart
+auth.state.listen((state) {
+  switch (state) {
+    case GlobeAuthStateLoading():
+      // Loading the users auth state
+      break;
+    case GlobeAuthStateUnauthenticated():
+      // Loaded, but not authenticated
+      break;
+    case GlobeAuthStateAuthenticated():
+      // User is authenticated
+      print(state.user);
+      print(state.session);
+      break;
+    case GlobeAuthStateLoaded():
+      // Not loading - but may or may not be authenticated
+      throw UnimplementedError();
+  }
+});
+```
