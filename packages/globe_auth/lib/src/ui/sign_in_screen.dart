@@ -5,11 +5,7 @@ import 'package:globe_auth_rest_client/globe_auth_rest_client.dart';
 class SignInScreen extends StatefulWidget {
   final GlobeAuth auth;
 
-  const SignInScreen({
-    super.key,
-    required this.auth,
-    this.onSignIn,
-  });
+  const SignInScreen({super.key, required this.auth, this.onSignIn});
 
   final void Function(User user)? onSignIn;
 
@@ -30,14 +26,18 @@ class _SignInScreenState extends State<SignInScreen> {
     setState(() => _isLoading = true);
 
     try {
-      final result = await widget.auth.client.signInWithEmail(
+      final result = await widget.auth.client.signUpWithEmail(
         email: _emailController.text,
         password: _passwordController.text,
+        name: 'todo',
       );
 
-      if (result.user != null) {
-        widget.onSignIn?.call(result.user!);
-      }
+      print('SUCCESS!!! $result');
+      // if (result.user != null) {
+      //   widget.onSignIn?.call(result.user!);
+      // }
+    } catch (e) {
+      print('>>>>> $e');
     } finally {
       setState(() => _isLoading = false);
     }

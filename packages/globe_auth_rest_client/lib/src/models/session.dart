@@ -31,7 +31,8 @@ class Session {
       ipAddress: json['ipAddress'] as String,
       userAgent: json['userAgent'] as String,
       userId: json['userId'] as String,
-      impersonatedBy: json['impersonatedBy'] as String?,
+      impersonatedBy:
+          json['impersonatedBy'] == null ? null : json['impersonatedBy'] as String,
     );
   }
 

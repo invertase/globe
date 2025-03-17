@@ -18,6 +18,7 @@ class GlobeHttpClient extends http.BaseClient {
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     try {
       // Attach required headers.
+      request.headers['Content-Type'] = 'application/json';
       request.headers['X-Globe-Auth-Project-Id'] = projectId;
       request.headers['X-Globe-Auth-Public-Key'] = publicKey;
 

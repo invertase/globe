@@ -51,9 +51,10 @@ class GlobeAuthRestClient {
   signInWithProvider() async {
     // TODO: body
     final json = await _request(
-      () => http.post(
+      () => client.post(
         Uri.parse('$baseUrl/sign-in/social'),
-        body: {'provider': 'google'},
+        // TODO
+        body: jsonEncode({'provider': 'google'}),
       ),
     );
 
@@ -67,7 +68,7 @@ class GlobeAuthRestClient {
 
   Future<({Session session, User user})> getSession() async {
     final json = await _request(
-      () => http.get(Uri.parse('$baseUrl/get-session')),
+      () => client.get(Uri.parse('$baseUrl/get-session')),
     );
 
     return (
@@ -77,7 +78,9 @@ class GlobeAuthRestClient {
   }
 
   Future<void> signOut() async {
-    await _request(() => http.post(Uri.parse('$baseUrl/sign-out')));
+    await _request(
+      () => client.post(Uri.parse('$baseUrl/sign-out'), body: jsonEncode({})),
+    );
   }
 
   Future<
@@ -90,9 +93,14 @@ class GlobeAuthRestClient {
     String? username,
   }) async {
     final json = await _request(
-      () => http.post(
+      () => client.post(
         Uri.parse('$baseUrl/sign-up/email'),
-        body: {'email': 'test@test.com', 'password': 'password'},
+        body: jsonEncode({
+          'email': email,
+          'password': password,
+          'name': name,
+          if (username != null) 'username': username,
+        }),
       ),
     );
 
@@ -110,9 +118,9 @@ class GlobeAuthRestClient {
     required String password,
   }) async {
     final json = await _request(
-      () => http.post(
+      () => client.post(
         Uri.parse('$baseUrl/sign-in/email'),
-        body: {'email': email, 'password': password},
+        body: jsonEncode({'email': email, 'password': password}),
       ),
     );
 
@@ -124,6 +132,6 @@ class GlobeAuthRestClient {
   }
 
   Future<void> ok() async {
-    await _request(() => http.get(Uri.parse('$baseUrl/ok')));
+    await _request(() => client.get(Uri.parse('$baseUrl/ok')));
   }
 }

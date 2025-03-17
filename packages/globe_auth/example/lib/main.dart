@@ -2,17 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:globe_auth/globe_auth.dart';
 
 final auth = GlobeAuth.project(
-  'DEV',
-  publicKey: 'DEV',
+  'p-local',
+  publicKey:
+      'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJnbG9iZS1hdXRoIiwicm9sZSI6InB1YmxpYyIsIm9pZCI6Im8tbG9jYWwiLCJwaWQiOiJwLWxvY2FsIiwibG9jIjoibGhyIiwiaWF0IjoxNzQyMjI0Nzc4fQ.XVRhzLnOVh03HawLfnb3Y7Vk91pljJEbrrd4-dMprh8raJQnVJ2SB2nVXrYRIV_4MdM4jX_KEmGUT5HTjmhvLjliFsyQTPZPV0giRE0xgBuDu2cdCb5e-ILHZhlnrmogWmrLK7idciFkpEgNE8MMG9xVW5HLBn77k3dmLUOoS6eKtWbA8Ks1c8jKwzatqCb7BlPnF8tbU8DPhpXXkhDoqQjmG_4Ls2p-SEE_SaRpn-5itIG-IUTzKYzyvw_Uhk8o8m6NUFJ0doklfWlaT59enFKVxt8r1J1uW4BDYV1UdmHm-e-Me5SOGq9IcDsdOkXL68PnNF9hfEsXMlRcjw-odg',
   baseUrl: 'http://localhost:8787/auth/api',
 );
 
+// final auth = GlobeAuth.provider(FirebaseProvider(FirebaseAuth.instance));
+
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key}) {
+    auth.state.listen((state) {
+      // Auth state changed
+      print(state);
+    });
+  }
 
   // This widget is the root of your application.
   @override
@@ -39,9 +47,6 @@ class MyApp extends StatelessWidget {
       ),
       home: SignInScreen(
         auth: auth,
-        onSignIn: (user) {
-          print(user);
-        },
       ),
     );
   }

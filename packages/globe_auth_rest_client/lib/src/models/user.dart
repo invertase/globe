@@ -8,8 +8,8 @@ class User {
   final DateTime updatedAt;
   final String role;
   final bool banned;
-  final String banReason;
-  final DateTime banExpires;
+  final String? banReason;
+  final DateTime? banExpires;
 
   User({
     required this.id,
@@ -31,13 +31,16 @@ class User {
       name: json['name'] as String,
       email: json['email'] as String,
       emailVerified: json['emailVerified'] as bool,
-      image: json['image'] as String,
+      image: json['image'] == null ? '' : json['image'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
       role: json['role'] as String,
-      banned: json['banned'] as bool,
-      banReason: json['banReason'] as String,
-      banExpires: DateTime.parse(json['banExpires'] as String),
+      banned: json['banned'] == null ? false : json['banned'] as bool,
+      banReason: json['banReason'] == null ? null : json['banReason'] as String,
+      banExpires:
+          json['banExpires'] == null
+              ? null
+              : DateTime.parse(json['banExpires'] as String),
     );
   }
 
@@ -53,7 +56,7 @@ class User {
       'role': role,
       'banned': banned,
       'banReason': banReason,
-      'banExpires': banExpires.toIso8601String(),
+      'banExpires': banExpires?.toIso8601String(),
     };
   }
 }
