@@ -1,0 +1,6 @@
+# melos_managed_dependency_overrides: globe_auth,globe_auth_rest_client
+dependency_overrides:
+  globe_auth:
+    path: ..
+  globe_auth_rest_client:
+    path: ../../globe_auth_rest_client

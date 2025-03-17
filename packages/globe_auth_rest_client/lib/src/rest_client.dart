@@ -1,18 +1,44 @@
+import 'dart:async';
+
+import 'package:globe_auth_rest_client/src/state.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'http_client.dart';
 import 'models/session.dart';
 import 'models/user.dart';
 
-typedef GetAccessToken = Future<String?> Function();
-typedef SetAccessToken = Future<void> Function(String token);
+// TODO: Do records work for this? Or at least typedefs?
 
 class GlobeAuthRestClient {
-  GlobeAuthRestClient({required this.baseUrl, required this.client});
+  GlobeAuthRestClient({required this.baseUrl, required this.client}) {
+    // Sync the state as soon as we can.
+    this
+        .getSession()
+        .then((result) {
+          this._stateController.add(
+            GlobeAuthStateAuthenticated(
+              session: result.session,
+              user: result.user,
+            ),
+          );
+        })
+        .catchError((_) {
+          this._stateController.add(GlobeAuthStateUnauthenticated());
+        });
+  }
 
   final GlobeHttpClient client;
   final String baseUrl;
 
+  /// Stream of the current state of the client.
+  final StreamController<GlobeAuthState> _stateController =
+      StreamController<GlobeAuthState>.broadcast()
+        ..add(GlobeAuthStateLoading());
+
+  Stream<GlobeAuthState> get state => _stateController.stream;
+
+  /// Internal method to make a request to the API and return the JSON response.
   Future<Map<String, dynamic>> _request(
     Future<http.Response> Function() request,
   ) async {
@@ -21,11 +47,25 @@ class GlobeAuthRestClient {
     return Map<String, dynamic>.from(json);
   }
 
-  Future<void> getOk() async {
-    await _request(() => http.get(Uri.parse('$baseUrl/ok')));
+  Future<({bool redirect, String? url, String? token, User? user})>
+  signInWithProvider() async {
+    // TODO: body
+    final json = await _request(
+      () => http.post(
+        Uri.parse('$baseUrl/sign-in/social'),
+        body: {'provider': 'google'},
+      ),
+    );
+
+    return (
+      redirect: json['redirect'] as bool,
+      url: json['url'] == null ? null : json['url'] as String,
+      token: json['token'] == null ? null : json['token'] as String,
+      user: json['user'] == null ? null : User.fromJson(json['user']),
+    );
   }
 
-  Future<({Session session, User user})> getGetSession() async {
+  Future<({Session session, User user})> getSession() async {
     final json = await _request(
       () => http.get(Uri.parse('$baseUrl/get-session')),
     );
@@ -36,42 +76,54 @@ class GlobeAuthRestClient {
     );
   }
 
-  Future<void> postSignOut() async {
+  Future<void> signOut() async {
     await _request(() => http.post(Uri.parse('$baseUrl/sign-out')));
   }
-}
 
-class GlobeHttpClient extends http.BaseClient {
-  final http.Client _inner;
-  final Future<String?> Function() getAccessToken;
-  final Future<void> Function(String token) setAccessToken;
+  Future<
+    ({String id, String email, String name, String image, bool emailVerified})
+  >
+  signUpWithEmail({
+    required String name,
+    required String email,
+    required String password,
+    String? username,
+  }) async {
+    final json = await _request(
+      () => http.post(
+        Uri.parse('$baseUrl/sign-up/email'),
+        body: {'email': 'test@test.com', 'password': 'password'},
+      ),
+    );
 
-  GlobeHttpClient(
-    this._inner, {
-    required this.getAccessToken,
-    required this.setAccessToken,
-  });
+    return (
+      id: json['id'] as String,
+      email: json['email'] as String,
+      name: json['name'] as String,
+      image: json['image'] as String,
+      emailVerified: json['emailVerified'] as bool,
+    );
+  }
 
-  Future<http.StreamedResponse> send(http.BaseRequest request) async {
-    try {
-      final accessToken = await getAccessToken();
-      if (accessToken != null) {
-        request.headers['Authorization'] = 'Bearer $accessToken';
-      }
+  Future<({bool redirect, String? url, User? user})> signInWithEmail({
+    required String email,
+    required String password,
+  }) async {
+    final json = await _request(
+      () => http.post(
+        Uri.parse('$baseUrl/sign-in/email'),
+        body: {'email': email, 'password': password},
+      ),
+    );
 
-      final response = await _inner.send(request);
+    return (
+      user: User.fromJson(json['user']),
+      url: json['url'] == null ? null : json['url'] as String,
+      redirect: json['redirect'] as bool,
+    );
+  }
 
-      if (response.statusCode < 200 || response.statusCode >= 300) {
-        throw Exception('TODO make me a sealed error');
-      }
-
-      if (response.headers['set-access-token'] != null) {
-        await setAccessToken(response.headers['set-access-token']!);
-      }
-
-      return response;
-    } catch (e) {
-      rethrow;
-    }
+  Future<void> ok() async {
+    await _request(() => http.get(Uri.parse('$baseUrl/ok')));
   }
 }

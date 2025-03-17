@@ -2,7 +2,7 @@ name: globe
 repository: https://github.com/invertase/globe
 packages:
   - "*"
-  - "packages/*"
+  - "packages/**"
   - "examples/*"
   - "templates/**"
 
