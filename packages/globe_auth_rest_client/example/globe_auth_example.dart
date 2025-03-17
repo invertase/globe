@@ -22,5 +22,5 @@ void main() async {
     ),
   );
 
-  await client.getOk(); 
+  await client.ok();
 }

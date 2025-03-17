@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:globe_auth/globe_auth.dart';
 
 final auth = GlobeAuth.project(
-  '123456789',
-  publicKey: 'todo-jwt',
+  'DEV',
+  publicKey: 'DEV',
   baseUrl: 'http://localhost:8787/auth/api',
 );
 
