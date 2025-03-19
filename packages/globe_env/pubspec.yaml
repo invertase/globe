@@ -1,0 +1,14 @@
+name: globe_env
+description: A package which provides an interface around the available Globe Environment variables.
+version: 1.0.0
+repository: https://github.com/invertase/globe
+
+environment:
+  sdk: ^3.0.0
+
+dependencies:
+  meta: ^1.16.0
+
+dev_dependencies:
+  lints: ^5.0.0
+  test: ^1.24.0
