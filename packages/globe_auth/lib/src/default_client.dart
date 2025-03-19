@@ -34,6 +34,16 @@ GlobeAuthRestClient getDefaultRestClient(
           await _storage.write(_tokenKey, token);
         }
       },
+      getUserAgent: () async {
+        if (kIsWeb) {
+          return null;
+        } else {
+          // TODO: Get a good user agent for the platforms
+          // Android 12.3 Pixel 6
+          // iOS 15.5 iPhone 13 Pro
+          return 'Native Device';
+        }
+      },
     ),
   );
 }
