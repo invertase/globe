@@ -1,11 +1,10 @@
-import 'dart:io';
-
 import 'package:globe_kv/src/asserts.dart';
 import 'package:globe_kv/src/stores/http_store.dart';
 import 'package:globe_kv/src/stores/memory_store.dart';
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 import 'package:collection/collection.dart';
+import 'package:globe_env/globe_env.dart';
 
 part 'globe_kv_store.dart';
 
@@ -20,12 +19,10 @@ final class GlobeKV {
   ///
   /// Throws StateError if GLOBE is set but GLOBE_DS_API is not defined.
   GlobeKV(String namespace, {GlobeKvStore? store, bool debug = false}) {
-    if (Platform.environment['GLOBE'] == '1') {
-      final baseUrl = Platform.environment['GLOBE_DS_API'] ??
-          (throw StateError('GLOBE_DS_API is not set'));
+    if (GlobeEnv.isGlobeRuntime) {
       _store = GlobeHttpStore(
         namespace,
-        Uri.parse(baseUrl),
+        GlobeEnv.datasource ?? (throw StateError('GLOBE_DS_API is not set')),
         http.Client(),
         enableLogging: debug,
       );

@@ -1,0 +1,4 @@
+# melos_managed_dependency_overrides: globe_env
+dependency_overrides:
+  globe_env:
+    path: ../globe_env
