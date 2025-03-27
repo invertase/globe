@@ -1,0 +1,12 @@
+query Me {
+  me {
+    id
+    name
+    email
+    createdAt
+    organizations {
+      id
+      name
+    }
+  }
+}

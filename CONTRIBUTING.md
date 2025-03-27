@@ -76,6 +76,12 @@ command once.
 
 > You do not need to run `dart pub get` once bootstrap has been completed.
 
+After bootstrapping, run the follwing command to get the latest graphql schema.
+
+```shell
+melos run download-schema
+```
+
 To activate the Globe CLI for local development, run the following command inside the package directory:
 
 ```sh
@@ -96,10 +102,10 @@ dart pub global activate --source="path" . --executable="globe"
 1. Switch to `main` branch locally.
 2. Run `git pull origin main`.
 3. Run `git pull --tags` to make sure all tags are fetched.
-5. Run `melos version` to automatically version packages and update Changelogs.
-6. Run `melos publish` to dry run and confirm all packages are publishable.
-7. Run `melos publish --no-dry-run`
-8. Run `git push --follow-tags` to ensure the release is pushed to GitHub.
+4. Run `melos version` to automatically version packages and update Changelogs.
+5. Run `melos publish` to dry run and confirm all packages are publishable.
+6. Run `melos publish --no-dry-run`
+7. Run `git push --follow-tags` to ensure the release is pushed to GitHub.
 
 ### Open a pull request
 

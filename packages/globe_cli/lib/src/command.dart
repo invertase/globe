@@ -36,7 +36,7 @@ abstract class BaseGlobeCommand extends Command<int> {
     final session = auth.currentSession;
     if (session == null) {
       logger
-        ..err('Please login to deploy a project.')
+        ..err('Please login to run this command.')
         ..err('Run `globe login` to login.');
 
       exitOverride(1);
