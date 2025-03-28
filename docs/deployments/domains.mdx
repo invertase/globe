@@ -12,10 +12,8 @@ Custom domains allow you to connect your branded URL (e.g., `your-company.com`) 
 
 1. Register a domain with an external provider (e.g., Namecheap, GoDaddy, Google Domains).
 2. Configure your DNS settings to point to Globe.
-3. Verify ownership in the Globe Dashboard.
+3. Add your domain to a project via the Globe Dashbord.
 4. Cloudflare handles DNS management and security, including automatic SSL (HTTPS).
-
-Currently, each Globe project can have only one custom domain. To add a new domain, you must remove the existing one first. We will be adding support for multiple domains soon.
 
 ## Setting Up Your Custom Domain
 
@@ -30,40 +28,37 @@ Once updated, add your domain in the Globe Dashboard and verify it.
 
 ### Step 2: Add Your Domain in Globe
 
-Each Globe project can have only one linked custom domain at a time. If you want to add a new domain, you must first remove the existing one. We are working on adding support for multiple domains!
-
 1. Go to the **Globe Dashboard**.
-2. Select your project and navigate to **Domains**.
-3. Click **Add Custom Domain**.
-4. Enter your domain name (e.g., `example.com`).
-5. Click **Verify**.
+2. Navigate to **Domains**.
+3. Select **Add Domain**.
+4. Enter your domain name (e.g., `example-app.com`).
+5. Select **Verify**.
 
 ### Step 3: Verify Your Domain
 
-After adding your domain, Globe will display one of these statuses:
+After you add your domain, Cloudflare will attempt to verify it. The domain status may change as the setup progresses:
 
 - **Active** – The domain is linked, and SSL is enabled.
-- **Pending Verification** – DNS changes are still updating (this can take up to 24 hours).
-- **Verification Failed** – DNS records are incorrect or missing; update your DNS settings and retry.
+- **Pending Verification** - DNS changes are still updating. This can take up to 24 hours.
+- **Verification Failed** – DNS records are missing or incorrect. Check your DNS settings and try again.
 
 ## Removing or Changing a Domain
 
-Since each project currently supports only one domain, you must remove an existing domain before adding a new one.
-
 To remove a domain:
 
-1. Go to **Globe Dashboard → Domains**.
-2. Click on the existing domain.
-3. Click **Remove Domain**.
+1. Go to **Domains**.
+2. Select the existing domain.
+3. Select **Remove Domain**.
 
 Once removed, follow the setup steps above to add a new domain.
 
 ## Troubleshooting
 
-If verification fails, Globe will display an error message. Some common issues include:
+If you run into errors when adding or verifying a domain, try the following:
 
-- **"DNS Records Not Found"** – Wait up to 24 hours, or check your DNS settings with your provider.
-- **"Invalid Domain Format"** – Ensure the domain is entered correctly.
-- **"SSL Certificate Not Issued”** – Check for misconfigured CAA records.
+- **Check your DNS settings** with your domain provider. Make sure required records exist and are correct.
+- **Remove and re-add the domain** in Globe. This can fix temporary connection errors.
+- **Wait up to 24 hours** if your domain was recently updated. DNS changes can take time to propagate.
+- **Review [Cloudflare’s Troubleshooting Guide](https://developers.cloudflare.com/dns/troubleshooting/)** for help with DNS-specific errors.
+- Ask for help on Globe's [Discord](https://discord.gg/UCcCYjDaTy).
 
-If you get an error you can't fix, check your DNS settings, try re-adding the domain in Globe, refer to Cloudflare's [DNS Guide](https://developers.cloudflare.com/dns/troubleshooting/), or reach out on [Discord](https://discord.gg/UCcCYjDaTy) for help.
