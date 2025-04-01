@@ -1,6 +1,5 @@
 import 'package:globe_env/globe_env.dart';
 import 'package:test/test.dart';
-import 'dart:io';
 
 void main() {
   group('GlobeEnv', () {
@@ -94,7 +93,10 @@ void main() {
 
     test('datasource returns Uri when set', () {
       testEnv['GLOBE_DS_API'] = 'https://test.example.com';
-      expect(GlobeEnv.datasource, equals(Uri.parse('https://test.example.com')));
+      expect(
+        GlobeEnv.datasource,
+        equals(Uri.parse('https://test.example.com')),
+      );
     });
   });
 }
