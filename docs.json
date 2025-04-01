@@ -90,6 +90,11 @@
       ]
     },
     {
+      "group": "Storage",
+      "tab": "root",
+      "pages": [{ "title": "GlobeKV", "href": "/storage" }]
+    },
+    {
       "group": "CLI",
       "tab": "cli",
       "pages": [
