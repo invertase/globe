@@ -6,11 +6,11 @@ extension on Invocation {
   }
 }
 
-mixin MockMixin on Mock {
+extension MockMixin on Mock {
   Future<T> mockFuture<T>(Invocation invocation) async {
     final voidFuture = Future<void>.value();
 
-    return super.noSuchMethod(
+    return noSuchMethod(
       invocation,
       returnValue: (voidFuture is Future<T>)
           ? voidFuture
@@ -21,5 +21,9 @@ mixin MockMixin on Mock {
           : Future<T>.error('Missing stub for ${invocation.getDisplayString()}')
         ..ignore(),
     ) as Future<T>;
+  }
+
+  T nsm<T>(Invocation invocation, Object? returnValue) {
+    return noSuchMethod(invocation, returnValue: returnValue) as T;
   }
 }

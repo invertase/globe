@@ -32,3 +32,9 @@ scripts:
     description: Run `dart format` checks for all packages.
 
   test: melos exec --no-flutter --dir-exists="test" -- "dart test ."
+
+  download-schema:
+    exec: dart run lib/src/graphql/download_schema.dart
+    packageFilters:
+      fileExists: lib/src/graphql/download_schema.dart
+    description: Download the GraphQL schema from the specified endpoint.
