@@ -23,6 +23,7 @@ dependencies:
   collection: ^1.19.1
   cli_table: ^1.0.2
   graphql: ^5.1.2
+  gql: ^1.0.0+1
 
 dev_dependencies:
   build_runner: ^2.4.4
