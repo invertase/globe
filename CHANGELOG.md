@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2025-04-09
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`globe_cli` - `v0.0.15`](#globe_cli---v0015)
+
+---
+
+#### `globe_cli` - `v0.0.15`
+
+ - **FEAT**(globe_cli): Add whoami command and graphql support ([#148](https://github.com/invertase/globe/issues/148)). ([5f8bfa2b](https://github.com/invertase/globe/commit/5f8bfa2bdb1f8d02c39b10d2b37932366532236d))
+
+
 ## 2024-12-13
 
 ### Changes

@@ -1,3 +1,7 @@
+## 0.0.15
+
+ - **FEAT**(globe_cli): Add whoami command and graphql support ([#148](https://github.com/invertase/globe/issues/148)). ([5f8bfa2b](https://github.com/invertase/globe/commit/5f8bfa2bdb1f8d02c39b10d2b37932366532236d))
+
 ## 0.0.14+1
 
 - **FIX**: Major CLI Improvements ([#135])(https://github.com/invertase/globe/pull/134)
