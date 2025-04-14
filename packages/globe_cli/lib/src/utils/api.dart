@@ -618,6 +618,7 @@ class FrameworkPresetOptions {
     required this.name,
     required this.buildCommand,
     required this.entrypoint,
+    this.buildRunnerDetection,
   });
 
   factory FrameworkPresetOptions.fromJson(Map<dynamic, dynamic> json) {
@@ -627,12 +628,14 @@ class FrameworkPresetOptions {
         'name': final String name,
         'entrypoint': final String entrypoint,
         'buildCommand': final String? buildCommand,
+        'buildRunnerDetection': final bool? buildRunnerDetection,
       } =>
         FrameworkPresetOptions(
           id: id,
           name: name,
           buildCommand: buildCommand,
           entrypoint: entrypoint,
+          buildRunnerDetection: buildRunnerDetection,
         ),
       _ => throw const FormatException('FrameworkPresetOptions'),
     };
@@ -644,6 +647,8 @@ class FrameworkPresetOptions {
       'name': name,
       'buildCommand': buildCommand,
       'entrypoint': entrypoint,
+      if (buildRunnerDetection != null)
+        'buildRunnerDetection': buildRunnerDetection,
     };
   }
 
@@ -651,6 +656,7 @@ class FrameworkPresetOptions {
   final String name;
   final String? buildCommand;
   final String entrypoint;
+  final bool? buildRunnerDetection;
 }
 
 enum DeploymentEnvironment {

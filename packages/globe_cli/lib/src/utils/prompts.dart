@@ -205,7 +205,8 @@ Future<Project> selectProject(
 
     // Check if project has build_runner, if not skip.
     const buildRunner = 'build_runner';
-    if (parsed.devDependencies.keys.any((p) => p == buildRunner) ||
+    if ((discoveredPreset?.buildRunnerDetection ?? true) &&
+            parsed.devDependencies.keys.any((p) => p == buildRunner) ||
         parsed.dependencies.keys.any((p) => p == buildRunner)) {
       if (logger.confirm('❓ Would you like to run a custom build command?')) {
         buildCommand = logger.prompt(
