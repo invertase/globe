@@ -4,7 +4,11 @@ title: Deploy a Shelf Server
 
 To get started, we're going to create a simple Dart application that will be deployed to Globe. We'll use [Shelf](https://pub.dev/packages/shelf) to start an HTTP server that can handle requests and log some information about our application.
 
-<Info>In order for Globe to correctly run your backend application, it must be able to listen to the `PORT` environment variable, for example, using the `Platform.environment['PORT']`</Info>
+<Info>
+  In order for Globe to correctly run your backend application, it must be able
+  to listen to the `PORT` environment variable, for example, using the
+  `Platform.environment['PORT']`
+</Info>
 
 ## Create a new Dart project
 
@@ -70,9 +74,8 @@ Once complete, your deployment will be available via the URL shown in the dashbo
 
 Since our application has both a `print` statement and a middleware logger (provided by Shelf), we're able to inspect those logs in realtime from the dashboard. Click the "Logs" tab in the dashboard to view the logs for your deployment. Each time you refresh the deployment URL, a new log will appear in the dashboard! Any errors (which emit to `stderr`) will be highlighted in red.
 
-
 ## Further reading
 
-- [Learn about managing your deployments](/deployments)
+- [Learn about managing your deployments](/core-concepts/deployments)
 - [Learn about the Globe CLI](/cli)
-- [Integrate with GitHub](/deployments/github-integration)
+- [Integrate with GitHub](/core-concepts/github-integration)
