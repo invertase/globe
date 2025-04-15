@@ -57,27 +57,44 @@
       "pages": [
         { "title": "Overview", "href": "/" },
         { "title": "Getting Started", "href": "/getting-started" },
-        { "title": "Shelf Server", "href": "/getting-started/shelf-server" },
-        { "title": "Flutter Web", "href": "/getting-started/flutter-web" }
+        {
+          "group": "Environment Setup",
+          "pages": [
+            {
+              "title": "Setting up the Globe CLI",
+              "href": "/getting-started/environment-setup/globe-cli"
+            },
+            {
+              "title": "Authorizing Github",
+              "href": "/getting-started/environment-setup/github"
+            }
+          ]
+        },
+        { "title": "Quickstart", "href": "/getting-started/quickstart" }
       ]
     },
     {
-      "group": "Deployments",
+      "group": "Core Concepts",
       "tab": "root",
       "pages": [
-        { "title": "Overview", "href": "/deployments" },
-        { "title": "Build Settings", "href": "/deployments/build-settings" },
-        { "title": "Static Assets", "href": "/deployments/static-assets" },
-        { "title": "Domains", "href": "/deployments/domains" },
+        { "title": "Deployments", "href": "/core-concepts/deployments" },
+        { "title": "Logs", "href": "/core-concepts/logs" },
+        { "title": "Build Settings", "href": "/core-concepts/build-settings" },
         {
           "title": "Environment Variables",
-          "href": "/deployments/environment-variables"
+          "href": "/core-concepts/environment-variables"
         },
+        { "title": "Domains", "href": "/core-concepts/domains" },
         {
           "title": "GitHub Integration",
-          "href": "/deployments/github-integration"
+          "href": "/core-concepts/github-integration"
         },
-        { "title": "Hooks", "href": "/deployments/hooks" }
+        {
+          "title": "Monitoring",
+          "href": "/core-concepts/monitoring"
+        },
+        { "title": "Static Assets", "href": "/core-concepts/static-assets" },
+        { "title": "Cron Jobs", "href": "/core-concepts/cron-jobs" }
       ]
     },
     {
@@ -85,8 +102,10 @@
       "tab": "root",
       "pages": [
         { "title": "Overview", "href": "/frameworks" },
+        { "title": "Dart Shelf", "href": "/frameworks/shelf-server" },
         { "title": "Dart Frog", "href": "/frameworks/dart-frog" },
-        { "title": "Flutter Web", "href": "/frameworks/flutter-web" }
+        { "title": "Flutter Web", "href": "/frameworks/flutter-web" },
+        { "title": "Jaspr", "href": "/frameworks/jaspr" }
       ]
     },
     {

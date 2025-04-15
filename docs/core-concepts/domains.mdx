@@ -1,0 +1,67 @@
+---
+title: Domains
+---
+
+A **domain** is the address used to access your Globe-hosted project. Each project is assigned a unique domain (e.g., `your-project.globeapp.dev`).
+
+You can also link your own **custom domain** (e.g., `your-app.com`) with built-in HTTPS, DNS verification, and integration with your production deployment.
+
+### Supported Domain Types
+
+| Domain Type                   | Description                                     | Example                      |
+| ----------------------------- | ----------------------------------------------- | ---------------------------- |
+| **Default Project Domain**    | Automatically assigned after deployment         | `your-project.globeapp.dev`  |
+| **Preview Deployment Domain** | Unique URLs for each preview deployment         | `random-string.globeapp.dev` |
+| **Custom Domains**            | Your own branded domains linked to your project | `your-app.com`               |
+
+## How to Add a Custom Domain
+
+### Step 1: Configure DNS with Your Registrar
+
+Before adding your domain to Globe:
+
+1. Log in to your domain registrar (e.g., GoDaddy, Namecheap, Google Domains)
+2. Find the DNS management section
+3. Add a **CNAME record** pointing your domain to `domains.globeapp.dev`
+4. Save your changes
+
+<Info>
+  DNS changes can take up to 24 hours to propagate globally, though most updates
+  happen within an hour.
+</Info>
+
+### Step 2: Add Your Domain in Globe
+
+1. From your **Globe dashboard**, go to the **Domains** section
+2. Select **Add Domain**
+3. Enter your domain name (e.g., `www.your-app.com`)
+4. Select the project you want to link to this domain
+5. Click **Next** and then **Create**
+
+### Step 3: Verify Your Domain
+
+After adding your domain, Globe will attempt to verify it. The domain status may change as the setup progresses:
+
+- **Active:** Domain is linked, and SSL is enabled
+- **Pending Verification:** DNS changes are still updating (can take up to 24 hours)
+- **Verification Failed:** DNS records are missing or incorrect
+
+## How to Manage Domains
+
+To view and manage your domains:
+
+- Open the **Domains** tab in your project dashboard
+- Check the list of connected domains and their current status
+- To remove a domain, select **Delete** from the options menu
+- You can add, update, or reassign domains at any time
+
+### Best Practices
+
+- Use a subdomain (`www.` or `app.`) if your root domain hosts other services
+- Configure DNS before adding your domain to Globe
+- Use descriptive domain names for better clarity and branding
+- Limit frequent DNS changes to avoid propagation delays
+
+## Next
+
+Link your GitHub repository to trigger deployments automatically from your existing workflow.
