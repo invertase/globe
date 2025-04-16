@@ -1,0 +1,14 @@
+# Files and directories created by pub
+.dart_tool/
+.packages
+pubspec.lock
+
+# IDE
+.idea/
+.vscode/
+
+# Conventional directory for build outputs
+build/
+
+# Directory created by dartdoc
+doc/api/ 
