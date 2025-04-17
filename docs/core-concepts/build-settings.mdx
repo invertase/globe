@@ -16,21 +16,12 @@ Configuring build settings allows you to:
 
 ## How to Set Build Settings
 
-### 1. Globe Dashboard
-
-Use this for quick edits:
+You can change your build settings in the dashboard:
 
 1. In the **Globe dashboard**, go to your project
 2. Open **Settings** → **General** → **Build Settings**
 3. Edit values
 4. Select **Save Changes** to apply
-
-### 2. globe.yaml File
-
-Use this for team workflows and version control:
-
-1. Place the file in your project root
-2. Values here override the dashboard when both are set
 
 ## Available Build Settings
 
@@ -38,54 +29,18 @@ Use this for team workflows and version control:
 | ------------------------ | ------------------------------------------------------------ | --------------------- |
 | **Framework Preset**     | Preset values for the supported frameworks                   | Auto-detected         |
 | **Build Command**        | Command runs after dependencies are installed                | Based on framework    |
-| **Entrypoint**           | File used to bootstrap your app, e.g,. lib/main.dart         | Based on framework    |
+| **Entrypoint**           | File used to bootstrap your app, e.g. `lib/main.dart`        | Based on framework    |
 | **Dart/Flutter Version** | The version of the Dart or Flutter SDK to use for the builds | Latest stable release |
 | **Build Runner**         | Whether to run Build Runner before your project builds       | Auto-detected         |
 | **Melos**                | Whether to bootstrap your project at the root                | Auto-detected         |
 | **Root Directory**       | Directory where the project code to deploy is located        | Root directory        |
 
-## Example globe.yaml Configurations
-
-Flutter Web Application:
-
-```yaml
-dartVersion: "3.0"
-buildCommand: "flutter build web --release"
-```
-
-Dart Backend (Shelf):
-
-```yaml
-dartVersion: "stable"
-entrypoint: "bin/server.dart"
-```
-
-Monorepo:
-
-```yaml
-rootDirectory: "packages/api_service"
-dartVersion: "stable"
-entrypoint: "bin/server.dart"
-```
-
-## Settings Precedence
-
-If a setting is defined in both the dashboard and globe.yaml:
-
-- The value in globe.yaml takes priority
-- If not in globe.yaml, the dashboard value is used
-- If not defined in either, defaults apply
-
-This gives you flexibility while keeping version control authoritative.
-
 ## Best Practices
 
-- Use globe.yaml to keep build configs consistent and trackable
 - Always set the correct rootDirectory for nested apps
-- Tailor your buildCommand for production (e.g., --release, tree-shaking, etc.)
+- Tailor your **buildCommand** for production (e.g., `--release`, `tree-shaking`, etc.)
 - Use the default framework presets where possible override only when needed
-- Add build setup instructions to your README for easier onboarding
 
 ## Next
 
-Manage sensitive data and environment-specific values using Environment Variables.
+Manage **sensitive data** and **environment-specific values** using Environment Variables.
