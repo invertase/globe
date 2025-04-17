@@ -1,0 +1,112 @@
+---
+title: Static Assets
+---
+
+Serve static files like **images**, **fonts**, or **HTML** from your deployment. Globe **auto-detects** common folders, or you can define exactly what to include in your app.
+
+## What Are Static Assets?
+
+Static assets are files that don’t change at runtime. Think `.png`, `.css`, `.html`, fonts, or even compiled `.wasm` files. Globe serves these assets via a **global edge network** to ensure speedy delivery anywhere in the world.
+
+## How Static Assets Work in Globe
+
+You can configure static assets in two ways:
+
+### 1. Automatic Detection (Zero Config)
+
+Globe automatically detects common static asset directories used by most frameworks, such as `public/`, `static/`, and `assets/`. For Serverpod projects, it also includes `web/`, `config/`, and `migrations/`. All files and subdirectories within these folders are served as static assets by default.
+
+### 2. Manual Configuration (`globe.yaml`)
+
+For more control, explicitly list files and directories in your `globe.yaml` file under the `assets` key.
+
+#### Include Specific Files
+
+```yaml
+assets:
+  - assets/my_icon.png
+  - assets/background.png
+```
+
+#### Include Specific Directories
+
+To include all files under a folder, simply add the directory with a trailing slash:
+
+```yaml
+assets:
+  - directory/
+  - directory/subdirectory/
+```
+
+#### Use Glob Patterns
+
+You can match multiple files using **glob-like syntax**. This helps include file types in bulk, like all `.png` images in a directory:
+
+```yaml
+assets:
+  - public/\*.png
+```
+
+This will include every `.png` file in the public/ directory.
+
+#### Map Files to Custom Paths
+
+Want more control over where your assets end up at runtime? You can map a local source path to a destination path in Globe’s runtime using `source_path:destination_path`:
+
+```yaml
+assets:
+  - fake_lib_rust/target/fake_library.so:public/fake_library.so
+```
+
+This is useful when renaming files, serving compiled libraries, or tidying up your directory structure before deployment.
+
+## Example: Serving Static Files in Dart
+
+Globe supports static file serving with popular Dart web frameworks like **Shelf** and **Dart Frog**. Here’s an example using `shelf_static` to serve a basic `index.html` file:
+
+<Steps>
+  <Step title="Directory Structure">
+  ```yaml
+  /your_project
+    └── public/
+        └── index.html
+  ```
+  </Step>
+  <Step title="Dart Server Code">
+  ```dart
+  import 'package:shelf/shelf_io.dart' as io;
+  import 'package:shelf_static/shelf_static.dart';
+
+  void main() async {
+    final handler = createStaticHandler('public', defaultDocument: 'index.html');
+    final server = await io.serve(handler, 'localhost', 8080);
+    print('Serving at http://${server.address.host}:${server.port}');
+  }
+  ```
+  </Step>
+  <Step title="Deploy with Globe">
+  ```bash
+  globe deploy
+  ```
+  </Step>
+</Steps>
+
+And your static site is live from the edge.
+
+## Important Considerations
+
+- Static assets only work if **they are correctly configured**. Globe won’t magically serve them unless they’re detected or explicitly listed.
+- If both **automatic** and **manual** configurations are used, globe.yaml settings override **automatic detection**.
+- The order of items in globe.yaml matters; later rules can override earlier ones.
+
+## Best Practices
+
+- Keep assets in a dedicated directory like `public/` or `assets/`
+- Use **glob patterns** for file groups, but always confirm matched files
+- Avoid deeply nested structures for critical assets
+- Be mindful of asset size and redundancy
+- Stay organized, name assets clearly for easier maintenance
+
+## Next
+
+Schedule **recurring HTTP tasks** using **cron jobs** in your project config.

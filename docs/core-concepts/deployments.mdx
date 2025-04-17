@@ -1,0 +1,76 @@
+---
+title: Deployments
+---
+
+When you run `globe deploy` or push to GitHub, Globe creates a deployment, a versioned build of your app that runs on its global edge network. Use deployments to preview changes, push live updates, and track your app across environments.
+
+## Preview vs Production Deployments
+
+Globe supports two types of deployments: **preview** and **production**.
+
+### Preview Deployments
+
+Preview deployments are useful to test, review, and share work in progress without affecting the live app. These are ideal for **internal review**, **staging**, or **QA**. They:
+
+- Do not impact the live app
+- Use temporary URLs (e.g. random-id.globeapp.dev)
+- Auto-expire after a period of inactivity
+
+**Create a preview deployment by:**
+
+- Running `globe deploy` in your terminal
+- Pushing to any branch that is **not** set as your production branch in project settings
+
+### Production Deployments
+
+Production deployments serve the live version of your app. Trigger one when you're ready to release updates to users. They:
+
+- Replace the current live version of your app
+- Persist until manually replaced
+- Use your custom domain (if connected), or a default URL like project-name.globeapp.dev
+
+**Trigger a production deployment by:**
+
+- Running `globe deploy --prod` in your terminal
+- Pushing to the branch marked as your **production branch** (default: `main`)
+
+## How to Manage Deployments
+
+You can view and manage deployments in the Globe dashboard:
+
+1. In the **Globe dashboard**, go to your project
+2. Open the **Deployments** tab
+3. Toggle between **Preview** and **Production** to see all versions
+4. Select any deployment to view logs and details
+5. Open your deployment via the direct URL
+
+## How Deployments Work
+
+Every deployment goes through five stages:
+
+1. **Source Acquisition:** Code is fetched from your local machine or GitHub repository
+2. **Build Process:** Code is compiled and built according to your project's configuration
+3. **Containerization:** The build output is packaged into a container
+4. **Distribution**: The container is distributed to Globe's global edge network
+5. **Activation:** The deployment becomes accessible via a unique URL
+
+## Deployment Status Reference
+
+| Status          | Meaning                                             |
+| --------------- | --------------------------------------------------- |
+| **Queued**      | Deployment is waiting to be processed               |
+| **In Progress** | Globe is building your application                  |
+| **Deployed**    | Successfully deployed and available through its URL |
+| **Failed**      | Build or deploy process failed                      |
+| **Cancelled**   | Deployments were manually stopped before completion |
+
+## Best Practices
+
+- Use **preview deployments** to test every major change
+- Protect **production branches** in GitHub to avoid accidental deploys
+- Use different environment variables for **preview** and **production**
+- Check logs on failed deployments for quick debugging
+
+## Next
+
+Monitor **build outputs**, **runtime errors**, and **real-time activity** from your live app, all in one place with **Logs**.

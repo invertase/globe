@@ -1,0 +1,110 @@
+---
+title: Environment Variables
+---
+
+Use environment variables to **manage secrets** and **environment-specific** config without hardcoding values in your app.
+
+## Why Use Environment Variables?
+
+Environment variables help you:
+
+- Keep secrets like **API keys**, **tokens**, or **credentials** out of your source code
+- Customize behavior for different deployment environments (e.g., **development**, **staging**, **production**)
+- Collaborate securely with teams across versions and environments
+- Automate deploys without hardcoding sensitive values
+
+<Warning>
+  Store sensitive values in environment variables, not in source code or
+  comments.
+</Warning>
+
+## How to Create Environment Variables
+
+1. In the **Globe dashboard**, go to your project
+2. Open **Settings → Environment Variables**
+3. Select **Add Variable**
+4. Enter a **name** and **value**
+5. Choose environments: `preview`, `production`, or both
+6. Select **Save**
+
+<Info>
+  All values are encrypted at rest and can only be viewed directly through the
+  dashboard. You’ll need to redeploy your project for changes to environment
+  variables to take effect.
+</Info>
+
+## How to Access Environment Variables in Dart
+
+### Using Dart’s `Platform.environment` map
+
+```dart
+import 'dart:io';
+
+void main() {
+  final apiKey = Platform.environment['API_KEY'];
+
+  if (apiKey != null) {
+    print('API Key: $apiKey');
+  } else {
+    print('API Key not found!');
+  }
+}
+```
+
+### Using the dotenv Package
+
+In development, use a .env file locally and the dotenv package to load environment variables while still respecting platform variables in deployment.
+
+```dart
+import 'package:dotenv/dotenv.dart';
+
+void main() {
+  final env = DotEnv(includePlatformEnvironment: true)..load();
+
+  final apiKey = env['API_KEY'];
+  print('API Key: $apiKey');
+}
+```
+
+<Warning>
+  Static files like .env are ignored during deployment. Always pass
+  `includePlatformEnvironment: true` to ensure your deployed app can access your
+  defined environment variables.
+</Warning>
+
+## Globe’s System Environment Variables
+
+Globe automatically provides these system environment variables in all deployments:
+
+| Name            | Description                                             |
+| --------------- | ------------------------------------------------------- |
+| `PORT`          | The port your application should listen on              |
+| `GLOBE`         | Set to `'1'` to indicate app running in Globe           |
+| `HOSTNAME`      | The hostname of your deployed application               |
+| `CRON_NAME`     | Name of the cron job from `globe.yaml` file             |
+| `CRON_SCHEDULE` | The cron schedule pattern (e.g., `* * * * *`)           |
+| `CRON_ID`       | Unique identifier for the defined cron job              |
+| `CRON_EVENT_ID` | Unique identifier for the current running cron instance |
+
+<Info>
+  Cron environment variables are only available when a cron job is running.
+</Info>
+
+## Important Considerations
+
+- **Environment-Specific Variables**: Configure variables to appear only in specific environments (**preview**, **production**, or both).
+- **Redeployment Required**: After adding, changing, or removing variables, redeploy your project.
+- **Encrypted Storage**: All variable values are encrypted at rest and in transit.
+- **No Version History**: Globe doesn't maintain history of variable values; document important changes.
+
+## Best Practices
+
+- Use descriptive variable names like `STRIPE_SECRET_KEY`, `FIREBASE_API_KEY`, or `DB_URL`
+- Never commit sensitive values to your code repository; even in comments
+- Regularly review and rotate sensitive values like API keys
+- Use different values for **preview** and **production** environments when appropriate
+- Document required variables in your project’s **README**
+
+## Next
+
+Connect a **custom domain** to make your deployed app accessible at a **branded URL**.
