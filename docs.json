@@ -103,8 +103,8 @@
       "pages": [
         { "title": "Overview", "href": "/frameworks" },
         { "title": "Dart Shelf", "href": "/frameworks/shelf-server" },
-        { "title": "Dart Frog", "href": "/frameworks/dart-frog" },
         { "title": "Flutter Web", "href": "/frameworks/flutter-web" },
+        { "title": "Dart Frog", "href": "/frameworks/dart-frog" },
         { "title": "Jaspr", "href": "/frameworks/jaspr" }
       ]
     },

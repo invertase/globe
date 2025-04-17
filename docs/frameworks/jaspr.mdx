@@ -1,36 +1,68 @@
 ---
-title: Deploying a Jaspr application
+title: Deploying a Jaspr Application
 ---
 
-<Warning>
-Currently, Jaspr support is an experimental feature and not recommended for production use. The api is actively being worked on and may change at any time.
-</Warning>
+Jaspr is a modern web framework for building websites in Dart. It supports both **client-side** and **server-side** rendering. Globe currently only supports **server-side** rendered Jaspr applications. This page outlines requirements and deployment behaviour.
 
-[Jaspr](https://pub.dev/packages/jaspr) is a modern web framework for building websites in Dart with support for both client-side and server-side rendering.
+## Project Setup
 
-Follow the [documentation](https://pub.dev/packages/jaspr#get-started) for assistance with installing the Jaspr CLI.
+To create a new Jaspr project:
 
-## Create a new project
+1.  Install the Jaspr CLI:
 
-Create a new Jaspr project by running the following command:
+    ```bash
+    dart pub global activate jaspr_cli
+    ```
 
-```bash
-jaspr create my_jaspr_app
-```
+2.  Create a new Jaspr project:
 
-Start a local development server with the following command:
+    ```bash
+    jaspr create my_jaspr_app
+    cd my_jaspr_app
+    ```
 
-```bash
-dart run jaspr serve
-```
+3.  Configure for server-side rendering in your pubspec.yaml:
+
+    ```bash
+    jaspr:
+      uses-ssr: true
+    ```
+
+4.  Test your application locally:
+
+    ```bash
+    dart run jaspr serve
+    ```
 
 ## Deploying to Globe
 
-Before deploying your application to Globe, ensure you have the Server Side Rendering disabled flag disabled in your `pubspec.yaml` file:
+Run the deployment command from your project root:
 
-```yaml
-jaspr:
-  uses-ssr: false
+```bash
+globe deploy
 ```
 
-This will enable Globe to build and serve your application instead. Globe will detect Jaspr is being used and automatically select it as a framework preset on your project settings. No additional steps are required.
+<Info>
+  Globe automatically detects Jaspr applications and applies the correct
+  framework preset during deployment. Currently, only server-side rendering mode
+  is supported.
+</Info>
+
+## Deployment Behaviour
+
+- **Rendering**: Only **SSR** is supported at this time. Client-side mode is not currently compatible with Globe.
+- **Preset detection**: Globe identifies Jaspr projects automatically.
+- **Build**: The server-rendered app is built and deployed without additional configuration.
+- **Status**: Client-side Jaspr applications are not yet supported, but we plan to add compatibility soon.
+
+## Jaspr vs Flutter Web
+
+Jaspr is best suited for building **static websites**, **server-rendered**, or **single-page—apps** using Dart with native web technologies (HTML, DOM, CSS). It brings a Flutter-like structure but embraces the web’s natural rendering model.
+Flutter Web, in contrast, is optimized for building **cross-platform apps** and paints UI via a canvas, which may not align well with **document-centric** or **content-heavy websites**.
+
+## Learn more
+
+- [Jaspr documentation](https://docs.jaspr.site/)
+- [Managing deployments](/core-concepts/deployments)
+- [Globe CLI reference](/cli)
+- [GitHub integration](/core-concepts/github-integration)
