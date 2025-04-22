@@ -9,27 +9,30 @@ Deploying Flutter Web on Globe enables you to host high-performance single-page 
 To create a new Flutter Web project:
 
 1. Open your terminal and run:
-    ```bash
-    flutter create my_flutter_app
-    cd my_flutter_app
-    ```
+
+   ```bash
+   flutter create my_flutter_app
+   cd my_flutter_app
+   ```
 
 2. Test your application locally with:
-    ```bash
-    flutter run -d chrome
-    ```
+   ```bash
+   flutter run -d chrome
+   ```
 
 ## Deploying to Globe
 
 1. Run the deployment command from your project root:
-    ```bash
-    globe deploy
-    ```
+
+   ```bash
+   globe deploy
+   ```
 
 2. For first-time deployments:
-   * Confirm setup when prompted (press Y)
-   * Enter a name for your project (e.g., my-flutter-app)
-   * Accept the detected Flutter preset when prompted
+
+   - Confirm setup when prompted (press Y)
+   - Enter a name for your project (e.g., my-flutter-app)
+   - Accept the detected Flutter preset when prompted
 
 3. Wait for the deployment to complete. You'll receive a unique URL for accessing your web application.
 
@@ -43,21 +46,21 @@ Once deployed, your app is available at the unique URL shown in your dashboard (
 
 Globe builds your Flutter Web project and uploads the compiled output (build/web) to its CDN network.
 
-* **Preset detection**: Flutter Web projects are automatically recognized.
-* **Environment**: No manual configuration required.
-* **Build runner**: If used, it is auto-detected and executed before deployment.
-* **Asset handling**:
-   * Assets are hashed and fingerprinted for cache optimization.
-   * Base href is automatically set to /.
+- **Preset detection**: Flutter Web projects are automatically recognized.
+- **Environment**: No manual configuration required.
+- **Build runner**: If used, it is auto-detected and executed before deployment.
+- **Asset handling**:
+  - Assets are hashed and fingerprinted for cache optimization.
+  - Base href is automatically set to /.
 
 ## Best practices
 
-* Use responsive design principles for optimal display across different devices.
-* Test your application across multiple browsers before deployment.
-* Consider using web-specific optimizations like lazy loading for better performance.
+- Use responsive design principles for optimal display across different devices.
+- Test your application across multiple browsers before deployment.
+- Consider using web-specific optimizations like lazy loading for better performance.
 
 ## Learn more
 
-* [Managing deployments](/core-concepts/deployments)
-* [Globe CLI reference](/cli)
-* [GitHub integration](/core-concepts/github-integration)
+- [Managing deployments](/core-concepts/deployments)
+- [Globe CLI reference](/core-concepts/cli)
+- [GitHub integration](/core-concepts/github-integration)

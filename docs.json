@@ -30,11 +30,6 @@
       "href": "/"
     },
     {
-      "id": "cli",
-      "title": "CLI",
-      "href": "/cli"
-    },
-    {
       "id": "infrastructure",
       "title": "Infrastructure",
       "href": "/infrastructure"
@@ -94,7 +89,44 @@
           "href": "/core-concepts/monitoring"
         },
         { "title": "Static Assets", "href": "/core-concepts/static-assets" },
-        { "title": "Cron Jobs", "href": "/core-concepts/cron-jobs" }
+        { "title": "Cron Jobs", "href": "/core-concepts/cron-jobs" },
+        {
+          "group": "Globe CLI",
+          "pages": [
+            {
+              "title": "Globe CLI Overview",
+              "href": "/core-concepts/cli"
+            },
+            {
+              "title": "Login and Logout",
+              "href": "/core-concepts/cli/login-and-logout"
+            },
+            {
+              "title": "Deploying a Project",
+              "href": "/core-concepts/cli/deploying-a-project"
+            },
+            {
+              "title": "Viewing Build Logs",
+              "href": "/core-concepts/cli/viewing-build-logs"
+            },
+            {
+              "title": "Linking and Unlinking Projects",
+              "href": "/core-concepts/cli/link-and-unlink"
+            },
+            {
+              "title": "Managing Globe Tokens",
+              "href": "/core-concepts/cli/managing-tokens"
+            },
+            {
+              "title": "Updating the CLI",
+              "href": "/core-concepts/cli/updating-the-cli"
+            },
+            {
+              "title": "Creating a New Project",
+              "href": "/core-concepts/cli/creating-a-new-project"
+            }
+          ]
+        }
       ]
     },
     {
@@ -103,25 +135,9 @@
       "pages": [
         { "title": "Overview", "href": "/frameworks" },
         { "title": "Dart Shelf", "href": "/frameworks/shelf-server" },
-        { "title": "Flutter Web", "href": "/frameworks/flutter-web" },
         { "title": "Dart Frog", "href": "/frameworks/dart-frog" },
+        { "title": "Flutter Web", "href": "/frameworks/flutter-web" },
         { "title": "Jaspr", "href": "/frameworks/jaspr" }
-      ]
-    },
-    {
-      "group": "CLI",
-      "tab": "cli",
-      "pages": [
-        { "title": "Overview", "href": "/cli" },
-        { "title": "Deploy", "href": "/cli/commands/deploy" },
-        { "title": "Build Logs", "href": "/cli/commands/build-logs" },
-        { "title": "Link", "href": "/cli/commands/link" },
-        { "title": "Unlink", "href": "/cli/commands/unlink" },
-        { "title": "Login", "href": "/cli/commands/login" },
-        { "title": "Token", "href": "/cli/commands/token" },
-        { "title": "Logout", "href": "/cli/commands/logout" },
-        { "title": "Update", "href": "/cli/commands/update" },
-        { "title": "Create", "href": "/cli/commands/create" }
       ]
     },
     {
@@ -146,7 +162,6 @@
         {
           "group": "Version History",
           "pages": [
-            { "title": "0.14.0 (Mar 25)", "href": "/releases/v/0.14.0" },
             { "title": "0.13.0 (Feb 25)", "href": "/releases/v/0.13.0" },
             { "title": "0.12.0 (Jan 25)", "href": "/releases/v/0.12.0" },
             { "title": "0.11.0 (Dec 24)", "href": "/releases/v/0.11.0" },
