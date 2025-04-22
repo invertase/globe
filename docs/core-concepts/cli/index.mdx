@@ -1,0 +1,73 @@
+---
+title: Globe CLI Overview
+description: Install and start deploying using the Globe CLI.
+---
+
+Use the Globe CLI to deploy and manage projects from your **terminal**. Ideal for automation, scripting, or working locally without switching to the dashboard.
+
+The CLI also provides a consistent and flexible way to manage your projects, view build logs, create templates, and more.
+
+## Pre-Requisites
+
+To get started, you must have the Dart SDK installed on your machine.
+
+## Installation
+
+To install the Globe CLI on your machine, run the following command:
+
+```bash
+dart pub global activate globe_cli
+```
+
+After installation, confirm it's available by running:
+
+```bash
+globe --help
+```
+
+## Inspecting Version
+
+To check your current version of the Globe CLI:
+
+```bash
+globe --version
+```
+
+If there's a newer version available, you’ll see a notification when running any CLI command.
+
+## Why Use the Globe CLI?
+
+- Deploy Flutter and Dart apps in seconds.
+- Manage deployments without leaving your terminal.
+- Link and manage multiple apps or mono-repos.
+- Securely manage project-specific tokens.
+- View build logs directly from your terminal.
+- Easily integrate into shell scripts or CI/CD pipelines.
+
+## CLI Commands
+
+The Globe CLI provides the following commands, which can be accessed by running globe `command` `subcommand`:
+
+- [`deploy`](/core-concepts/cli/deploying-a-project): Deploys your Dart application to Globe.
+- [`login`](/core-concepts/cli/login-and-logout): Logs you into your Globe account.
+- [`logout`](/core-concepts/cli/login-and-logout): Logs you out of your Globe account.
+- [`link`](/core-concepts/cli/link-and-unlink): Links a local project directory to a Globe project.
+- [`unlink`](/core-concepts/cli/link-and-unlink): Unlinks a local project directory from a Globe project.
+- [`token create`](/core-concepts/cli/managing-tokens): Creates a new authentication token.
+- [`token list`](/core-concepts/cli/managing-tokens): Lists your existing authentication tokens.
+- [`token delete`](/core-concepts/cli/managing-tokens): Deletes an authentication token.
+- [`update`](/core-concepts/cli/updating-the-cli): Updates the Globe CLI to the latest version.
+- [`create`](/core-concepts/cli/creating-a-new-project): Creates a new project from a template.
+- [`build-logs`](/core-concepts/cli/viewing-build-logs): Displays build logs.
+
+You can get help for any command by adding the --help flag (e.g., globe deploy --help).
+
+## Global Flags
+
+All CLI commands have global flags that can be used to modify the behavior of the command, which can be accessed by running globe `command` `--flag`.
+
+- `--help`: Display help information for the command.
+- `--verbose`: Display verbose output for the command, such as API calls and debug information.
+- `--token`: Use API token for CLI Auth.
+- `--project`: Set the Project ID used by this command. Defaults to what was previously linked using the globe link.
+- `--org`: Set the Organization ID used by this command. Defaults to what was previously linked using the globe link.
