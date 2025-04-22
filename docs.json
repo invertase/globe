@@ -200,5 +200,13 @@
         { "title": "Privacy Policy", "href": "/terms-privacy/privacy-policy" }
       ]
     }
-  ]
+  ],
+  "search": {
+    "docsearch": {
+      "apiKey": "dfea0a339a6cae0c538c4fd5eadd566f",
+      "appId": "OHWOUOYAZR",
+      "indexName": "globe",
+      "insights": true
+    }
+  }
 }
