@@ -30,11 +30,6 @@
       "href": "/"
     },
     {
-      "id": "infrastructure",
-      "title": "Infrastructure",
-      "href": "/infrastructure"
-    },
-    {
       "id": "releases",
       "title": "Releases",
       "href": "/releases"
@@ -142,15 +137,42 @@
     },
     {
       "group": "Infrastructure",
-      "tab": "infrastructure",
+      "tab": "root",
       "pages": [
-        { "title": "Overview", "href": "/infrastructure" },
-        { "title": "Limits", "href": "/infrastructure/limits" },
-        { "title": "Cold Starts", "href": "/infrastructure/cold-starts" },
-        { "title": "Cron Jobs", "href": "/infrastructure/cron-jobs" },
-        { "title": "Headers", "href": "/infrastructure/headers" },
-        { "title": "Regions", "href": "/infrastructure/regions" },
-        { "title": "Web Sockets", "href": "/infrastructure/websockets" }
+        {
+          "group": "Infrastructure Overview",
+          "pages": [
+            {
+              "title": "Overview",
+              "href": "/infrastructure/overview"
+            },
+            {
+              "title": "Cold Starts",
+              "href": "/infrastructure/overview/cold-starts"
+            },
+            {
+              "title": "Regions And Networking",
+              "href": "/infrastructure/overview/regions-and-networking"
+            },
+            {
+              "title": "HTTP Headers in Globe",
+              "href": "/infrastructure/overview/http-headers"
+            }
+          ]
+        },
+        {
+          "group": "Performance and Security",
+          "pages": [
+            {
+              "title": "Performance",
+              "href": "/infrastructure/performance-and-security/performance"
+            },
+            {
+              "title": "Security",
+              "href": "/infrastructure/performance-and-security/security"
+            }
+          ]
+        }
       ]
     },
     {
