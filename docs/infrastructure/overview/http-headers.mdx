@@ -1,0 +1,122 @@
+---
+title: HTTP Headers in Globe
+---
+
+Globe automatically adds several **HTTP headers** to each **request** reaching your application. These headers provide valuable information about the **request context**, **execution environment**, and **geographic details** that you can use for **customizing behavior** and **diagnostics**.
+
+## Request headers provided by Globe
+
+The following headers are added to each request before it reaches your Dart application:
+
+| Header                 | Type    | Description                                                                        |
+| ---------------------- | ------- | ---------------------------------------------------------------------------------- |
+| `x-globe-request-id`   | String  | Unique identifier for the current request, useful for debugging and tracing        |
+| `x-globe-dc-id`        | String? | IATA code of the compute region where the request is executing                     |
+| `x-globe-dc-eu`        | String? | `true` or `false` indicating whether the request is executing in an EU data center |
+| `x-globe-dc-city`      | String? | City name where the request is being executed                                      |
+| `x-globe-dc-country`   | String  | ISO-3166-1 alpha-2 country code of the executing data center (e.g., "US")          |
+| `x-globe-dc-continent` | String  | Continent of the executing data center (e.g., "Europe")                            |
+| `x-globe-dc-latitude`  | String  | Latitude coordinate of the executing data center                                   |
+| `x-globe-dc-longitude` | String  | Longitude coordinate of the executing data center                                  |
+| `x-globe-eu`           | String? | `true` or `false` indicating whether the request originated from within the EU     |
+| `x-globe-latitude`     | String? | Latitude coordinate of the request origin                                          |
+| `x-globe-longitude`    | String? | Longitude coordinate of the request origin                                         |
+| `x-globe-city`         | String? | City name where the request originated from                                        |
+| `x-globe-country`      | String? | ISO-3166-1 alpha-2 country code of the request origin (e.g., "US")                 |
+| `x-globe-region`       | String? | Region or state where the request originated from (e.g., "Texas")                  |
+| `x-globe-region-code`  | String? | ISO-3166-2 region code of the request origin (e.g., "TX")                          |
+| `x-globe-continent`    | String? | Continent where the request originated from (e.g., "Europe")                       |
+| `x-globe-tz`           | String? | Timezone of the request origin (e.g., "America/Chicago")                           |
+
+Additionally, Globe includes standard forwarding headers:
+
+| Header              | Description                                 |
+| ------------------- | ------------------------------------------- |
+| `x-forwarded-for`   | Original IP address of the client           |
+| `x-forwarded-proto` | Protocol used by the client (http or https) |
+
+## Response headers added by Globe
+
+Globe adds these headers to responses sent back to clients:
+
+| Header                | Description                                     |
+| --------------------- | ----------------------------------------------- |
+| `x-globe-temperature` | Container start state: `cold`, `warm`, or `hot` |
+
+## Using headers in your Dart application
+
+### Accessing request headers
+
+Here's how to access Globe headers in a typical Shelf application:
+
+```dart
+import 'package:shelf/shelf.dart';
+
+Response handleRequest(Request request) {
+  final requestId = request.headers['x-globe-request-id'] ?? 'unknown';
+  final region = request.headers['x-globe-dc-id'] ?? 'unknown';
+  final city = request.headers['x-globe-city'] ?? 'unknown';
+
+  // Use header values in your application logic
+  return Response.ok('Request $requestId from $city, processed in $region');
+}
+```
+
+### Common use cases for Globe headers
+
+#### Geolocation-based customization
+
+Use location headers to provide regionalized content without additional geolocation services:
+
+```dart
+Response handleRequest(Request request) {
+  final country = request.headers['x-globe-country'];
+  final language = _determineLanguageForCountry(country);
+
+  return Response.ok(_getLocalizedContent(language));
+}
+```
+
+#### Deployment debugging
+
+Headers can help identify where and how your code is executing:
+
+```dart
+Response debugInfo(Request request) {
+  return Response.ok({
+    'requestId': request.headers['x-globe-request-id'],
+    'datacenter': request.headers['x-globe-dc-city'],
+    'country': request.headers['x-globe-dc-country'],
+    'temperature': request.headers['x-globe-temperature']  // Checked in response
+  }.toString());
+}
+```
+
+#### GDPR and data residency compliance
+
+EU-specific headers help implement compliance requirements:
+
+```dart
+bool isRequestFromEU(Request request) {
+  return request.headers['x-globe-eu'] == 'true';
+}
+
+Response handleRequest(Request request) {
+  if (isRequestFromEU(request)) {
+    // Apply EU-specific data handling
+  }
+
+  return Response.ok('Handled with appropriate compliance');
+}
+```
+
+#### Monitoring cold starts
+
+You can monitor the x-globe-temperature response header to track cold start frequency and impact.
+
+## Best practices
+
+- Don't assume all headers will be present; always provide fallback values
+- For location-specific features, use the headers as a convenience, but provide user options to override
+- Include the `x-globe-request-id` in logs to simplify request tracking
+- Consider storing region information in analytics to identify performance patterns
