@@ -155,6 +155,10 @@
               "href": "/infrastructure/overview/regions-and-networking"
             },
             {
+              "title": "Resources And Limits",
+              "href": "/infrastructure/overview/resources-and-limits"
+            },
+            {
               "title": "HTTP Headers in Globe",
               "href": "/infrastructure/overview/http-headers"
             }
