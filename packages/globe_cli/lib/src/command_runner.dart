@@ -9,6 +9,7 @@ import 'commands/build_logs_command.dart';
 import 'commands/commands.dart';
 import 'commands/create_project_command.dart';
 import 'commands/project_command.dart';
+import 'commands/runtime_command.dart';
 import 'commands/update.dart';
 import 'get_it.dart';
 import 'graphql/client.dart';
@@ -74,6 +75,7 @@ class GlobeCliCommandRunner extends CompletionCommandRunner<int> {
     addCommand(BuildLogsCommand());
     addCommand(TokenCommand());
     addCommand(ProjectCommand());
+    addCommand(RuntimeCommand());
     addCommand(CreateProjectFromTemplate());
     addCommand(WhoamiCommand());
   }
