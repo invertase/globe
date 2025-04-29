@@ -1,0 +1,16 @@
+{
+  "name": "globe_ai",
+  "version": "1.0.0",
+  "license": "MIT",
+  "type": "module",
+  "directories": {
+    "lib": "lib"
+  },
+  "dependencies": {
+    "google-protobuf": "^3.21.4",
+    "openai": "^4.85.4"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.6"
+  }
+}

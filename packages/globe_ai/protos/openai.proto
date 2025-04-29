@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+
+message ChatCompletion {
+
+  message Message {
+    string role = 1;
+    string content = 2;
+    string refusal = 3;
+  }
+
+  message Choices {
+    uint32 index = 1;
+    Message message = 2;
+    string finish_reason = 3;
+  }
+
+  message Prompt_tokens_details {
+    uint32 cached_tokens = 1;
+    uint32 audio_tokens = 2;
+  }
+
+  message Completion_tokens_details {
+    uint32 reasoning_tokens = 1;
+    uint32 audio_tokens = 2;
+    uint32 accepted_prediction_tokens = 3;
+    uint32 rejected_prediction_tokens = 4;
+  }
+
+  message Usage {
+    uint32 prompt_tokens = 1;
+    uint32 completion_tokens = 2;
+    uint32 total_tokens = 3;
+    Prompt_tokens_details prompt_tokens_details = 4;
+    Completion_tokens_details completion_tokens_details = 5;
+  }
+
+  string id = 1;
+  string object = 2;
+  uint32 created = 3;
+  string model = 4;
+  repeated Choices choices = 5;
+  Usage usage = 6;
+  string service_tier = 7;
+  string system_fingerprint = 8;
+}
+
+message ChatCompletionChunk {
+  string id = 1;
+  string object = 2;
+  uint32 created = 3;
+  string model = 4;
+  repeated Choices choices = 5;
+  ChatCompletion.Usage usage = 6;
+  string service_tier = 7;
+  string system_fingerprint = 8;
+
+
+  message Choices {
+    uint32 index = 1;
+    ChatCompletion.Message delta = 2;
+    string finish_reason = 3;
+  }
+
+}
