@@ -85,13 +85,15 @@ final class RuntimeVersion {
 
 Future<RuntimeVersion> getLatestVersion() async {
   final url = Uri.parse(
-      'https://api.github.com/repos/invertase/globe_runtime/releases/latest');
+    'https://api.github.com/repos/invertase/globe_runtime/releases/latest',
+  );
   final response = await http.get(url);
   if (response.statusCode != 200) {
     throw Exception('Failed to fetch release info');
   }
   return RuntimeVersion.fromJson(
-      jsonDecode(response.body) as Map<String, dynamic>);
+    jsonDecode(response.body) as Map<String, dynamic>,
+  );
 }
 
 class RuntimeInstallCommand extends BaseGlobeCommand {
