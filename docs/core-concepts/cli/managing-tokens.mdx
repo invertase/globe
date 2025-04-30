@@ -1,0 +1,64 @@
+---
+title: Managing Globe Tokens
+---
+
+The `globe token` command allows you to **create**, **list**, and **delete** authentication tokens. These tokens can be used to authenticate the CLI or other tools without requiring interactive login.
+
+## Subcommands
+
+- `globe token create`: Creates a new token.
+- `globe token list`: Lists existing tokens.
+- `globe token delete`: Deletes a token.
+
+## `globe token create`
+
+### Usage
+
+```bash
+globe token create [flags]
+```
+
+### Flags
+
+- `--name`: **Required**. A descriptive name for the token.
+- `--expiry`: The expiration date of the token (format: YYYY-MM-DD).
+- `--project`: Associate the token with specific project IDs (comma-separated).
+- `--help`: Displays help information.
+- `--verbose`: Displays verbose output.
+- `--token`: Use API token for CLI Auth.
+
+### Example:
+
+```bash
+globe token create --name="CI/CD Token" --expiry="2024-12-31" --project="project-id-1,project-id-2"
+```
+
+## `globe token list`
+
+### Usage:
+
+```bash
+globe token list [flags]
+```
+
+### Flags
+
+- `--project`: List tokens for a specific project.
+- `--help`: Displays help information.
+- `--verbose`: Displays verbose output.
+- `--token`: Use API token for CLI Auth.
+
+## `globe token delete`
+
+### Usage:
+
+```bash
+globe token delete --tokenId="your-token-id" [flags]
+```
+
+### Flags
+
+- `--tokenId`: Required. The ID of the token to delete.
+- `--help`: Displays help information.
+- `--verbose`: Displays verbose output.
+- `--token`: Use API token for CLI Auth.

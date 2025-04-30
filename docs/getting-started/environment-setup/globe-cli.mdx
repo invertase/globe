@@ -1,0 +1,37 @@
+---
+title: Setting up the Globe CLI
+---
+
+The CLI gives you full control from the terminal.
+
+<Steps>
+  <Step title="Install the CLI">
+    Run the command below in your terminal:
+    ```bash 
+    dart pub global activate globe_cli
+    ```
+  </Step>
+  <Step title="Verify Installation">
+   Confirm that the CLI is installed correctly:
+
+    ```bash
+    globe --version
+    ```
+
+    This outputs the version number of the Globe CLI, confirming a successful installation.
+
+  </Step>
+  <Step title="Log in to your Globe account">
+   Authenticate your CLI with your Globe account:
+
+    ```bash
+    globe login
+    ```
+
+    This command will open a browser window to complete the login process.
+
+  </Step>
+
+</Steps>
+
+You can now deploy directly from your project directory.

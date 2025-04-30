@@ -1,21 +1,66 @@
 ---
-title: Flutter Web
+title: Deploying a Flutter Web Application
 ---
 
-To deploy a Flutter Web Application, you can add it via the [Github Integration](/deployments/github-integration) or if you use the CLI, you can run the following command in the root of the project: 
+Deploying Flutter Web on Globe enables you to host high-performance single-page applications (SPAs) globally with minimal setup. Globe detects Flutter projects automatically and applies optimized defaults for build, deploy, and caching. This page outlines requirements and deployment behaviour.
 
-```bash
-globe deploy
-```
+## Project Setup
 
-Globe will automatically apply the correct preset and deploy your application. The build system will auto-detect `build_runner` if used and runs it during the building stage of the deployment.
+To create a new Flutter Web project:
 
-For a more detailed example, [click here](/getting-started/flutter-web).
+1. Open your terminal and run:
 
-## How it works
+   ```bash
+   flutter create my_flutter_app
+   cd my_flutter_app
+   ```
 
-Globe builds your Flutter Application for the Web and uploads the built files to our globally distributed CDN network. Hence, your application is always served from a location nearest to the user thus reducing latency and improving load times.
+2. Test your application locally with:
+   ```bash
+   flutter run -d chrome
+   ```
 
-## Automatic Optimizations
+## Deploying to Globe
 
-Globe hashes your assets and applies filename fingerprinting to vastly improve cache performance. This also ensures your files are correctly updated by the browser for every new deployment.
+1. Run the deployment command from your project root:
+
+   ```bash
+   globe deploy
+   ```
+
+2. For first-time deployments:
+
+   - Confirm setup when prompted (press Y)
+   - Enter a name for your project (e.g., my-flutter-app)
+   - Accept the detected Flutter preset when prompted
+
+3. Wait for the deployment to complete. You'll receive a unique URL for accessing your web application.
+
+## Viewing your application
+
+Once deployed, your app is available at the unique URL shown in your dashboard (e.g., https://my-flutter-app.globeapp.dev). Reloading the page or opening in multiple tabs will show the same consistent deployment state.
+
+![Flutter Web Application](/assets/flutter-web.png)
+
+## Deployment Behaviour
+
+Globe builds your Flutter Web project and uploads the compiled output (build/web) to its CDN network.
+
+- **Preset detection**: Flutter Web projects are automatically recognized.
+- **Environment**: No manual configuration required.
+- **Build runner**: If used, it is auto-detected and executed before deployment.
+- **Asset handling**:
+  - Assets are hashed and fingerprinted for cache optimization.
+  - Base href is automatically set to /.
+
+## Best practices
+
+- Use responsive design principles for optimal display across different devices.
+- Test your application across multiple browsers before deployment.
+- Consider using web-specific optimizations like lazy loading for better performance.
+
+## Learn more
+
+- [Managing deployments](/core-concepts/deployments)
+- [Globe CLI reference](/core-concepts/cli)
+- [GitHub integration](/core-concepts/github-integration)

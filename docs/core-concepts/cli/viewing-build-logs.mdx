@@ -1,0 +1,43 @@
+---
+title: Viewing Build Logs
+---
+
+You can view the build logs for your deployments in two ways:
+
+## 1. During Deployment (with `--logs`)
+
+    Use the `--logs` flag with `globe deploy` to stream the build logs directly to your terminal:
+
+    ```bash
+    # Stream logs during the deployment process
+    globe deploy --logs
+    ```
+
+## 2. After Deployment (with `globe build-logs`)
+
+    Use the `globe build-logs` command to view the logs for a specific deployment. You'll need the deployment ID for this.
+
+    ```bash
+    # Fetch logs for a specific deployment using its ID
+    globe build-logs -d <DEPLOYMENT_ID>
+    ```
+
+<Info>
+  You can find the deployment ID in the Globe dashboard (usually within the
+  deployment details page) or often in the output provided right after running
+  the `globe deploy` command.
+</Info>
+
+## Usage
+
+```bash
+globe build-logs [flags]
+```
+
+## Flags
+
+- `-d`, `--deployment`: **Required.** The ID of the deployment.
+- `--help`: Displays help information.
+- `--verbose`: Displays verbose output.
+- `--token`: Use API token for CLI Auth.
+- `--project`: Set the Project ID used by this command. Defaults to what was previously linked using `globe link`.

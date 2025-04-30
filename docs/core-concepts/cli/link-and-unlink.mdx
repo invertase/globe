@@ -1,0 +1,70 @@
+---
+title: Linking and Unlinking Projects
+---
+
+The `globe link` and `globe unlink` commands manage the association between your local project directories and your Globe projects.
+
+## `globe link`
+
+**Purpose**: Associates a local directory with a Globe project. This is required before you can deploy using `globe deploy`.
+
+### **Usage**:
+
+```bash
+globe link [flags]
+```
+
+### Flags:
+
+- `--project`: Specify the project ID or name to link. If omitted, the CLI will prompt you interactively.
+- `--show-all`: Lists all linked projects within the current directory (useful for monorepos).
+- `--help`: Displays help information.
+- `--verbose`: Displays verbose output.
+- `--token`: Use API token for CLI Auth.
+
+### Interactive Workflow:
+
+- Run `globe link` in your project's root directory.
+- The CLI will display a list of your Globe projects.
+- Select the project you want to link.
+- The CLI stores the project association in the `.dart_tool/dart_globe` directory (add this to your `.gitignore`).
+
+### Non-Interactive Workflow:
+
+```bash
+globe link --project="your-project-id" # Or project name
+```
+
+### Multiple Projects (Monorepos):
+
+`globe link` supports linking multiple projects within a single directory. Use `--show-all` to view linked projects. When running `globe deploy`, use `--project` or the interactive prompt to specify the target project.
+
+## `globe unlink`
+
+**Purpose**: Removes the association between a local directory and a Globe project.
+
+### Usage:
+
+```bash
+globe unlink [flags]
+```
+
+### Flags:
+
+- `--project`: Specify the project ID or name to unlink. If omitted, the CLI will prompt you interactively.
+- `--help`: Displays help information.
+- `--verbose`: Displays verbose output.
+- `--token`: Use API token for CLI Auth.
+
+### Interactive Workflow:
+
+- Run `globe unlink` in your project's root directory.
+- The CLI will display a list of linked projects.
+- Select the project you want to unlink.
+- The CLI removes the association.
+
+### Non-Interactive Workflow:
+
+```bash
+globe unlink --project="your-project-id" # Or project name
+```

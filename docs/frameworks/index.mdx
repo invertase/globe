@@ -2,13 +2,19 @@
 title: Frameworks
 ---
 
-Globe aims to be framework agnostic and hence you can deploy any frameworks that does not have additional build steps. If the framework that you are using does not require such additional steps, then it is already supported by Globe. There is auto detection for `build_runner` and `melos`, so these are already covered by the Globe system. In addition, you can also set a custom build command for your project.
+Globe is **framework-agnostic** and supports **any Dart-based project** that can be built **without additional tooling**. If your framework does not require extra setup or custom build steps, it will work on Globe by default.
 
-Some frameworks have additional steps like build commands that need to be run before deployment. Globe supports these frameworks by automatically providing default build settings for each framework that can be used to build and deploy your application.
+For supported frameworks with specific build requirements, Globe applies **preconfigured framework** presets that detect and run the necessary build commands automatically. This includes support for tools like `build_runner` and `melos`.
 
-## Framework Presets
+You can also configure a custom build command for frameworks not yet supported by presets.
 
-Ongoing work is being done to support more frameworks. If you'd like to see a framework supported please submit a [feature request](https://invertase.canny.io/globe).
+## Supported frameworks
 
-- [Dart Frog](/frameworks/dart-frog)
-- [Flutter Web](/frameworks/flutter-web)
+Globe currently includes presets for:
+
+- [Dart Shelf](/frameworks/shelf-server): Minimal HTTP server framework for Dart.
+- [Dart Frog](/frameworks/dart-frog): File system-based routing framework for Dart.
+- [Flutter Web](/frameworks/flutter-web): Frontend framework for building SPAs and web applications.
+- [Jaspr](/frameworks/jaspr): Modern web framework for building websites in Dart.
+
+More frameworks are in progress. To request support for a specific framework, [submit a feature request](https://invertase.canny.io/globe).
