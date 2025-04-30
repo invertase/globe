@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2025-04-29
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`globe_cli` - `v0.0.16-dev.0`](#globe_cli---v0016-dev0)
+
+---
+
+#### `globe_cli` - `v0.0.16-dev.0`
+
+ - **FIX**: Ignore custom build runner command if disabled in preset ([#158](https://github.com/invertase/globe/issues/158)). ([8856dd36](https://github.com/invertase/globe/commit/8856dd36f591265c381cf5a9073cb023c566b708))
+ - **FEAT**: Add simple globe runtime install ([#162](https://github.com/invertase/globe/issues/162)). ([3536e99d](https://github.com/invertase/globe/commit/3536e99dd6cfb2b871efe8310cccca0353b077a3))
+
+
 ## 2025-04-09
 
 ### Changes
