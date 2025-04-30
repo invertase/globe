@@ -5,7 +5,7 @@ description: How Globe's network architecture works
 
 Globe uses a two-tier network architecture to deliver your applications globally:
 
-### Globe Edge Network
+## Globe Edge Network
 
 Globe's edge network spans more than [300 cities across 100+ countries](https://www.cloudflare.com/en-gb/network/), powered by Cloudflare's global infrastructure. This network:
 
@@ -13,11 +13,10 @@ Globe's edge network spans more than [300 cities across 100+ countries](https://
 - Provides [DDoS](https://www.cloudflare.com/learning/ddos/what-is-a-ddos-attack/) protection and **security filtering**
 - Routes requests to the appropriate **compute regions**
 - Serves **cached content** directly when possible
-- Enables **instant rollbacks** and **A/B testing** deployments
 
 The edge network handles initial request processing before forwarding to a compute region where your code runs.
 
-### Compute regions
+## Compute regions
 
 Globe currently operates 39 compute regions worldwide where your Dart application code executes. These regions:
 
@@ -30,7 +29,12 @@ Globe currently operates 39 compute regions worldwide where your Dart applicatio
 
 ### Default Behavior
 
-Globe automatically routes requests to the **nearest compute region** to minimize latency. However, this may not always provide the best performance.
+Globe optimizes request handling through intelligent loadbalancers that distribute traffic efficiently across compute regions. These loadbalancers:
+
+- Automatically route requests to maintain optimal performance
+- Balance workloads based on regional capacity and response times
+- Prevent overloading of any single compute region
+- Ensure consistent application performance regardless of user location
 
 ### When to Use Preferred Regions
 
@@ -81,14 +85,6 @@ This header:
 - Overrides any dashboard settings
 - Can specify multiple regions (comma-separated)
 - Uses IATA airport codes to identify regions
-
-## Failover Behavior
-
-Globe handles region availability intelligently:
-
-- If a single preferred region is specified but unavailable, Globe falls back to standard routing (nearest available region)
-- If multiple preferred regions are specified, Globe selects the closest available one
-- If all preferred regions are unavailable, standard routing applies
 
 ## Available Compute Regions
 

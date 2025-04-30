@@ -23,7 +23,7 @@ When you deploy your application to Globe, the following happens:
 
 Globe runs your Dart code in isolated containers using proprietary runner technology.
 
-- **Execution environment**: Your app runs inside a **sandboxed** container with **no shared memory** or **persistent disk**.
+- **Execution environment**: Your app runs inside a sandboxed container with no shared memory or persistent disk, but supports [static assets](/core-concepts/static-assets) with built-in compatibility for file system access and shelf_static for serving web content.
 - **Compiled output**: Deployments are compiled as native `x86_64` binaries for **optimal performance**.
 - **Scaling**: CPU and memory are **automatically allocated** per request based on **demand**.
 
@@ -59,7 +59,6 @@ Each request runs in a fresh container with no **persistent memory** or **file s
 - **Optimized for Dart**: The execution environment is specifically designed for **Dart applications**, providing **efficient** runtime performance.
 - **Global by default**: Your application instantly becomes available **worldwide** with **regional compute** for lower latency.
 - **Cost efficiency**: Pay only for actual usage—**no charges** for **idle capacity** or **over-provisioned** resources.
-- **Built-in DevOps**: Instant rollbacks and A/B testing without additional tooling.
 - **Security at scale**: [DDoS](https://www.cloudflare.com/learning/ddos/what-is-a-ddos-attack/) protection and **edge network security** features protect your application by default.
 
 ## Technical Limitations

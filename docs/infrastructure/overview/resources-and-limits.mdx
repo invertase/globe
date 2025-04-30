@@ -14,7 +14,7 @@ Your Globe account operates with the following default resource thresholds and b
 | ------------------ | ------------------------- | ------------------------------------------------------------ |
 | **Requests**       | 1 million per month       | All HTTP requests count toward this limit                    |
 | **Bandwidth**      | 10GB per month (uncached) | Static assets served from cache don't count toward bandwidth |
-| **Memory**         | 256MB per container       | Applies per running instance of your application             |
+| **Memory**         | 512MB per container       | Applies per running instance of your application             |
 | **CPU Usage**      | Varies based on load      | Avoid CPU-heavy tasks for extended periods                   |
 | **Execution time** | 30 seconds per request    | Maximum processing time allowed per single request           |
 
@@ -45,7 +45,7 @@ If you exceed your bandwidth allowance, you may experience request rejections or
 
 ## Memory Usage
 
-Each running instance of your application in Globe has access to **256MB of memory**.
+Each running instance of your application in Globe has access to **512MB of memory**.
 
 If your application exceeds this memory limit, Globe will terminate your application instance. Also, any active requests will fail as a result.
 
