@@ -2,11 +2,11 @@
 title: GlobeKV
 ---
 
-GlobeKV is a **key-value store** designed for **fast reads** and **low-latency data access**. It is ideal for **caching, user settings, session storage, and feature flags** in Flutter applications.
+GlobeKV is a **key-value store** designed for **fast reads** and **low-latency data access**. It is ideal for **caching**, **user settings**, **session storage**, and **feature flags** in Dart applications.
 
-Unlike traditional databases, GlobeKV **does not guarantee immediate consistency**. Updates can take up to **60 seconds** to propagate globally. This makes it great for **temporary or frequently accessed data** but unsuitable for operations requiring absolute consistency (e.g., payments, counters).
+Unlike traditional databases, GlobeKV does not guarantee **immediate consistency**. Updates can take up to **60 seconds** to propagate globally. This makes it great for **temporary** or **frequently accessed data** but unsuitable for operations requiring absolute consistency (e.g., payments, counters).
 
-This guide explains **how to use GlobeKV**, covering **setup, storing and retrieving data, expiration, performance, and eventual consistency**. For method details and advanced configurations, links to the API documentation are provided where relevant.
+This page covers setup, storing and retrieving data, data expiration, performance characteristics, and eventual consistency
 
 ## Setting Up GlobeKV
 
@@ -43,7 +43,10 @@ flutter pub add globe_kv
 
 To use GlobeKV, you need a **KV namespace**.
 
-Replace with steps
+1. From your Globe dashboard, go to the **KV** section
+2. Select **Create Namespace**
+3. Enter your Namespace name (e.g. users)
+4. Select **Create**
 
 ### 3. Creating an Instance
 
@@ -58,7 +61,7 @@ final kv = GlobeKV('namespace-id');
 
 ### 4. Persist Data to Your Local Filesystem
 
-In development, GlobeKV will use in-memory storage so your data will be lost when the Dart app is restarted. To persist data to your local filesystem, use the GlobeFileStore instance:
+In development, GlobeKV will use **in-memory storage** so your data will be lost when the Dart app is restarted. To persist data to your local filesystem, use the GlobeFileStore instance:
 
 ```dart
 final kv = GlobeKV('namespace-id', store: GlobeFileStore());
@@ -91,7 +94,7 @@ await kv.delete('user:123');
 
 #### Retrieving Data
 
-GlobeKV **supports typed retrieval**, so you can fetch data in a specific format:
+GlobeKV supports **typed retrieval**, so you can fetch data in a specific format:
 
 ```dart
 await kv.getString('key');  // String?
@@ -102,7 +105,7 @@ await kv.getBinary('key');  // List<int>?
 
 ### Listing and Filtering Data
 
-When storing multiple related keys (e.g., user data), use prefixes to **group and filter keys**.
+When storing multiple related keys (e.g., user data), use prefixes to **group** and **filter** keys.
 
 #### Listing All Keys with a Prefix
 
@@ -113,7 +116,7 @@ print(result.results.map((e) => e.key)); // ['user:123', 'user:456']
 
 #### Paginating Large Datasets
 
-By default, list() returns **up to 1000 keys per page**. If you have more, paginate:
+By default, list() returns up to **1000 keys per page**. If you have more, paginate:
 
 ```dart
 final result = await kv.list(prefix: 'user:', limit: 10);
@@ -149,10 +152,10 @@ await kv.set('user:123', 'John Doe', expires: DateTime.now().add(Duration(minute
 
 GlobeKV uses **edge locations** (Points of Presence, POPs) to **cache data closer to users**.
 
-- If data is **already cached** at an edge location → **Hot Read** (Fast)
-- If data **needs to be fetched** from storage → **Cold Read** (Slower)
+- If data is already cached at an edge location → **Hot Read** (Fast)
+- If data needs to be fetched from storage → **Cold Read** (Slower)
 
-By default, **hot reads last 60 seconds**.
+By default, hot reads last **60 seconds**.
 
 #### Increasing Cache Duration for Faster Reads
 
