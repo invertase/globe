@@ -16,7 +16,7 @@ Your Globe account operates with the following default resource thresholds and b
 | **Bandwidth**      | 10GB per month (uncached) | Static assets served from cache don't count toward bandwidth |
 | **Memory**         | 256MB per container       | Applies per running instance of your application             |
 | **CPU Usage**      | Varies based on load      | Avoid CPU-heavy tasks for extended periods                   |
-| **Execution time** | 10 seconds per request    | Maximum processing time allowed per single request           |
+| **Execution time** | 30 seconds per request    | Maximum processing time allowed per single request           |
 
 These baseline thresholds are intended for general use. Production apps should monitor usage and optimise accordingly.
 
@@ -45,21 +45,16 @@ If you exceed your bandwidth allowance, you may experience request rejections or
 
 ## Memory Usage
 
-Each running container in your Globe deployment has access to **256MB of memory**. This memory is shared across:
+Each running instance of your application in Globe has access to **256MB of memory**.
 
-- Your application code
-- Libraries, packages, and dependencies
-- In-memory caches
-- Active connections and stateful data
-
-If your application exceeds this memory limit, Globe may **terminate the container** to maintain platform stability. Any active requests handled by that container will fail as a result.
+If your application exceeds this memory limit, Globe will terminate your application instance. Also, any active requests will fail as a result.
 
 ## CPU Usage
 
-Globe dynamically monitors CPU load across the platform. There's no hard limit per container instead, applications using excessive CPU for extended periods may have requests **terminated** to protect overall system performance.
+Globe dynamically monitors CPU load across the platform. There's no hard limit per instance instead, applications using excessive CPU for extended periods may have requests **terminated**.
 
 ## Execution Time
 
-Each request to your application is allowed a maximum of **10 seconds** from start to finish, from the time Globe receives the request to when the response is completed.
+Each request to your application is allowed a maximum of **30 seconds** from start to finish, from the time Globe receives the request to when the response is completed.
 
-If a request takes longer than 10 seconds, it will be **automatically terminated**, regardless of its progress.
+If a request takes longer than 30 seconds, it will be **automatically terminated**, regardless of its progress.
