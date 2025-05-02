@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:globe_ai/generated/openai.pbserver.dart';
 import 'package:globe_runtime/globe_runtime.dart';
@@ -7,10 +8,9 @@ sealed class AiProvider {
   static const String moduleName = 'GlobeAISdk';
   static const String codeURL = "dist/globe_ai.js";
 
-  final String name;
   final String apiKey;
 
-  const AiProvider({required this.name, required this.apiKey});
+  const AiProvider(this.apiKey);
 
   GlobeRuntime get _runtime => GlobeRuntime.instance;
 
@@ -24,31 +24,37 @@ sealed class AiProvider {
   }
 }
 
-class OpenAI extends AiProvider {
-  final OpenAIConfig config;
-  OpenAI(this.config) : super(name: 'OpenAI', apiKey: config.apiKey);
+sealed class OpenAiModel<T, Z> {
+  Future<T> generateText({required String prompt});
 
-  Future<ChatCompletion> generateText(
-    String model, {
+  Stream<Z> streamText({required String prompt});
+}
+
+class ChatModel extends OpenAiModel<String, ChatCompletionChunk> {
+  final OpenAI _openAI;
+  final String model;
+
+  ChatModel._(this._openAI, this.model);
+
+  @override
+  Future<String> generateText({
     required String prompt,
-    String? user,
   }) async {
-    await _registerModuleIfNotAlready();
+    await _openAI._registerModuleIfNotAlready();
 
-    final completer = Completer<ChatCompletion>();
+    final completer = Completer<String>();
 
-    _runtime.callFunction(
+    _openAI._runtime.callFunction(
       AiProvider.moduleName,
-      function: 'openai_generate_text',
-      args: [model.toFFIType, prompt.toFFIType],
+      function: 'openai_chat_generate_text',
+      args: [model.toFFIType, prompt.toFFIType, ''.toFFIType],
       onData: (data) {
         if (data.hasError()) {
           completer.completeError(data.error);
           return true;
         }
 
-        final response = ChatCompletion.fromBuffer(data.data);
-        completer.complete(response);
+        completer.complete(utf8.decode(data.data));
         return true;
       },
     );
@@ -56,19 +62,18 @@ class OpenAI extends AiProvider {
     return completer.future;
   }
 
-  Stream<ChatCompletionChunk> streamText(
-    String model, {
+  @override
+  Stream<ChatCompletionChunk> streamText({
     required String prompt,
-    String? user,
   }) async* {
-    await _registerModuleIfNotAlready();
+    await _openAI._registerModuleIfNotAlready();
 
     final streamController = StreamController<ChatCompletionChunk>();
 
-    _runtime.callFunction(
+    _openAI._runtime.callFunction(
       AiProvider.moduleName,
-      function: 'openai_stream_text',
-      args: [model.toFFIType, prompt.toFFIType],
+      function: 'openai_chat_stream_text',
+      args: [model.toFFIType, prompt.toFFIType, ''.toFFIType],
       onData: (data) {
         if (data.hasError()) {
           streamController
@@ -93,4 +98,11 @@ class OpenAI extends AiProvider {
 
     yield* streamController.stream;
   }
+}
+
+class OpenAI extends AiProvider {
+  final OpenAIConfig config;
+  OpenAI(this.config) : super(config.apiKey);
+
+  ChatModel chat(String model) => ChatModel._(this, model);
 }

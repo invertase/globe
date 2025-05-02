@@ -1,110 +1,50 @@
-import { OpenAI } from "openai";
 import { ChatCompletion, ChatCompletionChunk } from "./generated/openai";
 
+import { generateText, LanguageModelV1, streamText } from "ai";
+import { createOpenAI, OpenAIProvider } from "@ai-sdk/openai"; // Ensure OPENAI_API_KEY environment variable is set
+
 type GlobeAISdkState = {
-  openAI: OpenAI;
+  openAI: OpenAIProvider;
 };
 
-const openai_generate_text = async (
+const openai_chat_generate_text = async (
   state: GlobeAISdkState,
   model: string,
-  query: string,
+  prompt: string,
+  system: string | undefined,
   callbackId: number
 ) => {
-  const completion = await state.openAI.chat.completions.create({
-    model,
-    messages: [{ role: "user", content: query }],
+  const { text } = await generateText({
+    model: state.openAI.chat(model),
+    prompt,
+    system,
   });
 
-  const choices: ChatCompletion.Choices[] = completion.choices.map((choice) => {
-    return new ChatCompletion.Choices({
-      index: choice.index,
-      finish_reason: choice.finish_reason,
-      message: new ChatCompletion.Message({
-        role: choice.message.role.toString(),
-        content: choice.message.content?.toString(),
-        refusal: choice.message.refusal?.toString(),
-      }),
-    });
-  });
-
-  const usage = new ChatCompletion.Usage({
-    total_tokens: completion.usage?.total_tokens,
-    completion_tokens: completion.usage?.completion_tokens,
-    prompt_tokens: completion.usage?.prompt_tokens,
-    prompt_tokens_details: new ChatCompletion.Prompt_tokens_details(
-      completion.usage?.prompt_tokens_details
-    ),
-    completion_tokens_details: new ChatCompletion.Completion_tokens_details(
-      completion.usage?.completion_tokens_details
-    ),
-  });
-
-  const response = new ChatCompletion({
-    id: completion.id,
-    model: completion.model,
-    created: completion.created,
-    system_fingerprint: completion.system_fingerprint,
-    object: completion.object,
-    service_tier: completion.service_tier?.toString(),
-    choices,
-    usage,
-  });
-
-  Dart.send_value(callbackId, response.serializeBinary());
+  const result = new TextEncoder().encode(text);
+  Dart.send_value(callbackId, result);
 };
 
-const openai_stream_text = async (
+const openai_chat_stream_text = async (
   state: GlobeAISdkState,
   model: string,
-  query: string,
+  prompt: string,
+  system: string | undefined,
   callbackId: number
 ) => {
-  const completion = await state.openAI.chat.completions.create({
-    model,
-    messages: [{ role: "user", content: query }],
-    stream: true,
+  const result = await streamText({
+    model: state.openAI.chat(model),
+    prompt,
+    system,
   });
 
-  for await (const chunk of completion) {
-    const choices: ChatCompletionChunk.Choices[] = chunk.choices.map(
-      (choice) => {
-        return new ChatCompletionChunk.Choices({
-          index: choice.index,
-          finish_reason: choice.finish_reason?.toString(),
-          delta: new ChatCompletion.Message({
-            role: choice.delta.role?.toString(),
-            content: choice.delta.content?.toString(),
-            refusal: choice.delta.refusal?.toString(),
-          }),
-        });
-      }
-    );
+  console.log("I am here");
 
-    const usage = new ChatCompletion.Usage({
-      total_tokens: chunk.usage?.total_tokens,
-      completion_tokens: chunk.usage?.completion_tokens,
-      prompt_tokens: chunk.usage?.prompt_tokens,
-      prompt_tokens_details: new ChatCompletion.Prompt_tokens_details(
-        chunk.usage?.prompt_tokens_details
-      ),
-      completion_tokens_details: new ChatCompletion.Completion_tokens_details(
-        chunk.usage?.completion_tokens_details
-      ),
-    });
-
-    const response = new ChatCompletionChunk({
-      id: chunk.id,
-      model: chunk.model,
-      created: chunk.created,
-      system_fingerprint: chunk.system_fingerprint,
-      object: chunk.object,
-      service_tier: chunk.service_tier?.toString(),
-      choices,
-      usage,
-    });
-
-    Dart.stream_value(callbackId, response.serializeBinary());
+  for await (const part of result.fullStream) {
+    if (part.type === "reasoning") {
+      console.log(`Reasoning: ${part.textDelta}`);
+    } else if (part.type === "text-delta") {
+      console.log(part.textDelta);
+    }
   }
 
   Dart.stream_value_end(callbackId);
@@ -112,8 +52,12 @@ const openai_stream_text = async (
 
 export default {
   init: (apiKey: string): GlobeAISdkState => {
-    const openAI = new OpenAI({ apiKey });
+    const openAI = createOpenAI({
+      apiKey,
+      compatibility: "strict", // strict mode, enable when using the OpenAI API
+    });
+
     return { openAI };
   },
-  functions: { openai_generate_text, openai_stream_text },
+  functions: { openai_chat_generate_text, openai_chat_stream_text },
 };
