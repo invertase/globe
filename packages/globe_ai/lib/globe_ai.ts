@@ -5,7 +5,7 @@ type GlobeAISdkState = {
   openAI: OpenAI;
 };
 
-const openai_chat_complete = async (
+const openai_generate_text = async (
   state: GlobeAISdkState,
   model: string,
   query: string,
@@ -54,7 +54,7 @@ const openai_chat_complete = async (
   Dart.send_value(callbackId, response.serializeBinary());
 };
 
-const openai_chat_complete_stream = async (
+const openai_generate_text_stream = async (
   state: GlobeAISdkState,
   model: string,
   query: string,
@@ -115,5 +115,5 @@ export default {
     const openAI = new OpenAI({ apiKey });
     return { openAI };
   },
-  functions: { openai_chat_complete, openai_chat_complete_stream },
+  functions: { openai_generate_text, openai_generate_text_stream },
 };

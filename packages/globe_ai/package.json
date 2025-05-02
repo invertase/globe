@@ -11,6 +11,7 @@
     "openai": "^4.85.4"
   },
   "devDependencies": {
-    "tsup": "^8.3.6"
+    "tsup": "^8.3.6",
+    "typescript": "^5.8.3"
   }
 }
