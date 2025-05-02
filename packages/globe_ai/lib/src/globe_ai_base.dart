@@ -39,7 +39,7 @@ class OpenAI extends AiProvider {
 
     _runtime.callFunction(
       AiProvider.moduleName,
-      function: "openai_generate_text",
+      function: 'openai_generate_text',
       args: [model.toFFIType, prompt.toFFIType],
       onData: (data) {
         if (data.hasError()) {
@@ -56,7 +56,7 @@ class OpenAI extends AiProvider {
     return completer.future;
   }
 
-  Stream<ChatCompletionChunk> generateTextStream(
+  Stream<ChatCompletionChunk> streamText(
     String model, {
     required String prompt,
     String? user,
@@ -67,7 +67,7 @@ class OpenAI extends AiProvider {
 
     _runtime.callFunction(
       AiProvider.moduleName,
-      function: "openai_generate_text_stream",
+      function: 'openai_stream_text',
       args: [model.toFFIType, prompt.toFFIType],
       onData: (data) {
         if (data.hasError()) {

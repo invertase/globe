@@ -54,7 +54,7 @@ const openai_generate_text = async (
   Dart.send_value(callbackId, response.serializeBinary());
 };
 
-const openai_generate_text_stream = async (
+const openai_stream_text = async (
   state: GlobeAISdkState,
   model: string,
   query: string,
@@ -115,5 +115,5 @@ export default {
     const openAI = new OpenAI({ apiKey });
     return { openAI };
   },
-  functions: { openai_generate_text, openai_generate_text_stream },
+  functions: { openai_generate_text, openai_stream_text },
 };

@@ -18,7 +18,6 @@ void main() async {
     'gpt-4o',
     prompt: 'Who is the president of the United States?',
   );
-
   stdout.writeln(result.choices[0].message.content);
 
   // stream
