@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+enum Compatibility {
+  STRICT = 0;
+  COMPATIBLE = 1;
+}
+// Configuration message for the OpenAI provider
+message OpenAIConfig {
+  string base_url = 1;// Optional: custom base URL, e.g., for proxy
+  string api_key = 2;// Optional: API key for authentication
+  string name = 3;// Optional: provider name (e.g., 'openai', 'anyscale')
+  string organization = 4;// Optional: OpenAI organization ID
+  string project = 5;// Optional: OpenAI project ID
+  map<string, string> headers = 6;// Optional: custom HTTP headers
+  Compatibility compatibility = 7;// Enum ensures valid values only
+}
