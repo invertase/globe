@@ -10,6 +10,14 @@ declare global {
     send_value: (callbackId: number, data: Uint8Array) => boolean;
 
     /**
+     * Sends an error message back to Dart from JavaScript.
+     *
+     * @param callbackId - A unique identifier for the callback.
+     * @param error - The error message to send.
+     */
+    send_error: (callbackId, error: string) => boolean;
+
+    /**
      * Sends data back to Dart from JavaScript.
      *
      * @param callbackId - A unique identifier for the callback.
@@ -32,6 +40,11 @@ declare global {
   }
 
   const Dart: DartGlobal;
+
+  const JsonPayload: {
+    encode(value: unknown): Uint8Array | undefined;
+    decode(value: Uint8Array): any;
+  };
 }
 
 export {};

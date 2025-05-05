@@ -1,6 +1,6 @@
-import { ChatCompletion, ChatCompletionChunk } from "./generated/openai";
+import { JSONSchemaToZod } from "@dmitryrechkin/json-schema-to-zod";
 
-import { generateText, LanguageModelV1, streamText } from "ai";
+import { generateText, generateObject } from "ai";
 import { createOpenAI, OpenAIProvider } from "@ai-sdk/openai"; // Ensure OPENAI_API_KEY environment variable is set
 
 type GlobeAISdkState = {
@@ -24,6 +24,32 @@ const openai_chat_generate_text = async (
   Dart.send_value(callbackId, result);
 };
 
+const openai_chat_generate_object = async (
+  state: GlobeAISdkState,
+  model: string,
+  prompt: string,
+  schema: Uint8Array,
+  callbackId: number
+) => {
+  const schemaJson = schema && JsonPayload.decode(schema);
+  const zodSchema = JSONSchemaToZod.convert(schemaJson as any);
+
+  const result = await generateObject({
+    model: state.openAI.responses(model),
+    schema: zodSchema,
+    prompt,
+  });
+
+  const encoded = JsonPayload.encode(result.object);
+
+  if (!encoded) {
+    Dart.send_error(callbackId, "Failed to encode object");
+    return;
+  }
+
+  Dart.send_value(callbackId, encoded);
+};
+
 const openai_chat_stream_text = async (
   state: GlobeAISdkState,
   model: string,
@@ -31,21 +57,27 @@ const openai_chat_stream_text = async (
   system: string | undefined,
   callbackId: number
 ) => {
-  const result = await streamText({
-    model: state.openAI.chat(model),
-    prompt,
-    system,
+  const result = await generateText({
+    model: state.openAI(model),
+    messages: [
+      {
+        role: "user",
+        content: [
+          { type: "text", text: "Describe the image in detail." },
+          {
+            type: "image",
+            image:
+              "https://github.com/vercel/ai/blob/main/examples/ai-core/data/comic-cat.png?raw=true",
+
+            // OpenAI specific options - image detail:
+            providerOptions: {
+              openai: { imageDetail: "low" },
+            },
+          },
+        ],
+      },
+    ],
   });
-
-  console.log("I am here");
-
-  for await (const part of result.fullStream) {
-    if (part.type === "reasoning") {
-      console.log(`Reasoning: ${part.textDelta}`);
-    } else if (part.type === "text-delta") {
-      console.log(part.textDelta);
-    }
-  }
 
   Dart.stream_value_end(callbackId);
 };
@@ -59,5 +91,9 @@ export default {
 
     return { openAI };
   },
-  functions: { openai_chat_generate_text, openai_chat_stream_text },
+  functions: {
+    openai_chat_generate_text,
+    openai_chat_generate_object,
+    openai_chat_stream_text,
+  },
 };

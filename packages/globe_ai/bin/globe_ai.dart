@@ -1,28 +1,38 @@
 import 'dart:io';
 
-import 'package:globe_ai/generated/openai.pbserver.dart';
 import 'package:globe_ai/globe_ai.dart';
-
-// ignore: constant_identifier_names
-final String openAIKey = (throw StateError(
-    'Please set your OpenAI API key in the OpenAIKey constant.'));
+import 'package:luthor/luthor.dart';
 
 void main() async {
-  final config = OpenAIConfig(
-    apiKey: openAIKey,
-    compatibility: Compatibility.STRICT,
+  final result1 = await generateText(
+    model: openai.chat('gpt-4o', reasoningEffort: ReasoningEffort.high),
+    prompt: 'Who is the president of the United States?',
   );
+  stdout.writeln(result1);
 
-  final chat = OpenAI(config).chat('gpt-4o');
-  // final result = await chat.generateText(
-  //   prompt: 'Who is the president of the United States?',
-  // );
-  // stdout.writeln(result);
+  final schema = l.schema({
+    'recipe': l.schema({
+      'name': l.string().required(),
+      'ingredients': l.list(validators: [
+        l.schema({
+          'name': l.string().required(),
+          'amount': l.string().required(),
+        }).required(),
+      ]).required(),
+      'steps': l.list(validators: [l.string()]).required(),
+    }).required()
+  });
 
-  final stream = chat.streamText(prompt: 'Tell me short 5 line story');
-  await for (final data in stream) {
-    stdout.write(data.choices[0].delta.content);
-  }
+  final result2 = await generateObject<Map<dynamic, dynamic>>(
+    model: openai('gpt-4.1', structuredOutputs: true),
+    prompt: 'Generate a lasagna recipe.',
+    schema: ObjectSchema(
+      name: 'recipe',
+      description: 'A recipe for lasagna.',
+      schema: schema,
+    ),
+  );
+  print(result2);
 
   exit(0);
 }
