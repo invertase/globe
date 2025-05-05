@@ -1,6 +1,6 @@
 import { JSONSchemaToZod } from "@dmitryrechkin/json-schema-to-zod";
 
-import { generateText, generateObject } from "ai";
+import { generateText, generateObject, streamText } from "ai";
 import { createOpenAI, OpenAIProvider } from "@ai-sdk/openai"; // Ensure OPENAI_API_KEY environment variable is set
 
 type GlobeAISdkState = {
@@ -9,13 +9,15 @@ type GlobeAISdkState = {
 
 const openai_chat_generate_text = async (
   state: GlobeAISdkState,
+  model_args: Uint8Array,
   model: string,
   prompt: string,
   system: string | undefined,
   callbackId: number
 ) => {
+  const modelArgs = JsonPayload.decode(model_args);
   const { text } = await generateText({
-    model: state.openAI.chat(model),
+    model: state.openAI.chat(model, { ...modelArgs }),
     prompt,
     system,
   });
@@ -41,7 +43,6 @@ const openai_chat_generate_object = async (
   });
 
   const encoded = JsonPayload.encode(result.object);
-
   if (!encoded) {
     Dart.send_error(callbackId, "Failed to encode object");
     return;
@@ -54,30 +55,19 @@ const openai_chat_stream_text = async (
   state: GlobeAISdkState,
   model: string,
   prompt: string,
-  system: string | undefined,
   callbackId: number
 ) => {
-  const result = await generateText({
-    model: state.openAI(model),
-    messages: [
-      {
-        role: "user",
-        content: [
-          { type: "text", text: "Describe the image in detail." },
-          {
-            type: "image",
-            image:
-              "https://github.com/vercel/ai/blob/main/examples/ai-core/data/comic-cat.png?raw=true",
-
-            // OpenAI specific options - image detail:
-            providerOptions: {
-              openai: { imageDetail: "low" },
-            },
-          },
-        ],
-      },
-    ],
+  const result = streamText({
+    model: state.openAI.responses(model),
+    prompt,
   });
+
+  for await (const part of result.fullStream) {
+    if (part.type === "reasoning" || part.type === "text-delta") {
+      const encoded = new TextEncoder().encode(part.textDelta);
+      Dart.stream_value(callbackId, encoded);
+    }
+  }
 
   Dart.stream_value_end(callbackId);
 };

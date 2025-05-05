@@ -15,14 +15,6 @@ bool _isNotModifierValidation(Validation validation) {
       validation is StringValidation;
 }
 
-Map<String, dynamic> validatorToJson(Validator validator) {
-  if (validator.validations.isEmpty) {
-    throw StateError('Validator has no validations');
-  }
-  final requiredKeys = <String>[];
-  return _validationsToJson(validator.validations, null, requiredKeys) as Map<String, dynamic>;
-}
-
 dynamic _validationsToJson(
   List<Validation> validations,
   String? fieldName,
@@ -89,9 +81,8 @@ dynamic _validationsToJson(
   if (first is SchemaValidation) {
     final properties = <String, dynamic>{};
 
-    final requiredProps = first.validatorSchema.entries
-        .where((e) => e.value.validations.any((e) => e is RequiredValidation))
-        .map((e) => e.key);
+    /// Make all fields required by default
+    final requiredProps = first.validatorSchema.entries.where((e) => e.value.validations.isNotEmpty).map((e) => e.key);
 
     first.validatorSchema.forEach((key, validator) {
       final fieldJson = _validationsToJson(validator.validations, key, []);
@@ -107,4 +98,14 @@ dynamic _validationsToJson(
   }
 
   throw StateError('Unknown validation type: $first');
+}
+
+extension LuthorValidationToJson on Validator {
+  Map<String, dynamic> toJson() {
+    if (validations.isEmpty) {
+      throw StateError('Validator has no validations');
+    }
+    final requiredKeys = <String>[];
+    return _validationsToJson(validations, null, requiredKeys) as Map<String, dynamic>;
+  }
 }
