@@ -9,10 +9,10 @@ environment:
 
 dependencies:
   globe_runtime:
-    path: "../../../../OpenSource/dart_v8_runtime/packages/globe_runtime"
-    # git:
-    #   url: https://github.com/invertase/globe_runtime.git
-    #   path: packages/globe_runtime
+    # path: "../../../../OpenSource/dart_v8_runtime/packages/globe_runtime"
+    git:
+      url: https://github.com/invertase/globe_runtime.git
+      path: packages/globe_runtime
   luthor: ^0.6.1
   path: ^1.9.1
   protobuf: ^3.1.0
