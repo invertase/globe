@@ -53,25 +53,31 @@ class OpenAIConfig extends $pb.GeneratedMessage {
     return $result;
   }
   OpenAIConfig._() : super();
-  factory OpenAIConfig.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+  factory OpenAIConfig.fromBuffer($core.List<$core.int> i,
+          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(i, r);
-  factory OpenAIConfig.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+  factory OpenAIConfig.fromJson($core.String i,
+          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(i, r);
 
-  static final $pb.BuilderInfo _i =
-      $pb.BuilderInfo(_omitMessageNames ? '' : 'OpenAIConfig', createEmptyInstance: create)
-        ..aOS(1, _omitFieldNames ? '' : 'baseUrl')
-        ..aOS(2, _omitFieldNames ? '' : 'apiKey')
-        ..aOS(3, _omitFieldNames ? '' : 'name')
-        ..aOS(4, _omitFieldNames ? '' : 'organization')
-        ..aOS(5, _omitFieldNames ? '' : 'project')
-        ..m<$core.String, $core.String>(6, _omitFieldNames ? '' : 'headers',
-            entryClassName: 'OpenAIConfig.HeadersEntry',
-            keyFieldType: $pb.PbFieldType.OS,
-            valueFieldType: $pb.PbFieldType.OS)
-        ..e<Compatibility>(7, _omitFieldNames ? '' : 'compatibility', $pb.PbFieldType.OE,
-            defaultOrMaker: Compatibility.STRICT, valueOf: Compatibility.valueOf, enumValues: Compatibility.values)
-        ..hasRequiredFields = false;
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'OpenAIConfig',
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'baseUrl')
+    ..aOS(2, _omitFieldNames ? '' : 'apiKey')
+    ..aOS(3, _omitFieldNames ? '' : 'name')
+    ..aOS(4, _omitFieldNames ? '' : 'organization')
+    ..aOS(5, _omitFieldNames ? '' : 'project')
+    ..m<$core.String, $core.String>(6, _omitFieldNames ? '' : 'headers',
+        entryClassName: 'OpenAIConfig.HeadersEntry',
+        keyFieldType: $pb.PbFieldType.OS,
+        valueFieldType: $pb.PbFieldType.OS)
+    ..e<Compatibility>(
+        7, _omitFieldNames ? '' : 'compatibility', $pb.PbFieldType.OE,
+        defaultOrMaker: Compatibility.STRICT,
+        valueOf: Compatibility.valueOf,
+        enumValues: Compatibility.values)
+    ..hasRequiredFields = false;
 
   @$core.Deprecated('Using this can add significant overhead to your binary. '
       'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
@@ -81,16 +87,19 @@ class OpenAIConfig extends $pb.GeneratedMessage {
       'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
       'Will be removed in next major version')
   OpenAIConfig copyWith(void Function(OpenAIConfig) updates) =>
-      super.copyWith((message) => updates(message as OpenAIConfig)) as OpenAIConfig;
+      super.copyWith((message) => updates(message as OpenAIConfig))
+          as OpenAIConfig;
 
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
   static OpenAIConfig create() => OpenAIConfig._();
   OpenAIConfig createEmptyInstance() => create();
-  static $pb.PbList<OpenAIConfig> createRepeated() => $pb.PbList<OpenAIConfig>();
+  static $pb.PbList<OpenAIConfig> createRepeated() =>
+      $pb.PbList<OpenAIConfig>();
   @$core.pragma('dart2js:noInline')
-  static OpenAIConfig getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<OpenAIConfig>(create);
+  static OpenAIConfig getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<OpenAIConfig>(create);
   static OpenAIConfig? _defaultInstance;
 
   @$pb.TagNumber(1)
@@ -170,4 +179,5 @@ class OpenAIConfig extends $pb.GeneratedMessage {
 }
 
 const _omitFieldNames = $core.bool.fromEnvironment('protobuf.omit_field_names');
-const _omitMessageNames = $core.bool.fromEnvironment('protobuf.omit_message_names');
+const _omitMessageNames =
+    $core.bool.fromEnvironment('protobuf.omit_message_names');

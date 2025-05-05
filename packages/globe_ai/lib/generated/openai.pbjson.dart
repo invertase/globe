@@ -35,8 +35,22 @@ const OpenAIConfig$json = {
     {'1': 'name', '3': 3, '4': 1, '5': 9, '10': 'name'},
     {'1': 'organization', '3': 4, '4': 1, '5': 9, '10': 'organization'},
     {'1': 'project', '3': 5, '4': 1, '5': 9, '10': 'project'},
-    {'1': 'headers', '3': 6, '4': 3, '5': 11, '6': '.OpenAIConfig.HeadersEntry', '10': 'headers'},
-    {'1': 'compatibility', '3': 7, '4': 1, '5': 14, '6': '.Compatibility', '10': 'compatibility'},
+    {
+      '1': 'headers',
+      '3': 6,
+      '4': 3,
+      '5': 11,
+      '6': '.OpenAIConfig.HeadersEntry',
+      '10': 'headers'
+    },
+    {
+      '1': 'compatibility',
+      '3': 7,
+      '4': 1,
+      '5': 14,
+      '6': '.Compatibility',
+      '10': 'compatibility'
+    },
   ],
   '3': [OpenAIConfig_HeadersEntry$json],
 };
@@ -59,4 +73,3 @@ final $typed_data.Uint8List openAIConfigDescriptor = $convert.base64Decode(
     'ouT3BlbkFJQ29uZmlnLkhlYWRlcnNFbnRyeVIHaGVhZGVycxI0Cg1jb21wYXRpYmlsaXR5GAcg'
     'ASgOMg4uQ29tcGF0aWJpbGl0eVINY29tcGF0aWJpbGl0eRo6CgxIZWFkZXJzRW50cnkSEAoDa2'
     'V5GAEgASgJUgNrZXkSFAoFdmFsdWUYAiABKAlSBXZhbHVlOgI4AQ==');
-

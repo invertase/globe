@@ -111,7 +111,9 @@ class OpenAI extends AiProvider {
   String get apiKey => config.hasApiKey()
       ? config.apiKey
       : Platform.environment['OPENAI_API_KEY'] ??
-          (throw StateError('Please set your OpenAI API key in the OpenAIKey constant.'));
+          (throw StateError(
+            'Please set your OpenAI API key in the OpenAIKey constant.',
+          ));
 }
 
 Future<String> generateText({

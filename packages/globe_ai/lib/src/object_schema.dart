@@ -70,11 +70,14 @@ dynamic _validationsToJson(
   }
 
   if (first is ListValidation) {
-    final innerValidator = (first.validators?.isNotEmpty ?? false) ? first.validators!.first : null;
+    final innerValidator = (first.validators?.isNotEmpty ?? false)
+        ? first.validators!.first
+        : null;
 
     return {
       "type": "array",
-      if (innerValidator != null) "items": _validationsToJson(innerValidator.validations, null, [])
+      if (innerValidator != null)
+        "items": _validationsToJson(innerValidator.validations, null, [])
     };
   }
 
@@ -82,7 +85,9 @@ dynamic _validationsToJson(
     final properties = <String, dynamic>{};
 
     /// Make all fields required by default
-    final requiredProps = first.validatorSchema.entries.where((e) => e.value.validations.isNotEmpty).map((e) => e.key);
+    final requiredProps = first.validatorSchema.entries
+        .where((e) => e.value.validations.isNotEmpty)
+        .map((e) => e.key);
 
     first.validatorSchema.forEach((key, validator) {
       final fieldJson = _validationsToJson(validator.validations, key, []);
@@ -106,6 +111,7 @@ extension LuthorValidationToJson on Validator {
       throw StateError('Validator has no validations');
     }
     final requiredKeys = <String>[];
-    return _validationsToJson(validations, null, requiredKeys) as Map<String, dynamic>;
+    return _validationsToJson(validations, null, requiredKeys)
+        as Map<String, dynamic>;
   }
 }
