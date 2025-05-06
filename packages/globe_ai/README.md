@@ -1,12 +1,10 @@
 # 🧠 globe_ai
 
-`globe_ai` is a lightweight Dart package that provides a unified API for interacting with large language models (LLMs) like OpenAI’s GPT. It supports:
-• Text generation (single-shot and streaming)
-• Structured object generation with runtime schema validation
-• Compatibility with OpenAI chat and completion models
-• Runtime schema enforcement via luthor
+`globe_ai` is a Dart-first package for interacting with large language models (LLMs) like OpenAI’s GPT series — built specifically for the Globe runtime.
 
 > ⚠️ Note: This package currently only works in **Globe** Platform. Support for using it outside of **Globe** is coming soon.
+
+> 🧩 Internally, this package wraps the [AI-SDK OpenAI](https://ai-sdk.dev/providers/ai-sdk-providers/openai) to handle model execution and output parsing.
 
 ## ✨ Features
 
