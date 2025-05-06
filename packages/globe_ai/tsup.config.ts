@@ -3,7 +3,7 @@ import { defineConfig } from "tsup";
 export default defineConfig({
   entry: ["lib/globe_ai.ts"], // Adjust this to your entry file
   format: ["esm"], // or "cjs" depending on your needs
-  minify: false, // Optional, for smaller output
+  minify: true, // Optional, for smaller output
   sourcemap: false, // Optional, set to true if debugging
   bundle: true, // Ensures bundling
   splitting: false, // Prevents multiple output files
