@@ -1,6 +1,6 @@
 import { JSONSchemaToZod } from "@dmitryrechkin/json-schema-to-zod";
 
-import { generateText, generateObject, streamText } from "ai";
+import { generateText, generateObject, streamText, streamObject } from "ai";
 import { createOpenAI, OpenAIProvider } from "@ai-sdk/openai"; // Ensure OPENAI_API_KEY environment variable is set
 
 type GlobeAISdkState = {
@@ -24,6 +24,27 @@ const openai_chat_generate_text = async (
 
   const result = new TextEncoder().encode(text);
   Dart.send_value(callbackId, result);
+};
+
+const openai_chat_stream_text = async (
+  state: GlobeAISdkState,
+  model: string,
+  prompt: string,
+  callbackId: number
+) => {
+  const result = streamText({
+    model: state.openAI.responses(model),
+    prompt,
+  });
+
+  for await (const part of result.fullStream) {
+    if (part.type === "reasoning" || part.type === "text-delta") {
+      const encoded = new TextEncoder().encode(part.textDelta);
+      Dart.stream_value(callbackId, encoded);
+    }
+  }
+
+  Dart.stream_value_end(callbackId);
 };
 
 const openai_chat_generate_object = async (
@@ -51,22 +72,32 @@ const openai_chat_generate_object = async (
   Dart.send_value(callbackId, encoded);
 };
 
-const openai_chat_stream_text = async (
+const openai_chat_stream_object = async (
   state: GlobeAISdkState,
   model: string,
   prompt: string,
+  schema: Uint8Array,
   callbackId: number
 ) => {
-  const result = streamText({
+  const schemaJson = schema && JsonPayload.decode(schema);
+  const zodSchema = JSONSchemaToZod.convert(schemaJson as any);
+
+  const { fullStream } = await streamObject({
     model: state.openAI.responses(model),
+    schema: zodSchema,
     prompt,
   });
 
-  for await (const part of result.fullStream) {
-    if (part.type === "reasoning" || part.type === "text-delta") {
-      const encoded = new TextEncoder().encode(part.textDelta);
-      Dart.stream_value(callbackId, encoded);
+  for await (const part of fullStream) {
+    if (part.type != "object") continue;
+
+    const encoded = JsonPayload.encode(part.object);
+    if (!encoded) {
+      Dart.send_error(callbackId, "Failed to encode object");
+      return;
     }
+
+    Dart.stream_value(callbackId, encoded);
   }
 
   Dart.stream_value_end(callbackId);
@@ -85,5 +116,6 @@ export default {
     openai_chat_generate_text,
     openai_chat_generate_object,
     openai_chat_stream_text,
+    openai_chat_stream_object,
   },
 };

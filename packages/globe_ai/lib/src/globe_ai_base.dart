@@ -220,3 +220,46 @@ Stream<String> streamText({
 
   yield* streamController.stream;
 }
+
+Stream<T> streamObject<T>({
+  required AiModel model,
+  required String prompt,
+  Validator? schema,
+}) async* {
+  final aiProvider = AiProvider._getInstance(model.apiKey);
+  await aiProvider._registerModuleIfNotAlready();
+
+  final streamController = StreamController<T>();
+
+  aiProvider._runtime.callFunction(
+    AiProvider.moduleName,
+    function: 'openai_chat_stream_object',
+    args: [
+      model.name.toFFIType,
+      prompt.toFFIType,
+      schema?.toJson().pack().toFFIType,
+    ],
+    onData: (data) {
+      if (data.hasError()) {
+        streamController
+          ..addError(data.error)
+          ..close();
+        return true;
+      }
+
+      if (data.hasData()) {
+        final object = JsonPayload(data: data.data).unpack<T>();
+        streamController.add(object);
+      }
+
+      if (data.done) {
+        streamController.close();
+        return true;
+      }
+
+      return false;
+    },
+  );
+
+  yield* streamController.stream;
+}
