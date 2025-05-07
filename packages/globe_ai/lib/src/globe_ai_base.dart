@@ -13,7 +13,8 @@ import 'object_schema.dart';
 
 sealed class AiProvider {
   static const String moduleName = 'GlobeAISdk';
-  static const String codeURL = "dist/globe_ai_v$packageVersion.js";
+  static const String codeURL =
+      'https://runtime-s3.globe.dev/globe_ai_v$packageVersion.js';
 
   final String? apiKey;
 
