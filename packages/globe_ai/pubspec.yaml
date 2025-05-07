@@ -1,5 +1,5 @@
 name: globe_ai
-description: A starting point for Dart libraries or applications.
+description: A Dart-first package for interacting with large language models (LLMs) like OpenAI’s GPT series — built specifically for the Globe runtime.
 version: 1.0.0
 
 environment:
