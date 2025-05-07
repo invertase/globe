@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:globe_ai/globe_ai.dart';
-import 'package:luthor/luthor.dart';
 
 void main() async {
   print('Method: :generateText\n');

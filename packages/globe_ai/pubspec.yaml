@@ -1,18 +1,13 @@
 name: globe_ai
-description: A starting point for Dart libraries or applications.
-version: 1.0.0
-
-publish_to: "none" # Remove this line if you wish to publish to pub.dev
+description: A Dart-first package for interacting with large language models (LLMs) like OpenAI’s GPT series — built specifically for the Globe runtime.
+version: 1.0.0+1
+repository: https://github.com/invertase/globe/tree/main/packages/globe_ai
 
 environment:
   sdk: ^3.4.0
 
 dependencies:
-  globe_runtime:
-    # path: "../../../../OpenSource/dart_v8_runtime/packages/globe_runtime"
-    git:
-      url: https://github.com/invertase/globe_runtime.git
-      path: packages/globe_runtime
+  globe_runtime: ^1.0.3
   luthor: ^0.6.1
   path: ^1.9.1
   protobuf: ^3.1.0
@@ -21,15 +16,14 @@ dev_dependencies:
   lints: ^5.1.1
   test: ^1.24.0
   protoc_plugin: 21.1.2
+  rps: ^0.7.0
 
 scripts:
+  build: npx tsup
   gen_dart: protoc
     --dart_out=lib/generated
     --proto_path=protos protos/*.proto
-    # google/protobuf/any.proto
-    # google/protobuf/struct.proto
   gen_typescript: protoc
     --plugin=protoc-gen-ts_proto=$(which protoc-gen-ts_proto)
     --ts_out=lib/generated
     --proto_path=protos protos/*.proto
-    google/protobuf/any.proto
