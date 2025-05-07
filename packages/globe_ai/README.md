@@ -2,9 +2,9 @@
 
 `globe_ai` is a Dart-first package for interacting with large language models (LLMs) like OpenAI’s GPT series — built specifically for the Globe runtime.
 
-> ⚠️ Note: This package currently only works in **Globe** Platform. Support for using it outside of **Globe** is coming soon.
+⚠️ Note: This package currently only works in **Globe** Platform. Support for using it outside of **Globe** is coming soon.
 
-> 🧩 Internally, this package wraps the [AI-SDK OpenAI](https://ai-sdk.dev/providers/ai-sdk-providers/openai) to handle model execution and output parsing.
+🧩 Internally, this package wraps the [AI-SDK OpenAI](https://ai-sdk.dev/providers/ai-sdk-providers/openai) to handle model execution and output parsing.
 
 ## ✨ Features
 
@@ -23,7 +23,6 @@ Add to your `pubspec.yaml`:
 ```yaml
 dependencies:
   globe_ai: ^<latest-version>
-  luthor: ^<latest-version>
 ```
 
 ### Setup

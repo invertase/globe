@@ -1,11 +1,8 @@
 import 'dart:io';
 
 import 'package:globe_ai/globe_ai.dart';
-import 'package:globe_runtime/globe_runtime.dart';
 
 void main() async {
-  print('Runtime version: ${GlobeRuntime.instance.version}\n');
-
   print('Method: :generateText\n');
   final result1 = await generateText(
     model: openai.chat('gpt-4o', user: 'Chima'),
