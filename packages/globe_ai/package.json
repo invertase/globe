@@ -14,8 +14,10 @@
     "zod": "^3.24.3"
   },
   "devDependencies": {
+    "@globe/runtime_types": "https://gitpkg.now.sh/invertase/globe_runtime/packages/globe_runtime_ts?main",
+    "fs": "^0.0.1-security",
+    "path": "^0.12.7",
     "tsup": "^8.3.6",
-    "typescript": "^5.8.3",
-    "@globe/runtime_types": "https://gitpkg.now.sh/invertase/globe_runtime/packages/globe_runtime_ts?main"
+    "typescript": "^5.8.3"
   }
 }

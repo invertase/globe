@@ -110,3 +110,23 @@ await for (final chunk in resultStream) {
 - 🧪 Unit tests & CI examples
 
 - 📖 Function-level API docs
+
+## 🛠️ Development
+
+- Building the JS package
+
+  ```sh
+  dart pub run rps build
+  ```
+
+- Generate types from protos
+
+  ```sh
+  dart pub run rps gen_dart
+  ```
+
+  and
+
+  ```sh
+  dart pub run rps gen_typescript
+  ```
