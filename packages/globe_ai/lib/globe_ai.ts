@@ -107,7 +107,7 @@ export default {
   init: (apiKey: string): GlobeAISdkState => {
     const openAI = createOpenAI({
       apiKey,
-      compatibility: "strict", // strict mode, enable when using the OpenAI API
+      compatibility: "strict",
     });
 
     return { openAI };

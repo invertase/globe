@@ -2,8 +2,6 @@ name: globe_ai
 description: A starting point for Dart libraries or applications.
 version: 1.0.0
 
-publish_to: "none" # Remove this line if you wish to publish to pub.dev
-
 environment:
   sdk: ^3.4.0
 
@@ -22,10 +20,7 @@ scripts:
   gen_dart: protoc
     --dart_out=lib/generated
     --proto_path=protos protos/*.proto
-    # google/protobuf/any.proto
-    # google/protobuf/struct.proto
   gen_typescript: protoc
     --plugin=protoc-gen-ts_proto=$(which protoc-gen-ts_proto)
     --ts_out=lib/generated
     --proto_path=protos protos/*.proto
-    google/protobuf/any.proto
