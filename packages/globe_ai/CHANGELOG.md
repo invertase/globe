@@ -1,3 +1,6 @@
 ## 1.0.0
 
-- Initial version.
+- Added `generateText` function.
+- Added `generateObject` function.
+- Added `streamText` function.
+- Added `streamObject` function.
