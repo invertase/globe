@@ -16,6 +16,6 @@
   "devDependencies": {
     "tsup": "^8.3.6",
     "typescript": "^5.8.3",
-    "@globe/runtime_types": "file:../../../../OpenSource/dart_v8_runtime/packages/globe_runtime_ts/"
+    "@globe/runtime_types": "https://gitpkg.now.sh/invertase/globe_runtime/packages/globe_runtime_ts?main"
   }
 }

@@ -1,7 +1,7 @@
 import { JSONSchemaToZod } from "@dmitryrechkin/json-schema-to-zod";
 
 import { generateText, generateObject, streamText, streamObject } from "ai";
-import { createOpenAI, OpenAIProvider } from "@ai-sdk/openai"; // Ensure OPENAI_API_KEY environment variable is set
+import { createOpenAI, OpenAIProvider } from "@ai-sdk/openai";
 
 type GlobeAISdkState = {
   openAI: OpenAIProvider;
