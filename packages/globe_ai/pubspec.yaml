@@ -1,13 +1,13 @@
 name: globe_ai
 description: A Dart-first package for interacting with large language models (LLMs) like OpenAI’s GPT series — built specifically for the Globe runtime.
-version: 1.0.0+1
+version: 1.0.0+2
 repository: https://github.com/invertase/globe/tree/main/packages/globe_ai
 
 environment:
   sdk: ^3.4.0
 
 dependencies:
-  globe_runtime: ^1.0.3
+  globe_runtime: ^1.0.3+1
   luthor: ^0.6.1
   path: ^1.9.1
   protobuf: ^3.1.0
