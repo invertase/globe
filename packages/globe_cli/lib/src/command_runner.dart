@@ -9,8 +9,10 @@ import 'commands/build_logs_command.dart';
 import 'commands/commands.dart';
 import 'commands/create_project_command.dart';
 import 'commands/project_command.dart';
+import 'commands/runtime_command.dart';
 import 'commands/update.dart';
 import 'get_it.dart';
+import 'graphql/client.dart';
 import 'package_info.dart' as package_info;
 import 'utils/api.dart';
 import 'utils/auth.dart';
@@ -73,7 +75,9 @@ class GlobeCliCommandRunner extends CompletionCommandRunner<int> {
     addCommand(BuildLogsCommand());
     addCommand(TokenCommand());
     addCommand(ProjectCommand());
+    addCommand(RuntimeCommand());
     addCommand(CreateProjectFromTemplate());
+    addCommand(WhoamiCommand());
   }
 
   final Logger _logger;
@@ -125,8 +129,9 @@ class GlobeCliCommandRunner extends CompletionCommandRunner<int> {
         logger: _logger,
       );
 
-      GetIt.instance.registerSingleton<GlobeMetadata>(metadata);
-      GetIt.instance.registerSingleton<GlobeScope>(scope);
+      GetIt.instance
+        ..registerSingleton<GlobeScope>(scope)
+        ..registerSingleton<GlobeMetadata>(metadata);
 
       final maybeProjectIdOrSlug = topLevelResults['project'] as String?;
       final maybeToken = topLevelResults['token'] as String?;
@@ -138,7 +143,7 @@ class GlobeCliCommandRunner extends CompletionCommandRunner<int> {
       Organization? org;
 
       if (maybeToken != null) {
-        api.auth.loginWithApiToken(jwt: maybeToken);
+        auth.loginWithApiToken(jwt: maybeToken);
         org = await selectOrganization(
           logger: _logger,
           api: api,
@@ -167,6 +172,9 @@ class GlobeCliCommandRunner extends CompletionCommandRunner<int> {
           ),
         );
       }
+
+      GetIt.instance
+          .registerSingleton<GlobeGraphQLClient>(GlobeGraphQLClient());
 
       return await runCommand(topLevelResults) ?? ExitCode.success.code;
       // TODO(rrousselGit) why are we checking FormatExceptions here?

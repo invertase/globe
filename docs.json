@@ -30,16 +30,6 @@
       "href": "/"
     },
     {
-      "id": "cli",
-      "title": "CLI",
-      "href": "/cli"
-    },
-    {
-      "id": "infrastructure",
-      "title": "Infrastructure",
-      "href": "/infrastructure"
-    },
-    {
       "id": "releases",
       "title": "Releases",
       "href": "/releases"
@@ -57,27 +47,81 @@
       "pages": [
         { "title": "Overview", "href": "/" },
         { "title": "Getting Started", "href": "/getting-started" },
-        { "title": "Shelf Server", "href": "/getting-started/shelf-server" },
-        { "title": "Flutter Web", "href": "/getting-started/flutter-web" }
+        {
+          "group": "Environment Setup",
+          "pages": [
+            {
+              "title": "Setting up the Globe CLI",
+              "href": "/getting-started/environment-setup/globe-cli"
+            },
+            {
+              "title": "Authorizing Github",
+              "href": "/getting-started/environment-setup/github"
+            }
+          ]
+        },
+        { "title": "Quickstart", "href": "/getting-started/quickstart" }
       ]
     },
     {
-      "group": "Deployments",
+      "group": "Core Concepts",
       "tab": "root",
       "pages": [
-        { "title": "Overview", "href": "/deployments" },
-        { "title": "Build Settings", "href": "/deployments/build-settings" },
-        { "title": "Static Assets", "href": "/deployments/static-assets" },
-        { "title": "Domains", "href": "/deployments/domains" },
+        { "title": "Deployments", "href": "/core-concepts/deployments" },
+        { "title": "Logs", "href": "/core-concepts/logs" },
+        { "title": "Build Settings", "href": "/core-concepts/build-settings" },
         {
           "title": "Environment Variables",
-          "href": "/deployments/environment-variables"
+          "href": "/core-concepts/environment-variables"
         },
+        { "title": "Domains", "href": "/core-concepts/domains" },
         {
           "title": "GitHub Integration",
-          "href": "/deployments/github-integration"
+          "href": "/core-concepts/github-integration"
         },
-        { "title": "Hooks", "href": "/deployments/hooks" }
+        {
+          "title": "Monitoring",
+          "href": "/core-concepts/monitoring"
+        },
+        { "title": "Static Assets", "href": "/core-concepts/static-assets" },
+        { "title": "Cron Jobs", "href": "/core-concepts/cron-jobs" },
+        {
+          "group": "Globe CLI",
+          "pages": [
+            {
+              "title": "Globe CLI Overview",
+              "href": "/core-concepts/cli"
+            },
+            {
+              "title": "Login and Logout",
+              "href": "/core-concepts/cli/login-and-logout"
+            },
+            {
+              "title": "Deploying a Project",
+              "href": "/core-concepts/cli/deploying-a-project"
+            },
+            {
+              "title": "Viewing Build Logs",
+              "href": "/core-concepts/cli/viewing-build-logs"
+            },
+            {
+              "title": "Linking and Unlinking Projects",
+              "href": "/core-concepts/cli/link-and-unlink"
+            },
+            {
+              "title": "Managing Globe Tokens",
+              "href": "/core-concepts/cli/managing-tokens"
+            },
+            {
+              "title": "Updating the CLI",
+              "href": "/core-concepts/cli/updating-the-cli"
+            },
+            {
+              "title": "Creating a New Project",
+              "href": "/core-concepts/cli/creating-a-new-project"
+            }
+          ]
+        }
       ]
     },
     {
@@ -85,8 +129,10 @@
       "tab": "root",
       "pages": [
         { "title": "Overview", "href": "/frameworks" },
+        { "title": "Dart Shelf", "href": "/frameworks/shelf-server" },
         { "title": "Dart Frog", "href": "/frameworks/dart-frog" },
-        { "title": "Flutter Web", "href": "/frameworks/flutter-web" }
+        { "title": "Flutter Web", "href": "/frameworks/flutter-web" },
+        { "title": "Jaspr", "href": "/frameworks/jaspr" }
       ]
     },
     {
@@ -95,32 +141,47 @@
       "pages": [{ "title": "GlobeKV", "href": "/storage" }]
     },
     {
-      "group": "CLI",
-      "tab": "cli",
-      "pages": [
-        { "title": "Overview", "href": "/cli" },
-        { "title": "Deploy", "href": "/cli/commands/deploy" },
-        { "title": "Build Logs", "href": "/cli/commands/build-logs" },
-        { "title": "Link", "href": "/cli/commands/link" },
-        { "title": "Unlink", "href": "/cli/commands/unlink" },
-        { "title": "Login", "href": "/cli/commands/login" },
-        { "title": "Token", "href": "/cli/commands/token" },
-        { "title": "Logout", "href": "/cli/commands/logout" },
-        { "title": "Update", "href": "/cli/commands/update" },
-        { "title": "Create", "href": "/cli/commands/create" }
-      ]
-    },
-    {
       "group": "Infrastructure",
-      "tab": "infrastructure",
+      "tab": "root",
       "pages": [
-        { "title": "Overview", "href": "/infrastructure" },
-        { "title": "Limits", "href": "/infrastructure/limits" },
-        { "title": "Cold Starts", "href": "/infrastructure/cold-starts" },
-        { "title": "Cron Jobs", "href": "/infrastructure/cron-jobs" },
-        { "title": "Headers", "href": "/infrastructure/headers" },
-        { "title": "Regions", "href": "/infrastructure/regions" },
-        { "title": "Web Sockets", "href": "/infrastructure/websockets" }
+        {
+          "group": "Infrastructure Overview",
+          "pages": [
+            {
+              "title": "Overview",
+              "href": "/infrastructure/overview"
+            },
+            {
+              "title": "Cold Starts",
+              "href": "/infrastructure/overview/cold-starts"
+            },
+            {
+              "title": "Regions And Networking",
+              "href": "/infrastructure/overview/regions-and-networking"
+            },
+            {
+              "title": "Resources And Limits",
+              "href": "/infrastructure/overview/resources-and-limits"
+            },
+            {
+              "title": "HTTP Headers in Globe",
+              "href": "/infrastructure/overview/http-headers"
+            }
+          ]
+        },
+        {
+          "group": "Performance and Security",
+          "pages": [
+            {
+              "title": "Performance",
+              "href": "/infrastructure/performance-and-security/performance"
+            },
+            {
+              "title": "Security",
+              "href": "/infrastructure/performance-and-security/security"
+            }
+          ]
+        }
       ]
     },
     {
@@ -132,6 +193,8 @@
         {
           "group": "Version History",
           "pages": [
+            { "title": "0.15.0 (Apr 25)", "href": "/releases/v/0.15.0" },
+            { "title": "0.14.0 (Mar 25)", "href": "/releases/v/0.14.0" },
             { "title": "0.13.0 (Feb 25)", "href": "/releases/v/0.13.0" },
             { "title": "0.12.0 (Jan 25)", "href": "/releases/v/0.12.0" },
             { "title": "0.11.0 (Dec 24)", "href": "/releases/v/0.11.0" },
@@ -170,5 +233,13 @@
         { "title": "Privacy Policy", "href": "/terms-privacy/privacy-policy" }
       ]
     }
-  ]
+  ],
+  "search": {
+    "docsearch": {
+      "apiKey": "dfea0a339a6cae0c538c4fd5eadd566f",
+      "appId": "OHWOUOYAZR",
+      "indexName": "globe",
+      "insights": true
+    }
+  }
 }

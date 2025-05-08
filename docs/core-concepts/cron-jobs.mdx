@@ -1,0 +1,86 @@
+---
+title: Cron Jobs
+---
+
+Schedule **recurring background tasks** by defining HTTP-based cron jobs. Tasks run automatically **after production deployments**; no separate job runner needed.
+
+Globe supports defining cron jobs directly in your `globe.yaml` file. These scheduled tasks run periodically against specified HTTP paths in your production deployment, helping you maintain consistency, reduce manual overhead, and scale reliably.
+
+### Cron jobs in Globe.dev:
+
+- Execute HTTP requests to specific endpoints in your application
+- Only run on **production deployments** (not preview or development)
+- Are synchronized with each successful production deployment
+- Run in **UTC** timezone only
+
+### How to Manage Cron Jobs
+
+Once defined, cron jobs are visible in your Globe dashboard after a production deployment. If a job no longer appears in your `globe.yaml`, it becomes inactive and stops running until re-added.
+
+1. From your Globe dashboard, navigate to your project
+2. Navigate to **Cron Jobs**
+3. View your defined Cron Jobs by **Active** and **Inactive** jobs
+
+### How to Define a Cron Job
+
+Here’s how you can define a simple cron job in `globe.yaml`:
+
+```yaml
+crons:
+  - id: refresh_auth_token
+    schedule: "*/45 * * * *"
+    path: "/auth/refresh"
+```
+
+This example schedules a request to `/auth/refresh` every 45 minutes. For more details on cron syntax, see the [unix-cron documentation](https://crontab.guru/).
+
+Globe ensures that these cron-triggered requests are **private by default**, meaning only internal events can trigger them. To make an endpoint public (not recommended for sensitive paths), disable the privacy setting:
+
+```yaml
+crons:
+  - id: refresh_auth_token
+    schedule: "*/45 * * * *"
+    path: "/auth/refresh"
+    private: false # This endpoint is now publicly accessible
+```
+
+### How to Handle Cron Job Requests
+
+Each cron job triggers **an HTTP POST request** to the specified path. You need to write a route to handle this in your application.
+
+Here’s an example using `shelf_router`:
+
+```dart
+import 'package:shelf_router/shelf_router.dart';
+
+final app = Router();
+
+app.post('/auth/refresh', (Request request) async {
+  // Logic to refresh the auth token
+  return Response.ok('ok');
+});
+```
+
+If your handler returns a status code outside the `2xx` range, it will be displayed as an error on the Globe dashboard.
+
+### Cron Job IDs
+
+The `id` field represents the unique identifier of the cron job. It is used to manage job states and view logs in the dashboard.
+
+- The list **cannot** contain duplicate IDs
+- Max length: 50 characters
+- Allowed characters: `a-z`, `0-9`, and `_`
+
+If a job is removed and later re-added with the same ID, its log history will persist.
+
+### Best Practices
+
+- Keep sensitive endpoints **private** (default behavior)
+- Name cron jobs clearly (e.g., `refresh_auth_token`, `db_cleanup`)
+- Use tools like [crontab.guru](https://crontab.guru) to help design cron expressions
+- Monitor jobs via the dashboard to catch issues early
+- Consider logging actions/failures in cron handlers for easier observability
+
+### Next
+
+Use the **Globe CLI** to deploy, manage, and inspect projects directly from your terminal.

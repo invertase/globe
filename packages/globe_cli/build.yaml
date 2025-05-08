@@ -1,0 +1,16 @@
+targets:
+  $default:
+    builders:
+      graphql_codegen:
+        options:
+          # Configure GraphQL code generation
+          clients:
+            - graphql
+          # Add __typename field to all selection sets for better caching
+          addTypename: true
+          # Ignore lint warnings in generated files
+          generatedFileHeader: "// ignore_for_file: type=lint\n// ignore_for_file: deprecated_member_use, deprecated_member_use_from_same_package\n"
+          # Custom scalar mappings
+          scalars:
+            DateTime:
+              type: DateTime

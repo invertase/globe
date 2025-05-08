@@ -30,6 +30,7 @@ A collection of packages for Globe.
 | Package                               | Pub                                                                                          |
 | ------------------------------------- | -------------------------------------------------------------------------------------------- |
 | [Globe CLI](./packages/globe_cli)     | [![pub](https://img.shields.io/pub/v/globe_cli.svg)](https://pub.dev/packages/globe_cli)     |
+| [Globe Env](./packages/globe_env)     | [![pub](https://img.shields.io/pub/v/globe_env.svg)](https://pub.dev/packages/globe_env)     |
 | [Globe Lints](./packages/globe_lints) | [![pub](https://img.shields.io/pub/v/globe_lints.svg)](https://pub.dev/packages/globe_lints) |
 
 ## How to Contribute
@@ -48,5 +49,5 @@ To start making contributions please refer to
     <img width="75px" src="https://static.invertase.io/assets/invertase/invertase-rounded-avatar.png">
   </a>
   <p align="center">
-    Built and maintained with 💛 by <a href="https://invertase.io/?utm_source=readme&utm_medium=footer&utm_campaign=globe">Invertase</a>.
+    Built and maintained by <a href="https://invertase.io/?utm_source=readme&utm_medium=footer&utm_campaign=globe">Invertase</a>.
 </p>

@@ -1,3 +1,16 @@
+## 0.0.16-dev.1
+
+ - **DOCS**: Implement the first version of the new docs ([#160](https://github.com/invertase/globe/issues/160)). ([a64c2229](https://github.com/invertase/globe/commit/a64c222949a50dcdd7ecd0c4d5b98d9ea83709db))
+
+## 0.0.16-dev.0
+
+ - **FIX**: Ignore custom build runner command if disabled in preset ([#158](https://github.com/invertase/globe/issues/158)). ([8856dd36](https://github.com/invertase/globe/commit/8856dd36f591265c381cf5a9073cb023c566b708))
+ - **FEAT**: Add simple globe runtime install ([#162](https://github.com/invertase/globe/issues/162)). ([3536e99d](https://github.com/invertase/globe/commit/3536e99dd6cfb2b871efe8310cccca0353b077a3))
+
+## 0.0.15
+
+ - **FEAT**(globe_cli): Add whoami command and graphql support ([#148](https://github.com/invertase/globe/issues/148)). ([5f8bfa2b](https://github.com/invertase/globe/commit/5f8bfa2bdb1f8d02c39b10d2b37932366532236d))
+
 ## 0.0.14+1
 
 - **FIX**: Major CLI Improvements ([#135])(https://github.com/invertase/globe/pull/134)

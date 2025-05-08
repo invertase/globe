@@ -2,42 +2,32 @@
 title: Getting started with Globe
 ---
 
-To get started using Globe, ensure you have [logged in](https://globe.dev/login) to your account.
+Before deploying, make sure you have the following:
 
-There are two ways to deploy to Globe:
-- Using the [Globe CLI](#install-the-globe-cli-optional), or
-- Using the [GitHub integration](/deployments/github-integration)
+- Dart SDK Installed
 
-## Install the Globe CLI (optional)
+  [Install Dart →](https://dart.dev/get-dart)
 
-The Globe CLI is a command line tool that allows you to interact with your Globe account and deploy from the command line. It is not required to use Globe, but it can be useful for some workflows.
+- A Globe.dev account to deploy projects
 
-#### Pre-requisites
+  [Sign up or log in →](https://globe.dev/login)
 
-To get started, you must have the [Dart SDK](https://dart.dev/get-dart) installed on your machine.
+<Info>If you have Flutter installed, the Dart SDK is already included.</Info>
 
-#### Installation
+### Choose Your Deployment Method
 
-To install the Globe CLI, run the following command:
+You can deploy in two ways:
 
-```bash
-dart pub global activate globe_cli
-```
-
-Once installed, you can access the globe executable from anywhere on your machine.
-
-To login with your Globe account, run the following command:
-
-```bash
-globe login
-```
-
-To learn more about the CLI, view the [documentation](/cli).
-
-## Deploying your first application
-
-You can deploy your Dart applications to a Globally distributed network using the [framework of your choice](/frameworks). It is possible to deploy both Backend and Frontend applications as shown below. For simplicity, the CLI will be used for deployment.
-
-- [Backend Shelf Server](/getting-started/shelf-server)
-- [Frontend Flutter Web Application](/getting-started/flutter-web)
-
+<CardGroup>
+  <Card title="Globe CLI" href="/getting-started/environment-setup/globe-cli">
+    Deploy from your terminal using a lightweight CLI tool. Great for local
+    development, quick iteration, and preview builds.
+  </Card>
+  <Card
+    title="GitHub Integration"
+    href="/getting-started/environment-setup/github"
+  >
+    Connect your GitHub repo and deploy automatically on every push. Perfect
+    for teams and Git-based workflows.
+  </Card>
+</CardGroup>
