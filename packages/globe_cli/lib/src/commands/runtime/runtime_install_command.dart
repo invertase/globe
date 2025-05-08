@@ -71,15 +71,7 @@ final class RuntimeVersion {
 
     final directory = Directory(globeRuntimeInstallDirectory);
     await directory.create(recursive: true);
-
-    final nameParts = name.split('.');
-    final versionedName = path.join(
-      directory.path,
-      '${nameParts.first}_$version.${nameParts.last}',
-    );
-
-    final file = File(versionedName);
-    await file.writeAsBytes(response);
+    await File(path.join(directory.path, name)).writeAsBytes(response);
   }
 }
 
@@ -119,7 +111,7 @@ class RuntimeInstallCommand extends BaseGlobeCommand {
 
       await release.download();
 
-      runtimeDownloadProgress.complete('Globe Runtime.installed.');
+      runtimeDownloadProgress.complete('Globe Runtime installed.');
       return ExitCode.success.code;
     } on ApiException catch (e) {
       runtimeDownloadProgress.fail('✗ Failed to pause project: ${e.message}');
