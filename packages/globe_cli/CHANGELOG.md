@@ -1,3 +1,7 @@
+## 0.0.16-dev.1
+
+ - **DOCS**: Implement the first version of the new docs ([#160](https://github.com/invertase/globe/issues/160)). ([a64c2229](https://github.com/invertase/globe/commit/a64c222949a50dcdd7ecd0c4d5b98d9ea83709db))
+
 ## 0.0.16-dev.0
 
  - **FIX**: Ignore custom build runner command if disabled in preset ([#158](https://github.com/invertase/globe/issues/158)). ([8856dd36](https://github.com/invertase/globe/commit/8856dd36f591265c381cf5a9073cb023c566b708))

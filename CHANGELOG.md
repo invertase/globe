@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2025-05-08
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`globe_cli` - `v0.0.16-dev.1`](#globe_cli---v0016-dev1)
+
+---
+
+#### `globe_cli` - `v0.0.16-dev.1`
+
+ - **DOCS**: Implement the first version of the new docs ([#160](https://github.com/invertase/globe/issues/160)). ([a64c2229](https://github.com/invertase/globe/commit/a64c222949a50dcdd7ecd0c4d5b98d9ea83709db))
+
+
 ## 2025-04-29
 
 ### Changes
