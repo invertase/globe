@@ -29,10 +29,10 @@ Here’s how you can define a simple cron job in `globe.yaml`:
 crons:
   - id: refresh_auth_token
     schedule: "*/45 * * * *"
-    path: "/auth/refresh"
+    path: "/auth/refresh" # This is the application endpoint that Globe will call
 ```
 
-This example schedules a request to `/auth/refresh` every 45 minutes. For more details on cron syntax, see the [unix-cron documentation](https://crontab.guru/).
+This example schedules a POST request to your application's `/auth/refresh` endpoint every 45 minutes. The path value is the **HTTP route** in your application that Globe will call. For more details on cron syntax, see the [unix-cron documentation](https://crontab.guru/).
 
 Globe ensures that these cron-triggered requests are **private by default**, meaning only internal events can trigger them. To make an endpoint public (not recommended for sensitive paths), disable the privacy setting:
 
@@ -40,7 +40,7 @@ Globe ensures that these cron-triggered requests are **private by default**, mea
 crons:
   - id: refresh_auth_token
     schedule: "*/45 * * * *"
-    path: "/auth/refresh"
+    path: "/auth/refresh" # Globe will call this endpoint in your application
     private: false # This endpoint is now publicly accessible
 ```
 
@@ -56,6 +56,7 @@ import 'package:shelf_router/shelf_router.dart';
 final app = Router();
 
 app.post('/auth/refresh', (Request request) async {
+  // Your handler for the endpoint defined in globe.yaml
   // Logic to refresh the auth token
   return Response.ok('ok');
 });
