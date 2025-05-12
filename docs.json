@@ -136,6 +136,11 @@
       ]
     },
     {
+      "group": "Storage",
+      "tab": "root",
+      "pages": [{ "title": "GlobeKV", "href": "/storage" }]
+    },
+    {
       "group": "Infrastructure",
       "tab": "root",
       "pages": [

@@ -1,0 +1,191 @@
+---
+title: GlobeKV
+---
+
+GlobeKV is a **key-value store** designed for **fast reads** and **low-latency data access**. It is ideal for **caching**, **user settings**, **session storage**, and **feature flags** in Dart applications.
+
+Unlike traditional databases, GlobeKV does not guarantee **immediate consistency**. Updates can take up to **60 seconds** to propagate globally. This makes it great for **temporary** or **frequently accessed data** but unsuitable for operations requiring absolute consistency (e.g., payments, counters).
+
+This page covers setup, storing and retrieving data, data expiration, performance characteristics, and eventual consistency
+
+## Setting Up GlobeKV
+
+### 1. Adding GlobeKV to your Project
+
+Add `globe_kv` to your `pubspec.yaml`:
+
+```yaml
+dependencies:
+  globe_kv: latest
+```
+
+Then install it:
+
+```bash
+dart pub get
+```
+
+Or run this command in your terminal:
+
+With Dart:
+
+```bash
+dart pub add globe_kv
+```
+
+With Flutter:
+
+```bash
+flutter pub add globe_kv
+```
+
+### 2. Creating a Namespace
+
+To use GlobeKV, you need a **KV namespace**.
+
+1. From your Globe dashboard, go to the **KV** section
+2. Select **Create Namespace**
+3. Enter your Namespace name (e.g. users)
+4. Select **Create**
+
+### 3. Creating an Instance
+
+Create a new GlobeKV instance, passing in your KV namespace.
+
+```dart
+import 'package:globe_kv/globe_kv.dart';
+
+// Replace 'namespace-id' with your actual KV namespace
+final kv = GlobeKV('namespace-id');
+```
+
+### 4. Persist Data to Your Local Filesystem
+
+In development, GlobeKV will use **in-memory storage** so your data will be lost when the Dart app is restarted. To persist data to your local filesystem, use the GlobeFileStore instance:
+
+```dart
+final kv = GlobeKV('namespace-id', store: GlobeFileStore());
+```
+
+## Using GlobeKV
+
+### Storing, Retrieving, and Deleting Data
+
+GlobeKV is a **key-value store**, meaning you store and retrieve data using **keys**.
+
+#### Writing Data
+
+```dart
+await kv.set('user:123', 'John Doe');
+```
+
+#### Reading Data
+
+```dart
+final userData = await kv.getString('user:123');
+debugPrint(userData); // Output: John Doe
+```
+
+#### Deleting Data
+
+```dart
+await kv.delete('user:123');
+```
+
+#### Retrieving Data
+
+GlobeKV supports **typed retrieval**, so you can fetch data in a specific format:
+
+```dart
+await kv.getString('key');  // String?
+await kv.getInt('key');     // int?
+await kv.getBool('key');    // bool?
+await kv.getBinary('key');  // List<int>?
+```
+
+### Listing and Filtering Data
+
+When storing multiple related keys (e.g., user data), use prefixes to **group** and **filter** keys.
+
+#### Listing All Keys with a Prefix
+
+```dart
+final result = await kv.list(prefix: 'user:');
+print(result.results.map((e) => e.key)); // ['user:123', 'user:456']
+```
+
+#### Paginating Large Datasets
+
+By default, list() returns up to **1000 keys per page**. If you have more, paginate:
+
+```dart
+final result = await kv.list(prefix: 'user:', limit: 10);
+if (!result.complete) {
+  final nextResult = await kv.list(prefix: 'user:', limit: 10, cursor: result.cursor!);
+}
+```
+
+### Expiring Data (TTL & Absolute Expiration)
+
+GlobeKV supports **automatic expiration**, useful for caching API responses or managing temporary session data.
+
+#### Setting a Time-to-Live (TTL)
+
+```dart
+await kv.set('user:123', 'John Doe', ttl: 5); // Expires in 5 seconds
+```
+
+#### Setting an Absolute Expiration Time
+
+```dart
+await kv.set('user:123', 'John Doe', expires: DateTime.now().add(Duration(minutes: 5)));
+```
+
+#### When to Use TTL vs Expiration
+
+- TTL (time-to-live) is best for **short-lived cache** or session data.
+- **Absolute expiration** is best when data must expire at a fixed point in time.
+
+### Performance: Hot vs Cold Reads
+
+#### Understanding Edge Caching
+
+GlobeKV uses **edge locations** (Points of Presence, POPs) to **cache data closer to users**.
+
+- If data is already cached at an edge location → **Hot Read** (Fast)
+- If data needs to be fetched from storage → **Cold Read** (Slower)
+
+By default, hot reads last **60 seconds**.
+
+#### Increasing Cache Duration for Faster Reads
+
+```dart
+await kv.get('user:123', ttl: 60 * 60 * 24); // Cache for 24 hours
+```
+
+Use this for data that rarely changes, like feature flags or app settings.
+
+### Eventual Consistency
+
+GlobeKV is **not fully consistent**—updates may take **up to 60 seconds** to reflect globally.
+
+#### Good for:
+
+- User preferences
+- Feature flags
+- Non-critical cached data
+
+#### Not suitable for:
+
+- Financial transactions
+- Real-time counters
+
+#### For Less Frequent Updates, Use a Longer Cache
+
+If your data doesn't change often, increasing the **TTL on reads** can improve performance:
+
+```dart
+await kv.get('user:123', ttl: 60 * 60 * 24); // Cache for 24 hours
+```
+
+This reduces cold reads and improves performance for users.
