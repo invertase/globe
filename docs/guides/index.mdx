@@ -1,0 +1,108 @@
+---
+title: Manage Your Projects in the Globe Dashboard
+description: Manage deployments, logs, settings, integrations, and monitoring.
+---
+
+The Globe Dashboard is your central hub for overseeing all your projects. This guide will walk you through the essentials of navigating and utilizing the dashboard for effective project management; from monitoring deployments and logs to configuring settings and integrations. Understanding the dashboard is key to maintaining visibility and control over your applications after deployment.
+
+**10 min read**
+
+---
+
+## Features Covered:
+
+- Managing Deployments
+- Viewing Application Logs
+- Configuring Build Settings
+- Managing Environment Variables
+- Managing Domains
+- Setting up GitHub Integration
+- Monitoring Project Usage
+
+## Prerequisites:
+
+- A [Globe Account](https://globe.dev/login) and login access to the Globe Dashboard.
+- An existing Globe project deployed or linked to your account.
+
+## Step 1: Access Your Project
+
+Navigate to your desired project from the main project list in the Globe dashboard.
+
+## Step 2: Manage Deployments
+
+View and manage different versions of your application deployments.
+
+- Open the **Deployments** tab within your project view.
+- Toggle between **Preview** and **Production** deployments.
+- Select any deployment to view details and logs.
+- Access your deployed application via the provided URL.
+- **Understand deployment statuses**: Queued, In Progress, Deployed, Failed, Cancelled.
+
+## Step 3: View Application Logs
+
+Monitor build and runtime logs for debugging and insights.
+
+- Open the **Logs** tab in your project dashboard.
+- Filter logs by severity (e.g., INFO, ERROR) or time range.
+- Use the search bar to find specific messages.
+- Click into log entries for timestamps and more details.
+
+## Step 4: Configure Build Settings
+
+Control how your application is built and deployed.
+
+- Go to **Settings** > **General** > **Build Settings**.
+- Edit settings like Framework Preset, Build Command, Entrypoint, Dart/Flutter Version, and Root Directory.
+- Select **Save Changes** to apply your configurations.
+
+## Step 5: Manage Environment Variables
+
+Securely store and manage sensitive information and configuration values.
+
+- Open **Settings** > **Environment Variables**.
+- Select **Add Variable**.
+- Enter the **name** and **value** for the variable.
+- Choose the environments (preview, production, or both) where the variable applies.
+- Select **Save**. Remember to redeploy for changes to take effect.
+
+## Step 6: Manage Domains
+
+Link and manage custom domains for your projects.
+
+- Go to the **Domains** section in your project dashboard.
+- Select **Add Domain**.
+- Enter your domain name and select the project to link.
+- Follow the steps to configure DNS with your registrar and verify the domain.
+- View connected domains and their status, and **Delete** domains as needed.
+
+## Step 7: Set up GitHub Integration
+
+Connect your GitHub repository for automatic deployments.
+
+- Go to **Settings** > **Git** in your project dashboard.
+- Select **Connect** and choose your repository.
+- Configure deployment settings as required.
+- To disconnect, go to **Settings** > **Git** and select **Disconnect**.
+
+## Step 8: Monitor Project Usage
+
+Track requests, bandwidth, and resource usage.
+
+- Access monitoring data within your project dashboard.
+- View **Project-Level** Usage metrics like CPU Usage, Memory Usage, and Network Usage over time.
+- For a high-level view across all projects, check **Organization-Wide** Usage for total requests, bandwidth, and breakdowns.
+
+Mastering the Globe Dashboard helps you to oversee your project's lifecycle, from deployment to ongoing maintenance and monitoring.
+
+## What next:
+
+- Explore [Monitoring](/core-concepts/monitoring) in more detail.
+- Learn about [Environment Variables](/core-concepts/environment-variables).
+- Configure [GitHub Integration](/core-concepts/github-integration) for automated workflows.
+
+---
+
+<Info>
+  Couldn't find the guide you need? [Talk to us in
+  Discord](https://invertase.link/globe-discord)
+</Info>
