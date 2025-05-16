@@ -32,7 +32,7 @@
     {
       "id": "guides",
       "title": "Guides",
-      "href": "/guides/dart-frog-deployment"
+      "href": "/guides"
     },
     {
       "id": "releases",
@@ -193,6 +193,10 @@
       "group": "Guides",
       "tab": "guides",
       "pages": [
+        {
+          "title": "Manage Projects",
+          "href": "/guides"
+        },
         {
           "title": "Deploy a Dart Frog App",
           "href": "/guides/dart-frog-deployment"
