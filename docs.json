@@ -30,6 +30,11 @@
       "href": "/"
     },
     {
+      "id": "guides",
+      "title": "Guides",
+      "href": "/guides/dart-frog-deployment"
+    },
+    {
       "id": "releases",
       "title": "Releases",
       "href": "/releases"
@@ -176,6 +181,16 @@
               "href": "/infrastructure/performance-and-security/security"
             }
           ]
+        }
+      ]
+    },
+    {
+      "group": "Guides",
+      "tab": "guides",
+      "pages": [
+        {
+          "title": "Deploy a Dart Frog App",
+          "href": "/guides/dart-frog-deployment"
         }
       ]
     },
