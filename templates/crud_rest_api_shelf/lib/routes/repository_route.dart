@@ -43,6 +43,30 @@ class RepositoryRoute {
       );
     });
 
+    // Get a repository
+    router.get('/repos/<id>', (Request request, String id) async {
+      final repoId = int.tryParse(id);
+      if (repoId == null) {
+        return Response.badRequest(
+          body: jsonEncode({'error': 'Invalid repository ID'}),
+          headers: {'content-type': 'application/json'},
+        );
+      }
+
+      final index = repositories.indexWhere((repo) => repo.id == repoId);
+      if (index == -1) {
+        return Response.notFound(
+          jsonEncode({'error': 'Repository not found'}),
+          headers: {'content-type': 'application/json'},
+        );
+      }
+
+      return Response.ok(
+        jsonEncode(repositories[index].toJson()),
+        headers: {'content-type': 'application/json'},
+      );
+    });
+
     // Update a repository
     router.put('/repos/<id>', (Request request, String id) async {
       final repoId = int.tryParse(id);
