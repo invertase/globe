@@ -15,7 +15,7 @@ export default defineConfig({
     const dartFile = resolve(`lib/src/${dartFileName}`);
 
     // 1. read actual file content as string
-    const jsSource = await readFileSync(actualFile, "utf8");
+    const jsSource = readFileSync(actualFile, "utf8");
 
     // 2. Write the Dart version file
     writeFileSync(
