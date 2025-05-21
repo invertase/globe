@@ -1,27 +1,39 @@
 import { defineConfig } from "tsup";
-import { version } from "./package.json";
-import { writeFileSync } from "fs";
+import { version, name } from "./package.json";
+import { writeFileSync, readFileSync } from "fs";
 import { resolve } from "path";
 
-// 1. Write the Dart version file
-const dartVersionFile = resolve("lib/src/version.dart");
-writeFileSync(
-  dartVersionFile,
-  `// GENERATED FILE — DO NOT MODIFY BY HAND
-// This file was generated from package.json
-
-const packageVersion = '${version}';
-`
-);
-console.log(
-  `\x1b[34mCLI\x1b[0m Wrote \x1b[32mlib/src/version.dart\x1b[0m with version \x1b[32m${version}\x1b[0m`
-);
+const outputFileName = `${name}_v${version}`;
+const dartFileName = `${name}_source.dart`;
 
 export default defineConfig({
   entry: {
-    [`globe_ai_v${version}`]: "lib/globe_ai.ts",
+    [outputFileName]: `lib/${name}.ts`,
   },
-  // entry: ["lib/globe_ai.ts"], // Adjust this to your entry file
+  onSuccess: async () => {
+    const actualFile = resolve(`dist/${outputFileName}.js`);
+    const dartFile = resolve(`lib/src/${dartFileName}`);
+
+    // 1. read actual file content as string
+    const jsSource = await readFileSync(actualFile, "utf8");
+
+    // 2. Write the Dart version file
+    writeFileSync(
+      dartFile,
+      `// GENERATED FILE — DO NOT MODIFY BY HAND
+// This file was generated from package.json
+
+const packageVersion = '${version}';
+
+const packageSource = r'''
+${jsSource}
+''';
+`
+    );
+    console.log(
+      `\x1b[34mCLI\x1b[0m Wrote \x1b[32mlib/src/${dartFileName}\x1b[0m with version \x1b[32m${version}\x1b[0m`
+    );
+  },
   format: ["esm"], // or "cjs" depending on your needs
   minify: true, // Optional, for smaller output
   sourcemap: false, // Optional, set to true if debugging
