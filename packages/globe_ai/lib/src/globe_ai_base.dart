@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:globe_ai/generated/openai.pbserver.dart';
 import 'package:globe_runtime/globe_runtime.dart';
 import 'package:luthor/luthor.dart';
+import 'package:version/version.dart';
 
 import 'globe_ai_source.dart';
 import 'object_schema.dart';
@@ -28,6 +29,15 @@ sealed class AiProvider {
 
   Future<void> _registerModuleIfNotAlready() async {
     if (_runtime.isModuleRegistered(moduleName)) return;
+
+    final currentVersion = Version.parse(_runtime.version);
+    if (currentVersion < Version(0, 0, 4)) {
+      throw StateError(
+        'Globe Runtime version $currentVersion is not supported. '
+        'Please update runtime version.',
+      );
+    }
+
     return _runtime.registerModule(
       moduleName,
       packageSource,
