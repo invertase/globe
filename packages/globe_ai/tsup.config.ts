@@ -17,7 +17,7 @@ export default defineConfig({
     // 1. read actual file content as string
     const jsSource = readFileSync(actualFile, "utf8");
 
-    // 2. Write the Dart version file
+    // 2. Write the Dart source file containing JavaScript code
     writeFileSync(
       dartFile,
       `// GENERATED FILE — DO NOT MODIFY BY HAND
