@@ -202,6 +202,10 @@
           "href": "/guides/dart-frog-deployment"
         },
         {
+          "title": "Connect Flutter App to Backend",
+          "href": "/guides/connect-flutter-app"
+        },
+        {
           "title": "Set up CI/CD with GitHub Integration",
           "href": "/guides/github-integration"
         },
