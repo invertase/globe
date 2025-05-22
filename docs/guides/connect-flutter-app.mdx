@@ -1,0 +1,174 @@
+---
+title: Connect Your Flutter App to a Dart Backend on Globe
+description: Ship a complete Flutter web app with an integrated Dart backend in minutes.
+---
+
+Building a complete full-stack application often involves integrating a frontend with its backend. Globe simplifies this process for Flutter and Dart developers, enabling you to quickly deploy both components with minimal configuration. This guide will walk you through setting up a Flutter web application that communicates with a Dart Shelf backend, both deployed on Globe, demonstrating a complete full-stack solution.
+
+**15 min read**
+
+---
+
+## Features Covered:
+
+- Scaffolding a Dart Shelf backend with a CRUD API
+- Deploying a Dart backend to Globe
+- Scaffolding a Flutter web frontend for the backend
+- Updating frontend API configuration for deployed backend
+- Deploying a Flutter web application to Globe
+- Testing a full-stack Flutter and Dart application on Globe
+
+## Prerequisites:
+
+- **Dart SDK Installed**: Required for both Dart and Flutter. [Install Dart](https://dart.dev/get-dart).
+- **Flutter SDK Installed**: Specifically for Flutter web development. [Install Flutter](https://docs.flutter.dev/install).
+- **Globe Account**: You'll need an account to deploy projects. [Sign up or log in to Globe](https://globe.dev/login).
+- **Globe CLI Installed and Authenticated**: Install the CLI by running `dart pub global activate globe_cli` and log in using `globe login`.
+- **Git Installed**: For cloning Globe templates.
+
+## Part 1: Set Up and Deploy Your Dart Shelf Backend
+
+### Step 1: Initialize Your Shelf Backend Project
+
+Start by creating your Dart Shelf backend using a Globe template for a quick setup.
+
+- Open your terminal and run the following command:
+
+  ```bash
+  globe create -t crud_rest_api_shelf
+  ```
+
+- Navigate into your newly created project directory:
+
+  ```bash
+  cd crud_rest_api_shelf
+  ```
+
+### Step 2: Understand and Test the Backend Locally
+
+The `crud_rest_api_shelf` template provides a simple CRUD REST API for managing a list of repositories.
+
+- Start the Shelf server locally:
+
+  ```bash
+  dart run bin/server.dart
+  ```
+
+- The server will run at http://localhost:3000. You can test its endpoints using curl from another terminal window:
+
+  - **List Repositories**:
+    ```bash
+    curl --request GET --url http://localhost:3000/repos
+    ```
+  - **Create New Repository**:
+
+    ```bash
+    curl -X POST \
+    -H "Content-Type: application/json" \
+    -d '{
+      "name": "newrepo",
+      "url": "github.com/newrepo/newrepo"
+    }' \
+    http://localhost:3000/repos
+    ```
+
+  - **Update Repository (e.g., `id 1`)**:
+
+    ```bash
+    curl -X PUT \
+    -H "Content-Type: application/json" \
+    -d '{
+        "name": "updated",
+        "url": "updated.com"
+    }' \
+    http://localhost:3000/repos/1
+    ```
+
+  - **Delete Repository (e.g., `id 2`)**:
+
+    ```bash
+    curl --request DELETE http://localhost:3000/repos/2
+    ```
+
+### Step 3: Deploy Your Shelf Backend to Globe
+
+Deploy your backend to make it accessible online.
+
+- From your `crud_rest_api_shelf` project directory, run the Globe deploy command:
+
+  ```bash
+  globe deploy
+  ```
+
+- When prompted, select to create a **new project** for your backend.
+- **Important**: Note the deployment URL provided by the CLI (e.g., https://your-shelf-api.globeapp.dev). You will need this URL for your Flutter frontend.
+
+## Part 2: Set Up and Deploy Your Flutter Web Frontend
+
+### Step 4: Initialize Your Flutter Web Frontend Project
+
+Create your Flutter web application using another Globe template in a separate directory from your backend project.
+
+- Open a **new terminal window** or navigate to a different directory.
+- Run the command to create the Flutter web client:
+
+  ```bash
+  globe create -t crud_flutter_web
+  ```
+
+- Navigate into your new Flutter project directory:
+
+  ```bash
+  cd crud_flutter_web
+  ```
+
+### Step 5: Configure the Flutter App for the Deployed Backend
+
+Update your Flutter application's code to point to your live, deployed Shelf backend.
+
+- Open the `lib/main.dart` file in your `crud_flutter_web` project using your preferred code editor.
+- Locate the `apiUrl` constant.
+- Modify the `kReleaseMode` branch of the `apiUrl` to use the **deployment URL of your Shelf backend** that you noted in Step 3.
+
+  ```dart
+  const apiUrl = !kReleaseMode
+  ? 'http://localhost:3000' // For local development
+  : 'https://your-shelf-api.globeapp.dev'; // Replace with your deployed backend URL
+  ```
+
+- Save the main.dart file.
+
+### Step 6: Build and Deploy Your Flutter Web Frontend to Globe
+
+Build your Flutter web application and deploy it to Globe.
+
+- From your `crud_flutter_web` project directory, first build the web application:
+
+  ```bash
+  flutter build web
+  ```
+
+- Then, deploy the Flutter web client to Globe:
+
+  ```bash
+  globe deploy
+  ```
+
+- When prompted, select to create a **new project** for your frontend.
+- Note the deployment URL provided by the CLI (e.g., https://your-flutter-app.globeapp.dev). This is the URL to access your full-stack application.
+
+## What next:
+
+You have successfully deployed a complete full-stack Flutter web application with a Dart Shelf backend on Globe!
+
+- **Test Your Full-Stack App**: Visit the deployment URL of your Flutter frontend (from Step 6) in your browser. You should now be able to interact with the CRUD API and see your repositories being managed.
+- Automate future updates by setting up CI/CD with [GitHub Integration](/core-concepts/github-integration).
+- Securely manage production configurations for both backend and frontend using [Environment Variables](/core-concepts/environment-variables).
+- Add a [Custom Domain](/core-concepts/domains) to your Flutter web application for professional branding.
+
+---
+
+<Info>
+  Couldn't find the guide you need? [Talk to us in
+  Discord](https://invertase.link/globe-discord)
+</Info>
