@@ -43,6 +43,16 @@ $ dart run bin/server.dart
   ]
   ```
 
+- Get Repository
+
+  ```shell
+  curl --request GET --url http://localhost:3000/repos/3
+  ```
+
+  ```json
+  { "id": 2, "name": "freezed", "url": "github.com/rrousselGit/freezed" }
+  ```
+
 - Create New Repository
 
   ```shell
