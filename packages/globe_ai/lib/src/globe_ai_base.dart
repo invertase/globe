@@ -31,7 +31,7 @@ sealed class AiProvider {
     if (_runtime.isModuleRegistered(moduleName)) return;
 
     final currentVersion = Version.parse(_runtime.version);
-    if (currentVersion < Version(0, 0, 4)) {
+    if (currentVersion < Version(0, 0, 6)) {
       throw StateError(
         'Globe Runtime version $currentVersion is not supported. '
         'Please update runtime version.',
@@ -134,13 +134,12 @@ Future<String> generateText({
   await aiProvider._registerModuleIfNotAlready();
 
   final completer = Completer<String>();
-  final optionsJson = model.options.pack();
 
   aiProvider._runtime.callFunction(
     AiProvider.moduleName,
     function: 'openai_chat_generate_text',
     args: [
-      optionsJson.toFFIType,
+      model.options.toFFIType,
       model.name.toFFIType,
       prompt.toFFIType,
       ''.toFFIType,
@@ -175,7 +174,7 @@ Future<T> generateObject<T>({
     args: [
       model.name.toFFIType,
       prompt.toFFIType,
-      schema?.toJson().pack().toFFIType,
+      schema?.toJson().toFFIType,
     ],
     onData: (data) {
       if (data.hasError()) {
@@ -183,7 +182,7 @@ Future<T> generateObject<T>({
         return true;
       }
 
-      completer.complete(JsonPayload(data: data.data).unpack<T>());
+      completer.complete(data.data.unpack());
       return true;
     },
   );
@@ -247,7 +246,7 @@ Stream<T> streamObject<T>({
     args: [
       model.name.toFFIType,
       prompt.toFFIType,
-      schema?.toJson().pack().toFFIType,
+      schema?.toJson().toFFIType,
     ],
     onData: (data) {
       if (data.hasError()) {
@@ -258,8 +257,7 @@ Stream<T> streamObject<T>({
       }
 
       if (data.hasData()) {
-        final object = JsonPayload(data: data.data).unpack<T>();
-        streamController.add(object);
+        streamController.add(data.data.unpack());
       }
 
       if (data.done) {

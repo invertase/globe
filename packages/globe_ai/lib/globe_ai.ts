@@ -1,4 +1,4 @@
-import { JSONSchemaToZod } from "@dmitryrechkin/json-schema-to-zod";
+import { JSONObject, JSONSchemaToZod } from "@dmitryrechkin/json-schema-to-zod";
 
 import { generateText, generateObject, streamText, streamObject } from "ai";
 import { createOpenAI, OpenAIProvider } from "@ai-sdk/openai";
@@ -9,15 +9,14 @@ type GlobeAISdkState = {
 
 const openai_chat_generate_text = async (
   state: GlobeAISdkState,
-  model_args: Uint8Array,
+  model_args: JSONObject,
   model: string,
   prompt: string,
   system: string | undefined,
   callbackId: number
 ) => {
-  const modelArgs = JsonPayload.decode(model_args);
   const { text } = await generateText({
-    model: state.openAI.chat(model, { ...modelArgs }),
+    model: state.openAI.chat(model, { ...model_args }),
     prompt,
     system,
   });
@@ -51,11 +50,10 @@ const openai_chat_generate_object = async (
   state: GlobeAISdkState,
   model: string,
   prompt: string,
-  schema: Uint8Array,
+  schema: JSONObject,
   callbackId: number
 ) => {
-  const schemaJson = schema && JsonPayload.decode(schema);
-  const zodSchema = JSONSchemaToZod.convert(schemaJson as any);
+  const zodSchema = JSONSchemaToZod.convert(schema);
 
   const result = await generateObject({
     model: state.openAI.responses(model),
@@ -76,11 +74,10 @@ const openai_chat_stream_object = async (
   state: GlobeAISdkState,
   model: string,
   prompt: string,
-  schema: Uint8Array,
+  schema: JSONObject,
   callbackId: number
 ) => {
-  const schemaJson = schema && JsonPayload.decode(schema);
-  const zodSchema = JSONSchemaToZod.convert(schemaJson as any);
+  const zodSchema = JSONSchemaToZod.convert(schema);
 
   const { fullStream } = await streamObject({
     model: state.openAI.responses(model),

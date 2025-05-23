@@ -7,7 +7,7 @@ environment:
   sdk: ^3.4.0
 
 dependencies:
-  globe_runtime: ^1.0.4
+  globe_runtime: ^1.0.5
   luthor: ^0.6.1
   path: ^1.9.1
   protobuf: ^3.1.0
