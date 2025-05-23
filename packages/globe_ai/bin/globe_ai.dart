@@ -3,13 +3,13 @@ import 'dart:io';
 import 'package:globe_ai/globe_ai.dart';
 
 void main() async {
-  // print('Method: :generateText\n');
+  print('Method: :generateText\n');
 
-  // final textResponse = await generateText(
-  //   model: openai.chat('gpt-4o', user: 'Chima'),
-  //   prompt: 'Who is the president of Ghana?',
-  // );
-  // print(textResponse);
+  final textResponse = await generateText(
+    model: openai.chat('gpt-4o', user: 'Chima'),
+    prompt: 'Who is the president of Ghana?',
+  );
+  print(textResponse);
 
   print('\nMethod: :generateText with Messages and File Input\n');
   final textWithPdf = await generateText(
@@ -32,59 +32,59 @@ void main() async {
   );
   print(textWithPdf);
 
-  // print('\nMethod:streamText\n');
-  // final result3 = streamText(
-  //   model: openai('o4-mini'),
-  //   prompt: 'Tell me about the Mission burrito debate in San Francisco.',
-  // );
+  print('\nMethod:streamText\n');
+  final result3 = streamText(
+    model: openai('o4-mini'),
+    prompt: 'Tell me about the Mission burrito debate in San Francisco.',
+  );
 
-  // final buffer = StringBuffer();
-  // await for (final chunk in result3) {
-  //   buffer.write(chunk);
-  // }
-  // print(buffer.toString());
+  final buffer = StringBuffer();
+  await for (final chunk in result3) {
+    buffer.write(chunk);
+  }
+  print(buffer.toString());
 
-  // print('\nMethod:generateObject with Schema\n');
-  // final schema = l.schema({
-  //   'recipe': l.schema({
-  //     'name': l.string(),
-  //     'ingredients': l.list(validators: [
-  //       l.schema({
-  //         'name': l.string(),
-  //         'amount': l.string(),
-  //       }),
-  //     ]),
-  //     'steps': l.list(validators: [l.string()]),
-  //   })
-  // });
-  // final result2 = await generateObject<Map<dynamic, dynamic>>(
-  //   model: openai('gpt-4.1'),
-  //   prompt: 'Generate a lasagna recipe.',
-  //   schema: schema,
-  // );
-  // print(result2);
+  print('\nMethod:generateObject with Schema\n');
+  final schema = l.schema({
+    'recipe': l.schema({
+      'name': l.string(),
+      'ingredients': l.list(validators: [
+        l.schema({
+          'name': l.string(),
+          'amount': l.string(),
+        }),
+      ]),
+      'steps': l.list(validators: [l.string()]),
+    })
+  });
+  final result2 = await generateObject<Map<dynamic, dynamic>>(
+    model: openai('gpt-4.1'),
+    prompt: 'Generate a lasagna recipe.',
+    schema: schema,
+  );
+  print(result2);
 
-  // print('\nMethod:streamObject with Schema\n');
-  // final schema2 = l.schema({
-  //   'recipe': l.schema({
-  //     'name': l.string(),
-  //     'ingredients': l.list(validators: [
-  //       l.schema({
-  //         'name': l.string(),
-  //         'amount': l.string(),
-  //       }),
-  //     ]),
-  //     'steps': l.list(validators: [l.string()]),
-  //   })
-  // });
-  // final result4 = streamObject<Map<dynamic, dynamic>>(
-  //   model: openai('gpt-4.1'),
-  //   prompt: 'Generate a lasagna recipe.',
-  //   schema: schema2,
-  // );
-  // await for (final chunk in result4) {
-  //   print(chunk);
-  // }
+  print('\nMethod:streamObject with Schema\n');
+  final schema2 = l.schema({
+    'recipe': l.schema({
+      'name': l.string(),
+      'ingredients': l.list(validators: [
+        l.schema({
+          'name': l.string(),
+          'amount': l.string(),
+        }),
+      ]),
+      'steps': l.list(validators: [l.string()]),
+    })
+  });
+  final result4 = streamObject<Map<dynamic, dynamic>>(
+    model: openai('gpt-4.1'),
+    prompt: 'Generate a lasagna recipe.',
+    schema: schema2,
+  );
+  await for (final chunk in result4) {
+    print(chunk);
+  }
 
   exit(0);
 }
