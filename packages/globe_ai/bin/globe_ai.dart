@@ -4,7 +4,6 @@ import 'package:globe_ai/globe_ai.dart';
 
 void main() async {
   print('Method: :generateText\n');
-
   final textResponse = await generateText(
     model: openai.chat('gpt-4o', user: 'Chima'),
     prompt: 'Who is the president of Ghana?',
@@ -18,10 +17,10 @@ void main() async {
       OpenAIMessage(
         role: 'user',
         content: [
-          OpenAIInput(text: 'How many jobs has the user had?'),
+          OpenAIInput(text: 'What is the title of this book?'),
           OpenAIInput(
             file: FileInput(
-              data: File('bin/resume.pdf').readAsBytesSync(),
+              data: File('bin/test_doc.pdf').readAsBytesSync(),
               mimeType: 'application/pdf',
               name: 'ai.pdf',
             ),
