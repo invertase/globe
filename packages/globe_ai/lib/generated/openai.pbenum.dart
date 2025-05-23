@@ -14,21 +14,19 @@ import 'dart:core' as $core;
 import 'package:protobuf/protobuf.dart' as $pb;
 
 class Compatibility extends $pb.ProtobufEnum {
-  static const Compatibility STRICT =
-      Compatibility._(0, _omitEnumNames ? '' : 'STRICT');
-  static const Compatibility COMPATIBLE =
-      Compatibility._(1, _omitEnumNames ? '' : 'COMPATIBLE');
+  static const Compatibility STRICT = Compatibility._(0, _omitEnumNames ? '' : 'STRICT');
+  static const Compatibility COMPATIBLE = Compatibility._(1, _omitEnumNames ? '' : 'COMPATIBLE');
 
-  static const $core.List<Compatibility> values = <Compatibility>[
+  static const $core.List<Compatibility> values = <Compatibility> [
     STRICT,
     COMPATIBLE,
   ];
 
-  static final $core.Map<$core.int, Compatibility> _byValue =
-      $pb.ProtobufEnum.initByValue(values);
+  static final $core.Map<$core.int, Compatibility> _byValue = $pb.ProtobufEnum.initByValue(values);
   static Compatibility? valueOf($core.int value) => _byValue[value];
 
   const Compatibility._($core.int v, $core.String n) : super(v, n);
 }
+
 
 const _omitEnumNames = $core.bool.fromEnvironment('protobuf.omit_enum_names');

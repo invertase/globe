@@ -14,3 +14,35 @@ message OpenAIConfig {
   map<string, string> headers = 6;// Optional: custom HTTP headers
   Compatibility compatibility = 7;// Enum ensures valid values only
 }
+
+
+message FileInput {
+  string name = 1;
+  string mime_type = 2;
+  bytes data = 3;
+}
+
+message TextInput {
+  string text = 1;
+}
+message OpenAIMessage {
+  string role = 1;
+  repeated OpenAIInput content = 2;
+}
+message OpenAIMessages {
+  repeated OpenAIMessage messages = 1;
+}
+
+message OpenAIInput {
+  oneof input {
+    string text = 1;
+    FileInput file = 2;
+  }
+}
+
+message EitherMessagesOrPrompt {
+  oneof input {
+    string prompt = 1;
+    OpenAIMessages messages = 2;
+  }
+}

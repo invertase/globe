@@ -128,8 +128,18 @@ class OpenAI extends AiProvider {
 
 Future<String> generateText({
   required AiModel model,
-  required String prompt,
+  String? prompt,
+  List<OpenAIMessage>? messages,
 }) async {
+  if (prompt == null && messages == null) {
+    throw ArgumentError('Either prompt or messages must be provided.');
+  }
+
+  final openAiMessage = EitherMessagesOrPrompt(
+    prompt: prompt,
+    messages: messages == null ? null : OpenAIMessages(messages: messages),
+  );
+
   final aiProvider = AiProvider._getInstance(model.apiKey);
   await aiProvider._registerModuleIfNotAlready();
 
@@ -141,8 +151,7 @@ Future<String> generateText({
     args: [
       model.options.toFFIType,
       model.name.toFFIType,
-      prompt.toFFIType,
-      ''.toFFIType,
+      openAiMessage.writeToBuffer().toFFIType,
     ],
     onData: (data) {
       if (data.hasError()) {
@@ -161,7 +170,7 @@ Future<String> generateText({
 Future<T> generateObject<T>({
   required AiModel model,
   required String prompt,
-  Validator? schema,
+  required Validator schema,
 }) async {
   final aiProvider = AiProvider._getInstance(model.apiKey);
   await aiProvider._registerModuleIfNotAlready();
@@ -174,7 +183,7 @@ Future<T> generateObject<T>({
     args: [
       model.name.toFFIType,
       prompt.toFFIType,
-      schema?.toJson().toFFIType,
+      schema.toJson().toFFIType,
     ],
     onData: (data) {
       if (data.hasError()) {
@@ -233,7 +242,7 @@ Stream<String> streamText({
 Stream<T> streamObject<T>({
   required AiModel model,
   required String prompt,
-  Validator? schema,
+  required Validator schema,
 }) async* {
   final aiProvider = AiProvider._getInstance(model.apiKey);
   await aiProvider._registerModuleIfNotAlready();
@@ -246,7 +255,7 @@ Stream<T> streamObject<T>({
     args: [
       model.name.toFFIType,
       prompt.toFFIType,
-      schema?.toJson().toFFIType,
+      schema.toJson().toFFIType,
     ],
     onData: (data) {
       if (data.hasError()) {
