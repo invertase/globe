@@ -131,7 +131,8 @@ Future<String> generateText({
   String? prompt,
   List<OpenAIMessage>? messages,
 }) async {
-  if (prompt == null && messages == null) {
+  if ((prompt == null && messages == null) ||
+      (prompt != null && messages != null)) {
     throw ArgumentError('Either prompt or messages must be provided.');
   }
 
@@ -201,8 +202,19 @@ Future<T> generateObject<T>({
 
 Stream<String> streamText({
   required AiModel model,
-  required String prompt,
+  String? prompt,
+  List<OpenAIMessage>? messages,
 }) async* {
+  if ((prompt == null && messages == null) ||
+      (prompt != null && messages != null)) {
+    throw ArgumentError('Either prompt or messages must be provided.');
+  }
+
+  final openAiMessage = EitherMessagesOrPrompt(
+    prompt: prompt,
+    messages: messages == null ? null : OpenAIMessages(messages: messages),
+  );
+
   final aiProvider = AiProvider._getInstance(model.apiKey);
   await aiProvider._registerModuleIfNotAlready();
 
@@ -213,7 +225,7 @@ Stream<String> streamText({
     function: 'openai_chat_stream_text',
     args: [
       model.name.toFFIType,
-      prompt.toFFIType,
+      openAiMessage.writeToBuffer().toFFIType,
     ],
     onData: (data) {
       if (data.hasError()) {

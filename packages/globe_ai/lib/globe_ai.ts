@@ -56,13 +56,42 @@ const openai_chat_generate_text = async (
 const openai_chat_stream_text = async (
   state: GlobeAISdkState,
   model: string,
-  prompt: string,
+  prompt: Uint8Array,
   callbackId: number
 ) => {
-  const result = streamText({
-    model: state.openAI.responses(model),
-    prompt,
-  });
+  const actualModel = state.openAI.responses(model);
+  const eitherPromptOrMessage =
+    EitherMessagesOrPrompt.deserializeBinary(prompt);
+
+  let messages: any[] = [];
+
+  if (eitherPromptOrMessage.has_messages) {
+    messages = eitherPromptOrMessage.messages.messages.map((m) => ({
+      role: m.role,
+      content: m.content.map((d) => {
+        if (d.has_file) {
+          return {
+            type: "file",
+            data: d.file.data,
+            filename: d.file.name,
+            mimeType: d.file.mime_type,
+          };
+        }
+
+        return { type: "text", text: d.text };
+      }),
+    }));
+  }
+
+  let pendingPromise =
+    messages.length === 0
+      ? streamText({
+          model: actualModel,
+          prompt: eitherPromptOrMessage.prompt,
+        })
+      : streamText({ model: actualModel, messages });
+
+  const result = await pendingPromise;
 
   for await (const part of result.fullStream) {
     if (part.type === "reasoning" || part.type === "text-delta") {

@@ -6,7 +6,7 @@
 
 ## ✨ Features
 
-- 📝 `generateText` — basic prompt-response text generation
+- 📝 `generateText` — basic prompt or messages based text generation
 
 - 📡 `streamText` — stream text responses as they’re generated
 
@@ -47,6 +47,30 @@ final result = await generateText(
   prompt: 'What is the capital of Ghana?',
 );
 print(result);
+```
+
+or
+
+```dart
+final textWithPdf = await generateText(
+  model: openai.chat('gpt-4o', user: 'Chima'),
+  messages: [
+    OpenAIMessage(
+      role: 'user',
+      content: [
+        OpenAIInput(text: 'What is the title of this book?'),
+        OpenAIInput(
+          file: FileInput(
+            data: File('bin/test_doc.pdf').readAsBytesSync(),
+            mimeType: 'application/pdf',
+            name: 'ai.pdf',
+          ),
+        ),
+      ],
+    ),
+  ],
+);
+print(textWithPdf);
 ```
 
 ### 🔹 Streaming Text

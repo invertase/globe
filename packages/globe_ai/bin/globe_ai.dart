@@ -43,6 +43,31 @@ void main() async {
   }
   print(buffer.toString());
 
+  print('\nMethod: :streamText with Messages and File Input\n');
+  final streamTextWithPdf = streamText(
+    model: openai.chat('gpt-4o', user: 'Chima'),
+    messages: [
+      OpenAIMessage(
+        role: 'user',
+        content: [
+          OpenAIInput(text: 'Mention all the chapters and title in this book'),
+          OpenAIInput(
+            file: FileInput(
+              data: File('bin/test_doc.pdf').readAsBytesSync(),
+              mimeType: 'application/pdf',
+              name: 'ai.pdf',
+            ),
+          ),
+        ],
+      ),
+    ],
+  );
+  final buffer2 = StringBuffer();
+  await for (final chunk in streamTextWithPdf) {
+    buffer2.write(chunk);
+  }
+  print(buffer2.toString());
+
   print('\nMethod:generateObject with Schema\n');
   final schema = l.schema({
     'recipe': l.schema({
