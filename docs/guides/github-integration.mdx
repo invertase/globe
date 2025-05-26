@@ -1,0 +1,79 @@
+---
+title: How to Set up CI/CD with GitHub Integration
+description: Automate your build, test, and deploy workflow for faster releases with Globe and GitHub.
+---
+
+Globe’s built-in Continuous Integration/Continuous Delivery (CI/CD) automates your build and deployment process, so you don’t have to manage it manually. By connecting your GitHub repository, you can trigger builds and deploy updates automatically whenever you push code. This guide walks you through how to set that up in a few steps.
+
+**10 min read**
+
+---
+
+## Features Covered:
+
+- Connecting GitHub account to Globe
+- Linking a GitHub repository to a Globe project
+- Automatic build and deployment triggers
+- Understanding preview and production deployment triggers
+
+## Prerequisites:
+
+- A [Globe Account](https://globe.dev/login).
+- A [GitHub Account](https://github.com/).
+- An existing GitHub repository containing your application code (e.g., a `Dart Frog`, `Shelf`, or `Flutter Web` project).
+- An existing Globe project deployed or linked to your account (or you can create a new one during the linking process).
+
+## Step1: Connect Your GitHub Account to Globe
+
+First, authorize Globe to access your GitHub account. This is a one-time setup at the account level.
+
+- Log in to your [Globe Dashboard](https://globe.dev/login).
+- Navigate to your **Account Settings**.
+- Find the section for **Connected Accounts**.
+- Select the option to **Connect your GitHub account**.
+- You will be redirected to GitHub to authorize Globe. Follow the prompts to grant the necessary permissions.
+
+## Step 2: Link Your GitHub Repository to Your Globe Project
+
+Once your GitHub account is connected, link a specific repository to your Globe project to enable automation.
+
+- In the Globe Dashboard, go to your existing project.
+- Navigate to **Settings** > **Git**.
+- Select the **Connect** button.
+- Choose the GitHub repository you want to link from the list of your repositories.
+- Confirm the linking.
+
+<Info>
+  If creating a new project, you often select "Import from GitHub" during the
+  project creation flow to connect a repository from the start.
+</Info>
+
+## Step 3: Understand Automatic Deployment Triggers
+
+With your repository linked, Globe is now configured to automatically build and deploy your application based on Git push events in your connected GitHub repository.
+
+- Pushing code to your designated **production branch** (by default, `main`) will trigger a **production deployment**, updating your live application URL (including any custom domain).
+- Pushing code to any other branch will trigger a **preview deployment**, creating a unique, temporary URL for you to review changes before merging to production.
+
+## Step 4: (Optional) Configure Your Production Branch
+
+If your production branch in GitHub is not named `main`, you can configure which branch triggers production deployments in your Globe project settings.
+
+- In your project's dashboard, go to **Settings** > **Git**.
+- Find the option to set the **Production Branch**.
+- Select the desired branch name from the dropdown.
+- **Save Changes**.
+
+Your CI/CD pipeline is now active! Pushing code to your GitHub repository will automatically trigger builds and deployments on Globe.
+
+## What next:
+
+- Monitor the progress and logs of your automated deployments in the [Deployments](/core-concepts/deployments) section of your project dashboard.
+- View runtime logs and usage metrics under your custom domain or default URL in the [Monitoring](/core-concepts/monitoring) and [Logs](/core-concepts/logs) sections of your dashboard.
+
+---
+
+<Info>
+  Couldn't find the guide you need? [Talk to us in
+  Discord](https://invertase.link/globe-discord)
+</Info>

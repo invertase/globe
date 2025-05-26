@@ -200,6 +200,10 @@
         {
           "title": "Deploy a Dart Frog App",
           "href": "/guides/dart-frog-deployment"
+        },
+        {
+          "title": "Set up CI/CD with GitHub Integration",
+          "href": "/guides/github-integration"
         }
       ]
     },
