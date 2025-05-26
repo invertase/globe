@@ -35,8 +35,22 @@ const OpenAIConfig$json = {
     {'1': 'name', '3': 3, '4': 1, '5': 9, '10': 'name'},
     {'1': 'organization', '3': 4, '4': 1, '5': 9, '10': 'organization'},
     {'1': 'project', '3': 5, '4': 1, '5': 9, '10': 'project'},
-    {'1': 'headers', '3': 6, '4': 3, '5': 11, '6': '.OpenAIConfig.HeadersEntry', '10': 'headers'},
-    {'1': 'compatibility', '3': 7, '4': 1, '5': 14, '6': '.Compatibility', '10': 'compatibility'},
+    {
+      '1': 'headers',
+      '3': 6,
+      '4': 3,
+      '5': 11,
+      '6': '.OpenAIConfig.HeadersEntry',
+      '10': 'headers'
+    },
+    {
+      '1': 'compatibility',
+      '3': 7,
+      '4': 1,
+      '5': 14,
+      '6': '.Compatibility',
+      '10': 'compatibility'
+    },
   ],
   '3': [OpenAIConfig_HeadersEntry$json],
 };
@@ -84,15 +98,22 @@ const TextInput$json = {
 };
 
 /// Descriptor for `TextInput`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List textInputDescriptor = $convert.base64Decode(
-    'CglUZXh0SW5wdXQSEgoEdGV4dBgBIAEoCVIEdGV4dA==');
+final $typed_data.Uint8List textInputDescriptor =
+    $convert.base64Decode('CglUZXh0SW5wdXQSEgoEdGV4dBgBIAEoCVIEdGV4dA==');
 
 @$core.Deprecated('Use openAIMessageDescriptor instead')
 const OpenAIMessage$json = {
   '1': 'OpenAIMessage',
   '2': [
     {'1': 'role', '3': 1, '4': 1, '5': 9, '10': 'role'},
-    {'1': 'content', '3': 2, '4': 3, '5': 11, '6': '.OpenAIInput', '10': 'content'},
+    {
+      '1': 'content',
+      '3': 2,
+      '4': 3,
+      '5': 11,
+      '6': '.OpenAIInput',
+      '10': 'content'
+    },
   ],
 };
 
@@ -105,7 +126,14 @@ final $typed_data.Uint8List openAIMessageDescriptor = $convert.base64Decode(
 const OpenAIMessages$json = {
   '1': 'OpenAIMessages',
   '2': [
-    {'1': 'messages', '3': 1, '4': 3, '5': 11, '6': '.OpenAIMessage', '10': 'messages'},
+    {
+      '1': 'messages',
+      '3': 1,
+      '4': 3,
+      '5': 11,
+      '6': '.OpenAIMessage',
+      '10': 'messages'
+    },
   ],
 };
 
@@ -119,7 +147,15 @@ const OpenAIInput$json = {
   '1': 'OpenAIInput',
   '2': [
     {'1': 'text', '3': 1, '4': 1, '5': 9, '9': 0, '10': 'text'},
-    {'1': 'file', '3': 2, '4': 1, '5': 11, '6': '.FileInput', '9': 0, '10': 'file'},
+    {
+      '1': 'file',
+      '3': 2,
+      '4': 1,
+      '5': 11,
+      '6': '.FileInput',
+      '9': 0,
+      '10': 'file'
+    },
   ],
   '8': [
     {'1': 'input'},
@@ -136,7 +172,15 @@ const EitherMessagesOrPrompt$json = {
   '1': 'EitherMessagesOrPrompt',
   '2': [
     {'1': 'prompt', '3': 1, '4': 1, '5': 9, '9': 0, '10': 'prompt'},
-    {'1': 'messages', '3': 2, '4': 1, '5': 11, '6': '.OpenAIMessages', '9': 0, '10': 'messages'},
+    {
+      '1': 'messages',
+      '3': 2,
+      '4': 1,
+      '5': 11,
+      '6': '.OpenAIMessages',
+      '9': 0,
+      '10': 'messages'
+    },
   ],
   '8': [
     {'1': 'input'},
@@ -147,4 +191,3 @@ const EitherMessagesOrPrompt$json = {
 final $typed_data.Uint8List eitherMessagesOrPromptDescriptor = $convert.base64Decode(
     'ChZFaXRoZXJNZXNzYWdlc09yUHJvbXB0EhgKBnByb21wdBgBIAEoCUgAUgZwcm9tcHQSLQoIbW'
     'Vzc2FnZXMYAiABKAsyDy5PcGVuQUlNZXNzYWdlc0gAUghtZXNzYWdlc0IHCgVpbnB1dA==');
-
