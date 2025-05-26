@@ -4,11 +4,32 @@ import 'package:globe_ai/globe_ai.dart';
 
 void main() async {
   print('Method: :generateText\n');
-  final result1 = await generateText(
+  final textResponse = await generateText(
     model: openai.chat('gpt-4o', user: 'Chima'),
-    prompt: 'Who is the president of Ghana?',
+    prompt: 'In a single line, tell me who Tim Cook is?',
   );
-  print(result1);
+  print(textResponse);
+
+  print('\nMethod: :generateText with Messages and File Input\n');
+  final textWithPdf = await generateText(
+    model: openai.chat('gpt-4o', user: 'Chima'),
+    messages: [
+      OpenAIMessage(
+        role: 'user',
+        content: [
+          OpenAIInput(text: 'What is the title of this book?'),
+          OpenAIInput(
+            file: FileInput(
+              data: File('bin/test_doc.pdf').readAsBytesSync(),
+              mimeType: 'application/pdf',
+              name: 'ai.pdf',
+            ),
+          ),
+        ],
+      ),
+    ],
+  );
+  print(textWithPdf);
 
   print('\nMethod:streamText\n');
   final result3 = streamText(
@@ -21,6 +42,31 @@ void main() async {
     buffer.write(chunk);
   }
   print(buffer.toString());
+
+  print('\nMethod: :streamText with Messages and File Input\n');
+  final streamTextWithPdf = streamText(
+    model: openai.chat('gpt-4o', user: 'Chima'),
+    messages: [
+      OpenAIMessage(
+        role: 'user',
+        content: [
+          OpenAIInput(text: 'Mention all the chapters and title in this book'),
+          OpenAIInput(
+            file: FileInput(
+              data: File('bin/test_doc.pdf').readAsBytesSync(),
+              mimeType: 'application/pdf',
+              name: 'ai.pdf',
+            ),
+          ),
+        ],
+      ),
+    ],
+  );
+  final buffer2 = StringBuffer();
+  await for (final chunk in streamTextWithPdf) {
+    buffer2.write(chunk);
+  }
+  print(buffer2.toString());
 
   print('\nMethod:generateObject with Schema\n');
   final schema = l.schema({

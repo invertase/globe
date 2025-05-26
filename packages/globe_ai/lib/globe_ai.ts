@@ -1,7 +1,8 @@
-import { JSONSchemaToZod } from "@dmitryrechkin/json-schema-to-zod";
+import { JSONObject, JSONSchemaToZod } from "@dmitryrechkin/json-schema-to-zod";
 
 import { generateText, generateObject, streamText, streamObject } from "ai";
 import { createOpenAI, OpenAIProvider } from "@ai-sdk/openai";
+import { EitherMessagesOrPrompt } from "./generated/openai";
 
 type GlobeAISdkState = {
   openAI: OpenAIProvider;
@@ -9,18 +10,44 @@ type GlobeAISdkState = {
 
 const openai_chat_generate_text = async (
   state: GlobeAISdkState,
-  model_args: Uint8Array,
+  model_args: JSONObject,
   model: string,
-  prompt: string,
-  system: string | undefined,
+  prompt: Uint8Array,
   callbackId: number
 ) => {
-  const modelArgs = JsonPayload.decode(model_args);
-  const { text } = await generateText({
-    model: state.openAI.chat(model, { ...modelArgs }),
-    prompt,
-    system,
-  });
+  const actualModel = state.openAI.chat(model, { ...model_args });
+  const eitherPromptOrMessage =
+    EitherMessagesOrPrompt.deserializeBinary(prompt);
+
+  let messages: any[] = [];
+
+  if (eitherPromptOrMessage.has_messages) {
+    messages = eitherPromptOrMessage.messages.messages.map((m) => ({
+      role: m.role,
+      content: m.content.map((d) => {
+        if (d.has_file) {
+          return {
+            type: "file",
+            data: d.file.data,
+            filename: d.file.name,
+            mimeType: d.file.mime_type,
+          };
+        }
+
+        return { type: "text", text: d.text };
+      }),
+    }));
+  }
+
+  let pendingPromise =
+    messages.length === 0
+      ? generateText({
+          model: actualModel,
+          prompt: eitherPromptOrMessage.prompt,
+        })
+      : generateText({ model: actualModel, messages });
+
+  const { text } = await pendingPromise;
 
   const result = new TextEncoder().encode(text);
   Dart.send_value(callbackId, result);
@@ -29,13 +56,42 @@ const openai_chat_generate_text = async (
 const openai_chat_stream_text = async (
   state: GlobeAISdkState,
   model: string,
-  prompt: string,
+  prompt: Uint8Array,
   callbackId: number
 ) => {
-  const result = streamText({
-    model: state.openAI.responses(model),
-    prompt,
-  });
+  const actualModel = state.openAI.responses(model);
+  const eitherPromptOrMessage =
+    EitherMessagesOrPrompt.deserializeBinary(prompt);
+
+  let messages: any[] = [];
+
+  if (eitherPromptOrMessage.has_messages) {
+    messages = eitherPromptOrMessage.messages.messages.map((m) => ({
+      role: m.role,
+      content: m.content.map((d) => {
+        if (d.has_file) {
+          return {
+            type: "file",
+            data: d.file.data,
+            filename: d.file.name,
+            mimeType: d.file.mime_type,
+          };
+        }
+
+        return { type: "text", text: d.text };
+      }),
+    }));
+  }
+
+  let pendingPromise =
+    messages.length === 0
+      ? streamText({
+          model: actualModel,
+          prompt: eitherPromptOrMessage.prompt,
+        })
+      : streamText({ model: actualModel, messages });
+
+  const result = await pendingPromise;
 
   for await (const part of result.fullStream) {
     if (part.type === "reasoning" || part.type === "text-delta") {
@@ -51,11 +107,10 @@ const openai_chat_generate_object = async (
   state: GlobeAISdkState,
   model: string,
   prompt: string,
-  schema: Uint8Array,
+  schema: JSONObject,
   callbackId: number
 ) => {
-  const schemaJson = schema && JsonPayload.decode(schema);
-  const zodSchema = JSONSchemaToZod.convert(schemaJson as any);
+  const zodSchema = JSONSchemaToZod.convert(schema);
 
   const result = await generateObject({
     model: state.openAI.responses(model),
@@ -76,11 +131,10 @@ const openai_chat_stream_object = async (
   state: GlobeAISdkState,
   model: string,
   prompt: string,
-  schema: Uint8Array,
+  schema: JSONObject,
   callbackId: number
 ) => {
-  const schemaJson = schema && JsonPayload.decode(schema);
-  const zodSchema = JSONSchemaToZod.convert(schemaJson as any);
+  const zodSchema = JSONSchemaToZod.convert(schema);
 
   const { fullStream } = await streamObject({
     model: state.openAI.responses(model),
