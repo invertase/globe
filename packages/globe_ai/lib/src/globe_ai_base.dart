@@ -12,9 +12,9 @@ import 'package:version/version.dart';
 import 'globe_ai_source.dart';
 import 'object_schema.dart';
 
-sealed class AiProvider {
-  static const String moduleName = 'GlobeAISdk';
+const _module = InlinedModule(name: 'GlobeAISdk', sourceCode: packageSource);
 
+sealed class AiProvider {
   final String? apiKey;
 
   const AiProvider(this.apiKey);
@@ -25,12 +25,8 @@ sealed class AiProvider {
     return _aiProviderInstance = OpenAI(OpenAIConfig(apiKey: apiKey));
   }
 
-  GlobeRuntime get _runtime => GlobeRuntime.instance;
-
-  Future<void> _registerModuleIfNotAlready() async {
-    if (_runtime.isModuleRegistered(moduleName)) return;
-
-    final currentVersion = Version.parse(_runtime.version);
+  Future<void> _registerModule() async {
+    final currentVersion = Version.parse(GlobeRuntime.instance.version);
     if (currentVersion < Version(0, 0, 6)) {
       throw StateError(
         'Globe Runtime version $currentVersion is not supported. '
@@ -38,11 +34,7 @@ sealed class AiProvider {
       );
     }
 
-    return _runtime.registerModule(
-      moduleName,
-      packageSource,
-      args: [apiKey?.toFFIType],
-    );
+    await _module.register(args: [apiKey?.toFFIType]);
   }
 }
 
@@ -142,13 +134,12 @@ Future<String> generateText({
   );
 
   final aiProvider = AiProvider._getInstance(model.apiKey);
-  await aiProvider._registerModuleIfNotAlready();
+  await aiProvider._registerModule();
 
   final completer = Completer<String>();
 
-  aiProvider._runtime.callFunction(
-    AiProvider.moduleName,
-    function: 'openai_chat_generate_text',
+  _module.callFunction(
+    'openai_chat_generate_text',
     args: [
       model.options.toFFIType,
       model.name.toFFIType,
@@ -174,13 +165,12 @@ Future<T> generateObject<T>({
   required Validator schema,
 }) async {
   final aiProvider = AiProvider._getInstance(model.apiKey);
-  await aiProvider._registerModuleIfNotAlready();
+  await aiProvider._registerModule();
 
   final completer = Completer<T>();
 
-  aiProvider._runtime.callFunction(
-    AiProvider.moduleName,
-    function: 'openai_chat_generate_object',
+  _module.callFunction(
+    'openai_chat_generate_object',
     args: [
       model.name.toFFIType,
       prompt.toFFIType,
@@ -216,13 +206,12 @@ Stream<String> streamText({
   );
 
   final aiProvider = AiProvider._getInstance(model.apiKey);
-  await aiProvider._registerModuleIfNotAlready();
+  await aiProvider._registerModule();
 
   final streamController = StreamController<String>();
 
-  aiProvider._runtime.callFunction(
-    AiProvider.moduleName,
-    function: 'openai_chat_stream_text',
+  _module.callFunction(
+    'openai_chat_stream_text',
     args: [
       model.name.toFFIType,
       openAiMessage.writeToBuffer().toFFIType,
@@ -257,13 +246,12 @@ Stream<T> streamObject<T>({
   required Validator schema,
 }) async* {
   final aiProvider = AiProvider._getInstance(model.apiKey);
-  await aiProvider._registerModuleIfNotAlready();
+  await aiProvider._registerModule();
 
   final streamController = StreamController<T>();
 
-  aiProvider._runtime.callFunction(
-    AiProvider.moduleName,
-    function: 'openai_chat_stream_object',
+  _module.callFunction(
+    'openai_chat_stream_object',
     args: [
       model.name.toFFIType,
       prompt.toFFIType,

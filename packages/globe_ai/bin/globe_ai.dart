@@ -6,7 +6,7 @@ void main() async {
   print('Method: :generateText\n');
   final textResponse = await generateText(
     model: openai.chat('gpt-4o', user: 'Chima'),
-    prompt: 'Who is the president of Ghana?',
+    prompt: 'In a single line, tell me who Tim Cook is?',
   );
   print(textResponse);
 
