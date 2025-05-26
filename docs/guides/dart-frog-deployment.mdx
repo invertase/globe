@@ -1,0 +1,72 @@
+---
+title: Deploy Your Dart Frog Backend on Globe
+description: Learn how to deploy your Dart Frog backend applications to Globe.
+---
+
+Dart Frog is a fast and minimalistic backend framework for Dart, designed for building efficient and well-structured server-side applications. Globe offers seamless support for Dart Frog, automatically detecting your project and applying the necessary configurations for a smooth deployment experience. This guide will walk you through how to deploy a Dart Frog backend to Globe.
+
+**15 min read**
+
+---
+
+## Features Covered:
+
+- Globe CLI setup
+- Dart Frog project setup
+- Deploying with Globe CLI
+- Automatic framework detection
+- Environment variables
+
+## Prerequisites:
+
+- **Dart SDK Installed**: If you have Flutter installed, the Dart SDK is already included. If not, [Install Dart](https://dart.dev/get-dart).
+- **Globe Account**: You'll need an account to deploy projects. [Sign up or log in to Globe](https://globe.dev/login).
+- **Globe CLI Installed and Authenticated**: Install the CLI by running `dart pub global activate globe_cli` and log in using `globe login`.
+- **Dart Frog CLI Installed**: Install the Dart Frog CLI by running `dart pub global activate dart_frog_cli`.
+- **An Existing Dart Frog Project**: You should have a Dart Frog project ready for deployment. If you're new to Dart Frog or need help creating one, refer to the [official Dart Frog documentation](https://dartfrog.vgv.dev/docs/overview). You can test it locally by running `dart_frog dev` in your project directory.
+
+## Step 1: Navigate to Your Project Directory
+
+Open your terminal and change to the root directory of your Dart Frog project (the one containing your `pubspec.yaml` file and `routes` folder).
+
+```bash
+cd path/to/your/my_dart_frog_app
+```
+
+## Step 2: Deploy Your Dart Frog Backend
+
+Run the `globe deploy` command from your project's root directory.
+
+```bash
+globe deploy
+```
+
+If this is the first time deploying this project from this location, the Globe CLI will automatically initiate the linking process, guiding you through selecting an existing Globe project or creating a new one before proceeding with the deployment.
+
+Globe will automatically detect that you are deploying a Dart Frog application and apply the correct framework preset. No additional configuration specific to Dart Frog is typically required for the deployment to proceed.
+
+For a production deployment (to your live application), use the `--prod` flag:
+
+```bash
+globe deploy --prod
+```
+
+## Step 3: Access Your Deployed Backend
+
+Once the deployment is complete, the Globe CLI will output a URL (e.g., `your-project-name.globeapp.dev` or a preview URL). You can use this URL to access your live Dart Frog backend.
+
+Your Dart Frog backend is now deployed and accessible via a unique URL By leveraging Globe's built-in support for Dart Frog, you have successfully deployed your backend application with a quick and automated process, unlocking the value of effortless deployment and scaling.
+
+## What next:
+
+- Learn more about [Managing Deployments in Globe](/core-concepts/deployments).
+- Explore the [Globe CLI reference](/core-concepts/cli).
+- Set up [GitHub Integration](/core-concepts/github-integration) for automatic deployments.
+- Read the official [Dart Frog documentation](https://dartfrog.vgv.dev/docs/overview).
+
+---
+
+<Info>
+  Couldn't find the guide you need? [Talk to us in
+  Discord](https://invertase.link/globe-discord)
+</Info>
