@@ -204,6 +204,10 @@
         {
           "title": "Set up CI/CD with GitHub Integration",
           "href": "/guides/github-integration"
+        },
+        {
+          "title": "Add Custom Domain",
+          "href": "/guides/add-custom-domain"
         }
       ]
     },

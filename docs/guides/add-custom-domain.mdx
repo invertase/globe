@@ -1,0 +1,74 @@
+---
+title: Add a Custom Domain to Your Globe App
+description: Link your domain for professional branding and direct access to your application.
+---
+
+Globe gives your project a default .globeapp.dev URL. When you’re ready to go live with your own domain, you can configure one via the Domains tab in your dashboard.
+
+This guide walks through connecting a domain, verifying it, and updating DNS records. If you don’t have a domain yet, you’ll need to purchase one from a domain provider such as [GoDaddy](https://www.godaddy.com/), [Namecheap](https://www.namecheap.com/), [Cloudflare](https://www.cloudflare.com/products/registrar/) etc.
+
+**15 min read**
+
+## Features Covered:
+
+- DNS configuration for custom domains
+- Adding and linking domains in the Globe dashboard
+- Domain status verification and SSL provisioning
+- Testing your custom domain
+
+## Prerequisites:
+
+- A [Globe Account](https://globe.dev/login) with an existing deployed project.
+- A purchased domain name with access to its [DNS](https://www.cloudflare.com/learning/dns/what-is-dns/) settings via your domain registrar.
+
+## Step 1: Configure DNS with Your Registrar
+
+The first step is to point your domain or subdomain to Globe using a [CNAME record](https://www.cloudflare.com/learning/dns/dns-records/dns-cname-record/) in your domain registrar's DNS settings.
+
+- Log in to your domain registrar's website (e.g., [GoDaddy](https://www.godaddy.com/), [Namecheap](https://www.namecheap.com/), [Cloudflare](https://www.cloudflare.com/products/registrar/)).
+- Navigate to the DNS management section for your domain.
+- Add a new CNAME record.
+- For the Name or Host field, enter your subdomain (e.g., `www`) or `@` if you are linking the root domain (though using a subdomain like `www` is often recommended if your root domain hosts other services).
+- For the Value or Target field, enter: `domains.globeapp.dev`
+- Save the DNS record.
+
+<Info>
+  DNS changes can take some time to propagate across the internet, often from a
+  few minutes up to 24 hours.
+</Info>
+
+## Step 2: Add Your Domain in the Globe Dashboard
+
+Once you've configured your DNS, inform Globe about your custom domain and link it to your project.
+
+- Log in to your [Globe Dashboard](https://globe.dev/login).
+- From the main dashboard, navigate to the Domains section.
+- Select Add Domain.
+- Enter the full domain name (e.g., `www.your-app.com` or `your-app.com`) that you configured in the previous step.
+- From the list of your projects, select the project you want to link this domain to.
+- Follow any additional prompts and click Create.
+
+## Step 3: Verify Your Domain Status and Test
+
+Check the status of your domain to ensure it's successfully linked and active, then test it in a browser.
+
+- In the Domains section, you will see your added domain listed with its current status.
+- The status will initially likely show as Pending Verification while Globe waits for DNS propagation and verifies the record.
+- Once successfully verified, the status will change to Active. Globe automatically provisions an [SSL certificate](https://www.cloudflare.com/learning/ssl/what-is-an-ssl-certificate/) for your custom domain when it becomes active, ensuring secure HTTPS access.
+- If the status shows Verification Failed, carefully review your CNAME record configuration at your domain registrar and ensure it matches the requirements in Step 1.
+- **Test**: Once your domain status is Active, your custom domain will point to your latest production deployment. Test this by visiting your custom URL in a browser.
+
+## What next:
+
+Now that your custom domain is set up, consider these steps to enhance your production application:
+
+- Automate future updates by setting up [GitHub Integration](https://docs.globe.dev/core-concepts/github-integration).
+- Securely manage production configurations using [Environment Variables](https://docs.globe.dev/core-concepts/environment-variables).
+- Gain insights into your application's performance and traffic with [Monitoring](https://docs.globe.dev/core-concepts/monitoring).
+
+---
+
+<Info>
+  Couldn't find the guide you need? [Talk to us in
+  Discord](https://invertase.link/globe-discord)
+</Info>
