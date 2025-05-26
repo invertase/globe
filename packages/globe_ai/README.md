@@ -1,8 +1,6 @@
 # 🧠 globe_ai
 
-`globe_ai` is a Dart-first package for interacting with large language models (LLMs) like OpenAI’s GPT series — built specifically for the Globe runtime.
-
-> This package currently only works in **Globe** Platform. Support for using it outside of **Globe** is coming soon. Internally, this package wraps the [AI-SDK OpenAI](https://ai-sdk.dev/providers/ai-sdk-providers/openai) to handle model execution and output parsing.
+`globe_ai` is a Dart-first package for interacting with large language models (LLMs) like OpenAI’s GPT series.
 
 ## ✨ Features
 
@@ -16,16 +14,28 @@
 
 ## 🚀 Installation
 
-Add to your `pubspec.yaml`:
+### Install Globe Runtime
+
+You can install globe runtime using either of these approaches.
+
+- Using `Globe CLI`.
+
+  If you have Globe CLI installed locally, you can run `globe runtime install`.
+
+- Adding Manually to your Environment
+
+  Download the `libglobe_runtime` dynamic library for your Platform from [Github Release Pages](https://github.com/invertase/globe_runtime/releases) and place it in `~/.globe/runtime/` directory.
+
+### Setup
+
+- Add dependency
 
 ```yaml
 dependencies:
   globe_ai: ^<latest-version>
 ```
 
-### Setup
-
-Configure your model provider (e.g. OpenAI):
+- Configure your model provider (e.g. OpenAI):
 
 ```dart
 final model = openai.chat('gpt-4o', user: 'Chima');
