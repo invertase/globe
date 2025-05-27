@@ -35,6 +35,11 @@
       "href": "/guides"
     },
     {
+      "id": "build",
+      "title": "Build",
+      "href": "/build"
+    },
+    {
       "id": "releases",
       "title": "Releases",
       "href": "/releases"
@@ -141,11 +146,6 @@
       ]
     },
     {
-      "group": "Storage",
-      "tab": "root",
-      "pages": [{ "title": "GlobeKV", "href": "/storage" }]
-    },
-    {
       "group": "Infrastructure",
       "tab": "root",
       "pages": [
@@ -214,6 +214,11 @@
           "href": "/guides/add-custom-domain"
         }
       ]
+    },
+    {
+      "group": "Build",
+      "tab": "build",
+      "pages": [{ "title": "GlobeKV", "href": "/build" }]
     },
     {
       "group": "Release Notes",
