@@ -235,7 +235,10 @@
     {
       "group": "Build",
       "tab": "build",
-      "pages": [{ "title": "GlobeKV", "href": "/build" }]
+      "pages": [
+        { "title": "GlobeKV", "href": "/build" },
+        { "title": "Globe AI", "href": "/build/ai" }
+      ]
     },
     {
       "group": "Release Notes",
