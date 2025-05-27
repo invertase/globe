@@ -1,16 +1,16 @@
 ---
-title: GlobeKV
+title: Globe KV
 ---
 
-GlobeKV is a **key-value store** designed for **fast reads** and **low-latency data access**. It is ideal for **caching**, **user settings**, **session storage**, and **feature flags** in Dart applications.
+Globe KV is a **key-value store** designed for **fast reads** and **low-latency data access**. It is ideal for **caching**, **user settings**, **session storage**, and **feature flags** in Dart applications.
 
-Unlike traditional databases, GlobeKV does not guarantee **immediate consistency**. Updates can take up to **60 seconds** to propagate globally. This makes it great for **temporary** or **frequently accessed data** but unsuitable for operations requiring absolute consistency (e.g., payments, counters).
+Unlike traditional databases, Globe KV does not guarantee **immediate consistency**. Updates can take up to **60 seconds** to propagate globally. This makes it great for **temporary** or **frequently accessed data** but unsuitable for operations requiring absolute consistency (e.g., payments, counters).
 
 This page covers setup, storing and retrieving data, data expiration, performance characteristics, and eventual consistency
 
-## Setting Up GlobeKV
+## Setting Up Globe KV
 
-### 1. Adding GlobeKV to your Project
+### 1. Adding Globe KV to your Project
 
 Add `globe_kv` to your `pubspec.yaml`:
 
@@ -41,7 +41,7 @@ flutter pub add globe_kv
 
 ### 2. Creating a Namespace
 
-To use GlobeKV, you need a **KV namespace**.
+To use Globe KV, you need a **KV namespace**.
 
 1. From your Globe dashboard, go to the **KV** section
 2. Select **Create Namespace**
@@ -50,28 +50,28 @@ To use GlobeKV, you need a **KV namespace**.
 
 ### 3. Creating an Instance
 
-Create a new GlobeKV instance, passing in your KV namespace.
+Create a new Globe KV instance, passing in your KV namespace.
 
 ```dart
 import 'package:globe_kv/globe_kv.dart';
 
 // Replace 'namespace-id' with your actual KV namespace
-final kv = GlobeKV('namespace-id');
+final kv = Globe KV('namespace-id');
 ```
 
 ### 4. Persist Data to Your Local Filesystem
 
-In development, GlobeKV will use **in-memory storage** so your data will be lost when the Dart app is restarted. To persist data to your local filesystem, use the GlobeFileStore instance:
+In development, Globe KV will use **in-memory storage** so your data will be lost when the Dart app is restarted. To persist data to your local filesystem, use the GlobeFileStore instance:
 
 ```dart
-final kv = GlobeKV('namespace-id', store: GlobeFileStore());
+final kv = Globe KV('namespace-id', store: GlobeFileStore());
 ```
 
-## Using GlobeKV
+## Using Globe KV
 
 ### Storing, Retrieving, and Deleting Data
 
-GlobeKV is a **key-value store**, meaning you store and retrieve data using **keys**.
+Globe KV is a **key-value store**, meaning you store and retrieve data using **keys**.
 
 #### Writing Data
 
@@ -94,7 +94,7 @@ await kv.delete('user:123');
 
 #### Retrieving Data
 
-GlobeKV supports **typed retrieval**, so you can fetch data in a specific format:
+Globe KV supports **typed retrieval**, so you can fetch data in a specific format:
 
 ```dart
 await kv.getString('key');  // String?
@@ -127,7 +127,7 @@ if (!result.complete) {
 
 ### Expiring Data (TTL & Absolute Expiration)
 
-GlobeKV supports **automatic expiration**, useful for caching API responses or managing temporary session data.
+Globe KV supports **automatic expiration**, useful for caching API responses or managing temporary session data.
 
 #### Setting a Time-to-Live (TTL)
 
@@ -150,7 +150,7 @@ await kv.set('user:123', 'John Doe', expires: DateTime.now().add(Duration(minute
 
 #### Understanding Edge Caching
 
-GlobeKV uses **edge locations** (Points of Presence, POPs) to **cache data closer to users**.
+Globe KV uses **edge locations** (Points of Presence, POPs) to **cache data closer to users**.
 
 - If data is already cached at an edge location → **Hot Read** (Fast)
 - If data needs to be fetched from storage → **Cold Read** (Slower)
@@ -167,7 +167,7 @@ Use this for data that rarely changes, like feature flags or app settings.
 
 ### Eventual Consistency
 
-GlobeKV is **not fully consistent**—updates may take **up to 60 seconds** to reflect globally.
+Globe KV is **not fully consistent**—updates may take **up to 60 seconds** to reflect globally.
 
 #### Good for:
 
