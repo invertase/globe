@@ -35,11 +35,6 @@
       "href": "/guides"
     },
     {
-      "id": "build",
-      "title": "Build",
-      "href": "/build"
-    },
-    {
       "id": "releases",
       "title": "Releases",
       "href": "/releases"
@@ -238,14 +233,6 @@
           "title": "Add a Custom Domain",
           "href": "/guides/add-custom-domain"
         }
-      ]
-    },
-    {
-      "group": "Build",
-      "tab": "build",
-      "pages": [
-        { "title": "GlobeKV", "href": "/build" },
-        { "title": "Globe AI", "href": "/build/ai" }
       ]
     },
     {
