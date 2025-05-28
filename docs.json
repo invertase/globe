@@ -161,6 +161,10 @@
               "href": "/infrastructure/overview/cold-starts"
             },
             {
+              "title": "Global CDN And Edge Network",
+              "href": "/infrastructure/overview/global-cdn"
+            },
+            {
               "title": "Regions And Networking",
               "href": "/infrastructure/overview/regions-and-networking"
             },
