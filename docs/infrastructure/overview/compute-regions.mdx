@@ -1,0 +1,85 @@
+---
+title: Compute Regions
+---
+
+After a request passes through the [Global CDN & Edge Network](/infrastructure/overview/global-cdn), it's processed by your Dart application in a Compute Region. These are the global data centers where your code runs.
+
+This page focuses on the compute regions and how you can configure their behavior for optimal performance.
+
+### Default Behavior
+
+Globe optimizes request handling through intelligent loadbalancers that distribute traffic efficiently across compute regions. These loadbalancers:
+
+- Automatically route requests to maintain optimal performance
+- Balance workloads based on regional capacity and response times
+- Prevent overloading of any single compute region
+- Ensure consistent application performance regardless of user location
+
+## When to Use Preferred Regions
+
+For most applications, the default behavior is ideal. However, you should consider specifying **preferred regions** when your application has specific geographic needs, such as:
+
+- Connecting to a **region-specific database** or external service.
+- Ensuring **data residency** to comply with local regulations.
+- Consolidating processing in specific regions to manage resources.
+
+A common use case is co-locating your compute with your database. If your app in Europe needs to make multiple queries to a database in North America, it's often faster to run the code in a North American **compute region** to minimize high-latency, transatlantic round-trip.
+
+## How to Configure Preferred Regions
+
+You can configure preferred regions in two ways:
+
+- **Via Globe Dashboard**: In your project settings, you can select one or more preferred regions. This configuration applies to all new deployments.
+- **Via HTTP Header**: For per-request control, use the `X-Globe-Preferred-Region` header (e.g., `X-Globe-Preferred-Region: DFW, PDX`) to override the dashboard settings.
+
+## Available Compute Regions
+
+Globe uses three-letter IATA airport codes to identify regions.
+
+| **Continent**     | **Country**    | **City**          | **Region Code** |
+| ----------------- | -------------- | ----------------- | --------------- |
+| **Africa**        | South Africa   | Johannesburg      | JNB             |
+| **Asia**          | Hong Kong      | Hong Kong         | HKG             |
+| **Asia**          | India          | Mumbai            | BOM             |
+| **Asia**          | India          | Delhi             | DEL             |
+| **Asia**          | Indonesia      | Jakarta           | CGK             |
+| **Asia**          | Israel         | Tel Aviv          | TLV             |
+| **Asia**          | Japan          | Osaka             | KIX             |
+| **Asia**          | Japan          | Tokyo             | NRT             |
+| **Asia**          | Qatar          | Doha              | DOH             |
+| **Asia**          | Singapore      | Singapore         | SIN             |
+| **Asia**          | South Korea    | Seoul             | ICN             |
+| **Asia**          | Taiwan         | Taiwan            | TPE             |
+| **Europe**        | Belgium        | Belgium           | BRU             |
+| **Europe**        | Finland        | Finland           | HEL             |
+| **Europe**        | France         | Paris             | CDG             |
+| **Europe**        | Germany        | Berlin            | BER             |
+| **Europe**        | Germany        | Frankfurt         | FRA             |
+| **Europe**        | Italy          | Milan             | MXP             |
+| **Europe**        | Italy          | Turin             | TRN             |
+| **Europe**        | Netherlands    | Netherlands       | AMS             |
+| **Europe**        | Poland         | Warsaw            | WAW             |
+| **Europe**        | Spain          | Madrid            | MAD             |
+| **Europe**        | Switzerland    | Zurich            | ZRH             |
+| **Europe**        | United Kingdom | London            | LHR             |
+| **North America** | Canada         | Montreal          | YUL             |
+| **North America** | Canada         | Toronto           | YYZ             |
+| **North America** | United States  | South Carolina    | CHS             |
+| **North America** | United States  | Columbus          | CMH             |
+| **North America** | United States  | Dallas            | DFW             |
+| **North America** | United States  | Iowa              | DSM             |
+| **North America** | United States  | Northern Virginia | IAD             |
+| **North America** | United States  | Los Angeles       | LAX             |
+| **North America** | United States  | Las Vegas         | LAS             |
+| **North America** | United States  | Oregon            | PDX             |
+| **North America** | United States  | Salt Lake City    | SLC             |
+| **Oceania**       | Australia      | Melbourne         | MEL             |
+| **Oceania**       | Australia      | Sydney            | SYD             |
+| **South America** | Brazil         | Sao Paulo         | GRU             |
+| **South America** | Chile          | Santiago          | SCL             |
+
+<Info>
+  Globe is expanding to additional regions including Berlin, Dammam, Querétaro,
+  Malaysia, Thailand, New Zealand, Greece, Norway, South Africa, Austria, and
+  Sweden.
+</Info>

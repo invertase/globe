@@ -165,6 +165,10 @@
               "href": "/infrastructure/overview/global-cdn"
             },
             {
+              "title": "Compute Regions",
+              "href": "/infrastructure/overview/compute-regions"
+            },
+            {
               "title": "Regions And Networking",
               "href": "/infrastructure/overview/regions-and-networking"
             },
