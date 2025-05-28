@@ -179,6 +179,10 @@
             {
               "title": "HTTP Headers in Globe",
               "href": "/infrastructure/overview/http-headers"
+            },
+            {
+              "title": "Using FFI with Native Code",
+              "href": "/infrastructure/overview/using-ffi"
             }
           ]
         },
