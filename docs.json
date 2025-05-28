@@ -169,6 +169,10 @@
               "href": "/infrastructure/overview/compute-regions"
             },
             {
+              "title": "Automatic Caching",
+              "href": "/infrastructure/overview/automatic-caching"
+            },
+            {
               "title": "Resources And Limits",
               "href": "/infrastructure/overview/resources-and-limits"
             },
