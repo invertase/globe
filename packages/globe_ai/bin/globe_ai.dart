@@ -17,13 +17,10 @@ void main() async {
       OpenAIMessage(
         role: 'user',
         content: [
-          OpenAIInput(text: 'What is the title of this book?'),
-          OpenAIInput(
-            file: FileInput(
-              data: File('bin/test_doc.pdf').readAsBytesSync(),
-              mimeType: 'application/pdf',
-              name: 'ai.pdf',
-            ),
+          OpenAIContent.text('What is the title of this book?'),
+          OpenAIContent.file(
+            File('bin/test_doc.pdf'),
+            mimeType: 'application/pdf',
           ),
         ],
       ),
@@ -50,13 +47,10 @@ void main() async {
       OpenAIMessage(
         role: 'user',
         content: [
-          OpenAIInput(text: 'Mention all the chapters and title in this book'),
-          OpenAIInput(
-            file: FileInput(
-              data: File('bin/test_doc.pdf').readAsBytesSync(),
-              mimeType: 'application/pdf',
-              name: 'ai.pdf',
-            ),
+          OpenAIContent.text('Mention all the chapters and title in this book'),
+          OpenAIContent.file(
+            File('bin/test_doc.pdf'),
+            mimeType: 'application/pdf',
           ),
         ],
       ),

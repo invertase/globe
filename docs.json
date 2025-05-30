@@ -161,12 +161,17 @@
               "href": "/infrastructure/overview/cold-starts"
             },
             {
-              "title": "Global CDN",
-              "href": "/infrastructure/overview/global-cdn"
-            },
-            {
-              "title": "Compute Regions",
-              "href": "/infrastructure/overview/compute-regions"
+              "group": "Networking and Regions",
+              "pages": [
+                {
+                  "title": "Global CDN",
+                  "href": "/infrastructure/overview/global-cdn"
+                },
+                {
+                  "title": "Compute Regions",
+                  "href": "/infrastructure/overview/compute-regions"
+                }
+              ]
             },
             {
               "title": "Automatic Caching",
@@ -236,6 +241,7 @@
         {
           "group": "Version History",
           "pages": [
+            { "title": "0.16.0 (May 25)", "href": "/releases/v/0.16.0" },
             { "title": "0.15.0 (Apr 25)", "href": "/releases/v/0.15.0" },
             { "title": "0.14.0 (Mar 25)", "href": "/releases/v/0.14.0" },
             { "title": "0.13.0 (Feb 25)", "href": "/releases/v/0.13.0" },
