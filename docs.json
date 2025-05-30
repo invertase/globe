@@ -141,9 +141,12 @@
       ]
     },
     {
-      "group": "Storage",
+      "group": "Products",
       "tab": "root",
-      "pages": [{ "title": "GlobeKV", "href": "/storage" }]
+      "pages": [
+        { "title": "Globe KV", "href": "/products" },
+        { "title": "Globe AI", "href": "/products/ai" }
+      ]
     },
     {
       "group": "Infrastructure",
