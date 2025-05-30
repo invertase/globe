@@ -1,0 +1,23 @@
+---
+title: Global CDN & Edge Network
+---
+
+Globe is designed to be global by default. Your application is served by a high-performance **Global CDN (Content Delivery Network)** that acts as the front door for all your traffic, ensuring a fast and secure experience for users everywhere.
+
+This network is the first point of contact for every request.
+
+## How the Edge Network Works
+
+Powered by Cloudflare's global infrastructure, Globe's Edge Network spans more than [300 cities across 100+ countries](https://www.cloudflare.com/en-gb/network/). This network sits **milliseconds** away from virtually every internet user.
+
+When a user sends a request to your application, it's automatically intercepted by the nearest edge location, which performs three key actions:
+
+1. **Security Filtering**: The network provides built-in **DDoS protection** and security filtering, mitigating threats before they can reach your application.
+2. **Serving Cached Content**: If the request is for a static asset, it's served directly from the edge cache for the fastest possible response. See Automatic Caching for details.
+3. **Intelligent Routing**: For all other requests, the Edge Network intelligently forwards the traffic to be processed by your Dart application in the nearest [Compute Region](/infrastructure/overview/compute-regions).
+
+## Benefits of the Global CDN
+
+- **Global Performance**: Users worldwide experience minimal latency because they connect to a server that is geographically close to them.
+- **Enhanced Security**: Your application is protected by default from a wide range of common web threats, with no configuration required.
+- **High Availability**: The distributed nature of the network means traffic is automatically rerouted if a location has an issue, increasing your application's uptime.

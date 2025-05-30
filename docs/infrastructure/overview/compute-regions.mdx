@@ -1,33 +1,12 @@
 ---
-title: Regions & Networking
-description: How Globe's network architecture works
+title: Compute Regions
 ---
 
-Globe uses a two-tier network architecture to deliver your applications globally:
+After a request passes through the [Global CDN & Edge Network](/infrastructure/overview/global-cdn), it's processed by your Dart application in a Compute Region. These are the global data centers where your code runs.
 
-## Globe Edge Network
+This page focuses on the compute regions and how you can configure their behavior for optimal performance.
 
-Globe's edge network spans more than [300 cities across 100+ countries](https://www.cloudflare.com/en-gb/network/), powered by Cloudflare's global infrastructure. This network:
-
-- Sits **milliseconds** away from virtually every internet user
-- Provides [DDoS](https://www.cloudflare.com/learning/ddos/what-is-a-ddos-attack/) protection and **security filtering**
-- Routes requests to the appropriate **compute regions**
-- Serves **cached content** directly when possible
-
-The edge network handles initial request processing before forwarding to a compute region where your code runs.
-
-## Compute regions
-
-Globe currently operates 39 compute regions worldwide where your Dart application code executes. These regions:
-
-- Are strategically **distributed** across **major global markets**
-- Run containerized instances of your application
-- **Scale** automatically based on **regional traffic**
-- Process requests and generate responses
-
-## Region Selection & Optimization
-
-### Default Behavior
+## Default Behavior
 
 Globe optimizes request handling through intelligent loadbalancers that distribute traffic efficiently across compute regions. These loadbalancers:
 
@@ -36,60 +15,26 @@ Globe optimizes request handling through intelligent loadbalancers that distribu
 - Prevent overloading of any single compute region
 - Ensure consistent application performance regardless of user location
 
-### When to Use Preferred Regions
+## When to Use Preferred Regions
 
-Consider specifying preferred regions when:
+For most applications, the default behavior is ideal. However, you should consider specifying **preferred regions** when your application has specific geographic needs, such as:
 
-- Your application **connects** to **region-specific databases**
-- You need to ensure **data residency** in specific **geographic areas**
-- Your application depends on **region-specific services**
-- You want to **consolidate processing** in specific regions
+- Connecting to a **region-specific database** or external service.
+- Ensuring **data residency** to comply with local regulations.
+- Consolidating processing in specific regions to manage resources.
 
-### Example scenario
-
-A user in **Europe** accesses your application, which needs to **query a database** located in** North America**. If the request executes in Europe:
-
-1. User request travels a **minimal distance** to the European compute region
-2. The application makes **multiple database queries** across the Atlantic
-3. Each database query experiences high latency
-4. Total response time **is high** due to transatlantic database queries
-
-By setting a North American **preferred region**:
-
-1. User request travels to the North American compute region
-2. The application makes database queries with minimal latencyx
-3. Single completed response travels back to Europe
-4. Total response time improves despite the initial request traveling further
+A common use case is co-locating your compute with your database. If your app in Europe needs to make multiple queries to a database in North America, it's often faster to run the code in a North American **compute region** to minimize high-latency, transatlantic round-trip.
 
 ## How to Configure Preferred Regions
 
 You can configure preferred regions in two ways:
 
-### Via Globe Dashboard
-
-1. Go to **Projects** → Select **Project** → **Settings** → **Preferred Region**
-2. Select one or more **preferred regions** from the list
-3. Save your changes
-4. This configuration applies to all new deployments of your project.
-
-### Via HTTP header
-
-For more granular control, specify **preferred regions** on a per-request basis using the `X-Globe-Preferred-Region` header:
-
-```http
-X-Globe-Preferred-Region: DFW, PDX
-```
-
-This header:
-
-- Overrides any dashboard settings
-- Can specify multiple regions (comma-separated)
-- Uses IATA airport codes to identify regions
+- **Via Globe Dashboard**: In your project settings, you can select one or more preferred regions. This configuration applies to all new deployments.
+- **Via HTTP Header**: For per-request control, use the `X-Globe-Preferred-Region` header (e.g., `X-Globe-Preferred-Region: DFW, PDX`) to override the dashboard settings.
 
 ## Available Compute Regions
 
-<details>
-  <summary>**Compute Regions**</summary>
+Globe uses three-letter IATA airport codes to identify regions.
 
 | **Continent**     | **Country**    | **City**          | **Region Code** |
 | ----------------- | -------------- | ----------------- | --------------- |
@@ -133,25 +78,8 @@ This header:
 | **South America** | Brazil         | Sao Paulo         | GRU             |
 | **South America** | Chile          | Santiago          | SCL             |
 
-</details>
-
 <Info>
   Globe is expanding to additional regions including Berlin, Dammam, Querétaro,
   Malaysia, Thailand, New Zealand, Greece, Norway, South Africa, Austria, and
-  Sweden._
+  Sweden.
 </Info>
-
-### Understanding Region (IATA) Codes
-
-Globe uses IATA (International Air Transport Association) airport codes to identify regions. These standardized **three-letter codes** correspond to major **airports** near compute regions.
-
-To determine your current routing region's IATA code, check the `colo=XXX` field in your network details.
-
-## Caching Behavior
-
-Globe caches content at the regional level:
-
-- Static assets are **cached** at edge locations
-- Cache hits are served directly from the routing region
-- Cache behavior can be controlled via HTTP headers
-- Regional caching reduces load on your application and improves response time.

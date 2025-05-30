@@ -9,7 +9,7 @@ Globe's infrastructure runs your Dart code in containers that start on demand an
 When you deploy your application to Globe, the following happens:
 
 - **Build**: Your Dart code is compiled into a native executable targeting `x86_64`.
-- **Distribute**: The binary is uploaded to Globe's private registry and made available across [global compute regions](/infrastructure/overview/regions-and-networking).
+- **Distribute**: The binary is uploaded to Globe's private registry and made available across [global compute regions](/infrastructure/overview/compute-regions).
 - **Request Handling**: Incoming HTTP requests are routed through [Globe's edge network](https://www.cloudflare.com/en-gb/network/) (300+ locations) and sent to the **nearest compute region**.
 - **Execute**: If no container is running, one is started on demand. Your app runs in isolation, handles the request, and shuts down when idle.
 
