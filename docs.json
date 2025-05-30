@@ -161,12 +161,17 @@
               "href": "/infrastructure/overview/cold-starts"
             },
             {
-              "title": "Global CDN",
-              "href": "/infrastructure/overview/global-cdn"
-            },
-            {
-              "title": "Compute Regions",
-              "href": "/infrastructure/overview/compute-regions"
+              "group": "Networking and Regions",
+              "pages": [
+                {
+                  "title": "Global CDN",
+                  "href": "/infrastructure/overview/global-cdn"
+                },
+                {
+                  "title": "Compute Regions",
+                  "href": "/infrastructure/overview/compute-regions"
+                }
+              ]
             },
             {
               "title": "Resources And Limits",
