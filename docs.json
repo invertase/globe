@@ -73,7 +73,19 @@
       "tab": "root",
       "pages": [
         { "title": "Deployments", "href": "/core-concepts/deployments" },
-        { "title": "Logs", "href": "/core-concepts/logs" },
+        {
+          "group": "Observability",
+          "pages": [
+            {
+              "title": "Logs",
+              "href": "/core-concepts/logs"
+            },
+            {
+              "title": "Usage",
+              "href": "/core-concepts/usage"
+            }
+          ]
+        },
         { "title": "Build Settings", "href": "/core-concepts/build-settings" },
         {
           "title": "Environment Variables",
@@ -83,10 +95,6 @@
         {
           "title": "GitHub Integration",
           "href": "/core-concepts/github-integration"
-        },
-        {
-          "title": "Monitoring",
-          "href": "/core-concepts/monitoring"
         },
         { "title": "Static Assets", "href": "/core-concepts/static-assets" },
         { "title": "Cron Jobs", "href": "/core-concepts/cron-jobs" },
