@@ -2,7 +2,7 @@
 title: Globe AI
 ---
 
-Globe AI is a Dart first SDK for integrating **large language models (LLMs)** into Dart and Flutter apps. It supports **text generation**, **streaming responses**, and **structured data extraction**.
+Globe AI is a Dart-first SDK for integrating **large language models (LLMs)** into Dart and Flutter apps. It supports **text generation**, **streaming responses**, and **structured data extraction**.
 
 It is ideal for building AI-powered features, generating creative text, extracting information from documents, and validating structured data output against a schema.
 
@@ -133,9 +133,13 @@ await for (final chunk in stream) {
 
 Ensure you get reliable, machine-readable output by generating JSON that is validated against a schema. This is perfect for when you need a specific data structure.
 
+To define the structure of your JSON output, Globe AI uses **Luthor**, a powerful data validation library that is bundled directly into the `globe_ai` package. You can access its functions through the `l` object.
+
+Luthor allows you to define a schema that the AI's output will be validated against, ensuring you always get the data structure you expect. For more detailed information on creating schemas and using all available validators, please refer to the official [Luthor documentation](https://luthor.netlify.app/).
+
 #### 1. Define Your Schema
 
-First, define the shape of the JSON you expect using l.schema.
+First, define the shape of the JSON you expect using `l.schema`.
 
 ```dart
 final schema = l.schema({
@@ -151,7 +155,7 @@ final schema = l.schema({
 
 #### 2. Generate the Object
 
-Then, call generateObject with your prompt and schema.
+Then, call `generateObject` with your prompt and schema.
 
 ```dart
 final result = await generateObject<Map<String, dynamic>>(
