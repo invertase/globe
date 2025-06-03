@@ -9,6 +9,9 @@
   "theme": {
     "primary": "#9140E6"
   },
+  "scripts": {
+    "googleTagManager": "GTM-537TMZTG"
+  },
   "header": {
     "links": [
       {
