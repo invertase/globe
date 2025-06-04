@@ -14,11 +14,11 @@ void main() async {
   final textWithPdf = await generateText(
     model: openai.chat('gpt-4o', user: 'Chima'),
     messages: [
-      OpenAIMessage(
+      AIMessage(
         role: 'user',
         content: [
-          OpenAIContent.text('What is the title of this book?'),
-          OpenAIContent.file(
+          AIContent.text('What is the title of this book?'),
+          AIContent.file(
             File('bin/test_doc.pdf'),
             mimeType: 'application/pdf',
           ),
@@ -44,11 +44,11 @@ void main() async {
   final streamTextWithPdf = streamText(
     model: openai.chat('gpt-4o', user: 'Chima'),
     messages: [
-      OpenAIMessage(
+      AIMessage(
         role: 'user',
         content: [
-          OpenAIContent.text('Mention all the chapters and title in this book'),
-          OpenAIContent.file(
+          AIContent.text('Mention all the chapters and title in this book'),
+          AIContent.file(
             File('bin/test_doc.pdf'),
             mimeType: 'application/pdf',
           ),

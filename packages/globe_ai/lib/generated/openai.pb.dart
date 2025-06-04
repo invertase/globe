@@ -329,10 +329,10 @@ class TextInput extends $pb.GeneratedMessage {
   void clearText() => clearField(1);
 }
 
-class OpenAIMessage extends $pb.GeneratedMessage {
-  factory OpenAIMessage({
+class AIMessage extends $pb.GeneratedMessage {
+  factory AIMessage({
     $core.String? role,
-    $core.Iterable<OpenAIInput>? content,
+    $core.Iterable<AIInput>? content,
   }) {
     final $result = create();
     if (role != null) {
@@ -343,44 +343,42 @@ class OpenAIMessage extends $pb.GeneratedMessage {
     }
     return $result;
   }
-  OpenAIMessage._() : super();
-  factory OpenAIMessage.fromBuffer($core.List<$core.int> i,
+  AIMessage._() : super();
+  factory AIMessage.fromBuffer($core.List<$core.int> i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(i, r);
-  factory OpenAIMessage.fromJson($core.String i,
+  factory AIMessage.fromJson($core.String i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(i, r);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      _omitMessageNames ? '' : 'OpenAIMessage',
+      _omitMessageNames ? '' : 'AIMessage',
       createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'role')
-    ..pc<OpenAIInput>(2, _omitFieldNames ? '' : 'content', $pb.PbFieldType.PM,
-        subBuilder: OpenAIInput.create)
+    ..pc<AIInput>(2, _omitFieldNames ? '' : 'content', $pb.PbFieldType.PM,
+        subBuilder: AIInput.create)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('Using this can add significant overhead to your binary. '
       'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
       'Will be removed in next major version')
-  OpenAIMessage clone() => OpenAIMessage()..mergeFromMessage(this);
+  AIMessage clone() => AIMessage()..mergeFromMessage(this);
   @$core.Deprecated('Using this can add significant overhead to your binary. '
       'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
       'Will be removed in next major version')
-  OpenAIMessage copyWith(void Function(OpenAIMessage) updates) =>
-      super.copyWith((message) => updates(message as OpenAIMessage))
-          as OpenAIMessage;
+  AIMessage copyWith(void Function(AIMessage) updates) =>
+      super.copyWith((message) => updates(message as AIMessage)) as AIMessage;
 
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
-  static OpenAIMessage create() => OpenAIMessage._();
-  OpenAIMessage createEmptyInstance() => create();
-  static $pb.PbList<OpenAIMessage> createRepeated() =>
-      $pb.PbList<OpenAIMessage>();
+  static AIMessage create() => AIMessage._();
+  AIMessage createEmptyInstance() => create();
+  static $pb.PbList<AIMessage> createRepeated() => $pb.PbList<AIMessage>();
   @$core.pragma('dart2js:noInline')
-  static OpenAIMessage getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<OpenAIMessage>(create);
-  static OpenAIMessage? _defaultInstance;
+  static AIMessage getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<AIMessage>(create);
+  static AIMessage? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.String get role => $_getSZ(0);
@@ -395,12 +393,12 @@ class OpenAIMessage extends $pb.GeneratedMessage {
   void clearRole() => clearField(1);
 
   @$pb.TagNumber(2)
-  $core.List<OpenAIInput> get content => $_getList(1);
+  $core.List<AIInput> get content => $_getList(1);
 }
 
-class OpenAIMessages extends $pb.GeneratedMessage {
-  factory OpenAIMessages({
-    $core.Iterable<OpenAIMessage>? messages,
+class AIMessages extends $pb.GeneratedMessage {
+  factory AIMessages({
+    $core.Iterable<AIMessage>? messages,
   }) {
     final $result = create();
     if (messages != null) {
@@ -408,53 +406,50 @@ class OpenAIMessages extends $pb.GeneratedMessage {
     }
     return $result;
   }
-  OpenAIMessages._() : super();
-  factory OpenAIMessages.fromBuffer($core.List<$core.int> i,
+  AIMessages._() : super();
+  factory AIMessages.fromBuffer($core.List<$core.int> i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(i, r);
-  factory OpenAIMessages.fromJson($core.String i,
+  factory AIMessages.fromJson($core.String i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(i, r);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      _omitMessageNames ? '' : 'OpenAIMessages',
+      _omitMessageNames ? '' : 'AIMessages',
       createEmptyInstance: create)
-    ..pc<OpenAIMessage>(
-        1, _omitFieldNames ? '' : 'messages', $pb.PbFieldType.PM,
-        subBuilder: OpenAIMessage.create)
+    ..pc<AIMessage>(1, _omitFieldNames ? '' : 'messages', $pb.PbFieldType.PM,
+        subBuilder: AIMessage.create)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('Using this can add significant overhead to your binary. '
       'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
       'Will be removed in next major version')
-  OpenAIMessages clone() => OpenAIMessages()..mergeFromMessage(this);
+  AIMessages clone() => AIMessages()..mergeFromMessage(this);
   @$core.Deprecated('Using this can add significant overhead to your binary. '
       'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
       'Will be removed in next major version')
-  OpenAIMessages copyWith(void Function(OpenAIMessages) updates) =>
-      super.copyWith((message) => updates(message as OpenAIMessages))
-          as OpenAIMessages;
+  AIMessages copyWith(void Function(AIMessages) updates) =>
+      super.copyWith((message) => updates(message as AIMessages)) as AIMessages;
 
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
-  static OpenAIMessages create() => OpenAIMessages._();
-  OpenAIMessages createEmptyInstance() => create();
-  static $pb.PbList<OpenAIMessages> createRepeated() =>
-      $pb.PbList<OpenAIMessages>();
+  static AIMessages create() => AIMessages._();
+  AIMessages createEmptyInstance() => create();
+  static $pb.PbList<AIMessages> createRepeated() => $pb.PbList<AIMessages>();
   @$core.pragma('dart2js:noInline')
-  static OpenAIMessages getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<OpenAIMessages>(create);
-  static OpenAIMessages? _defaultInstance;
+  static AIMessages getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<AIMessages>(create);
+  static AIMessages? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.List<OpenAIMessage> get messages => $_getList(0);
+  $core.List<AIMessage> get messages => $_getList(0);
 }
 
-enum OpenAIInput_Input { text, file, notSet }
+enum AIInput_Input { text, file, notSet }
 
-class OpenAIInput extends $pb.GeneratedMessage {
-  factory OpenAIInput({
+class AIInput extends $pb.GeneratedMessage {
+  factory AIInput({
     $core.String? text,
     FileInput? file,
   }) {
@@ -467,22 +462,21 @@ class OpenAIInput extends $pb.GeneratedMessage {
     }
     return $result;
   }
-  OpenAIInput._() : super();
-  factory OpenAIInput.fromBuffer($core.List<$core.int> i,
+  AIInput._() : super();
+  factory AIInput.fromBuffer($core.List<$core.int> i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(i, r);
-  factory OpenAIInput.fromJson($core.String i,
+  factory AIInput.fromJson($core.String i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(i, r);
 
-  static const $core.Map<$core.int, OpenAIInput_Input> _OpenAIInput_InputByTag =
-      {
-    1: OpenAIInput_Input.text,
-    2: OpenAIInput_Input.file,
-    0: OpenAIInput_Input.notSet
+  static const $core.Map<$core.int, AIInput_Input> _AIInput_InputByTag = {
+    1: AIInput_Input.text,
+    2: AIInput_Input.file,
+    0: AIInput_Input.notSet
   };
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      _omitMessageNames ? '' : 'OpenAIInput',
+      _omitMessageNames ? '' : 'AIInput',
       createEmptyInstance: create)
     ..oo(0, [1, 2])
     ..aOS(1, _omitFieldNames ? '' : 'text')
@@ -493,26 +487,25 @@ class OpenAIInput extends $pb.GeneratedMessage {
   @$core.Deprecated('Using this can add significant overhead to your binary. '
       'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
       'Will be removed in next major version')
-  OpenAIInput clone() => OpenAIInput()..mergeFromMessage(this);
+  AIInput clone() => AIInput()..mergeFromMessage(this);
   @$core.Deprecated('Using this can add significant overhead to your binary. '
       'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
       'Will be removed in next major version')
-  OpenAIInput copyWith(void Function(OpenAIInput) updates) =>
-      super.copyWith((message) => updates(message as OpenAIInput))
-          as OpenAIInput;
+  AIInput copyWith(void Function(AIInput) updates) =>
+      super.copyWith((message) => updates(message as AIInput)) as AIInput;
 
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
-  static OpenAIInput create() => OpenAIInput._();
-  OpenAIInput createEmptyInstance() => create();
-  static $pb.PbList<OpenAIInput> createRepeated() => $pb.PbList<OpenAIInput>();
+  static AIInput create() => AIInput._();
+  AIInput createEmptyInstance() => create();
+  static $pb.PbList<AIInput> createRepeated() => $pb.PbList<AIInput>();
   @$core.pragma('dart2js:noInline')
-  static OpenAIInput getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<OpenAIInput>(create);
-  static OpenAIInput? _defaultInstance;
+  static AIInput getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<AIInput>(create);
+  static AIInput? _defaultInstance;
 
-  OpenAIInput_Input whichInput() => _OpenAIInput_InputByTag[$_whichOneof(0)]!;
+  AIInput_Input whichInput() => _AIInput_InputByTag[$_whichOneof(0)]!;
   void clearInput() => clearField($_whichOneof(0));
 
   @$pb.TagNumber(1)
@@ -547,7 +540,7 @@ enum EitherMessagesOrPrompt_Input { prompt, messages, notSet }
 class EitherMessagesOrPrompt extends $pb.GeneratedMessage {
   factory EitherMessagesOrPrompt({
     $core.String? prompt,
-    OpenAIMessages? messages,
+    AIMessages? messages,
   }) {
     final $result = create();
     if (prompt != null) {
@@ -577,8 +570,8 @@ class EitherMessagesOrPrompt extends $pb.GeneratedMessage {
       createEmptyInstance: create)
     ..oo(0, [1, 2])
     ..aOS(1, _omitFieldNames ? '' : 'prompt')
-    ..aOM<OpenAIMessages>(2, _omitFieldNames ? '' : 'messages',
-        subBuilder: OpenAIMessages.create)
+    ..aOM<AIMessages>(2, _omitFieldNames ? '' : 'messages',
+        subBuilder: AIMessages.create)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('Using this can add significant overhead to your binary. '
@@ -623,9 +616,9 @@ class EitherMessagesOrPrompt extends $pb.GeneratedMessage {
   void clearPrompt() => clearField(1);
 
   @$pb.TagNumber(2)
-  OpenAIMessages get messages => $_getN(1);
+  AIMessages get messages => $_getN(1);
   @$pb.TagNumber(2)
-  set messages(OpenAIMessages v) {
+  set messages(AIMessages v) {
     setField(2, v);
   }
 
@@ -634,7 +627,7 @@ class EitherMessagesOrPrompt extends $pb.GeneratedMessage {
   @$pb.TagNumber(2)
   void clearMessages() => clearField(2);
   @$pb.TagNumber(2)
-  OpenAIMessages ensureMessages() => $_ensure(1);
+  AIMessages ensureMessages() => $_ensure(1);
 }
 
 const _omitFieldNames = $core.bool.fromEnvironment('protobuf.omit_field_names');
