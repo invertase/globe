@@ -12,11 +12,7 @@ import 'globe_ai_source.dart';
 import 'object_schema.dart';
 
 Future<Module> _registerModule(String provider, {String? apiKey}) async {
-  final module = InlinedModule(
-    name: '${provider.toUpperCase()}AISdk',
-    sourceCode: packageSource,
-  );
-
+  final module = InlinedModule(name: provider, sourceCode: packageSource);
   final currentVersion = Version.parse(GlobeRuntime.instance.version);
   if (currentVersion < Version(0, 0, 6)) {
     throw StateError(
