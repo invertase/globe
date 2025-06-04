@@ -10,4 +10,4 @@ export 'package:luthor/luthor.dart';
 
 final openai = OpenAI(OpenAIConfig());
 
-final google = GoogleGenAi(apiKey: 'AIzaSyCYzKkGgvzI2snmm2rQ5uR924NYxIGSO0E');
+final google = GoogleGenAi();
