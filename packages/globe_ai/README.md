@@ -35,16 +35,16 @@ dependencies:
   globe_ai: ^<latest-version>
 ```
 
-- Configure your model provider (e.g. OpenAI):
+- Configure your model provider (e.g. OpenAI, Google Generative AI):
 
 ```dart
-final model = openai.chat('gpt-4o', user: 'Chima');
+final model = openai('gpt-4o');
 ```
 
 or
 
 ```dart
-final model = openai('gpt-4o');
+final model = google('gemini-2.0-flash');
 ```
 
 ## Usage
@@ -68,7 +68,7 @@ final textWithPdf = await generateText(
     OpenAIMessage(
       role: 'user',
       content: [
-        OpenAIContent.text( 'What is the title of this book?'),
+        OpenAIContent.text('What is the title of this book?'),
         OpenAIContent.file(
           File('bin/test_doc.pdf'),
           mimeType: 'application/pdf',
