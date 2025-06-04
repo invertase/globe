@@ -101,50 +101,42 @@ const TextInput$json = {
 final $typed_data.Uint8List textInputDescriptor =
     $convert.base64Decode('CglUZXh0SW5wdXQSEgoEdGV4dBgBIAEoCVIEdGV4dA==');
 
-@$core.Deprecated('Use openAIMessageDescriptor instead')
-const OpenAIMessage$json = {
-  '1': 'OpenAIMessage',
+@$core.Deprecated('Use aIMessageDescriptor instead')
+const AIMessage$json = {
+  '1': 'AIMessage',
   '2': [
     {'1': 'role', '3': 1, '4': 1, '5': 9, '10': 'role'},
-    {
-      '1': 'content',
-      '3': 2,
-      '4': 3,
-      '5': 11,
-      '6': '.OpenAIInput',
-      '10': 'content'
-    },
+    {'1': 'content', '3': 2, '4': 3, '5': 11, '6': '.AIInput', '10': 'content'},
   ],
 };
 
-/// Descriptor for `OpenAIMessage`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List openAIMessageDescriptor = $convert.base64Decode(
-    'Cg1PcGVuQUlNZXNzYWdlEhIKBHJvbGUYASABKAlSBHJvbGUSJgoHY29udGVudBgCIAMoCzIMLk'
-    '9wZW5BSUlucHV0Ugdjb250ZW50');
+/// Descriptor for `AIMessage`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List aIMessageDescriptor = $convert.base64Decode(
+    'CglBSU1lc3NhZ2USEgoEcm9sZRgBIAEoCVIEcm9sZRIiCgdjb250ZW50GAIgAygLMgguQUlJbn'
+    'B1dFIHY29udGVudA==');
 
-@$core.Deprecated('Use openAIMessagesDescriptor instead')
-const OpenAIMessages$json = {
-  '1': 'OpenAIMessages',
+@$core.Deprecated('Use aIMessagesDescriptor instead')
+const AIMessages$json = {
+  '1': 'AIMessages',
   '2': [
     {
       '1': 'messages',
       '3': 1,
       '4': 3,
       '5': 11,
-      '6': '.OpenAIMessage',
+      '6': '.AIMessage',
       '10': 'messages'
     },
   ],
 };
 
-/// Descriptor for `OpenAIMessages`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List openAIMessagesDescriptor = $convert.base64Decode(
-    'Cg5PcGVuQUlNZXNzYWdlcxIqCghtZXNzYWdlcxgBIAMoCzIOLk9wZW5BSU1lc3NhZ2VSCG1lc3'
-    'NhZ2Vz');
+/// Descriptor for `AIMessages`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List aIMessagesDescriptor = $convert.base64Decode(
+    'CgpBSU1lc3NhZ2VzEiYKCG1lc3NhZ2VzGAEgAygLMgouQUlNZXNzYWdlUghtZXNzYWdlcw==');
 
-@$core.Deprecated('Use openAIInputDescriptor instead')
-const OpenAIInput$json = {
-  '1': 'OpenAIInput',
+@$core.Deprecated('Use aIInputDescriptor instead')
+const AIInput$json = {
+  '1': 'AIInput',
   '2': [
     {'1': 'text', '3': 1, '4': 1, '5': 9, '9': 0, '10': 'text'},
     {
@@ -162,10 +154,10 @@ const OpenAIInput$json = {
   ],
 };
 
-/// Descriptor for `OpenAIInput`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List openAIInputDescriptor = $convert.base64Decode(
-    'CgtPcGVuQUlJbnB1dBIUCgR0ZXh0GAEgASgJSABSBHRleHQSIAoEZmlsZRgCIAEoCzIKLkZpbG'
-    'VJbnB1dEgAUgRmaWxlQgcKBWlucHV0');
+/// Descriptor for `AIInput`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List aIInputDescriptor = $convert.base64Decode(
+    'CgdBSUlucHV0EhQKBHRleHQYASABKAlIAFIEdGV4dBIgCgRmaWxlGAIgASgLMgouRmlsZUlucH'
+    'V0SABSBGZpbGVCBwoFaW5wdXQ=');
 
 @$core.Deprecated('Use eitherMessagesOrPromptDescriptor instead')
 const EitherMessagesOrPrompt$json = {
@@ -177,7 +169,7 @@ const EitherMessagesOrPrompt$json = {
       '3': 2,
       '4': 1,
       '5': 11,
-      '6': '.OpenAIMessages',
+      '6': '.AIMessages',
       '9': 0,
       '10': 'messages'
     },
@@ -188,6 +180,7 @@ const EitherMessagesOrPrompt$json = {
 };
 
 /// Descriptor for `EitherMessagesOrPrompt`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List eitherMessagesOrPromptDescriptor = $convert.base64Decode(
-    'ChZFaXRoZXJNZXNzYWdlc09yUHJvbXB0EhgKBnByb21wdBgBIAEoCUgAUgZwcm9tcHQSLQoIbW'
-    'Vzc2FnZXMYAiABKAsyDy5PcGVuQUlNZXNzYWdlc0gAUghtZXNzYWdlc0IHCgVpbnB1dA==');
+final $typed_data.Uint8List eitherMessagesOrPromptDescriptor =
+    $convert.base64Decode(
+        'ChZFaXRoZXJNZXNzYWdlc09yUHJvbXB0EhgKBnByb21wdBgBIAEoCUgAUgZwcm9tcHQSKQoIbW'
+        'Vzc2FnZXMYAiABKAsyCy5BSU1lc3NhZ2VzSABSCG1lc3NhZ2VzQgcKBWlucHV0');

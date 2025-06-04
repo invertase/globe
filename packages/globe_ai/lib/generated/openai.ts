@@ -403,11 +403,11 @@ export class TextInput extends pb_1.Message {
         return TextInput.deserialize(bytes);
     }
 }
-export class OpenAIMessage extends pb_1.Message {
+export class AIMessage extends pb_1.Message {
     #one_of_decls: number[][] = [];
     constructor(data?: any[] | {
         role?: string;
-        content?: OpenAIInput[];
+        content?: AIInput[];
     }) {
         super();
         pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [2], this.#one_of_decls);
@@ -427,34 +427,34 @@ export class OpenAIMessage extends pb_1.Message {
         pb_1.Message.setField(this, 1, value);
     }
     get content() {
-        return pb_1.Message.getRepeatedWrapperField(this, OpenAIInput, 2) as OpenAIInput[];
+        return pb_1.Message.getRepeatedWrapperField(this, AIInput, 2) as AIInput[];
     }
-    set content(value: OpenAIInput[]) {
+    set content(value: AIInput[]) {
         pb_1.Message.setRepeatedWrapperField(this, 2, value);
     }
     static fromObject(data: {
         role?: string;
-        content?: ReturnType<typeof OpenAIInput.prototype.toObject>[];
-    }): OpenAIMessage {
-        const message = new OpenAIMessage({});
+        content?: ReturnType<typeof AIInput.prototype.toObject>[];
+    }): AIMessage {
+        const message = new AIMessage({});
         if (data.role != null) {
             message.role = data.role;
         }
         if (data.content != null) {
-            message.content = data.content.map(item => OpenAIInput.fromObject(item));
+            message.content = data.content.map(item => AIInput.fromObject(item));
         }
         return message;
     }
     toObject() {
         const data: {
             role?: string;
-            content?: ReturnType<typeof OpenAIInput.prototype.toObject>[];
+            content?: ReturnType<typeof AIInput.prototype.toObject>[];
         } = {};
         if (this.role != null) {
             data.role = this.role;
         }
         if (this.content != null) {
-            data.content = this.content.map((item: OpenAIInput) => item.toObject());
+            data.content = this.content.map((item: AIInput) => item.toObject());
         }
         return data;
     }
@@ -465,12 +465,12 @@ export class OpenAIMessage extends pb_1.Message {
         if (this.role.length)
             writer.writeString(1, this.role);
         if (this.content.length)
-            writer.writeRepeatedMessage(2, this.content, (item: OpenAIInput) => item.serialize(writer));
+            writer.writeRepeatedMessage(2, this.content, (item: AIInput) => item.serialize(writer));
         if (!w)
             return writer.getResultBuffer();
     }
-    static deserialize(bytes: Uint8Array | pb_1.BinaryReader): OpenAIMessage {
-        const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new OpenAIMessage();
+    static deserialize(bytes: Uint8Array | pb_1.BinaryReader): AIMessage {
+        const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new AIMessage();
         while (reader.nextField()) {
             if (reader.isEndGroup())
                 break;
@@ -479,7 +479,7 @@ export class OpenAIMessage extends pb_1.Message {
                     message.role = reader.readString();
                     break;
                 case 2:
-                    reader.readMessage(message.content, () => pb_1.Message.addToRepeatedWrapperField(message, 2, OpenAIInput.deserialize(reader), OpenAIInput));
+                    reader.readMessage(message.content, () => pb_1.Message.addToRepeatedWrapperField(message, 2, AIInput.deserialize(reader), AIInput));
                     break;
                 default: reader.skipField();
             }
@@ -489,14 +489,14 @@ export class OpenAIMessage extends pb_1.Message {
     serializeBinary(): Uint8Array {
         return this.serialize();
     }
-    static deserializeBinary(bytes: Uint8Array): OpenAIMessage {
-        return OpenAIMessage.deserialize(bytes);
+    static deserializeBinary(bytes: Uint8Array): AIMessage {
+        return AIMessage.deserialize(bytes);
     }
 }
-export class OpenAIMessages extends pb_1.Message {
+export class AIMessages extends pb_1.Message {
     #one_of_decls: number[][] = [];
     constructor(data?: any[] | {
-        messages?: OpenAIMessage[];
+        messages?: AIMessage[];
     }) {
         super();
         pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [1], this.#one_of_decls);
@@ -507,26 +507,26 @@ export class OpenAIMessages extends pb_1.Message {
         }
     }
     get messages() {
-        return pb_1.Message.getRepeatedWrapperField(this, OpenAIMessage, 1) as OpenAIMessage[];
+        return pb_1.Message.getRepeatedWrapperField(this, AIMessage, 1) as AIMessage[];
     }
-    set messages(value: OpenAIMessage[]) {
+    set messages(value: AIMessage[]) {
         pb_1.Message.setRepeatedWrapperField(this, 1, value);
     }
     static fromObject(data: {
-        messages?: ReturnType<typeof OpenAIMessage.prototype.toObject>[];
-    }): OpenAIMessages {
-        const message = new OpenAIMessages({});
+        messages?: ReturnType<typeof AIMessage.prototype.toObject>[];
+    }): AIMessages {
+        const message = new AIMessages({});
         if (data.messages != null) {
-            message.messages = data.messages.map(item => OpenAIMessage.fromObject(item));
+            message.messages = data.messages.map(item => AIMessage.fromObject(item));
         }
         return message;
     }
     toObject() {
         const data: {
-            messages?: ReturnType<typeof OpenAIMessage.prototype.toObject>[];
+            messages?: ReturnType<typeof AIMessage.prototype.toObject>[];
         } = {};
         if (this.messages != null) {
-            data.messages = this.messages.map((item: OpenAIMessage) => item.toObject());
+            data.messages = this.messages.map((item: AIMessage) => item.toObject());
         }
         return data;
     }
@@ -535,18 +535,18 @@ export class OpenAIMessages extends pb_1.Message {
     serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
         const writer = w || new pb_1.BinaryWriter();
         if (this.messages.length)
-            writer.writeRepeatedMessage(1, this.messages, (item: OpenAIMessage) => item.serialize(writer));
+            writer.writeRepeatedMessage(1, this.messages, (item: AIMessage) => item.serialize(writer));
         if (!w)
             return writer.getResultBuffer();
     }
-    static deserialize(bytes: Uint8Array | pb_1.BinaryReader): OpenAIMessages {
-        const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new OpenAIMessages();
+    static deserialize(bytes: Uint8Array | pb_1.BinaryReader): AIMessages {
+        const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new AIMessages();
         while (reader.nextField()) {
             if (reader.isEndGroup())
                 break;
             switch (reader.getFieldNumber()) {
                 case 1:
-                    reader.readMessage(message.messages, () => pb_1.Message.addToRepeatedWrapperField(message, 1, OpenAIMessage.deserialize(reader), OpenAIMessage));
+                    reader.readMessage(message.messages, () => pb_1.Message.addToRepeatedWrapperField(message, 1, AIMessage.deserialize(reader), AIMessage));
                     break;
                 default: reader.skipField();
             }
@@ -556,11 +556,11 @@ export class OpenAIMessages extends pb_1.Message {
     serializeBinary(): Uint8Array {
         return this.serialize();
     }
-    static deserializeBinary(bytes: Uint8Array): OpenAIMessages {
-        return OpenAIMessages.deserialize(bytes);
+    static deserializeBinary(bytes: Uint8Array): AIMessages {
+        return AIMessages.deserialize(bytes);
     }
 }
-export class OpenAIInput extends pb_1.Message {
+export class AIInput extends pb_1.Message {
     #one_of_decls: number[][] = [[1, 2]];
     constructor(data?: any[] | ({} & (({
         text?: string;
@@ -611,8 +611,8 @@ export class OpenAIInput extends pb_1.Message {
     static fromObject(data: {
         text?: string;
         file?: ReturnType<typeof FileInput.prototype.toObject>;
-    }): OpenAIInput {
-        const message = new OpenAIInput({});
+    }): AIInput {
+        const message = new AIInput({});
         if (data.text != null) {
             message.text = data.text;
         }
@@ -645,8 +645,8 @@ export class OpenAIInput extends pb_1.Message {
         if (!w)
             return writer.getResultBuffer();
     }
-    static deserialize(bytes: Uint8Array | pb_1.BinaryReader): OpenAIInput {
-        const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new OpenAIInput();
+    static deserialize(bytes: Uint8Array | pb_1.BinaryReader): AIInput {
+        const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new AIInput();
         while (reader.nextField()) {
             if (reader.isEndGroup())
                 break;
@@ -665,8 +665,8 @@ export class OpenAIInput extends pb_1.Message {
     serializeBinary(): Uint8Array {
         return this.serialize();
     }
-    static deserializeBinary(bytes: Uint8Array): OpenAIInput {
-        return OpenAIInput.deserialize(bytes);
+    static deserializeBinary(bytes: Uint8Array): AIInput {
+        return AIInput.deserialize(bytes);
     }
 }
 export class EitherMessagesOrPrompt extends pb_1.Message {
@@ -676,7 +676,7 @@ export class EitherMessagesOrPrompt extends pb_1.Message {
         messages?: never;
     } | {
         prompt?: never;
-        messages?: OpenAIMessages;
+        messages?: AIMessages;
     })))) {
         super();
         pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
@@ -699,9 +699,9 @@ export class EitherMessagesOrPrompt extends pb_1.Message {
         return pb_1.Message.getField(this, 1) != null;
     }
     get messages() {
-        return pb_1.Message.getWrapperField(this, OpenAIMessages, 2) as OpenAIMessages;
+        return pb_1.Message.getWrapperField(this, AIMessages, 2) as AIMessages;
     }
-    set messages(value: OpenAIMessages) {
+    set messages(value: AIMessages) {
         pb_1.Message.setOneofWrapperField(this, 2, this.#one_of_decls[0], value);
     }
     get has_messages() {
@@ -719,21 +719,21 @@ export class EitherMessagesOrPrompt extends pb_1.Message {
     }
     static fromObject(data: {
         prompt?: string;
-        messages?: ReturnType<typeof OpenAIMessages.prototype.toObject>;
+        messages?: ReturnType<typeof AIMessages.prototype.toObject>;
     }): EitherMessagesOrPrompt {
         const message = new EitherMessagesOrPrompt({});
         if (data.prompt != null) {
             message.prompt = data.prompt;
         }
         if (data.messages != null) {
-            message.messages = OpenAIMessages.fromObject(data.messages);
+            message.messages = AIMessages.fromObject(data.messages);
         }
         return message;
     }
     toObject() {
         const data: {
             prompt?: string;
-            messages?: ReturnType<typeof OpenAIMessages.prototype.toObject>;
+            messages?: ReturnType<typeof AIMessages.prototype.toObject>;
         } = {};
         if (this.prompt != null) {
             data.prompt = this.prompt;
@@ -764,7 +764,7 @@ export class EitherMessagesOrPrompt extends pb_1.Message {
                     message.prompt = reader.readString();
                     break;
                 case 2:
-                    reader.readMessage(message.messages, () => message.messages = OpenAIMessages.deserialize(reader));
+                    reader.readMessage(message.messages, () => message.messages = AIMessages.deserialize(reader));
                     break;
                 default: reader.skipField();
             }

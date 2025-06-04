@@ -2,7 +2,6 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:globe_ai/generated/openai.pbserver.dart';
 import 'package:globe_runtime/globe_runtime.dart';
@@ -12,137 +11,69 @@ import 'package:version/version.dart';
 import 'globe_ai_source.dart';
 import 'object_schema.dart';
 
-const _module = InlinedModule(name: 'GlobeAISdk', sourceCode: packageSource);
-
-sealed class AiProvider {
-  final String? apiKey;
-
-  const AiProvider(this.apiKey);
-
-  static AiProvider? _aiProviderInstance;
-  static AiProvider _getInstance(String apiKey) {
-    if (_aiProviderInstance != null) return _aiProviderInstance!;
-    return _aiProviderInstance = OpenAI(OpenAIConfig(apiKey: apiKey));
-  }
-
-  Future<void> _registerModule() async {
-    final currentVersion = Version.parse(GlobeRuntime.instance.version);
-    if (currentVersion < Version(0, 0, 6)) {
-      throw StateError(
-        'Globe Runtime version $currentVersion is not supported. '
-        'Please update runtime version.',
-      );
-    }
-
-    await _module.register(args: [apiKey?.toFFIType]);
-  }
-}
-
-abstract mixin class AiModel<T, Z> {
-  String get apiKey;
-
-  String get name;
-
-  Map<String, dynamic> get options;
-}
-
-class ChatModel extends AiModel<String, String> {
-  final OpenAI _openAI;
-  final String model;
-
-  @override
-  final Map<String, dynamic> options;
-
-  ChatModel._(this._openAI, this.model, {this.options = const {}});
-
-  @override
-  String get apiKey => _openAI.apiKey;
-
-  @override
-  String get name => model;
-}
-
-enum ReasoningEffort {
-  low,
-  medium,
-  high,
-}
-
-class OpenAI extends AiProvider {
-  final OpenAIConfig config;
-
-  OpenAI(this.config) : super(config.apiKey);
-
-  ChatModel chat(
-    String model, {
-    String? instance,
-    String? user,
-    Map<int, int>? logitBias,
-    bool? downloadImages,
-    bool? parallelToolCalls,
-    bool? structuredOutputs,
-    ReasoningEffort? reasoningEffort,
-  }) =>
-      ChatModel._(this, model, options: {
-        'instance': instance ?? 'chat',
-        if (user != null) 'user': user,
-        if (logitBias != null) 'logitBias': logitBias,
-        if (downloadImages != null) 'downloadImages': downloadImages,
-        if (parallelToolCalls != null) 'parallelToolCalls': parallelToolCalls,
-        if (structuredOutputs != null) 'structuredOutputs': structuredOutputs,
-        if (reasoningEffort != null) 'reasoningEffort': reasoningEffort.name,
-      });
-
-  // defaults to chat model
-  AiModel call(
-    String model, {
-    String? user,
-    bool structuredOutputs = false,
-    ReasoningEffort reasoningEffort = ReasoningEffort.medium,
-  }) {
-    return chat(
-      model,
-      instance: 'default',
-      user: user,
-      structuredOutputs: structuredOutputs,
-      reasoningEffort: reasoningEffort,
+Future<Module> _registerModule(String provider, {String? apiKey}) async {
+  final module = InlinedModule(name: provider, sourceCode: packageSource);
+  final currentVersion = Version.parse(GlobeRuntime.instance.version);
+  if (currentVersion < Version(0, 0, 6)) {
+    throw StateError(
+      'Globe Runtime version $currentVersion is not supported. '
+      'Please update runtime version.',
     );
   }
 
-  @override
-  String get apiKey => config.hasApiKey()
-      ? config.apiKey
-      : Platform.environment['OPENAI_API_KEY'] ??
-          (throw StateError(
-            'Please set your OpenAI API key in the OpenAIKey constant.',
-          ));
+  await module.register(args: [provider.toFFIType, apiKey?.toFFIType]);
+
+  return module;
+}
+
+abstract class AiProvider {
+  final String? apiKey;
+  final String name;
+
+  const AiProvider(this.name, {this.apiKey});
+}
+
+enum Model { chat, language, completion }
+
+abstract class AiModel<T extends AiProvider> {
+  final Model type;
+  final String id;
+  final T provider;
+
+  const AiModel({
+    required this.type,
+    required this.id,
+    required this.provider,
+  });
+
+  Map<String, dynamic> get options;
 }
 
 Future<String> generateText({
   required AiModel model,
   String? prompt,
-  List<OpenAIMessage>? messages,
+  List<AIMessage>? messages,
 }) async {
   if ((prompt == null && messages == null) ||
       (prompt != null && messages != null)) {
     throw ArgumentError('Either prompt or messages must be provided.');
   }
 
+  final provider = model.provider;
+  final module = await _registerModule(provider.name, apiKey: provider.apiKey);
+
   final openAiMessage = EitherMessagesOrPrompt(
     prompt: prompt,
-    messages: messages == null ? null : OpenAIMessages(messages: messages),
+    messages: messages == null ? null : AIMessages(messages: messages),
   );
-
-  final aiProvider = AiProvider._getInstance(model.apiKey);
-  await aiProvider._registerModule();
 
   final completer = Completer<String>();
 
-  _module.callFunction(
-    'openai_chat_generate_text',
+  module.callFunction(
+    '${model.provider.name}_${model.type.name}_generate_text',
     args: [
       model.options.toFFIType,
-      model.name.toFFIType,
+      model.id.toFFIType,
       openAiMessage.writeToBuffer().toFFIType,
     ],
     onData: (data) {
@@ -164,15 +95,15 @@ Future<T> generateObject<T>({
   required String prompt,
   required Validator schema,
 }) async {
-  final aiProvider = AiProvider._getInstance(model.apiKey);
-  await aiProvider._registerModule();
+  final provider = model.provider;
+  final module = await _registerModule(provider.name, apiKey: provider.apiKey);
 
   final completer = Completer<T>();
 
-  _module.callFunction(
-    'openai_chat_generate_object',
+  module.callFunction(
+    '${model.provider.name}_${model.type.name}_generate_object',
     args: [
-      model.name.toFFIType,
+      model.id.toFFIType,
       prompt.toFFIType,
       schema.toJson().toFFIType,
     ],
@@ -193,27 +124,27 @@ Future<T> generateObject<T>({
 Stream<String> streamText({
   required AiModel model,
   String? prompt,
-  List<OpenAIMessage>? messages,
+  List<AIMessage>? messages,
 }) async* {
   if ((prompt == null && messages == null) ||
       (prompt != null && messages != null)) {
     throw ArgumentError('Either prompt or messages must be provided.');
   }
 
+  final provider = model.provider;
+  final module = await _registerModule(provider.name, apiKey: provider.apiKey);
+
   final openAiMessage = EitherMessagesOrPrompt(
     prompt: prompt,
-    messages: messages == null ? null : OpenAIMessages(messages: messages),
+    messages: messages == null ? null : AIMessages(messages: messages),
   );
-
-  final aiProvider = AiProvider._getInstance(model.apiKey);
-  await aiProvider._registerModule();
 
   final streamController = StreamController<String>();
 
-  _module.callFunction(
-    'openai_chat_stream_text',
+  module.callFunction(
+    '${model.provider.name}_${model.type.name}_stream_text',
     args: [
-      model.name.toFFIType,
+      model.id.toFFIType,
       openAiMessage.writeToBuffer().toFFIType,
     ],
     onData: (data) {
@@ -245,15 +176,15 @@ Stream<T> streamObject<T>({
   required String prompt,
   required Validator schema,
 }) async* {
-  final aiProvider = AiProvider._getInstance(model.apiKey);
-  await aiProvider._registerModule();
+  final provider = model.provider;
+  final module = await _registerModule(provider.name, apiKey: provider.apiKey);
 
   final streamController = StreamController<T>();
 
-  _module.callFunction(
-    'openai_chat_stream_object',
+  module.callFunction(
+    '${model.provider.name}_${model.type.name}_stream_object',
     args: [
-      model.name.toFFIType,
+      model.id.toFFIType,
       prompt.toFFIType,
       schema.toJson().toFFIType,
     ],

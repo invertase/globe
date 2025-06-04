@@ -25,15 +25,15 @@ message FileInput {
 message TextInput {
   string text = 1;
 }
-message OpenAIMessage {
+message AIMessage {
   string role = 1;
-  repeated OpenAIInput content = 2;
+  repeated AIInput content = 2;
 }
-message OpenAIMessages {
-  repeated OpenAIMessage messages = 1;
+message AIMessages {
+  repeated AIMessage messages = 1;
 }
 
-message OpenAIInput {
+message AIInput {
   oneof input {
     string text = 1;
     FileInput file = 2;
@@ -43,6 +43,6 @@ message OpenAIInput {
 message EitherMessagesOrPrompt {
   oneof input {
     string prompt = 1;
-    OpenAIMessages messages = 2;
+    AIMessages messages = 2;
   }
 }
