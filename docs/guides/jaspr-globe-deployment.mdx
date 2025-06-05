@@ -1,0 +1,87 @@
+---
+title: Build and Deploy a Jaspr Website on Globe
+description: Use Jaspr to build and deploy a server-rendered site in Dart.
+---
+
+Jaspr is a modern web framework for building websites in Dart, supporting both **client-side** and **server-side** rendering. It's well-suited for **document-centric** or **content-heavy** websites that benefit from running on the server and rendering native HTML and CSS.
+
+Globe has built-in support for deploying **server-side rendered** (SSR) Jaspr applications, automatically detecting the framework and applying the correct build settings.
+
+**10 min read**
+
+---
+
+### Features Covered
+
+- Using the Jaspr CLI to create a new project
+- Globe's automatic framework detection for Jaspr
+- Deploying a server-side rendered application with the Globe CLI
+
+### Prerequisites
+
+- **Dart SDK Installed**: If you have Flutter installed, the Dart SDK is already included. If not, [Install Dart](https://dart.dev/get-dart).
+- **Globe Account**: You'll need an account to deploy projects. [Sign up or log in to Globe](https://globe.dev/login).
+- **Globe CLI Installed and Authenticated**: Install the CLI by running `dart pub global activate globe_cli` and log in using `globe login`.
+- **Jaspr CLI Installed**: Install the Dart Frog CLI by running `dart pub global activate jaspr_cli`.
+
+## Step 1: Create Your Jaspr Project
+
+Create a new Jaspr application. It is important to create the project in server-side rendering (SSR) mode, as this is the only mode Globe currently supports for Jaspr applications.
+
+- Run the jaspr create command with the server mode flag (`-m server:auto`):
+
+  ```bash
+  jaspr create -m server:auto my-jaspr-site
+  cd my-jaspr-site
+  ```
+
+## Step 2: Test Your Application Locally (Optional)
+
+Before deploying, it's a good practice to test your application locally to make sure everything is working as expected.
+
+- From your project directory (`my-jaspr-site`), run the local development server:
+
+  ```bash
+  jaspr serve
+  ```
+
+- Open your browser and navigate to the local address shown in the terminal (usually `http://localhost:8080`).
+
+## Step 3: Deploy to Globe
+
+Deploying your Jaspr site to Globe is a single command. Globe will automatically identify that it's a Jaspr project and handle the build process for you.
+
+- From your project's root directory, run the deploy command:
+
+  ```bash
+  globe deploy
+  ```
+
+- If this is your first time deploying this project, the CLI will guide you through creating and linking a new Globe project.
+
+<Info>
+  Globe automatically detects Jaspr applications and applies the correct
+  framework preset during deployment. No additional configuration is required
+  for a standard SSR project.
+</Info>
+
+## Step 4: View Your Deployed Website
+
+Once the deployment is complete, the Globe CLI will output the live URL for your website.
+
+- Navigate to the provided URL in your browser to see your live Jaspr website.
+
+Your Jaspr website is now deployed globally. You have successfully built and deployed a server-side rendered Dart application using Globe.
+
+## What's Next
+
+- Add a [Custom Domain](/core-concepts/domains) to your new website for professional branding
+- Set up [GitHub Integration](/core-concepts/github-integration) to automatically deploy your site on every code push
+- Read the official [Jaspr documentation](https://docs.jaspr.site/) to learn more about building with the framework
+
+---
+
+<Info>
+  Couldn't find the guide you need? [Talk to us in
+  Discord](https://invertase.link/globe-discord)
+</Info>
