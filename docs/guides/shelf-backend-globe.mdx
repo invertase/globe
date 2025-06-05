@@ -1,0 +1,202 @@
+---
+title: How to Use Shelf for Backends on Globe
+description: Create, test, and deploy a Dart backend using the Shelf framework on Globe.
+---
+
+Shelf is a flexible and minimal web server framework for Dart, making it an excellent choice for building APIs. Globe supports deploying Shelf applications with no custom configuration, allowing you to get a server running on a global infrastructure in minutes.
+
+This guide walks through setting up a full CRUD (Create, Read, Update, Delete) API server from scratch and deploying it to Globe.
+
+**15 min read**
+
+---
+
+### Features Covered
+
+- Creating a Shelf project with routing
+- Building a simple in-memory CRUD API
+- Listening for Globe's required PORT environment variable
+- Deploying to Globe with a single command
+
+### Prerequisites
+
+- **Dart SDK Installed**: If you have Flutter installed, the Dart SDK is already included. If not, [Install Dart](https://dart.dev/get-dart).
+- **Globe Account**: You'll need an account to deploy projects. [Sign up or log in to Globe](https://globe.dev/login).
+- **Globe CLI Installed and Authenticated**: Install the CLI by running `dart pub global activate globe_cli` and log in using `globe login`.
+
+## Step 1: Create a New Dart Project
+
+First, create a standard Dart console application that will serve as the foundation for your Shelf server.
+
+- In your terminal, run the dart create command:
+
+  ```bash
+  dart create my-shelf-api
+  cd my-shelf-api
+  ```
+
+## Step 2: Add Dependencies
+
+Next, add the necessary packages to your project: `shelf` for the server and `shelf_router` to handle API routes.
+
+- From your project's root directory, run the following commands:
+
+  ```bash
+  dart pub add shelf
+  dart pub add shelf_router
+  ```
+
+## Step 3: Write the Server Code
+
+Now, create your server logic with full CRUD endpoints. This code will manage a simple list of repositories in memory.
+
+- Open your project and create a new file at `bin/server.dart`.
+- Copy the following code into the file:
+
+  ```dart
+  import 'dart:io';
+  import 'dart:convert';
+  import 'package:shelf/shelf.dart';
+  import 'package:shelf/shelf_io.dart' as shelf_io;
+  import 'package:shelf_router/shelf_router.dart';
+
+  // In-memory data store
+  final _repositories = [
+    {'id': '1', 'name': 'shelf', 'url': 'https://github.com/dart-lang/shelf'},
+    {'id': '2', 'name': 'globe_cli', 'url': 'https://github.com/invertase/globe'},
+  ];
+  final _headers = {'Content-Type': 'application/json'};
+
+  // Configure routes for all CRUD operations
+  final _router = Router()
+    ..get('/repos', _getReposHandler)
+    ..get('/repos/<id>', _getRepoByIdHandler)
+    ..post('/repos', _createRepoHandler)
+    ..put('/repos/<id>', _updateRepoHandler)
+    ..delete('/repos/<id>', _deleteRepoHandler);
+
+  // READ (all)
+  Response _getReposHandler(Request request) {
+    return Response.ok(jsonEncode(_repositories), headers: _headers);
+  }
+
+  // READ (one)
+  Response _getRepoByIdHandler(Request request, String id) {
+    final repo = _repositories.firstWhere((repo) => repo['id'] == id, orElse: () => {});
+    if (repo.isEmpty) {
+      return Response.notFound('Repository not found.');
+    }
+    return Response.ok(jsonEncode(repo), headers: _headers);
+  }
+
+  // CREATE
+  Future<Response> _createRepoHandler(Request request) async {
+    final body = await request.readAsString();
+    final newRepoData = jsonDecode(body) as Map<String, dynamic>;
+    final newId = (_repositories.length + 1).toString();
+    final newRepo = {'id': newId, ...newRepoData};
+    _repositories.add(newRepo);
+    return Response(201, body: jsonEncode(newRepo), headers: _headers);
+  }
+
+  // UPDATE
+  Future<Response> _updateRepoHandler(Request request, String id) async {
+    final repoIndex = _repositories.indexWhere((repo) => repo['id'] == id);
+    if (repoIndex == -1) {
+      return Response.notFound('Repository not found.');
+    }
+    final body = await request.readAsString();
+    final updatedData = jsonDecode(body) as Map<String, dynamic>;
+    _repositories[repoIndex] = {'id': id, ...updatedData};
+    return Response.ok(jsonEncode(_repositories[repoIndex]), headers: _headers);
+  }
+
+  // DELETE
+  Response _deleteRepoHandler(Request request, String id) {
+    _repositories.removeWhere((repo) => repo['id'] == id);
+    return Response.ok('Repository deleted.');
+  }
+
+  void main() async {
+    final handler = const Pipeline().addMiddleware(logRequests()).addHandler(_router.call);
+
+    // Your app must listen on the PORT environment variable provided by Globe
+    final port = int.tryParse(Platform.environment['PORT'] ?? '8080') ?? 8080;
+    final server = await shelf_io.serve(handler, InternetAddress.anyIPv4, port);
+
+    print('Serving at http://${server.address.host}:${server.port}');
+  }
+  ```
+
+<Info>
+  This example uses an in-memory list to store data. This means all data will be
+  lost when the server restarts. For a production application, you would connect
+  to a persistent database.
+</Info>
+
+## Step 4: Test Your Server Locally
+
+Run your server locally to ensure all CRUD endpoints work before deploying.
+
+- Run the server from your terminal:
+
+  ```bash
+  dart run bin/server.dart
+  ```
+
+- In a new terminal window, use curl to test the API:
+
+  - **List all repositories (GET):**
+
+    ```bash
+    curl http://localhost:8080/repos
+    ```
+
+  - **Create a new repository (POST):**
+
+    ```bash
+    curl -X POST -H "Content-Type: application/json" \
+      -d '{"name": "new_repo", "url": "github.com/user/new_repo"}' \
+      http://localhost:8080/repos
+    ```
+
+  - **Update a repository (PUT):**
+
+    ```bash
+    curl -X PUT -H "Content-Type: application/json" \
+      -d '{"name": "updated_repo", "url": "github.com/user/updated_repo"}' \
+      http://localhost:8080/repos/2
+    ```
+
+  - **Delete a repository (DELETE):**
+
+    ```bash
+    curl -X DELETE http://localhost:8080/repos/1
+    ```
+
+## Step 5: Deploy to Globe
+
+Finally, deploy your Shelf API to Globe's global network.
+
+- From your project's root directory, run the deploy command:
+
+  ```bash
+  globe deploy
+  ```
+
+- If this is your first time deploying this project, the Globe CLI will guide you through creating and linking a new project on your account. Once complete, you will receive a unique URL for your live API.
+
+By combining Shelf's simplicity with Globe's automated deployments, you can launch efficient Dart backends with ease.
+
+## What's Next
+
+- Learn more about [Managing Deployments](/core-concepts/deployments) in the Globe dashboard
+- Explore the full capabilities of the [Globe CLI](/core-concepts/cli)
+- Automate your workflow by setting up [GitHub Integration](/core-concepts/github-integration)
+
+---
+
+<Info>
+  Couldn't find the guide you need? [Talk to us in
+  Discord](https://invertase.link/globe-discord)
+</Info>
