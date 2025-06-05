@@ -251,6 +251,10 @@
         {
           "title": "Deploy a Jaspr App",
           "href": "/guides/jaspr-globe-deployment"
+        },
+        {
+          "title": "Use Shelf for Backend",
+          "href": "/guides/shelf-backend-globe"
         }
       ]
     },
