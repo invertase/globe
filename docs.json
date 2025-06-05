@@ -243,6 +243,10 @@
         {
           "title": "Add a Custom Domain",
           "href": "/guides/add-custom-domain"
+        },
+        {
+          "title": "Use an External Service",
+          "href": "/guides/use-external-service"
         }
       ]
     },

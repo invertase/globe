@@ -1,0 +1,169 @@
+---
+title: How to Use External APIs & Packages in Your Globe Backend
+description: Use pub.dev packages and call external APIs from your Dart backend.
+---
+
+Integrating a dedicated error-tracking service like [Sentry](https://sentry.io/) gives you detailed, real-time insights into application issues, including stack traces and request context.
+
+This guide walks through integrating a Dart backend with Sentry. It shows how you aren't limited to Globe's built-in logging and can integrate with other developer services.
+
+**15 min read**
+
+---
+
+### Features Covered
+
+- Integrating a third-party service (Sentry) for observability
+- Using a package from pub.dev
+- Managing API keys with Globe Environment Variables
+- Capturing exceptions from a live deployment
+
+### Prerequisites
+
+- **Dart SDK Installed**: If you have Flutter installed, the Dart SDK is already included. If not, [Install Dart](https://dart.dev/get-dart).
+- **Globe Account**: You'll need an account to deploy projects. [Sign up or log in to Globe](https://globe.dev/login).
+- **Globe CLI Installed and Authenticated**: Install the CLI by running `dart pub global activate globe_cli` and log in using `globe login`.
+- **Sentry account**: Sign up for a free account at [Sentry.io](https://sentry.io/signup/).
+
+## Step 1: Set Up Your Sentry Project
+
+First, you need a Sentry project and a `DSN` key, which tells your application where to send errors.
+
+- Log in to your Sentry account and click **Create Project**
+- From the list of platforms, select **Flutter**. This will configure the project with the correct SDK that includes support for pure Dart
+- Give your project a name (e.g., `globe-backend`) and click **Create Project**
+- Sentry will display your `DSN` key. Copy this key; you will need it in the next step
+
+## Step 2: Prepare Your Globe Backend Project
+
+We will use the standard Dart Shelf server template to create our project.
+
+- In your terminal, run the `dart create` command:
+
+  ```bash
+  dart create --template=server-shelf my-sentry-backend
+  cd my-sentry-backend
+  ```
+
+- Add the official Sentry package to your project's dependencies:
+
+  ```bash
+  dart pub add sentry
+  ```
+
+## Step 3: Create or Link Your Globe Project
+
+Before deploying, associate your local project directory with a Globe project. If you don't have one for this application yet, this command will help you create it.
+
+- In your terminal, from your project's root directory (`my-sentry-backend`), run:
+
+  ```bash
+  globe link
+  ```
+
+  Follow the prompts to **create a new project**.
+
+## Step 4: Securely Configure the Sentry DSN
+
+Now that your Globe project exists, add the Sentry `DSN` as an environment variable. This keeps your `DSN` key secure and out of your source code.
+
+- In the [Globe dashboard](https://globe.dev/login), navigate to the project you just created
+- Open **Settings → Environment Variables**
+- Select **Add Variable**
+- For the **Name**, enter `SENTRY_DSN`
+- For the **Value**, paste the DSN key you copied from Sentry
+- Leave the environment setting as **All Environments** and select **Save**
+
+<Info>
+  For a real-world application, you would typically create two separate projects
+  in Sentry: one for production and one for preview/testing. You can then add
+  two `SENTRY_DSN` variables in Globe, one for each environment, to keep your
+  error data separate.
+</Info>
+
+## Step 5: Initialize Sentry in Your Application
+
+Now, add the Sentry initialization logic to your server's main function. The Sentry client should be initialized before the server starts handling requests.
+
+- Open the `bin/server.dart` file in your project
+- In the `main` function, add the call to `Sentry.init`. The client will read the DSN from the environment variables you configured previously
+
+```dart
+import 'dart:io';
+import 'package:shelf/shelf.dart';
+import 'package:shelf/shelf_io.dart' as io;
+import 'package:sentry/sentry.dart';
+
+// Your existing handlers...
+
+Future<void> main() async {
+  // Initialize Sentry
+  await Sentry.init(
+    (options) {
+      options.dsn = Platform.environment['SENTRY_DSN'];
+      // You can add more configuration here if needed
+      options.tracesSampleRate = 1.0;
+    },
+  );
+
+  final ip = InternetAddress.anyIPv4;
+
+  final handler = const Pipeline()
+      .addMiddleware(logRequests())
+      .addHandler(_router); // Assuming your router is named _router
+
+  final port = int.parse(Platform.environment['PORT'] ?? '8080');
+  final server = await io.serve(handler, ip, port);
+  print('Server listening on port ${server.port}');
+}
+```
+
+## Step 6: Create an Endpoint to Trigger a Test Error
+
+To verify the integration is working, create a new API endpoint that deliberately throws an exception.
+
+- In the same server file, add a new route to your router that throws an error
+
+```dart
+// In your router setup
+_router.get('/trigger-error', (Request request) {
+  try {
+    throw StateError('This is a test error from Globe!');
+  } catch (exception, stackTrace) {
+    // Capture the exception and send it to Sentry
+    Sentry.captureException(exception, stackTrace: stackTrace);
+    // Return an error response to the client
+    return Response.internalServerError(
+      body: 'An error was triggered and reported to Sentry.'
+    );
+  }
+});
+```
+
+## Step 7: Deploy and Test the Integration
+
+Deploy the application to Globe and call the new endpoint to see the error appear in your Sentry dashboard.
+
+- Run the deploy command for a production deployment:
+
+  ```bash
+  globe deploy --prod
+  ```
+
+- Once the deployment is complete, the CLI will provide a URL. Take that URL and append your new path to it (e.g., `https://your-app.globeapp.dev/trigger-error`)
+- Visit the full URL in your browser. You should see the error message
+- Go back to your Sentry dashboard. Within a few moments, you will see the captured error, complete with the stack trace and other details
+
+By connecting your Globe backend to an external service like Sentry, you can add advanced observability to your application.
+
+### What's Next
+
+- Remember that any changes to Environment Variables require you to redeploy your project for them to take effect
+- Explore the [Environment Variables documentation](/core-concepts/environment-variables) to learn more about managing configurations for different environments
+
+---
+
+<Info>
+  Couldn't find the guide you need? [Talk to us in
+  Discord](https://invertase.link/globe-discord)
+</Info>
