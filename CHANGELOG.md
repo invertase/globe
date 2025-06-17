@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2025-06-17
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`globe_cli` - `v0.0.16+1`](#globe_cli---v00161)
+
+---
+
+#### `globe_cli` - `v0.0.16+1`
+
+ - **FIX**(globe_cli): fix build-runner detection flag in CLI  ([#199](https://github.com/invertase/globe/issues/199)). ([fcc42a5c](https://github.com/invertase/globe/commit/fcc42a5c7f7e480f7d52ed4058c61436ce7fb8d4))
+
+
 ## 2025-05-08
 
 ### Changes

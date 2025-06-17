@@ -1,3 +1,7 @@
+## 0.0.16+1
+
+ - **FIX**(globe_cli): fix build-runner detection flag in CLI  ([#199](https://github.com/invertase/globe/issues/199)). ([fcc42a5c](https://github.com/invertase/globe/commit/fcc42a5c7f7e480f7d52ed4058c61436ce7fb8d4))
+
 ## 0.0.16-dev.1
 
  - **DOCS**: Implement the first version of the new docs ([#160](https://github.com/invertase/globe/issues/160)). ([a64c2229](https://github.com/invertase/globe/commit/a64c222949a50dcdd7ecd0c4d5b98d9ea83709db))
