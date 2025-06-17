@@ -628,14 +628,13 @@ class FrameworkPresetOptions {
         'name': final String name,
         'entrypoint': final String entrypoint,
         'buildCommand': final String? buildCommand,
-        'buildRunnerDetection': final bool? buildRunnerDetection,
       } =>
         FrameworkPresetOptions(
           id: id,
           name: name,
           buildCommand: buildCommand,
           entrypoint: entrypoint,
-          buildRunnerDetection: buildRunnerDetection,
+          buildRunnerDetection: json['buildRunnerDetection'] as bool?,
         ),
       _ => throw const FormatException('FrameworkPresetOptions'),
     };
