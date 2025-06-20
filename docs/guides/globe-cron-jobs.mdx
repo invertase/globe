@@ -7,6 +7,10 @@ Automating recurring background tasks, such as database cleanups or nightly repo
 
 This guide walks through defining a cron job in a globe.yaml file, creating an endpoint in a Dart Shelf application to handle the task, and verifying its status in the Globe dashboard.
 
+**15 min read**
+
+---
+
 ### Features Covered
 
 - Creating and configuring a `globe.yaml` file
@@ -62,7 +66,7 @@ Your application needs to have an endpoint that matches the path you defined. Gl
 
 - If your handler returns a status code outside the `2xx` range, Globe will display it as an error in the dashboard.
 
-## Step 4. Deploy Your Application
+## Step 4: Deploy Your Application
 
 For the cron job to be scheduled, you must deploy your application to production.
 
@@ -77,7 +81,7 @@ For the cron job to be scheduled, you must deploy your application to production
   deployments. They are synchronized with each successful production deployment.
 </Info>
 
-## Step 5. Verify the Cron Job in the Dashboard
+## Step 5: Verify the Cron Job in the Dashboard
 
 After a successful production deployment, you can verify that Globe has registered your scheduled task.
 
