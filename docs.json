@@ -251,6 +251,14 @@
         {
           "title": "Deploy a Jaspr App",
           "href": "/guides/jaspr-globe-deployment"
+        },
+        {
+          "title": "Use Shelf for Backend",
+          "href": "/guides/shelf-backend-globe"
+        },
+        {
+          "title": "Schedule Cron Jobs on Globe",
+          "href": "/guides/globe-cron-jobs"
         }
       ]
     },

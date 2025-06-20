@@ -1,0 +1,101 @@
+---
+title: How to Schedule Cron Jobs on Globe
+description: Automate recurring tasks by defining and deploying scheduled HTTP requests.
+---
+
+Automating recurring background tasks, such as database cleanups or nightly reports, is a common requirement for backend applications. Globe allows you to schedule these jobs by defining HTTP-based cron jobs directly in your project configuration.
+
+This guide walks through defining a cron job in a globe.yaml file, creating an endpoint in a Dart Shelf application to handle the task, and verifying its status in the Globe dashboard.
+
+### Features Covered
+
+- Creating and configuring a `globe.yaml` file
+- Defining a cron schedule and path
+- Implementing an endpoint handler in Dart to receive the cron request
+- Viewing and managing cron jobs in the Globe dashboard
+
+### Prerequisites
+
+- A Globe Account and the Globe CLI installed and authenticated
+- An existing Dart backend project deployed on Globe (e.g., a Shelf API)
+
+## Step 1: Create the globe.yaml File
+
+Configuration for Globe-specific features like cron jobs is done in a `globe.yaml` file.
+
+- In the **root directory** of your Dart project, create a new file named `globe.yaml`.
+
+## Step 2: Define Your Cron Job
+
+Inside the YAML file, you will define your scheduled task. Each job requires a unique `id`, a `schedule` in standard cron syntax, and a `path` that Globe will call in your application.
+
+- Add the following content to your `globe.yaml` file:
+
+  ```yaml
+  crons:
+    - id: daily-digest-email
+      schedule: "0 9 * * *" # Runs every day at 9:00 AM UTC
+      path: "/tasks/send-daily-digest"
+  ```
+
+<Info>
+  **Info:** You can use a tool like [Crontab Guru](https://crontab.guru/) to
+  help verify your cron schedule expressions. All schedules run in the **UTC**
+  timezone only.
+</Info>
+
+## Step 3: Implement the Endpoint Handler
+
+Your application needs to have an endpoint that matches the path you defined. Globe will send an HTTP `POST` request to this endpoint according to your schedule.
+
+- In your Dart Shelf application, add a new route to your router that listens for `POST` requests on the specified path.
+
+  ```dart
+  // In your main server file, add this to your shelf_router setup
+  _router.post('/tasks/send-daily-digest', (Request request) {
+    // Your logic for sending the digest email would go here.
+    print('CRON JOB EXECUTED: Sending daily digest email...');
+    // Return a 2xx status code to indicate success.
+    return Response.ok('Digest job processed.');
+  });
+  ```
+
+- If your handler returns a status code outside the `2xx` range, Globe will display it as an error in the dashboard.
+
+## Step 4. Deploy Your Application
+
+For the cron job to be scheduled, you must deploy your application to production.
+
+- From your project's root directory, run the **deploy** command:
+
+  ```bash
+  globe deploy --prod
+  ```
+
+<Info>
+  **Info:** Cron jobs only run on **production deployments**, not on preview
+  deployments. They are synchronized with each successful production deployment.
+</Info>
+
+## Step 5. Verify the Cron Job in the Dashboard
+
+After a successful production deployment, you can verify that Globe has registered your scheduled task.
+
+- In the Globe dashboard, navigate to your project
+- Select the **Cron Jobs** tab
+- You should see your `daily-digest-email` job listed as **Active**. If you later remove the job from your globe.yaml and redeploy, it will become inactive.
+
+You have now scheduled a recurring task for your Dart backend using Globe's built-in cron job support.
+
+## What's Next
+
+- Learn more about [Managing Deployments](/core-concepts/deployments) in the Globe dashboard
+- Explore the full capabilities of the [Globe CLI](/core-concepts/cli)
+- If your cron job fails, you can investigate the issue by checking your application's [Logs](/core-concepts/logs)
+
+---
+
+<Info>
+  Couldn't find the guide you need? [Talk to us in
+  Discord](https://invertase.link/globe-discord)
+</Info>
