@@ -247,6 +247,10 @@
         {
           "title": "Use an External Service",
           "href": "/guides/use-external-service"
+        },
+        {
+          "title": "Deploy a Jaspr App",
+          "href": "/guides/jaspr-globe-deployment"
         }
       ]
     },
