@@ -290,14 +290,10 @@
       ]
     },
     {
-      "group": "Public Roadmap",
+      "group": "Roadmap & Feedback",
       "tab": "releases",
       "pages": [
-        { "title": "Roadmap", "href": "/releases/roadmap" },
-        { "title": "Ideas", "href": "/releases/roadmap/ideas" },
-        {
-          "title": "Feature Request",
-          "href": "/releases/roadmap/feature-request"
+        { "title": "Overview", "href": "/releases/roadmap-and-feedback/overview" },
         }
       ]
     },
