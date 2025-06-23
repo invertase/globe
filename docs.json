@@ -293,9 +293,8 @@
       "group": "Roadmap & Feedback",
       "tab": "releases",
       "pages": [
-        { "title": "Overview", "href": "/releases/roadmap-and-feedback/overview" },
-        }
-      ]
+        { "title": "Overview", "href": "/releases/roadmap-and-feedback" }
+            ]
     },
     {
       "group": "Terms & Privacy",
