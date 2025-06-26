@@ -1,0 +1,322 @@
+---
+title: How to Secure Your Dart APIs on Globe
+description: Secure your backend APIs with authentication tips and techniques.
+---
+
+Securing your backend API is essential for any production application. While Globe provides a secure infrastructure foundation with features like automatic HTTPS and DDoS protection, you are responsible for implementing application-level security to control who can access your API.
+
+This guide provides a practical, step-by-step example of how to secure a Dart Shelf API using **JSON Web Token (JWT) authentication**. We will start with a pre-built CRUD API template and add a complete authentication flow, including user registration, login, and a middleware to protect existing endpoints.
+
+**20 min read**
+
+---
+
+### Features Covered
+
+- Bootstrapping a CRUD API from a Globe template.
+- Organizing routes and middleware into separate files for a clean and structured approach.
+- Securely hashing passwords and managing users in memory
+- Implementing user registration and login endpoints.
+- Generating and validating JSON Web Tokens (JWTs).
+- Creating a middleware to protect API routes.
+
+### Prerequisites
+
+- **Dart SDK Installed**: If you have Flutter installed, the Dart SDK is already included. If not, [Install Dart](https://dart.dev/get-dart).
+- **Globe Account**: You'll need an account to deploy projects. [Sign up or log in to Globe](https://globe.dev/login).
+- **Globe CLI Installed and Authenticated**: Install the CLI by running `dart pub global activate globe_cli` and log in using `globe login`.
+
+## Step 1: Create Your Initial API Project
+
+First, bootstrap a working CRUD API using a Globe template. This will serve as the insecure API that we are going to protect.
+
+- In your terminal, run the `globe create` command:
+
+  ```bash
+  globe create -t crud_rest_api_shelf my-secure-api
+  cd my-secure-api
+  ```
+
+## Step 2: Add Authentication Dependencies
+
+Now, add the necessary packages for password hashing and JWTs to your project.
+
+- Run the following commands in your terminal:
+
+  ```bash
+  dart pub add bcrypt
+  dart pub add dart_jsonwebtoken
+  ```
+
+## Step 3: Create the User Model
+
+To ensure type safety, we will create a proper model for our users.
+
+- Create a new file at `lib/models/user.dart` and add the following `User` class:
+
+  ```dart
+  class User {
+    final int id;
+    final String email;
+    final String password; // This will be the hashed password
+
+    User({
+      required this.id,
+      required this.email,
+      required this.password,
+    });
+  }
+  ```
+
+## Step 4: Link Your Project and Set Secrets
+
+Before you can configure secrets, the project must exist on the Globe platform.
+
+- **First, link your local directory to create the project on Globe:**
+
+  ```bash
+  globe link
+  ```
+
+  Follow the prompts to create a new project.
+
+- **Next, set your JWT secret key in the dashboard**.
+  - Navigate to your project in the Globe dashboard.
+  - Go to **Settings** → **Environment Variables**.
+  - Select **Add Variable** and create a secret named `JWT_SECRET_KEY`. Set its value to a long, random, and secure string.
+
+## Step 5: Set Up the In-Memory User Store
+
+For this guide, we'll use a simple list to store our `User` objects.
+
+- Create a new file lib/data/users.dart to hold your user data:
+
+  ```dart
+  import 'package:crud_rest_api_shelf/models/user.dart';
+
+  // A simple in-memory list to store registered User objects.
+  final users = <User>[];
+  ```
+
+  <Warning>
+    This guide uses an in-memory list to store users. This is for
+    **demonstration purposes only**. On a serverless platform like Globe, this
+    data will be lost when the server instance recycles and will not be shared
+    across multiple instances. For any production application, you must use a
+    persistent database.
+  </Warning>
+
+## Step 6: Create the Authentication Route
+
+Create a dedicated class for the public `/register` and `/login` endpoints.
+
+- Create a new file `lib/routes/auth_route.dart` and add the following code:
+
+  ```dart
+  import 'dart:io';
+  import 'dart:convert';
+  import 'package:bcrypt/bcrypt.dart';
+  import 'package:crud_rest_api_shelf/data/users.dart';
+  import 'package:crud_rest_api_shelf/models/user.dart';
+  import 'package:shelf/shelf.dart';
+  import 'package:shelf_router/shelf_router.dart';
+  import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
+
+  class AuthRoute {
+    Router get router {
+      final router = Router();
+
+      router.post('/register', (Request request) async {
+        final body = await request.readAsString();
+        final params = jsonDecode(body) as Map<String, dynamic>;
+        final email = params['email'] as String?;
+        final password = params['password'] as String?;
+
+        if (email == null || password == null || password.length < 8) {
+          return Response(
+            400,
+            body: 'Invalid input. Password must be at least 8 characters.',
+          );
+        }
+
+        if (users.any((user) => user.email == email)) {
+          return Response(
+            409,
+            body: 'User with this email already exists.',
+          );
+        }
+
+        // Securely hash the password using bcrypt
+        final hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+
+        final newUser = User(
+          id: users.length,
+          email: email,
+          password: hashedPassword,
+        );
+
+        users.add(newUser);
+
+        return Response(201, body: 'User created successfully.');
+      });
+
+      router.post('/login', (Request request) async {
+        final body = await request.readAsString();
+        final params = jsonDecode(body) as Map<String, dynamic>;
+        final email = params['email'] as String?;
+        final password = params['password'] as String?;
+
+        if (email == null || password == null || password.length < 8) {
+          return Response(
+            400,
+            body: 'Invalid input. Password must be at least 8 characters.',
+          );
+        }
+
+        final user = users.firstWhere(
+          (user) => user.email == email,
+          orElse: () => User(id: -1, email: '', password: ''),
+        );
+
+        // Check if user exists and if the provided password matches the hash
+        if (user.id == -1 || !BCrypt.checkpw(password, user.password)) {
+          return Response.unauthorized('Invalid email or password.');
+        }
+
+        final jwt = JWT({'id': user.id.toString()});
+        final secret = SecretKey(Platform.environment['JWT_SECRET_KEY']!);
+        final token = jwt.sign(secret, expiresIn: Duration(hours: 1));
+
+        return Response.ok(jsonEncode({'token': token}));
+      });
+
+      return router;
+    }
+  }
+  ```
+
+## Step 7: Create the Authentication Middleware
+
+Create a dedicated file for the middleware that will protect your repository routes.
+
+- Create a new directory `lib/middlewares`.
+- Inside it, create a new file `lib/middlewares/auth_middleware.dart`:
+
+  ```dart
+  import 'dart:io';
+  import 'package:shelf/shelf.dart';
+  import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
+
+  Middleware authMiddleware() {
+    return (Handler innerHandler) {
+      return (Request request) {
+        final authHeader = request.headers['authorization'];
+        final token = authHeader?.replaceFirst('Bearer ', '');
+
+        if (token == null) {
+          return Response.unauthorized('Missing authorization token.');
+        }
+
+        final secret = SecretKey(Platform.environment['JWT_SECRET_KEY']!);
+
+        try {
+          JWT.verify(token, secret);
+          return innerHandler(request);
+        } on JWTException catch (e) {
+          return Response.unauthorized('Invalid token: ${e.message}');
+        }
+      };
+    };
+  }
+  ```
+
+## Step 8: Update the Main Server File
+
+Now, update `bin/server.dart` with a simpler structure that uses `router.mount()` to apply middleware to specific path prefixes.
+
+- Replace the entire content of `bin/server.dart` with the following:
+
+  ```dart
+  import 'dart:io';
+  import 'package:crud_rest_api_shelf/middlewares/auth_middleware.dart';
+  import 'package:crud_rest_api_shelf/routes/auth_route.dart';
+  import 'package:crud_rest_api_shelf/routes/repository_route.dart';
+  import 'package:shelf/shelf.dart';
+  import 'package:shelf/shelf_io.dart';
+  import 'package:shelf_router/shelf_router.dart';
+  import 'package:shelf_cors_headers/shelf_cors_headers.dart';
+
+  void main(List<String> args) async {
+    // Create a single main router
+    final router = Router()
+      // Public routes are mounted under '/auth'
+      ..mount('/auth', AuthRoute().router.call)
+      // Protected routes are mounted under '/api' and wrapped in the auth middleware
+      ..mount(
+      '/api',
+      const Pipeline().addMiddleware(authMiddleware()).addHandler(
+              RepositoryRoute().router.call,
+          ),
+      );
+
+      final handler = const Pipeline()
+          .addMiddleware(logRequests())
+          .addMiddleware(corsHeaders())
+          .addHandler(router.call);
+
+    final port = int.parse(Platform.environment['PORT'] ?? '3000');
+    final server = await serve(handler, InternetAddress.anyIPv4, port);
+    print('Server listening on port ${server.port}');
+  }
+  ```
+
+## Step 9: Deploy and Test the Secured API
+
+With the simplified structure, deploy your application and test that the `/api/repos` endpoints are now secure.
+
+- **Deploy your application:** `globe deploy`
+- **Test the full flow:**
+
+  1. **Register a new user:**
+
+     ```bash
+     curl -X POST -H "Content-Type: application/json" -d '{"email":"test@example.com", "password":"password123"}' <YOUR_GLOBE_URL>/auth/register
+     ```
+
+  2. **Log in to get a token:**
+
+     ```bash
+     curl -X POST -H "Content-Type: application/json" -d '{"email":"test@example.com", "password":"password123"}' <YOUR_GLOBE_URL>/auth/login
+     ```
+
+     _Copy the token from the response_
+
+  3. **Try to access the protected `/api/repos` route WITHOUT the token:**
+
+     ```bash
+     curl <YOUR_GLOBE_URL>/api/repos
+     ```
+
+     _This should now return a 401 Unauthorized error_
+
+  4. **Access the protected `/api/repos` route WITH the token:**
+
+     ```bash
+     curl -H "Authorization: Bearer <YOUR_JWT_TOKEN>" <YOUR_GLOBE_URL>/api/repos
+     ```
+
+     _This should now succeed and return the list of repositories_
+
+## What Next:
+
+- **Implement Email Verification**: As a crucial next step, consider implementing an email verification flow to ensure users own the email addresses they register with.
+- **Use a Persistent Database**: In a real application, replace the in-memory \_users list with a connection to a persistent database like [PostgreSQL](https://www.postgresql.org/) or [MongoDB](https://www.mongodb.com/) for reliable user storage.
+- **Explore Refresh Tokens**: For a more robust and secure user session management, research and implement a refresh token strategy alongside the short-lived JWTs.
+- **Review Your Secrets Management**: Get more familiar with how Globe handles secrets by reading the [Environment Variables documentation](/core-concepts/environment-variables).
+
+---
+
+<Info>
+  Couldn't find the guide you need? [Talk to us in
+  Discord](https://invertase.link/globe-discord)
+</Info>
