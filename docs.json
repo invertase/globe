@@ -263,6 +263,10 @@
         {
           "title": "Secure Dart APIs",
           "href": "/guides/secure-dart-apis"
+        },
+        {
+          "title": "Auth Email Verification",
+          "href": "/guides/auth-email-verification"
         }
       ]
     },
