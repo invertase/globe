@@ -259,6 +259,10 @@
         {
           "title": "Schedule Cron Jobs on Globe",
           "href": "/guides/globe-cron-jobs"
+        },
+        {
+          "title": "Secure Dart APIs",
+          "href": "/guides/secure-dart-apis"
         }
       ]
     },
