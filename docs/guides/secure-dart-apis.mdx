@@ -13,12 +13,12 @@ This guide provides a practical, step-by-step example of how to secure a Dart Sh
 
 ### Features Covered
 
-- Bootstrapping a CRUD API from a Globe template.
-- Organizing routes and middleware into separate files for a clean and structured approach.
+- Bootstrapping a CRUD API from a Globe template
+- Organizing routes and middleware into separate files for a clean and structured approach
 - Securely hashing passwords and managing users in memory
-- Implementing user registration and login endpoints.
-- Generating and validating JSON Web Tokens (JWTs).
-- Creating a middleware to protect API routes.
+- Implementing user registration and login endpoints
+- Generating and validating JSON Web Tokens (JWTs)
+- Creating a middleware to protect API routes
 
 ### Prerequisites
 
@@ -50,7 +50,7 @@ Now, add the necessary packages for password hashing and JWTs to your project.
 
 ## Step 3: Create the User Model
 
-To ensure type safety, we will create a proper model for our users.
+To ensure type safety, we will create a model for our users.
 
 - Create a new file at `lib/models/user.dart` and add the following `User` class:
 
@@ -68,17 +68,17 @@ To ensure type safety, we will create a proper model for our users.
   }
   ```
 
-## Step 4: Link Your Project and Set Secrets
+## Step 4: Create Globe Project and Set Secrets
 
-Before you can configure secrets, the project must exist on the Globe platform.
+First, create the project on Globe so you can add your secrets in the dashboard. Use the `globe link` command to do this without deploying any code.
 
-- **First, link your local directory to create the project on Globe:**
+- **Link your local directory to create the project on Globe:**
 
   ```bash
   globe link
   ```
 
-  Follow the prompts to create a new project.
+  Follow the prompts to **create a new project**.
 
 - **Next, set your JWT secret key in the dashboard**.
   - Navigate to your project in the Globe dashboard.
@@ -309,7 +309,7 @@ With the simplified structure, deploy your application and test that the `/api/r
 
 ## What Next:
 
-- **Implement Email Verification**: As a crucial next step, consider implementing an email verification flow to ensure users own the email addresses they register with.
+- **Implement Email Verification**: Consider implementing an email verification flow to ensure users own the email addresses they register with.
 - **Use a Persistent Database**: In a real application, replace the in-memory \_users list with a connection to a persistent database like [PostgreSQL](https://www.postgresql.org/) or [MongoDB](https://www.mongodb.com/) for reliable user storage.
 - **Explore Refresh Tokens**: For a more robust and secure user session management, research and implement a refresh token strategy alongside the short-lived JWTs.
 - **Review Your Secrets Management**: Get more familiar with how Globe handles secrets by reading the [Environment Variables documentation](/core-concepts/environment-variables).
