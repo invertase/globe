@@ -1,0 +1,282 @@
+---
+title: Enhance API Auth Security with Email Verification
+description: Learn how to send verification emails with Gmail and the mailer package to complete your authentication flow.
+---
+
+This guide builds upon a foundational JWT authentication system by adding a crucial feature: **email verification**. We will walk through the process of ensuring users own the email addresses they register with by sending them a unique verification code. Instead of relying on a third-party service with domain requirements, we will use a standard Gmail account and the popular [mailer](https://pub.dev/packages/mailer) package.
+
+**20 min read**
+
+---
+
+### Features Covered
+
+- Generating a Google App Password for secure SMTP access
+- Sending emails from a Dart server using the [mailer](https://pub.dev/packages/mailer) package
+- Generating and validating time-limited verification tokens (OTPs)
+- Updating the authentication flow to require email verification
+
+### Prerequisites
+
+- A Dart API with a complete JWT authentication system already in place. This guide directly continues from the project built in our [How to Secure Your Dart APIs on Globe](/guides/secure-dart-apis) guide.
+- A [Google Account](https://myaccount.google.com) with **2-Factor Authentication (2FA) enabled**.
+
+## Step 1: Generate a Google App Password
+
+To send emails via your Gmail account from an application, you must use a secure, 16-character App Password.
+
+- First, ensure 2-Step Verification is enabled on your Google Account by visiting your [Google Account Security](https://myaccount.google.com/security) page.
+- Next, go directly to the [App Passwords](https://myaccount.google.com/apppasswords) page.
+- In the "App name" field, enter a descriptive name (e.g., `Globe Dart Server`) and click **Create**.
+- Google will display the 16-character password. **Copy this password immediately** and save it somewhere secure.
+
+## Step 2: Add Secrets and New Dependency
+
+Now, let's add your Gmail credentials to Globe and install the `mailer` package.
+
+- In your Globe project dashboard, navigate to **Settings** → **Environment Variables**. Add two new variables:
+  - `GMAIL_EMAIL`: Your full Gmail address.
+  - `GMAIL_APP_PASSWORD`: The 16-character App Password you just generated.
+- In your terminal, add the `mailer` package to your project:
+
+  ```bash
+  dart pub add mailer
+  ```
+
+## Step 3: Update the User Model
+
+We need to add new fields to our `User` model to track verification status.
+
+- Modify the `lib/models/user.dart` file:
+
+  ```dart
+  class User {
+    final int id;
+    final String email;
+    final String password; // This will be the hashed password
+
+    // Add new fields to track verification status.
+    // These are not final so we can update them later.
+    bool isVerified;
+    String? verificationToken;
+    DateTime? tokenExpiry;
+
+    User({
+      required this.id,
+      required this.email,
+      required this.password,
+      this.isVerified = false,
+      this.verificationToken,
+      this.tokenExpiry,
+    });
+  }
+  ```
+
+## Step 4: Create an Email Service
+
+To keep our code clean, we'll create a dedicated service for sending emails.
+
+- Create a new file at `lib/services/email_service.dart`:
+
+  ```dart
+  import 'dart:io';
+  import 'package:mailer/mailer.dart';
+  import 'package:mailer/smtp_server.dart';
+
+  class EmailService {
+    static Future<void> sendVerificationEmail(String recipientEmail, String token) async {
+      final gmailEmail = Platform.environment['GMAIL_EMAIL'];
+      final gmailAppPassword = Platform.environment['GMAIL_APP_PASSWORD'];
+
+      if (gmailEmail == null || gmailAppPassword == null) {
+        print('Email credentials not configured in environment variables.');
+        return;
+      }
+
+      final smtpServer = gmail(gmailEmail, gmailAppPassword);
+
+      final message = Message()
+        ..from = Address(gmailEmail, 'Your App Name')
+        ..recipients.add(recipientEmail)
+        ..subject = 'Verify Your Email Address'
+        ..text = 'Your verification code is: $token';
+
+      try {
+        await send(message, smtpServer);
+        print('Verification email sent to $recipientEmail');
+      } on MailerException catch (e) {
+        print('Message not sent. \n$e');
+      }
+    }
+  }
+  ```
+
+## Step 5: Update the Registration Endpoint
+
+Modify the registration logic in `lib/routes/auth_route.dart` to generate a token and send the verification email upon user creation.
+
+- Replace the **register handler** logic inside `lib/routes/auth_route.dart` with the following:
+
+  ```dart
+  // ... imports
+  import 'dart:math';
+  import '../services/email_service.dart';
+
+  class AuthRoute {
+    Router get router {
+      final router = Router();
+
+      router.post('/register', (Request request) async {
+        // ... (parsing and validation logic)
+        if (users.any((user) => user.email == email)) {
+          return Response(409, body: 'User with this email already exists.');
+        }
+
+        // --- ADDED LOGIC ---
+        // 1. Generate a 6-digit random token for verification.
+        final token = (100000 + Random().nextInt(900000)).toString();
+
+        final hashedPassword = BCrypt.hashpw(password!, BCrypt.gensalt());
+
+        // 2. Create the new User object with verification fields set.
+        final newUser = User(
+          id: users.length,
+          email: email,
+          password: hashedPassword,
+          isVerified: false, // User is not verified on creation.
+          verificationToken: token,
+          tokenExpiry: DateTime.now().add(const Duration(minutes: 15)),
+        );
+
+        // 3. Send the verification email asynchronously.
+        await EmailService.sendVerificationEmail(newUser.email, token);
+
+        users.add(newUser);
+        return Response(201, body: 'User created. Please check your email for a verification code.');
+      });
+
+      // ... (login handler remains here)
+      return router;
+    }
+  }
+  ```
+
+## Step 6: Create the Email Verification Endpoint
+
+Now, add a new route and handler to `lib/routes/auth_route.dart` to process the verification token from the user.
+
+- Add the following `router.post` block to the `router` getter in `lib/routes/auth_route.dart`:
+
+  ```dart
+  // In lib/routes/auth_route.dart, inside the AuthRoute class's router getter
+  // ... after the /login route ...
+
+  // ADD THIS NEW ENDPOINT
+  router.post('/verify-email', (Request request) async {
+    final body = await request.readAsString();
+    final params = jsonDecode(body) as Map<String, dynamic>;
+    final email = params['email'] as String?;
+    final token = params['token'] as String?;
+
+    if (email == null || token == null) {
+      return Response.badRequest(body: 'Email and token are required.');
+    }
+
+    final user = users.firstWhere((u) => u.email == email, orElse: () => User(id: -1, email: '', password: ''));
+
+    // Check if token is valid and not expired
+    if (user.id == -1 || user.verificationToken != token || user.tokenExpiry!.isBefore(DateTime.now())) {
+      return Response.unauthorized('Invalid or expired verification token.');
+    }
+
+    // Update the user's status to verified
+    user.isVerified = true;
+    user.verificationToken = null;
+    user.tokenExpiry = null;
+
+    return Response.ok('Email verified successfully.');
+  });
+
+  return router;
+  ```
+
+## Step 7: Update the Login Endpoint
+
+Finally, modify the login handler in `lib/routes/auth_route.dart` to prevent users from logging in if their email is not verified.
+
+- Add the `isVerified check` to your existing `/login` handler:
+
+  ```dart
+  router.post('/login', (Request request) async {
+    // ... (parsing and password check logic)
+
+    if (user.id == -1 || !BCrypt.checkpw(password, user.password)) {
+      return Response.unauthorized('Invalid email or password.');
+    }
+
+    // ADD THIS CHECK: Prevent login if email is not verified.
+    if (!user.isVerified) {
+      return Response.forbidden(
+        'Email not verified. Please check your inbox.',
+      );
+    }
+
+    // ... proceed to generate JWT
+    final jwt = JWT({'id': user.id.toString()});
+    final secret = SecretKey(Platform.environment['JWT_SECRET_KEY']!);
+    final token = jwt.sign(secret, expiresIn: Duration(hours: 1));
+    // ...
+
+    return Response.ok(jsonEncode({'token': token}));
+  });
+  ```
+
+## Step 8: Deploy and Test
+
+The main server file (`bin/server.dart`) does not need to be changed. You can now deploy your updated API and test the complete verification flow.
+
+- **Deploy your application:** `globe deploy`
+- **Test the full flow:**
+
+  1. **Register a new user:**
+
+     ```bash
+     curl -X POST -H "Content-Type: application/json" -d '{"email":"your-email@gmail.com", "password":"password123"}' <YOUR_GLOBE_URL>/auth/register
+     ```
+
+  2. Check your Gmail inbox for the 6-digit code.
+  3. **Attempt to log in (this should fail):**
+
+     ```bash
+     curl -X POST -H "Content-Type: application/json" -d '{"email":"your-email@gmail.com", "password":"password123"}' <YOUR_GLOBE_URL>/auth/login
+     ```
+
+     _Should return a 403 Forbidden error_
+
+  4. **Verify your email:**
+
+     ```bash
+     curl -X POST -H "Content-Type: application/json" -d '{"email":"your-email@gmail.com", "token":"<YOUR_6_DIGIT_CODE>"}' <YOUR_GLOBE_URL>/auth/verify-email
+     ```
+
+  5. **Log in again (this should succeed):**
+
+     ```bash
+     curl -X POST -H "Content-Type: application/json" -d '{"email":"your-email@gmail.com", "password":"password123"}' <YOUR_GLOBE_URL>/auth/login
+     ```
+
+     _Should now return a JWT_
+
+## What Next:
+
+- **Implement a Password Reset Flow**: The next logical step in a complete authentication system is to build a `forgot password` feature that allows users to securely reset their password via an email link.
+- **Add Rate Limiting**: To prevent abuse of the verification endpoint (e.g., an attacker repeatedly trying to guess tokens), consider adding a rate-limiting middleware.
+- **Observe for Errors**: Keep an eye on your application's [Logs](/core-concepts/logs) in the Globe dashboard to catch any potential issues with sending emails or verifying tokens.
+- **Use a Dedicated Email Service**: While Gmail is excellent for development, for production applications, consider migrating to a dedicated transactional email service like [Resend](https://resend.com/), [Postmark](https://postmarkapp.com/), or [SendGrid](https://sendgrid.com/) for better deliverability and tracking.
+
+---
+
+<Info>
+  Couldn't find the guide you need? [Talk to us in
+  Discord](https://invertase.link/globe-discord)
+</Info>
