@@ -28,21 +28,13 @@ Here’s how you can define a simple cron job in `globe.yaml`:
 ```yaml
 crons:
   - id: refresh_auth_token
-    schedule: "*/45 * * * *"
-    path: "/auth/refresh" # This is the application endpoint that Globe will call
+    schedule: '*/45 * * * *'
+    path: '/auth/refresh' # This is the application endpoint that Globe will call
 ```
 
 This example schedules a POST request to your application's `/auth/refresh` endpoint every 45 minutes. The path value is the **HTTP route** in your application that Globe will call. For more details on cron syntax, see the [unix-cron documentation](https://crontab.guru/).
 
-Globe ensures that these cron-triggered requests are **private by default**, meaning only internal events can trigger them. To make an endpoint public (not recommended for sensitive paths), disable the privacy setting:
-
-```yaml
-crons:
-  - id: refresh_auth_token
-    schedule: "*/45 * * * *"
-    path: "/auth/refresh" # Globe will call this endpoint in your application
-    private: false # This endpoint is now publicly accessible
-```
+Globe ensures that these cron-triggered requests are **private by default**, meaning only internal events can trigger them.
 
 ### How to Handle Cron Job Requests
 
@@ -76,7 +68,6 @@ If a job is removed and later re-added with the same ID, its log history will pe
 
 ### Best Practices
 
-- Keep sensitive endpoints **private** (default behavior)
 - Name cron jobs clearly (e.g., `refresh_auth_token`, `db_cleanup`)
 - Use tools like [crontab.guru](https://crontab.guru) to help design cron expressions
 - Monitor jobs via the dashboard to catch issues early
