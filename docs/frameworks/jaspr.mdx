@@ -19,14 +19,7 @@ To create a new Jaspr project:
 2.  Create a new Jaspr project, specifying your chosen rendering mode (`server`, `static`, or `client`):
 
     ```bash
-    # For server-side rendering
-    jaspr create -m server my_jaspr_app
-
-    # For a static site
-    jaspr create -m static my_jaspr_app
-
-    # For client-side rendering
-    jaspr create -m client my_jaspr_app
+    jaspr create my_jaspr_app
 
     cd my_jaspr_app
     ```
@@ -56,16 +49,6 @@ To create a new Jaspr project:
 ## Viewing your application
 
 Once deployed, your app is available at the unique URL shown in your dashboard (e.g., https://my-jaspr-app.globeapp.dev).
-
-## Deployment Behaviour
-
-Globe builds your Jaspr project and deploys the output based on its configured mode.
-
-- **Preset Detection**: Jaspr projects are automatically recognized.
-- **Build Process**: Globe tailors the build based on the `mode` in `pubspec.yaml`:
-  - `server`: Builds and deploys a Dart server application.
-  - `static`: Generates a static site (HTML, CSS, JS) and deploys it to Globe's CDN.
-  - `client`: Compiles a client-side application and deploys the static assets to Globe's CDN.
 
 ## Jaspr vs Flutter Web
 
