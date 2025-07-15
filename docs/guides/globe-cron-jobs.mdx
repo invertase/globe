@@ -3,6 +3,8 @@ title: How to Schedule Cron Jobs on Globe
 description: Automate recurring tasks by defining and deploying scheduled HTTP requests.
 ---
 
+<Image src="/assets/guides/cron-jobs.png" />
+
 Automating recurring background tasks, such as database cleanups or nightly reports, is a common requirement for backend applications. Globe allows you to schedule these jobs by defining HTTP-based cron jobs directly in your project configuration.
 
 This guide walks through defining a cron job in a globe.yaml file, creating an endpoint in a Dart Shelf application to handle the task, and verifying its status in the Globe dashboard.
@@ -38,8 +40,8 @@ Inside the YAML file, you will define your scheduled task. Each job requires a u
   ```yaml
   crons:
     - id: daily-digest-email
-      schedule: "0 9 * * *" # Runs every day at 9:00 AM UTC
-      path: "/tasks/send-daily-digest"
+      schedule: '0 9 * * *' # Runs every day at 9:00 AM UTC
+      path: '/tasks/send-daily-digest'
   ```
 
 <Info>
