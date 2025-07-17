@@ -1,0 +1,160 @@
+---
+title: The globe.yaml File
+---
+
+Define your project’s configuration in a version-controlled `globe.yaml` file. This allows you to keep settings consistent across environments, automate deployments, and manage configurations as code.
+
+## Why use the `globe.yaml` File?
+
+While you can configure your project in the Globe dashboard, using a `globe.yaml` file provides several advantages:
+
+- **Version Control**: Track changes to your configuration alongside your code.
+- **Consistency**: Ensure every team member and deployment uses the same settings.
+- **Automation**: Standardize your CI/CD pipeline with a reliable configuration source.
+- **Clarity**: Define complex settings like build presets, assets, and cron jobs in one clear location.
+
+## How to Set Up the `globe.yaml` File
+
+Create a `globe.yaml` file in the root of your project directory. For the best editing experience with autocompletion and validation, we recommend using the [YAML extension by Red Hat](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) in VS Code.
+
+Add the following comment to the top of your file to enable schema validation:
+
+```yaml
+# yaml-language-server: $schema=https://globe.dev/globe.schema.json
+
+# Your configuration starts here
+```
+
+## Configuration Options
+
+Below are the available top-level properties you can define in your `globe.yaml`.
+
+### `entrypoint`
+
+The main entry point of your Dart application. This is the file Globe runs to start your server.
+
+```yaml
+entrypoint: bin/server.dart
+```
+
+### `build`
+
+A nested object containing settings related to the **build** process, such as framework **presets**, **Melos** integration, and **Build Runner** commands.
+
+### `preset`
+
+Configure a framework-specific preset to streamline your build. Supported types include `dart_frog`, `flutter`, `jaspr`, `jaspr_static`, and `serverpod`. You can also specify a `version` and override the default `buildCommand`.
+
+```yaml
+build:
+  preset:
+    type: dart_frog
+    version: '1.1.0'
+    buildCommand: dart_frog build
+```
+
+### `melos` and `build_runner`
+
+Enable or disable automatic detection for Melos and Build Runner, or provide custom commands if needed. By default, Globe auto-detects if these tools are needed.
+
+```yaml
+build:
+  melos:
+    automatic_detection: true # Defaults to true
+    # command: melos bootstrap
+  build_runner:
+    automatic_detection: false # Disable if not needed
+    # command: dart run build_runner build --delete-conflicting-outputs
+```
+
+### `assets`
+
+A list of static files or directories to include in your deployment. Globe serves these assets from its global edge network. You can include individual files, entire directories (by adding a trailing slash `/`), or use glob patterns. You can also map a source file to a different destination path.
+
+For more details, see the [Static Assets](/core-concepts/static-assets) documentation.
+
+```yaml
+assets:
+  # Include a specific file
+  - assets/logo.png
+  # Include an entire directory
+  - public/
+  # Include all .css files in a directory
+  - styles/*.css
+  # Map a source file to a new destination path
+  - compiled_output/lib.so:public/native_lib.so
+```
+
+### `crons`
+
+Define scheduled tasks that trigger HTTP POST requests to your application at specified intervals. Cron jobs only run on **production deployments**. Each cron job requires a unique `id`, a `schedule` (in unix-cron format), and a `path` to an endpoint in your app.
+
+For more details, see the [Cron Jobs](/core-concepts/cron-jobs) documentation.
+
+```yaml
+crons:
+  - id: daily_database_cleanup
+    schedule: '0 0 * * *' # Runs every day at midnight UTC
+    path: '/tasks/db-cleanup'
+  - id: refresh_cache
+    schedule: '*/30 * * * *' # Runs every 30 minutes
+    path: '/tasks/refresh-cache'
+```
+
+### `preferred_regions`
+
+A list of preferred regions for your deployment. This helps Globe optimize performance by serving your application from edge locations closest to your users.
+
+```yaml
+preferred_regions:
+  - us-east1
+  - europe-west1
+```
+
+## Complete Example
+
+Here is an example of a globe.yaml file that combines several of the options above, following the recommended order.
+
+```yaml
+# yaml-language-server: $schema=https://globe.dev/globe.schema.json
+
+entrypoint: bin/server.dart
+
+build:
+  preset:
+    type: dart_frog
+    # buildCommand: dart_frog build
+    # version: "1.1.0"
+  build_runner:
+    automatic_detection: false
+    # command: dart run build_runner build --delete-conflicting-outputs
+  melos:
+    automatic_detection: false
+    # command: melos bootstrap
+    # version: "6.3.3"
+
+assets:
+  - public/
+  - assets/images/
+  - compiled/library.wasm:public/library.wasm
+
+crons:
+  - id: send_weekly_newsletter
+    schedule: '0 8 * * 1' # Every Monday at 8:00 AM UTC
+    path: '/api/v1/newsletter/send'
+
+preferred_regions:
+  - us-west1
+  - europe-central2
+```
+
+## Best Practices
+
+- Commit `globe.yaml` to your Git repository to keep it in sync with your codebase.
+- Use the **schema definition** in your editor for autocompletion and to prevent typos.
+- **Document** complex configurations or non-obvious settings with comments.
+- Start with a minimal configuration and only add properties as you need to override defaults.
+
+### Next
+
+Use the **Globe CLI** to deploy, manage, and inspect projects directly from your terminal.

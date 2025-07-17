@@ -6,14 +6,14 @@ Schedule **recurring background tasks** by defining HTTP-based cron jobs. Tasks 
 
 Globe supports defining cron jobs directly in your `globe.yaml` file. These scheduled tasks run periodically against specified HTTP paths in your production deployment, helping you maintain consistency, reduce manual overhead, and scale reliably.
 
-### Cron jobs in Globe.dev:
+## Cron Jobs in Globe.dev:
 
 - Execute HTTP requests to specific endpoints in your application
 - Only run on **production deployments** (not preview or development)
 - Are synchronized with each successful production deployment
 - Run in **UTC** timezone only
 
-### How to Manage Cron Jobs
+## How to Manage Cron Jobs
 
 Once defined, cron jobs are visible in your Globe dashboard after a production deployment. If a job no longer appears in your `globe.yaml`, it becomes inactive and stops running until re-added.
 
@@ -21,7 +21,7 @@ Once defined, cron jobs are visible in your Globe dashboard after a production d
 2. Navigate to **Cron Jobs**
 3. View your defined Cron Jobs by **Active** and **Inactive** jobs
 
-### How to Define a Cron Job
+## How to Define a Cron Job
 
 Here’s how you can define a simple cron job in `globe.yaml`:
 
@@ -36,7 +36,7 @@ This example schedules a POST request to your application's `/auth/refresh` endp
 
 Globe ensures that these cron-triggered requests are **private by default**, meaning only internal events can trigger them.
 
-### How to Handle Cron Job Requests
+## How to Handle Cron Job Requests
 
 Each cron job triggers **an HTTP POST request** to the specified path. You need to write a route to handle this in your application.
 
@@ -56,7 +56,7 @@ app.post('/auth/refresh', (Request request) async {
 
 If your handler returns a status code outside the `2xx` range, it will be displayed as an error on the Globe dashboard.
 
-### Cron Job IDs
+## Cron Job IDs
 
 The `id` field represents the unique identifier of the cron job. It is used to manage job states and view logs in the dashboard.
 
@@ -66,13 +66,13 @@ The `id` field represents the unique identifier of the cron job. It is used to m
 
 If a job is removed and later re-added with the same ID, its log history will persist.
 
-### Best Practices
+## Best Practices
 
 - Name cron jobs clearly (e.g., `refresh_auth_token`, `db_cleanup`)
 - Use tools like [crontab.guru](https://crontab.guru) to help design cron expressions
 - Monitor jobs via the dashboard to catch issues early
 - Consider logging actions/failures in cron handlers for easier observability
 
-### Next
+## Next
 
-Use the **Globe CLI** to deploy, manage, and inspect projects directly from your terminal.
+Manage **cron jobs** and all other project settings in one place with the **Project Configuration** (`globe.yaml` File).

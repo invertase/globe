@@ -13,6 +13,8 @@ class TestWorkspace {
     // Initialize basic folder structure
     fs.directory(Directory.current.path).createSync(recursive: true);
     fs.currentDirectory = Directory.current.path;
+
+    fs.directory(appConfigHomePath).createSync(recursive: true);
   }
 
   final MemoryFileSystem fs = MemoryFileSystem.test();
