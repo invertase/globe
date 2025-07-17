@@ -101,6 +101,7 @@
         },
         { "title": "Static Assets", "href": "/core-concepts/static-assets" },
         { "title": "Cron Jobs", "href": "/core-concepts/cron-jobs" },
+        { "title": "Globe.yaml", "href": "/core-concepts/globe-yaml" },
         {
           "group": "Globe CLI",
           "pages": [
@@ -303,7 +304,7 @@
       "tab": "releases",
       "pages": [
         { "title": "Overview", "href": "/releases/roadmap-and-feedback" }
-            ]
+      ]
     },
     {
       "group": "Terms & Privacy",
