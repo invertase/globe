@@ -272,6 +272,10 @@
         {
           "title": "What To Store in Globe KV",
           "href": "/guides/what-to-store-in-globe-kv"
+        },
+        {
+          "title": "Where To Put Your API Keys",
+          "href": "/guides/where-to-put-api-keys"
         }
       ]
     },
