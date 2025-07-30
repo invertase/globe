@@ -103,13 +103,15 @@ class DeployCommand extends BaseGlobeCommand {
 
             if (deployment.state == update.state) return;
 
+            final message = update.message ?? update.state.message;
+
             switch (update.state) {
               case DeploymentState.working:
                 status.complete();
-                status = logger.progress(update.state.message);
+                status = logger.progress(message);
               case DeploymentState.deploying:
                 status.complete();
-                status = logger.progress(update.state.message);
+                status = logger.progress(message);
               case DeploymentState.success:
                 status.complete();
                 logger.info(
@@ -118,7 +120,7 @@ class DeployCommand extends BaseGlobeCommand {
                 timer.cancel();
                 completer.complete(update);
               case DeploymentState.error:
-                status.fail(update.state.message);
+                status.fail(message);
                 timer.cancel();
                 completer.complete(update);
               case DeploymentState.cancelled:
@@ -130,7 +132,7 @@ class DeployCommand extends BaseGlobeCommand {
                 status.fail('Invalid Deployment State Received.');
                 timer.cancel();
               case DeploymentState.pending:
-                status = logger.progress(update.state.message);
+                status = logger.progress(message);
             }
 
             deployment = update;
@@ -208,12 +210,10 @@ class DeployCommand extends BaseGlobeCommand {
           );
         }
 
+        final message = update.message ?? update.state.message;
+
         if (update.state == DeploymentState.error) {
-          var message = 'Deployment failed';
-          if (update.message.isNotEmpty) {
-            message = '$message: ${update.message}';
-          }
-          status.fail(message);
+          status.fail('Deployment failed: $message');
         }
 
         if (update.state == DeploymentState.cancelled) {

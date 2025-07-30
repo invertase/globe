@@ -534,7 +534,7 @@ class Deployment {
     required this.environment,
     required this.status,
     required this.state,
-    required this.message,
+    this.message,
     required this.url,
     required this.hash,
     required this.active,
@@ -571,7 +571,7 @@ class Deployment {
             (e) => e.name == state,
             orElse: () => DeploymentState.invalid,
           ),
-          message: message ?? '',
+          message: message,
           url: url,
           hash: hash,
           active: active,
@@ -588,7 +588,7 @@ class Deployment {
   final DeploymentEnvironment environment;
   final String status;
   final DeploymentState state;
-  final String message;
+  final String? message;
   final String url;
   final String hash;
   final bool active;

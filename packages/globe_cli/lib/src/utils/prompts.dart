@@ -178,7 +178,20 @@ Future<Project> selectProject(
     String? buildCommand;
     String? entrypoint;
 
-    if (entryPoints.isNotEmpty) {
+    if (discoveredPreset != null) {
+      logger.detail('Detected "${discoveredPreset.name}" preset');
+      if (discoveredPreset.buildCommand != null) {
+        buildCommand = discoveredPreset.buildCommand;
+        logger.detail('Using preset build command: `$buildCommand`');
+      }
+
+      if (discoveredPreset.entrypoint.isNotEmpty) {
+        entrypoint = discoveredPreset.entrypoint;
+        logger.detail('Using preset entry point: `$entrypoint`');
+      }
+    }
+
+    if (entryPoints.isNotEmpty && entrypoint == null) {
       entrypoint = switch (entryPoints.length) {
         1 => entryPoints.first,
         > 1 => logger.chooseOne(
@@ -188,19 +201,6 @@ Future<Project> selectProject(
         _ => null,
       };
       logger.detail('Using entry point in `$entrypoint`');
-    }
-
-    if (discoveredPreset != null) {
-      logger.detail('Detected "${discoveredPreset.name}" preset');
-      if (discoveredPreset.buildCommand != null) {
-        buildCommand = discoveredPreset.buildCommand;
-        logger.detail('Using preset build command: `$buildCommand`');
-      }
-
-      if (discoveredPreset.entrypoint.isNotEmpty && entrypoint == null) {
-        entrypoint = discoveredPreset.entrypoint;
-        logger.detail('Using preset entry point: `$entrypoint`');
-      }
     }
 
     // Check if project has build_runner, if not skip.
@@ -391,6 +391,7 @@ Future<List<String>> findMainEntryPoint(Directory rootDir) async {
 
     final relativePath = p.relative(entity.path, from: rootDir.path);
     final segments = p.split(relativePath);
+    final baseName = p.basename(entity.path);
 
     if (p.extension(entity.path) != '.dart' ||
         [
@@ -402,7 +403,8 @@ Future<List<String>> findMainEntryPoint(Directory rootDir) async {
           'linux',
           'windows',
         ].any(segments.contains) ||
-        p.basename(entity.path).startsWith('test_')) {
+        baseName.startsWith('test_') ||
+        baseName.startsWith('.')) {
       continue;
     }
 
