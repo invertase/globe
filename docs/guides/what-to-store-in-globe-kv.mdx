@@ -21,7 +21,7 @@ So, what kind of data is a perfect fit for Globe KV? This tutorial will walk you
 
 ## Prerequisites:
 
-- A basic understanding of application data and APIs.
+- A basic understanding of storing and retrieving application data via APIs.
 
 ## Exploring Globe KV
 
@@ -43,12 +43,13 @@ Its primary trade-off is **eventual consistency**. When you write or update a va
 
 Let's look at the most common types of data you can store in Globe KV and why they are a good fit.
 
-#### Ideal Use Cases (Eventual Consistency is Acceptable)
+#### Ideal Use Cases for Eventual Consistency
 
 - **Caching API Responses & Data**
 
   - **Scenario**: Your application calls a slow third-party API.
   - **Why it works**: Storing a temporary copy of the response in Globe KV is a perfect use of its speed. A 60-second delay for a cached item to be updated globally is an acceptable trade-off for the massive performance gain. The **Time-to-Live (TTL)** feature is essential here for automatically expiring stale data.
+
     ```dart
     // Cache an API response that expires in 5 minutes
     await kv.set('cache:api:weather', apiResponseJson, ttl: 300);
@@ -58,6 +59,7 @@ Let's look at the most common types of data you can store in Globe KV and why th
 
   - **Scenario**: You want to enable a new feature in your Flutter app remotely without a new deployment.
   - **Why it works**: A 60-second delay for a feature flag to roll out globally is a common and acceptable practice. The **low-latency reads** ensure your app starts up quickly.
+
     ```dart
     // Your app fetches the flag on startup
     final isEnabled = await kv.getBool('feature:new-dashboard:enabled');
@@ -70,6 +72,7 @@ Let's look at the most common types of data you can store in Globe KV and why th
 
   - **Scenario**: You need to store a user's theme preference or their session data after they log in.
   - **Why it works**: A user's session is typically handled by servers in a single geographic region. As long as their requests stay within that region, their experience will be consistent.
+
     ```dart
     // Save a user's theme choice
     await kv.set('user:123:theme', 'dark');
@@ -106,6 +109,6 @@ For these, a traditional database that offers strong consistency (like PostgreSQ
 ---
 
 <Info>
-  Couldn't find the guide you need? [Talk to us in
+  Didn’t find what you were looking for? [Talk to us on
   Discord](https://invertase.link/globe-discord)
 </Info>
