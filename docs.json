@@ -38,6 +38,11 @@
       "href": "/guides"
     },
     {
+      "id": "tutorials",
+      "title": "Tutorials",
+      "href": "/tutorials"
+    },
+    {
       "id": "releases",
       "title": "Releases",
       "href": "/releases"
@@ -268,14 +273,20 @@
         {
           "title": "Auth Email Verification",
           "href": "/guides/auth-email-verification"
+        }
+      ]
+    },
+    {
+      "group": "Tutorials",
+      "tab": "tutorials",
+      "pages": [
+        {
+          "title": "Where To Store Your API Keys",
+          "href": "/tutorials"
         },
         {
           "title": "What To Store in Globe KV",
-          "href": "/guides/what-to-store-in-globe-kv"
-        },
-        {
-          "title": "Where To Store Your API Keys",
-          "href": "/guides/where-to-store-api-keys"
+          "href": "/tutorials/what-to-store-in-globe-kv"
         }
       ]
     },
