@@ -1,0 +1,114 @@
+---
+title: What Can You Store in Globe KV?
+description: Discover the ideal use cases for Globe KV, from caching and feature flags to user settings, and learn when to choose it for your Dart and Flutter apps.
+---
+
+<Image src="/assets/guides/globe-kv.png" />
+
+When building an application, choosing the right tool for storing your data is a critical decision. While traditional databases are powerful, not all data needs that level of complexity. For frequently accessed data that needs to be available quickly and globally, a key-value store is often a better choice.
+
+So, what kind of data is a perfect fit for Globe KV? This tutorial will walk you through the most common and effective use cases, helping you decide when Globe KV is the right solution for your project.
+
+**8 min read**
+
+---
+
+## What You Will Learn:
+
+- The ideal use cases for Globe KV, including Caching, Feature Flags, and Session Management.
+- How Globe KV's features (like TTL and low-latency reads) make it a powerful tool.
+- The concept of "eventual consistency" and which scenarios to avoid.
+
+## Prerequisites:
+
+- A basic understanding of storing and retrieving application data via APIs.
+
+## Exploring Globe KV
+
+### 1. What Problem Does a Key-Value Store Solve?
+
+Imagine your app needs to display a user's profile information. Fetching this from a main database might involve complex queries and take a few hundred milliseconds. This latency adds up, leading to a sluggish user experience.
+
+A **key-value store** solves this by providing a simple, extremely fast way to store and retrieve data. It works like a dictionary: you store a piece of data (the value) with a unique identifier (the key). This makes it perfect for tasks like **caching**, where you store temporary copies of frequently accessed data to speed up future requests.
+
+### 2. Understanding Globe KV
+
+Globe KV is a **globally distributed key-value store** designed for high-performance reads. This means data can be stored in an edge location close to your user, resulting in very low latency.
+
+![Globe KV Namespaces](/assets/guides/globe-kv-illustration.png)
+
+Its primary trade-off is **eventual consistency**. When you write or update a value, it can take up to 60 seconds for that change to be visible across all edge locations globally. Understanding this trade-off is the key to using Globe KV effectively.
+
+### 3. When to Use Globe KV
+
+Let's look at the most common types of data you can store in Globe KV and why they are a good fit.
+
+#### Ideal Use Cases for Eventual Consistency
+
+- **Caching API Responses & Data**
+
+  - **Scenario**: Your application calls a slow third-party API.
+  - **Why it works**: Storing a temporary copy of the response in Globe KV is a perfect use of its speed. A 60-second delay for a cached item to be updated globally is an acceptable trade-off for the massive performance gain. The **Time-to-Live (TTL)** feature is essential here for automatically expiring stale data.
+
+    ```dart
+    // Cache an API response that expires in 5 minutes
+    await kv.set('cache:api:weather', apiResponseJson, ttl: 300);
+    ```
+
+- **Feature Flags & Remote Configuration**=
+
+  - **Scenario**: You want to enable a new feature in your Flutter app remotely without a new deployment.
+  - **Why it works**: A 60-second delay for a feature flag to roll out globally is a common and acceptable practice. The **low-latency reads** ensure your app starts up quickly.
+
+    ```dart
+    // Your app fetches the flag on startup
+    final isEnabled = await kv.getBool('feature:new-dashboard:enabled');
+    if (isEnabled == true) {
+      // Show the new dashboard
+    }
+    ```
+
+- **User Preferences & Session Management**
+
+  - **Scenario**: You need to store a user's theme preference or their session data after they log in.
+  - **Why it works**: A user's session is typically handled by servers in a single geographic region. As long as their requests stay within that region, their experience will be consistent.
+
+    ```dart
+    // Save a user's theme choice
+    await kv.set('user:123:theme', 'dark');
+    ```
+
+<Info>
+  You can group related keys by creating a Namespace in the dashboard, such as
+  `feature_flags` for managing remote configuration
+</Info>
+![Globe KV Namespaces](/assets/guides/globe-kv-namespace.png)
+
+#### Use Cases to Avoid (Requires Strong Consistency)
+
+The following scenarios require immediate, guaranteed consistency and are **not suitable** for Globe KV.
+
+- **Real-time Leaderboards, Counters, or Analytics**: If a user submits a high score or casts a vote, they expect to see the result instantly. A 60-second delay is unacceptable for these real-time use cases.
+- **Rate Limiting**: This is a security function that must be instantly consistent. You cannot wait 60 seconds for a block on a malicious user to take effect everywhere.
+- **Job Queues or Financial Transactions**: These require transactional integrity to ensure that an action (like claiming a job or processing a payment) happens exactly once. Eventual consistency cannot provide this guarantee.
+
+For these, a traditional database that offers strong consistency (like PostgreSQL or MySQL) is the correct choice.
+
+### 4. Key Takeaways
+
+- Globe KV is a high-performance, globally distributed key-value store.
+- It is ideal for data that benefits from fast reads and can tolerate a short delay in updates, such as caches, feature flags, and user sessions.
+- Avoid using it for data that requires immediate, transactional consistency.
+
+## What's Next
+
+- **Experiment with a Use Case**: Try building a small project using one of the concepts discussed, like creating a simple feature flag system for a local Flutter app.
+- **Understand Application Performance**: Learn about how Globe's serverless platform manages container initialization by reading the documentation on [Cold Starts](https://docs.globe.dev/infrastructure/overview/cold-starts).
+- **Review the Full API**: Dive deeper into the features of the [globe_kv](https://pub.dev/packages/globe_kv) package by exploring the [documentation](https://docs.globe.dev/products).
+
+---
+
+<Info>
+  Didn’t find what you were looking for? [Talk to us on
+  Discord](https://invertase.link/globe-discord)
+</Info>
