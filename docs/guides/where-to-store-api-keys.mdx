@@ -3,6 +3,8 @@ title: Where Should You Store Your API Keys?
 description: Learn why hardcoding secrets is a risk and how to use environment variables to securely manage API keys and configuration in your Dart & Flutter apps.
 ---
 
+<Image src="/assets/guides/globe-env.png" />
+
 When building an application that connects to a third-party service, like a **payment gateway** or a **weather API**, you'll be given secret credentials like **API keys**. A common mistake for new developers is to place these keys directly in the source code.
 
 This tutorial will explain why that's a significant security risk and teach you the industry-standard solution: **environment variables**. We'll explore what they are, why they're essential, and how to use them to securely manage your application's secrets and configuration.
@@ -54,6 +56,8 @@ import 'dart:io';
 final resendApiKey = Platform.environment['RESEND_API_KEY'];
 ```
 
+<Image src="/assets/guides/globe-env-illustration.png" />
+
 This solves all our problems: the key is no longer in the code, it can be changed in the dashboard without redeploying, and you can have different values for different environments.
 
 ### 3. When to Use Environment Variables
@@ -75,6 +79,8 @@ Here are some common examples for each category:
   - **API Base URL**: Your Flutter app might talk to `http://localhost:3000` in development but `https://api.myapp.com` in production.
   - **Log Level**: You might want detailed `DEBUG` logs in development but only `INFO` logs in production.
   - **Feature Toggles**: A simple boolean to turn a feature on or off.
+
+<Image src="/assets/guides/globe-env-vars.png" />
 
 ### 4. Key Takeaways
 
