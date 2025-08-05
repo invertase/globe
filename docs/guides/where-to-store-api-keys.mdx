@@ -1,0 +1,101 @@
+---
+title: Where Should You Store Your API Keys?
+description: Learn why hardcoding secrets is a risk and how to use environment variables to securely manage API keys and configuration in your Dart & Flutter apps.
+---
+
+<Image src="/assets/guides/globe-env.png" />
+
+When building an application that connects to a third-party service, like a **payment gateway** or a **weather API**, you'll be given secret credentials like **API keys**. A common mistake for new developers is to place these keys directly in the source code.
+
+This tutorial will explain why that's a significant security risk and teach you the industry-standard solution: **environment variables**. We'll explore what they are, why they're essential, and how to use them to securely manage your application's secrets and configuration.
+
+**5 min read**
+
+---
+
+## What You Will Learn:
+
+- The difference between a **secret** and **configuration**.
+- Why you should **never** hardcode secrets like API keys in your source code.
+- How **environment variables** provide a secure and flexible solution.
+- Best practices for managing secrets on Globe.
+
+## Prerequisites:
+
+- Familiarity with using API keys to access an external service.
+
+## Exploring Secrets and Configuration
+
+### 1. What Problem Do Environment Variables Solve?
+
+Let's say you're building a Dart backend that uses a service to send emails. The service gives you an API key. A common first instinct is to put the key directly in your code:
+
+```dart
+// The WRONG way to handle a secret key!
+final resendApiKey = 're_123456789_abcdefg';
+// ... code to send email
+```
+
+This approach has three major problems:
+
+- **Security Risk**: If you share this code or upload it to a public GitHub repository, your secret API key is now exposed. Anyone can steal it and use your account, potentially costing you money.
+- **Inflexibility**: If the API key changes, you have to find it in your code, change it, and then redeploy your entire application.
+- **Environment Issues**: You might have a different key for your local test environment than you do for your live production app. Hardcoding makes it difficult to switch between them.
+
+### 2. Understanding Environment Variables
+
+**Environment variables** are a way to store values outside of your application's code. Think of them like sticky notes attached to the server where your app is running. Your app can read these notes, but they aren't saved in your source code.
+
+When you deploy your application to the Globe platform, you can set these variables in a secure dashboard. Your code then reads them at runtime.
+
+```dart
+// The RIGHT way to handle a secret key
+import 'dart:io';
+
+// Read the API key from the environment.
+final resendApiKey = Platform.environment['RESEND_API_KEY'];
+```
+
+<Image src="/assets/guides/globe-env-illustration.png" />
+
+This solves all our problems: the key is no longer in the code, it can be changed in the dashboard without redeploying, and you can have different values for different environments.
+
+### 3. When to Use Environment Variables
+
+So, what should you store in environment variables? The values typically fall into two categories: **secrets** and **configuration**.
+
+- A **secret** is any sensitive information that would cause a security problem if it were exposed publicly. API keys and database passwords are perfect examples.
+- **Configuration** refers to non-sensitive settings that might change depending on where your app is running (e.g., your local machine vs. your live production server).
+
+Here are some common examples for each category:
+
+- **Secrets (Sensitive Data)**:
+
+  - **API Keys**: For any third-party service (Stripe, Resend, Google Maps, etc.).
+  - **Database Connection Strings**: The full URL and password for your database.
+  - **JWT Secret Keys**: The secret used to sign and verify your authentication tokens.
+
+- **Configuration (Non-Sensitive Data that Changes)**:
+  - **API Base URL**: Your Flutter app might talk to `http://localhost:3000` in development but `https://api.myapp.com` in production.
+  - **Log Level**: You might want detailed `DEBUG` logs in development but only `INFO` logs in production.
+  - **Feature Toggles**: A simple boolean to turn a feature on or off.
+
+<Image src="/assets/guides/globe-env-vars.png" />
+
+### 4. Key Takeaways
+
+- **Never** hardcode API keys, passwords, or other secrets in your source code.
+- Use environment variables to store data that is sensitive or changes between environments (like development and production).
+- Globe provides a secure dashboard for managing your production environment variables, keeping your secrets safe and your configuration flexible.
+
+## What's Next
+
+- See this concept in action by following our guide on [How to Secure Your Dart APIs on Globe](/guides/secure-dart-apis).
+- Read the [Environment Variables documentation](/core-concepts/environment-variables) to learn how to set them up in the Globe dashboard.
+
+---
+
+<Info>
+  Didn’t find what you were looking for? [Talk to us on
+  Discord](https://invertase.link/globe-discord)
+</Info>
