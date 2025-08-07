@@ -1,0 +1,203 @@
+---
+title: Build a GitHub Stats Cacher with Globe KV
+description: Learn how to cache slow API responses with Globe KV to improve your app's performance and reliability.
+---
+
+When your application relies on third-party APIs, you often introduce external dependencies that can be slow or have rate limits. A way to mitigate this is by implementing a caching layer.
+
+This guide will walk you through building a simple Dart backend application that fetches repository statistics from the GitHub API. We will use **Globe KV** to cache these responses for five minutes, improving performance and reducing our reliance on the external API.
+
+**20 min read**
+
+---
+
+## Features Covered
+
+- How to fetch data from a third-party REST API in Dart.
+- How to cache API responses.
+- How to use Globe KV's **Time-to-Live (TTL)** feature to automatically expire stale cache data.
+
+## Prerequisites
+
+- **Dart SDK Installed**: If you have Flutter installed, the Dart SDK is already included. If not, [Install Dart](https://dart.dev/get-dart).
+- **Globe Account**: You'll need an account to deploy projects. [Sign up or log in to Globe](https://globe.dev/login).
+- **Globe CLI Installed and Authenticated**: Install the CLI by running `dart pub global activate globe_cli` and log in using `globe login`.
+
+## Step 1: Create a Dart Shelf Project
+
+First, create a simple Dart backend using the **Shelf** framework.
+
+- In your terminal, run the following commands:
+
+  ```dart
+  # Create a new server-side project using the Shelf template
+  dart create -t server-shelf github_cacher_app
+
+  # Navigate into your new project directory
+  cd github_cacher_app
+  ```
+
+## Step 2: Set Up KV Namespace & Dependencies
+
+Next, let's set up our Globe KV namespace and add the necessary Dart packages.
+
+- **Create a KV Namespace**: In your Globe dashboard, navigate to the **KV** section and create a new namespace called `github-cache`. Copy the provided **Namespace ID**.
+- **Add Dependencies**: In your terminal, add the `globe_kv` package for our cache and `http` to make requests to the GitHub API.
+
+  ```bash
+  dart pub add globe_kv
+  dart pub add http
+  ```
+
+## Step 3: Create the GitHub API Service
+
+Let's create a service to handle fetching data from GitHub. This helps keep our external API logic separate.
+
+- Create a new file `lib/github_service.dart`:
+
+  ```dart
+  import 'dart:convert';
+  import 'package:http/http.dart';
+
+  class GitHubService {
+    GitHubService(this._client);
+
+    final Client _client;
+
+    static final _baseUrl = Uri.parse('https://api.github.com');
+
+    Future<Map<String, dynamic>> getRepoStats(String repo) async {
+      final response = await _client.get(_baseUrl.resolve('/repos/$repo'));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body) as Map<String, dynamic>;
+        return {'stars': data['stargazers_count'], 'forks': data['forks_count']};
+      }
+
+      throw Exception('Failed to load stats: ${response.statusCode}');
+    }
+  }
+  ```
+
+## Step 4: Implement the Caching Handler
+
+We'll create a handler that uses the "[cache-aside](https://www.geeksforgeeks.org/system-design/cache-aside-pattern/)" pattern: check the cache first, and only if the data isn't there, fetch it from the source.
+
+- Create a new file at `lib/stats_handler.dart`:
+
+  ```dart
+  import 'dart:convert';
+  import 'package:globe_kv/globe_kv.dart';
+  import 'package:shelf/shelf.dart';
+  import 'github_service.dart';
+
+  class StatsHandler {
+    final GlobeKV _kv;
+    final GitHubService _githubService;
+
+    StatsHandler(this._kv, this._githubService);
+
+    Future<Response> call(Request req, String owner, String repo) async {
+      final repoName = '$owner/$repo';
+      final cacheKey = 'github:stats:$repoName';
+      final cachedStats = await _kv.getString(cacheKey);
+
+      if (cachedStats != null) {
+        print('CACHE HIT for $repoName');
+        return Response.ok(
+          cachedStats,
+          headers: {'Content-Type': 'application/json', 'X-Cache-Status': 'HIT'},
+        );
+      }
+
+      print('CACHE MISS for $repoName');
+      try {
+        final freshStats = await _githubService.getRepoStats(repoName);
+        final statsJson = jsonEncode(freshStats);
+
+        await _kv.set(cacheKey, statsJson, ttl: 300); // expire in 5 minutes
+
+        return Response.ok(
+          statsJson,
+          headers: {'Content-Type': 'application/json', 'X-Cache-Status': 'MISS'},
+        );
+      } catch (e) {
+        print('Error fetching fresh stats: $e');
+        return Response.internalServerError(body: 'Could not retrieve stats.');
+      }
+    }
+  }
+  ```
+
+## Step 5: Wire Everything Together in `server.dart`
+
+The `bin/server.dart` file acts as the composition root. Its job is to construct the application's dependencies and register the route with its handler.
+
+- Modify your `bin/server.dart` file to look like this:
+
+  ```dart
+  import 'dart:io';
+
+  import 'package:backend/github_service.dart';
+  import 'package:backend/stats_handler.dart';
+  import 'package:globe_kv/globe_kv.dart';
+  import 'package:http/http.dart';
+  import 'package:shelf/shelf_io.dart';
+  import 'package:shelf_router/shelf_router.dart';
+
+  void main(List<String> args) async {
+    final kv = GlobeKV('09b13af22a623aa2');
+    final githubService = GitHubService(Client());
+    final statsHandler = StatsHandler(kv, githubService);
+
+    final app = Router();
+
+    app.get('/stats/<owner>/<repo>', statsHandler.call);
+
+    final ip = InternetAddress.anyIPv4;
+    final port = int.parse(Platform.environment['PORT'] ?? '8080');
+
+    final server = await serve(app.call, ip, port);
+    print('Server listening on port ${server.port}');
+  }
+  ```
+
+## Step 6: Deploy and Test
+
+With the logic in place, deploy your application to Globe.
+
+```bash
+globe deploy --prod
+```
+
+Now, test your endpoint using `curl` or your browser:
+
+- **First Request (Cache Miss):**
+  This request might take a moment as it calls the GitHub API.
+
+  ```bash
+  curl -i https://<your-app>.globeapp.dev/stats/flutter/flutter
+  ```
+
+  You'll see a response with the header `X-Cache-Status: MISS`.
+
+- **Second Request (Cache Hit):**
+  Run the same command again within 5 minutes.
+
+  ```bash
+  curl -i https://<your-app>.globeapp.dev/stats/flutter/flutter
+  ```
+
+  This time, the response will be almost instantaneous, and you'll see the header `X-Cache-Status: HIT`. You've successfully served the data from Globe KV's low-latency cache!
+
+## What's Next
+
+- Add Globe KV **Namespace ID** to [environment variables](/core-concepts/environment-variables) in the Globe dashbord to avoid hardcoding it in your code.
+- **Explore More**: Dive deeper into the [globe_kv](https://pub.dev/packages/globe_kv) package by exploring the full [API documentation](/products).
+
+---
+
+<Info>
+  Couldn't find the guide you need? [Talk to us in
+  Discord](https://invertase.link/globe-discord)
+</Info>

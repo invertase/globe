@@ -273,6 +273,10 @@
         {
           "title": "Auth Email Verification",
           "href": "/guides/auth-email-verification"
+        },
+        {
+          "title": "Cache GitHub API with Globe KV",
+          "href": "/guides/cache-github-api-with-kv"
         }
       ]
     },
