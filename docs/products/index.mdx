@@ -146,6 +146,8 @@ await kv.set('user:123', 'John Doe', ttl: 60);
 
 #### Setting an Absolute Expiration Time on Write
 
+Alternatively, you can provide a specific `DateTime` for when the key should expire.
+
 ```dart
 // The key will be deleted at the specified time.
 await kv.set(
