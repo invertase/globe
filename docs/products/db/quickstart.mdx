@@ -1,0 +1,217 @@
+---
+title: Quickstart
+---
+
+Deploy a complete Dart backend with a globally distributed database in under 5 minutes. This quickstart covers the entire process, from creating a Globe DB on the dashboard to writing type-safe queries with Drift and testing your live API.
+
+## Prerequisites
+
+- A Globe account.
+- The Dart SDK.
+
+## Step 1: Create a Database
+
+First, create the database on the Globe dashboard.
+
+1. Navigate to the Globe dashboard.
+2. Go to the **Databases** tab and click **Create Database**.
+
+This provisions a distributed, serverless SQLite database.
+
+<Info>This quickstart will use `my-first-db` as an example.</Info>
+
+## Step 2: Set Up the Dart Server Project
+
+Create a new Dart server project by running the following commands in your terminal.
+
+1. **Create the project**:
+
+   ```bash
+   dart create -t server-shelf my_api
+   cd my_api
+   ```
+
+2. **Add dependencies**:
+   ```bash
+    dart pub add --dev drift_dev build_runner
+   ```
+
+## Step 3: Define the Database and Tables
+
+Define the database schema using Drift's Dart API.
+Create a new file at `lib/database.dart` with the following content:
+
+```dart
+import 'dart:io';
+import 'package:drift/drift.dart';
+import 'package:drift/native.dart';
+
+part 'database.g.dart';
+
+// Defines the 'users' table.
+@DataClassName('User')
+class Users extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get name => text()();
+}
+
+@DriftDatabase(tables: [Users])
+class AppDatabase extends _$AppDatabase {
+  AppDatabase() : super(_openConnection());
+
+  @override
+  int get schemaVersion => 1;
+}
+
+LazyDatabase _openConnection() {
+  return LazyDatabase(() async {
+    // Locally, Drift creates a file named 'my-first-db.db'.
+    // On deployment, Globe automatically connects this to the live database.
+    final file = File('my-first-db');
+    return NativeDatabase(file);
+  });
+}
+```
+
+Analyzer errors will be present in `database.dart` until the necessary helper code is generated in the next step.
+
+## Step 4: Generate the Drift Code
+
+Run the `build_runner` to generate the `database.g.dart` file.
+
+```bash
+dart run build_runner build --delete-conflicting-outputs
+```
+
+This command resolves the errors from the previous step.
+
+## Step 5: Write the API Logic
+
+The following server code initializes the database and creates two API endpoints: `POST /users` to create users and `GET /users` to list them.
+Replace the contents of `bin/server.dart` with this code:
+
+```dart
+import 'dart:convert';
+import 'dart:io';
+import 'package:drift/drift.dart';
+import 'package:my_api/database.dart';
+import 'package:shelf/shelf.dart';
+import 'package:shelf/shelf_io.dart';
+import 'package:shelf_router/shelf_router.dart';
+
+void main(List<String> args) async {
+ // Initialize the Drift database
+ final db = AppDatabase();
+
+ final app = Router();
+
+ app.get('/users', (Request request) async {
+   // Fetch all users using Drift's type-safe API
+   final allUsers = await db.select(db.users).get();
+
+   return Response.ok(
+     jsonEncode(allUsers.map((user) => user.toJson()).toList()),
+     headers: {'Content-Type': 'application/json'},
+   );
+ });
+
+ app.post('/users', (Request request) async {
+   final body = jsonDecode(await request.readAsString());
+   final name = body['name'] as String;
+
+   // Insert a new user using Drift's type-safe API
+   final user = await db
+       .into(db.users)
+       .insertReturning(UsersCompanion.insert(name: name));
+
+   return Response.ok(
+     jsonEncode(user.toJson()),
+     headers: {'Content-Type': 'application/json'},
+   );
+ });
+
+ app.patch('/users/<id>', (Request request, String id) async {
+   final body = jsonDecode(await request.readAsString());
+   final newName = body['name'] as String;
+   final userId = int.parse(id);
+
+   final count = await (db.update(db.users)..where(
+     (tbl) => tbl.id.equals(userId),
+   )).write(UsersCompanion(name: Value(newName)));
+
+   if (count == 0) return Response.notFound('User not found');
+
+   return Response.ok('User updated');
+ });
+
+ app.delete('/users/<id>', (Request request, String id) async {
+   final userId = int.parse(id);
+   final count =
+       await (db.delete(db.users)..where((tbl) => tbl.id.equals(userId))).go();
+
+   if (count == 0) return Response.notFound('User not found');
+
+   return Response.ok('User deleted');
+ });
+
+ final ip = InternetAddress.anyIPv4;
+ final handler = Pipeline().addMiddleware(logRequests()).addHandler(app.call);
+ final port = int.parse(Platform.environment['PORT'] ?? '8080');
+ final server = await serve(handler, ip, port);
+ print('✅ Server listening on port ${server.port}');
+}
+```
+
+## Step 6: Deploy to Globe
+
+Deploy the backend to the Globe platform.
+
+```bash
+globe deploy
+```
+
+<Info>
+  The connection between your local code and the live database is handled
+  automatically by the Globe deployment process. A detailed technical
+  explanation will be added to the How Globe DB Works page soon.
+</Info>
+
+## Step 7: Test the Live API
+
+After deployment, test the live API endpoints using `curl`.
+
+1. **Create a user**:
+
+   ```bash
+   curl -X POST https://your-live-url.globe.app/users \
+   -H "Content-Type": "application/json" \
+   -d '{"name": "Ada"}'
+   ```
+
+   The expected response is the newly created user: `{"id":1,"name":"Ada"}`
+
+2. **Get the list of users**:
+
+   ```bash
+   curl https://your-live-url.globe.app/users
+   ```
+
+   The expected response is a list containing the created user: `[{"id":1,"name":"Ada"}]`
+
+3. **Update a user (e.g., the user with ID 1)**:
+
+   ```bash
+    curl -X PATCH https://your-live-url.globe.app/users/1 \
+    -H "Content-Type: application/json" \
+    -d '{"name": "Ada Lovelace"}'
+   ```
+
+4. **Delete a user (e.g., the user with ID 1)**:
+
+   ```bash
+   curl -X DELETE https://your-live-url.globe.app/users/1
+   ```
+
+## Next Steps
+
+You've now deployed a basic backend. To prepare for a real-world application, the next concept to understand is how to manage changes to your database schema.

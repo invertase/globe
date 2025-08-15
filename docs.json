@@ -157,7 +157,32 @@
       "tab": "root",
       "pages": [
         { "title": "Globe KV", "href": "/products" },
-        { "title": "Globe AI", "href": "/products/ai" }
+        { "title": "Globe AI", "href": "/products/ai" },
+        {
+          "group": "Globe DB",
+          "pages": [
+            {
+              "title": "Overview",
+              "href": "/products/db"
+            },
+            {
+              "title": "Quickstart",
+              "href": "/products/db/quickstart"
+            },
+            {
+              "title": "Migrations with Drift",
+              "href": "/products/db/migrations"
+            },
+            {
+              "title": "Managing Your Database",
+              "href": "/products/db/database-management"
+            },
+            {
+              "title": "The Distributed Edge",
+              "href": "/products/db/the-distributed-edge"
+            }
+          ]
+        }
       ]
     },
     {
