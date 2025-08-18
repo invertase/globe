@@ -277,6 +277,10 @@
         {
           "title": "Cache GitHub API with Globe KV",
           "href": "/guides/cache-github-api-with-kv"
+        },
+        {
+          "title": "Build Snippet App with Globe KV",
+          "href": "/guides/build-snippet-app"
         }
       ]
     },
