@@ -13,20 +13,15 @@ Globe DB is a **serverless SQLite-compatible database** built for Dart and Flutt
 ## Key Features
 
 <CardGroup>
-  <Card title="Drop-in SQLite Compatibility" icon="database">
-    Globe DB speaks SQLite at the native layer and is binary-compatible with any
-    SQLite client. This means you can use it with tools like `Drift ORM` or
-    `sqlite3`—no custom SDKs required.
+  <Card title="Edge-Ready, Serverless" icon="bolt">
+    All SQL commands are proxied to Turso over the network, either via HTTP or
+    WebSockets. This enables truly serverless SQLite from the edge, with zero
+    local data storage.
   </Card>
   <Card title="Dart-First Experience" icon="code">
     Built with Dart and Flutter in mind. Works seamlessly with existing Dart
     packages like `Drift ORM` and `sqlite3`, supporting both local development
     and edge deployment.
-  </Card>
-  <Card title="Edge-Ready, Serverless" icon="bolt">
-    All SQL commands are proxied to Turso over the network, either via HTTP or
-    WebSockets. This enables truly serverless SQLite from the edge, with zero
-    local data storage.
   </Card>
 </CardGroup>
 
