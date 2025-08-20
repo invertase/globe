@@ -2,25 +2,13 @@
 title: Migrations with Drift
 ---
 
-As your application evolves, you will need to change your database schema. A **migration** is the process of safely applying these changes to an existing database without losing user data. Drift provides a simple and reliable version-based system, and following best practices is crucial to prevent data loss.
-
-## Key Principles of Database Migration
-
-Before writing code, it's important to understand these core principles:
-
-- **Migrations are for Schema, Not Data**: The primary job of a migration is to alter the structure of your database (`CREATE TABLE`, `ADD COLUMN`, etc.). Avoid performing complex data transformations (like fetching data from an API to populate a new column) within a migration. Keep them fast and focused.
-- **Migrations are Immutable**: Once a version of your app is released, the migration code for that version should **never be changed**. Users on that version have already run that code. Changing it will cause errors for them when they try to upgrade again. Always create a new migration for new changes.
-- **Development vs. Production**: During early development, it's often easiest to delete your local database file and let Drift recreate it. Once your app is in the hands of users, you **must** use migrations to preserve their data.
+A **migration** is the process of safely applying schema changes to an existing database without losing data. The recommended way to handle this is with Drift's command-line tools.
 
 ## The Guided Migration Workflow
 
-The recommended way to handle schema changes is with Drift's command-line tools, which automate the process and help prevent errors.
+### 1. Configure the Migration Tool
 
-### Step 1: Configure the Migration Tool
-
-First, you need to tell Drift's tools where to find your database class.
-
-Create or open the `build.yaml` file in the root of your project and add the following configuration:
+Create a `build.yaml` file in your project root to tell Drift's tools where to find your database class.
 
 ```yaml
 targets:
@@ -33,7 +21,7 @@ targets:
             my_database: lib/database.dart
 ```
 
-### Step 2: Generate the Initial Schema
+### 2. Generate the Initial Schema
 
 Before making any changes, run the `make-migrations` command. This creates a **snapshot** of your current database schema (version 1).
 
@@ -43,42 +31,42 @@ dart run drift_dev make-migrations
 
 This will create a new directory (usually `drift_schemas/`) containing a JSON file representing your V1 schema.
 
-### Step 3: Make Your Schema Changes in Dart
+### 3. Make Your Schema Changes in Dart
 
 Now, you can modify your database.
 
-1. **Update the table class in `lib/database.dart`**:
+- **Update the table class in `lib/database.dart`**:
 
-   A critical rule in database management is that you cannot add a `NOT NULL` column to a table that already contains data without providing a default value. We will do this in the column definition.
+  A critical rule in database management is that you cannot add a `NOT NULL` column to a table that already contains data without providing a default value. We will do this in the column definition.
 
-   ```dart
-   @DataClassName('User')
-   class Users extends Table {
-       IntColumn get id => integer().autoIncrement()();
-       TextColumn get name => text()();
+  ```dart
+  @DataClassName('User')
+  class Users extends Table {
+      IntColumn get id => integer().autoIncrement()();
+      TextColumn get name => text()();
 
-       // NEW: Add the non-nullable email column with a default value.
-       TextColumn get email => text().withDefault(const Constant('no-email-provided'))();
-   }
-   ```
+      // NEW: Add the non-nullable email column with a default value.
+      TextColumn get email => text().withDefault(const Constant('no-email-provided'))();
+  }
+  ```
 
-2. **Bump the `schemaVersion` in `lib/database.dart`**:
+- **Bump the `schemaVersion` in `lib/database.dart`**:
 
-   ```dart
-   // lib/database.dart
-   @DriftDatabase(tables: [Users])
-   class AppDatabase extends _$AppDatabase {
-       // ... constructor is the same
+  ```dart
+  // lib/database.dart
+  @DriftDatabase(tables: [Users])
+  class AppDatabase extends _$AppDatabase {
+      // ... constructor is the same
 
-       @override
-       // Bump the version to signal a schema change.
-       int get schemaVersion => 2;
+      @override
+      // Bump the version to signal a schema change.
+      int get schemaVersion => 2;
 
-       // ...
-   }
-   ```
+      // ...
+  }
+  ```
 
-### Step 4: Generate the Migration Steps
+### 4. Generate the Migration Steps
 
 Run the same command again. This time, Drift will compare your code with the V1 schema snapshot and generate a helper file for the migration.
 
@@ -88,7 +76,7 @@ dart run drift_dev make-migrations
 
 This command generates a new file, `lib/database.steps.dart`, which contains boilerplate code for your migration.
 
-### Step 5: Implement the Generated Step
+### 5. Implement the Generated Step
 
 Finally, wire up the generated helper in your `AppDatabase` class. The `database.steps.dart` file is not the migration itself; it's a helper file generated by Drift that provides the `stepByStep` function. This function gives you a structured way to write your migration logic.
 
@@ -125,6 +113,16 @@ class AppDatabase extends _$AppDatabase {
 
 The `from1To2` block is crucial. It ensures this specific migration step only runs once for users upgrading from version 1. Because we provided a default value in the table definition, Drift intelligently generates the correct SQL (`... ADD COLUMN ... DEFAULT ...`) to handle existing rows safely.
 
-## Next Steps
+### 6. Regenerate Final Code
 
-This covers the recommended workflow for simple migrations. For more advanced topics, such as testing migrations, renaming columns, or changing a column's type, refer to the [official Drift documentation on migrations](https://drift.simonbinder.eu/migrations/).
+Run the following command one last time to update your main generated file.
+
+```bash
+dart run build_runner build --delete-conflicting-outputs
+```
+
+<Info>
+  For more advanced topics, such as testing migrations, renaming columns, or
+  changing a column's type, refer to the [official Drift documentation on
+  migrations](https://drift.simonbinder.eu/migrations/).
+</Info>

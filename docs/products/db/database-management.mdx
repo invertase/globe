@@ -2,50 +2,53 @@
 title: Managing Your Database
 ---
 
-The Globe dashboard is the central hub for managing and interacting with your databases. It provides an integrated studio for direct data manipulation and the credentials needed to connect from external clients.
+The Globe dashboard is the central hub for managing your databases. It provides an integrated studio for data manipulation and the credentials needed to connect from external clients.
 
 ## Accessing the Dashboard
 
 1. Navigate to the Globe dashboard.
 2. Go to the **Databases** tab in the main navigation.
 
-This page displays a list of all the databases you have created.
+<Image src="/assets/database-view.png" />
 
-## Interacting with Data via Outerbase Studio
+<Info>
+  This page displays a list of all the databases you have created. If you have
+  not created a database yet, this page will be empty.
+</Info>
 
-The Globe dashboard integrates **Outerbase Studio**, allowing you to directly interact with your data through a full-featured interface. To open the studio, simply click on a database name from your list.
+## Interacting with Data
+
+The Globe dashboard integrates **Outerbase Studio**, allowing you to directly query, edit, and manage your data. To open the studio, click on a database name from your list.
 
 The studio allows you to:
 
-- **Browse Data**: Visually inspect the schema, tables, and rows of your database.
-- **Query**: Write and execute raw SQL queries directly against your live database.
-- **Edit Data**: Insert new rows, update existing cells, or delete records using a familiar spreadsheet-like interface.
+- **Browse** the schema, tables, and rows.
+- **Query** your data by writing and executing raw SQL.
+- **Edit** data by inserting, updating, or deleting rows.
 
 ## Connecting from External Tools
 
-You can connect to your Globe DB from any client, application, or tool that supports the **LibSQL protocol**. Globe provides a unique database URL and an authentication token for each database.
+You can connect to your Globe DB from any client that supports the LibSQL protocol.
 
 To find your credentials:
 
 1. From the **database** list, click the menu icon (⋮) next to the database name.
 2. Select **Connect to database** from the menu.
-3. Scroll to the **Connect using any LibSQL Client** section.
+3. Scroll to the **Connect using any LibSQL Client** section to find your URL and generate a token.
 
-Here you can find your database URL and generate an authentication token.
-
-- **Database URL**: `libsql://your-database-name.db.globe.dev`
-- **Auth Token**: A long-lived token used for authentication.
-
-## Database Administration
-
-### Database Limits
-
-Projects on the free tier are currently limited to **two active databases**. To create a new database when at your limit, you must first delete an existing one.
-
-### Deleting a Database
+## Deleting a Database
 
 Deleting a database is an irreversible action and will permanently erase all of its data.
 
-- From the database list, click the menu icon (⋮) next to the database name.
-- Select the **Delete** option.
-- Confirm the action by typing the name of the database.
+1. From the database list, click the menu icon (⋮) next to the database name.
+2. Select the _Delete_ option.
+3. Confirm the action by typing the name of the database.
+
+## Database Limits
+
+Projects on the free tier have the following limits:
+
+- **Two active databases** per project.
+- **1GB of storage** per database.
+
+To create a new database when at your limit, you must first delete an existing one. Please contact us if you require more capacity.

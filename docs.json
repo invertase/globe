@@ -170,13 +170,14 @@
               "href": "/products/db/quickstart"
             },
             {
-              "title": "Migrations with Drift",
-              "href": "/products/db/migrations"
-            },
-            {
               "title": "Managing Your Database",
               "href": "/products/db/database-management"
             },
+            {
+              "title": "Migrations with Drift",
+              "href": "/products/db/migrations"
+            },
+
             {
               "title": "The Distributed Edge",
               "href": "/products/db/the-distributed-edge"

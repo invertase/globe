@@ -4,17 +4,11 @@ title: Globe DB
 
 Globe DB is a **distributed, serverless database service** built for Dart and Flutter developers. It combines the **simplicity and familiarity of SQLite** with a globally distributed network, allowing you to create fast, modern applications with zero infrastructure management and the Dart tools you already know.
 
-## How It Works
-
-Globe DB is designed to provide **a seamless workflow** between local development and cloud deployment, eliminating the need for traditional database connection management.
-
-The process is designed to be transparent, requiring no code changes when moving from your local machine to production.
-
-- **Local Development**: You write your backend application using a standard Dart ORM like Drift. When you run your server locally, Drift connects to a regular file on your machine (e.g., my-first-db.db), allowing for fast and simple testing.
-
-- **Deploy to Globe**: When you deploy your application, the Globe platform detects this file-based connection and transparently redirects all database operations to your provisioned, live Globe DB.
-
-The result is that the exact same code works in both environments, abstracting away the complexity of managing different database configurations.
+<Warning>
+  Globe DB is currently in Beta. The core functionality is stable, but we may
+  introduce breaking changes to the API or platform in the future. We welcome
+  your feedback during this period.
+</Warning>
 
 ## Key Features
 

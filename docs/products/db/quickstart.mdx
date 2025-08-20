@@ -2,44 +2,43 @@
 title: Quickstart
 ---
 
-Deploy a complete Dart backend with a globally distributed database in under 5 minutes. This quickstart covers the entire process, from creating a Globe DB on the dashboard to writing type-safe queries with Drift and testing your live API.
+Deploy a complete Dart backend with a globally distributed database in under 5 minutes. This quickstart covers creating a Globe DB, writing a full CRUD API with Drift, and testing it live.
 
 ## Prerequisites
 
 - A Globe account.
 - The Dart SDK.
 
-## Step 1: Create a Database
+## 1. Create a Database
 
 First, create the database on the Globe dashboard.
 
 1. Navigate to the Globe dashboard.
 2. Go to the **Databases** tab and click **Create Database**.
+3. Select a location for your database.
+4. Click **Create**, and a name will be automatically assigned to your new database.
 
-This provisions a distributed, serverless SQLite database.
+This provisions your distributed, serverless SQLite database. Make sure to copy the auto-generated name for the next steps.
 
-<Info>This quickstart will use `my-first-db` as an example.</Info>
-
-## Step 2: Set Up the Dart Server Project
+## 2. Set Up the Dart Server Project
 
 Create a new Dart server project by running the following commands in your terminal.
 
-1. **Create the project**:
+- **Create the project**:
 
-   ```bash
-   dart create -t server-shelf my_api
-   cd my_api
-   ```
+  ```bash
+  dart create -t server-shelf my_api
+  cd my_api
+  ```
 
-2. **Add dependencies**:
-   ```bash
-    dart pub add --dev drift_dev build_runner
-   ```
+- **Add dependencies**:
+  ```bash
+   dart pub add --dev drift_dev build_runner
+  ```
 
-## Step 3: Define the Database and Tables
+## 3. Define the Database and Tables
 
-Define the database schema using Drift's Dart API.
-Create a new file at `lib/database.dart` with the following content:
+Create a new file at `lib/database.dart` to define your schema with Drift. **Remember to replace `your-db-name` with the name automatically assigned to your database in Step 1**.
 
 ```dart
 import 'dart:io';
@@ -73,9 +72,12 @@ LazyDatabase _openConnection() {
 }
 ```
 
-Analyzer errors will be present in `database.dart` until the necessary helper code is generated in the next step.
+<Info>
+  Analyzer errors will be present in `database.dart` until the necessary helper
+  code is generated in the next step.
+</Info>
 
-## Step 4: Generate the Drift Code
+## 4. Generate the Drift Code
 
 Run the `build_runner` to generate the `database.g.dart` file.
 
@@ -83,12 +85,9 @@ Run the `build_runner` to generate the `database.g.dart` file.
 dart run build_runner build --delete-conflicting-outputs
 ```
 
-This command resolves the errors from the previous step.
+## 5. Write the API Logic
 
-## Step 5: Write the API Logic
-
-The following server code initializes the database and creates two API endpoints: `POST /users` to create users and `GET /users` to list them.
-Replace the contents of `bin/server.dart` with this code:
+Replace the contents of `bin/server.dart` with this complete CRUD server.
 
 ```dart
 import 'dart:convert';
@@ -162,56 +161,42 @@ void main(List<String> args) async {
 }
 ```
 
-## Step 6: Deploy to Globe
+## 6. Deploy to Globe
 
 Deploy the backend to the Globe platform.
 
 ```bash
-globe deploy
+globe deploy --prod
 ```
 
-<Info>
-  The connection between your local code and the live database is handled
-  automatically by the Globe deployment process. A detailed technical
-  explanation will be added to the How Globe DB Works page soon.
-</Info>
-
-## Step 7: Test the Live API
+## 7. Test the Live API
 
 After deployment, test the live API endpoints using `curl`.
 
-1. **Create a user**:
+- **Create a user**:
 
-   ```bash
-   curl -X POST https://your-live-url.globe.app/users \
-   -H "Content-Type": "application/json" \
-   -d '{"name": "Ada"}'
-   ```
+  ```bash
+  curl -X POST https://your-live-url.globe.app/users \
+  -H "Content-Type": "application/json" \
+  -d '{"name": "Ada"}'
+  ```
 
-   The expected response is the newly created user: `{"id":1,"name":"Ada"}`
+- **Get the list of users**:
 
-2. **Get the list of users**:
+  ```bash
+  curl https://your-live-url.globe.app/users
+  ```
 
-   ```bash
-   curl https://your-live-url.globe.app/users
-   ```
+- **Update a user (e.g., the user with ID 1)**:
 
-   The expected response is a list containing the created user: `[{"id":1,"name":"Ada"}]`
+  ```bash
+   curl -X PATCH https://your-live-url.globe.app/users/1 \
+   -H "Content-Type: application/json" \
+   -d '{"name": "Ada Lovelace"}'
+  ```
 
-3. **Update a user (e.g., the user with ID 1)**:
+- **Delete a user (e.g., the user with ID 1)**:
 
-   ```bash
-    curl -X PATCH https://your-live-url.globe.app/users/1 \
-    -H "Content-Type: application/json" \
-    -d '{"name": "Ada Lovelace"}'
-   ```
-
-4. **Delete a user (e.g., the user with ID 1)**:
-
-   ```bash
-   curl -X DELETE https://your-live-url.globe.app/users/1
-   ```
-
-## Next Steps
-
-You've now deployed a basic backend. To prepare for a real-world application, the next concept to understand is how to manage changes to your database schema.
+  ```bash
+  curl -X DELETE https://your-live-url.globe.app/users/1
+  ```
