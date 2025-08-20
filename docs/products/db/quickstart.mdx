@@ -62,7 +62,7 @@ class AppDatabase extends _$AppDatabase {
 
   static QueryExecutor _openConnection() {
     // On deployment, Globe automatically connects this to the live database.
-    return NativeDatabase.opened(sqlite3.open('spotless-vestment.db'));
+    return NativeDatabase.opened(sqlite3.open('`your-db-name`.db'));
   }
 }
 ```
