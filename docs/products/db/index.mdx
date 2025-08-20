@@ -2,37 +2,31 @@
 title: Globe DB
 ---
 
-Globe DB is a **distributed, serverless database service** built for Dart and Flutter developers. It combines the **simplicity and familiarity of SQLite** with a globally distributed network, allowing you to create fast, modern applications with zero infrastructure management and the Dart tools you already know.
+Globe DB is a **serverless SQLite-compatible database** built for Dart and Flutter developers. It combines the **simplicity and familiarity of SQLite** with the power of the cloud, zero infrastructure, no learning curve, and built for performance at the edge.
 
 <Warning>
-  Globe DB is currently in Beta. The core functionality is stable, but we may
-  introduce breaking changes to the API or platform in the future. We welcome
-  your feedback during this period.
+  Globe DB is currently in **Beta**. While the core protocol compatibility and
+  proxy components are stable, internal APIs and network behavior may change.
+  Feedback is highly encouraged.
 </Warning>
 
 ## Key Features
 
 <CardGroup>
-  <Card title="Serverless SQLite" icon="server">
-    You get the benefits of the world's most popular database engine without
-    managing servers. We handle the scaling, replication, and maintenance so you
-    can focus on building features.
+  <Card title="Drop-in SQLite Compatibility" icon="database">
+    Globe DB speaks SQLite at the native layer and is binary-compatible with any
+    SQLite client. This means you can use it with tools like `Drift ORM` or
+    `sqlite3`—no custom SDKs required.
   </Card>
-  <Card title="Familiar Dart Tooling" icon="code">
-    There's no custom SDK to learn. Globe DB works seamlessly with the Dart
-    tools you already know, like the Drift ORM. Write your database code in
-    type-safe Dart, test it locally, and deploy to the edge without changing a
-    line.
+  <Card title="Dart-First Experience" icon="code">
+    Built with Dart and Flutter in mind. Works seamlessly with existing Dart
+    packages like `Drift ORM` and `sqlite3`, supporting both local development
+    and edge deployment.
   </Card>
-  <Card title="Global Low-Latency" icon="globe">
-    Your database is automatically distributed worldwide, ensuring fast data
-    access for users in locations like Abuja, London, and Tokyo, as they read
-    from a nearby database replica.
-  </Card>
-  <Card title="Data Portability" icon="unlock">
-    Globe DB uses the standard SQLite format, so your data is always yours. You
-    can easily export your database and run it anywhere, from a local machine to
-    another cloud provider, without being locked into a proprietary system.
+  <Card title="Edge-Ready, Serverless" icon="bolt">
+    All SQL commands are proxied to Turso over the network, either via HTTP or
+    WebSockets. This enables truly serverless SQLite from the edge, with zero
+    local data storage.
   </Card>
 </CardGroup>
 
