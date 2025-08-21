@@ -162,7 +162,24 @@
       "tab": "root",
       "pages": [
         { "title": "Globe KV", "href": "/products" },
-        { "title": "Globe AI", "href": "/products/ai" }
+        { "title": "Globe AI", "href": "/products/ai" },
+        {
+          "group": "Globe DB",
+          "pages": [
+            {
+              "title": "Overview",
+              "href": "/products/database"
+            },
+            {
+              "title": "Quickstart",
+              "href": "/products/database/quickstart"
+            },
+            {
+              "title": "Managing Your Database",
+              "href": "/products/database/database-management"
+            }
+          ]
+        }
       ]
     },
     {
