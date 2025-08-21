@@ -163,15 +163,15 @@
           "pages": [
             {
               "title": "Overview",
-              "href": "/products/db"
+              "href": "/products/database"
             },
             {
               "title": "Quickstart",
-              "href": "/products/db/quickstart"
+              "href": "/products/database/quickstart"
             },
             {
               "title": "Managing Your Database",
-              "href": "/products/db/database-management"
+              "href": "/products/database/database-management"
             }
           ]
         }
