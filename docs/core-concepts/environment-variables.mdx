@@ -72,6 +72,23 @@ void main() {
   defined environment variables.
 </Warning>
 
+## How to Use Environment Variables with Flutter Web
+
+Flutter Web requires build-time variables via the `--dart-define` flag, as runtime access with `Platform.environment` is unavailable.
+
+Globe automates this process for the Flutter preset. The build system reads all project **Environment Variables** for a deployment and appends them as `--dart-define=VARIABLE_NAME=value` flags to the `flutter build web` command.
+
+### How to Access Variables in Flutter Web
+
+You can then access these compiled-in variables in your Dart code using `String.fromEnvironment`:
+
+```dart
+class AppConfig {
+  static const supabaseUrl = String.fromEnvironment('SUPABASE_URL');
+  static const supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
+}
+```
+
 ## Globe’s System Environment Variables
 
 Globe automatically provides these system environment variables in all deployments:
