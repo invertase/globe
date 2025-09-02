@@ -10,6 +10,7 @@ import '../package_info.dart' as package_info;
 import 'auth.dart';
 import 'metadata.dart';
 import 'project_settings.dart';
+import 'scope.dart';
 
 class ApiException implements Exception {
   ApiException._(this.statusCode, this.message);
@@ -33,10 +34,16 @@ class GlobeApi {
 
   Map<String, String> get headers {
     final currentSession = auth.currentSession;
+    final currentScope = GlobeScope.value;
 
     return {
       'X-Globe-Platform': 'globe_cli',
       'X-Globe-Platform-Version': package_info.version,
+      if (currentScope != null) ...{
+        'X-Globe-Organization-Id': currentScope.orgId,
+        'X-Globe-Project-Id': currentScope.projectId,
+        'X-Globe-Project-Slug': currentScope.projectSlug,
+      },
       if (currentSession != null &&
           currentSession.authenticationMethod == AuthenticationMethod.jwt)
         'Authorization': 'Bearer ${currentSession.jwt}',
@@ -80,7 +87,7 @@ class GlobeApi {
           '"Body":\n${response.body}';
       logger.detail(message);
       if (e is FormatException) {
-        throw ApiException._(response.statusCode, 'Invalid JSON response');
+        throw ApiException._(response.statusCode, '${e.message}\n${e.source}');
       }
       rethrow;
     }
@@ -360,7 +367,7 @@ class Settings {
           connection: connection,
         );
       case _:
-        throw const FormatException('Settings');
+        throw FormatException('Settings', json);
     }
   }
 
@@ -419,7 +426,7 @@ class SettingsConnection {
           branch: branch,
         );
       case _:
-        throw const FormatException('SettingsConnection');
+        throw FormatException('SettingsConnection', json);
     }
   }
 
@@ -459,7 +466,7 @@ class Organization {
           createdAt: DateTime.parse(createdAt),
           updatedAt: DateTime.parse(updatedAt),
         ),
-      _ => throw const FormatException('Organization'),
+      _ => throw FormatException('Organization', json),
     };
   }
 
@@ -515,7 +522,7 @@ class Project {
           createdAt: DateTime.parse(createdAt),
           updatedAt: DateTime.parse(updatedAt),
         ),
-      _ => throw const FormatException('Project'),
+      _ => throw FormatException('Project', json),
     };
   }
 
@@ -579,7 +586,7 @@ class Deployment {
           updatedAt: DateTime.parse(updatedAt),
           buildId: buildId,
         ),
-      _ => throw const FormatException('Deployment'),
+      _ => throw FormatException('Deployment', json),
     };
   }
 
@@ -636,7 +643,7 @@ class FrameworkPresetOptions {
           entrypoint: entrypoint,
           buildRunnerDetection: json['buildRunnerDetection'] as bool?,
         ),
-      _ => throw const FormatException('FrameworkPresetOptions'),
+      _ => throw FormatException('FrameworkPresetOptions', json),
     };
   }
 
@@ -732,7 +739,7 @@ class Token {
               .toList(),
           value: json['value']?.toString(),
         ),
-      _ => throw const FormatException('Token'),
+      _ => throw FormatException('Token', json),
     };
   }
 }
