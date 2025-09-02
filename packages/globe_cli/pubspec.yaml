@@ -9,12 +9,12 @@ environment:
 dependencies:
   archive: ^3.3.6
   args: ^2.3.1
-  cli_completion: ^0.3.0
-  cli_util: ^0.4.0
+  cli_completion: ^0.5.0
+  cli_util: ^0.4.2
   get_it: ^7.2.0
   glob: ^2.1.2
   http: ^0.13.5
-  mason_logger: ^0.2.4
+  mason_logger: ^0.2.16
   meta: ^1.9.0
   path: ^1.8.3
   pub_updater: ^0.3.0
