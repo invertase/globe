@@ -102,7 +102,7 @@ class DeployCommand extends BaseGlobeCommand {
 
             if (deployment.state == update.state) return;
 
-            final message = update.message ?? update.state.message;
+            message = update.message ?? update.state.message;
 
             switch (update.state) {
               case DeploymentState.working:
@@ -214,7 +214,7 @@ class DeployCommand extends BaseGlobeCommand {
           );
         }
 
-        final message = update.message ?? update.state.message;
+        message = update.message ?? update.state.message;
 
         if (update.state == DeploymentState.error) {
           status.fail('Deployment failed: $message');
