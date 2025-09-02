@@ -63,6 +63,19 @@ class DeployCommand extends BaseGlobeCommand {
       'Deploying to ${styleBold.wrap('${validated.organization.slug}/${validated.project.slug}')}${environment == DeploymentEnvironment.production ? ' (production)' : ''}',
     );
 
+    void showDeploymentLinks(Deployment deployment, Logger logger) {
+      logger.info(
+        '${lightGreen.wrap('✓')} Preview URL: https://${deployment.url}',
+      );
+
+      if (deployment.environment == DeploymentEnvironment.production) {
+        final prodUrl = '${validated.project.slug}.globeapp.dev';
+        logger.info(
+          '${lightGreen.wrap('✓')} Production URL: https://$prodUrl',
+        );
+      }
+    }
+
     try {
       // Archive the current directory.
       final archive = await zipDir(Directory.current);
@@ -113,9 +126,7 @@ class DeployCommand extends BaseGlobeCommand {
                 status = logger.progress(message);
               case DeploymentState.success:
                 status.complete();
-                logger.info(
-                  '${lightGreen.wrap('✓')} Deployment URL: https://${update.url}',
-                );
+                showDeploymentLinks(deployment, logger);
                 timer.cancel();
                 completer.complete(update);
               case DeploymentState.error:
@@ -209,9 +220,7 @@ class DeployCommand extends BaseGlobeCommand {
 
         if (update.state == DeploymentState.success) {
           status.complete();
-          logger.info(
-            '${lightGreen.wrap('✓')} Deployment URL: https://${update.url}',
-          );
+          showDeploymentLinks(deployment, logger);
         }
 
         message = update.message ?? update.state.message;
