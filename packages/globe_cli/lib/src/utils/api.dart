@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -13,10 +14,11 @@ import 'project_settings.dart';
 import 'scope.dart';
 
 class ApiException implements Exception {
-  ApiException._(this.statusCode, this.message);
+  ApiException._(this.statusCode, this.message, {this.headers});
 
   final int statusCode;
   final String message;
+  final Map<String, String>? headers;
 
   @override
   String toString() => 'ApiException: [$statusCode] $message';
@@ -27,7 +29,9 @@ class GlobeApi {
     required this.metadata,
     required this.auth,
     required this.logger,
-  });
+  }) {
+    FutureExtension.logger = logger;
+  }
 
   List<Project>? _projectsCache;
   List<Organization>? _orgsCache;
@@ -65,30 +69,60 @@ class GlobeApi {
 
   /// Handles an [http.Response], throwing an [ApiException] if the response
   /// is not successful.
-  Object? _handleResponse(http.Response response) {
+  Future<T> _callGlobeApi<T>(
+    FutureOr<http.Response> Function() apiCall, {
+    bool needsAuth = true,
+  }) async {
+    if (needsAuth) requireAuth();
+
+    Future<({int status, T data})> makeApiCall() async {
+      final response = await apiCall.call();
+
+      Map<String, Object?> json;
+      try {
+        json = jsonDecode(response.body) as Map<String, Object?>;
+      } catch (_) {
+        json = {'message': 'Invalid JSON response from Globe API'};
+      }
+
+      if (response.statusCode > 399) {
+        throw ApiException._(
+          response.statusCode,
+          json['message']! as String,
+          headers: response.headers,
+        );
+      }
+
+      return (
+        status: response.statusCode,
+        data: json['data'] as T,
+      );
+    }
+
     try {
-      // Let the decode throw on invalid json.
-      final json = jsonDecode(response.body) as Map<String, Object?>;
-
-      if (response.statusCode == 200) return json['data'];
-
-      throw ApiException._(response.statusCode, json['message']! as String);
+      final result = await makeApiCall().retry(debugLabel: 'Globe API');
+      return result.data;
     } catch (e) {
       var message =
           'Globe API Error.\nThere was an issue calling the Globe API, please try again.\n';
       logger.err(
         '$message Use verbose mode using the --verbose flag for more details.',
       );
-      message =
-          'If this issue persists please contact support and provide these logs.\n'
-          '---\n'
-          '"Status Code": ${response.statusCode}\n\n'
-          '"Headers":${response.headers.entries.fold('', (acc, v) => '$acc\n${v.key}: ${v.value}')}\n\n'
-          '"Body":\n${response.body}';
-      logger.detail(message);
-      if (e is FormatException) {
-        throw ApiException._(response.statusCode, '${e.message}\n${e.source}');
+
+      if (e is ApiException) {
+        message = [
+          'If this issue persists please contact support and provide these logs.',
+          '---',
+          '"Status Code": ${e.statusCode}',
+          '',
+          '"Headers":${e.headers?.entries.fold('', (acc, v) => '$acc\n${v.key}: ${v.value}')}',
+        ].join('\n');
+
+        logger.detail(message);
+      } else {
+        logger.err('Unexpected Error: $e');
       }
+
       rethrow;
     }
   }
@@ -105,7 +139,6 @@ class GlobeApi {
     required String projectId,
     required ProjectSettings settings,
   }) async {
-    requireAuth();
     final path = '/orgs/$orgId/projects/$projectId/settings';
     final uri = _buildUri(path);
     logger.detail('API Request: PUT $path');
@@ -115,9 +148,9 @@ class GlobeApi {
 
     request.body = jsonEncode(settings.toJson());
 
-    _handleResponse(
-      await request.send().then(http.Response.fromStream),
-    )! as Map<String, Object?>;
+    await _callGlobeApi<Map<String, Object?>>(
+      () => request.send().then(http.Response.fromStream),
+    );
   }
 
   /// Gets all of the organizations that the current user is a member of.
@@ -127,11 +160,10 @@ class GlobeApi {
       return _orgsCache!;
     }
 
-    requireAuth();
     logger.detail('API Request: GET /user/orgs');
-    final response = _handleResponse(
-      await http.get(_buildUri('/user/orgs'), headers: headers),
-    )! as List<Object?>;
+    final response = await _callGlobeApi<List<Object?>>(
+      () => http.get(_buildUri('/user/orgs'), headers: headers),
+    );
 
     return _orgsCache = response
         .cast<Map<String, Object?>>()
@@ -148,11 +180,10 @@ class GlobeApi {
       return _projectsCache!;
     }
 
-    requireAuth();
     logger.detail('API Request: GET /orgs/$org/projects');
-    final response = _handleResponse(
-      await http.get(_buildUri('/orgs/$org/projects'), headers: headers),
-    )! as List<Object?>;
+    final response = await _callGlobeApi<List<Object?>>(
+      () => http.get(_buildUri('/orgs/$org/projects'), headers: headers),
+    );
 
     return _projectsCache =
         response.cast<Map<String, Object?>>().map(Project.fromJson).toList();
@@ -169,9 +200,9 @@ class GlobeApi {
 
     request.body = jsonEncode({'name': name});
 
-    final response = _handleResponse(
-      await request.send().then(http.Response.fromStream),
-    )! as Map<Object?, Object?>;
+    final response = await _callGlobeApi<Map<Object?, Object?>>(
+      () => request.send().then(http.Response.fromStream),
+    );
 
     _projectsCache = null;
     _orgsCache = null;
@@ -188,7 +219,9 @@ class GlobeApi {
     final request = http.Request('PUT', _buildUri(url));
     request.headers.addAll(headers);
 
-    _handleResponse(await request.send().then(http.Response.fromStream));
+    await _callGlobeApi<dynamic>(
+      () => request.send().then(http.Response.fromStream),
+    );
   }
 
   Future<void> resumeProject({
@@ -200,7 +233,9 @@ class GlobeApi {
     final request = http.Request('PUT', _buildUri(url));
     request.headers.addAll(headers);
 
-    _handleResponse(await request.send().then(http.Response.fromStream));
+    await _callGlobeApi<dynamic>(
+      () => request.send().then(http.Response.fromStream),
+    );
   }
 
   Future<FrameworkPresetOptions?> discoverPreset(String pubspecContent) async {
@@ -212,9 +247,9 @@ class GlobeApi {
     request.headers['Content-Type'] = 'text/plain';
     request.body = pubspecContent;
 
-    final response = _handleResponse(
-      await request.send().then(http.Response.fromStream),
-    ) as Map<Object?, Object?>?;
+    final response = await _callGlobeApi<Map<Object?, Object?>?>(
+      () => request.send().then(http.Response.fromStream),
+    );
 
     if (response == null) return null;
 
@@ -226,16 +261,15 @@ class GlobeApi {
     required String projectId,
     required String deploymentId,
   }) async {
-    requireAuth();
     logger.detail(
       'API Request: GET /orgs/$orgId/projects/$projectId/deployments/$deploymentId',
     );
-    final response = _handleResponse(
-      await http.get(
+    final response = await _callGlobeApi<Map<Object?, Object?>>(
+      () => http.get(
         _buildUri('/orgs/$orgId/projects/$projectId/deployments/$deploymentId'),
         headers: headers,
       ),
-    )! as Map<Object?, Object?>;
+    );
 
     return Deployment.fromJson(response);
   }
@@ -247,7 +281,6 @@ class GlobeApi {
     required DeploymentEnvironment environment,
     required List<int> archive,
   }) async {
-    requireAuth();
     logger.detail('API Request: POST /orgs/$orgId/projects/$projectId/deploy');
     final request = http.MultipartRequest(
       'POST',
@@ -265,9 +298,9 @@ class GlobeApi {
       ),
     );
 
-    final response = _handleResponse(
-      await request.send().then(http.Response.fromStream),
-    )! as Map<Object?, Object?>;
+    final response = await _callGlobeApi<Map<Object?, Object?>>(
+      () => request.send().then(http.Response.fromStream),
+    );
 
     return Deployment.fromJson(response);
   }
@@ -278,8 +311,6 @@ class GlobeApi {
     required List<String> projectUuids,
     required DateTime expiresAt,
   }) async {
-    requireAuth();
-
     final createTokenPath = '/orgs/$orgId/api-tokens';
     logger.detail('API Request: POST $createTokenPath');
 
@@ -290,9 +321,9 @@ class GlobeApi {
     });
 
     // create token
-    final response = _handleResponse(
-      await http.post(_buildUri(createTokenPath), headers: headers, body: body),
-    )! as Map<String, Object?>;
+    final response = await _callGlobeApi<Map<String, Object?>>(
+      () => http.post(_buildUri(createTokenPath), headers: headers, body: body),
+    );
     final token = Token.fromJson(response);
 
     return (id: token.uuid, value: token.value!);
@@ -302,14 +333,13 @@ class GlobeApi {
     required String orgId,
     required List<String> projectUuids,
   }) async {
-    requireAuth();
-
     final fullUri = _buildUri('/orgs/$orgId/api-tokens')
         .replace(queryParameters: {'projects': projectUuids});
 
     logger.detail('API Request: GET /orgs/$orgId/api-tokens');
-    final response = _handleResponse(await http.get(fullUri, headers: headers))!
-        as List<dynamic>;
+    final response = await _callGlobeApi<List<dynamic>>(
+      () => http.get(fullUri, headers: headers),
+    );
 
     return response
         .map((e) => Token.fromJson(e as Map<String, dynamic>))
@@ -320,14 +350,12 @@ class GlobeApi {
     required String orgId,
     required String tokenId,
   }) async {
-    requireAuth();
-
     final deleteTokenPath = '/orgs/$orgId/api-tokens/$tokenId';
     logger.detail('API Request: DELETE $deleteTokenPath');
 
-    _handleResponse(
-      await http.delete(_buildUri(deleteTokenPath), headers: headers),
-    )! as Map<String, Object?>;
+    await _callGlobeApi<Map<String, Object?>>(
+      () => http.delete(_buildUri(deleteTokenPath), headers: headers),
+    );
   }
 }
 
@@ -741,5 +769,32 @@ class Token {
         ),
       _ => throw FormatException('Token', json),
     };
+  }
+}
+
+extension FutureExtension<T> on Future<T> {
+  static late Logger logger;
+
+  Future<T> retry({
+    int retries = 3,
+    Duration delay = const Duration(seconds: 1),
+    String? debugLabel,
+  }) async {
+    try {
+      return await this;
+    } catch (e) {
+      if (retries > 1) {
+        if (debugLabel != null) {
+          FutureExtension.logger.detail('$debugLabel: retrying future');
+        }
+        await Future<void>.delayed(delay);
+        return retry(
+          retries: retries - 1,
+          delay: delay,
+          debugLabel: debugLabel,
+        );
+      }
+      rethrow;
+    }
   }
 }
