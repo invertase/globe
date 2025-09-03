@@ -63,7 +63,18 @@ class DeployCommand extends BaseGlobeCommand {
       'Deploying to ${styleBold.wrap('${validated.organization.slug}/${validated.project.slug}')}${environment == DeploymentEnvironment.production ? ' (production)' : ''}',
     );
 
-    // TODO: handle args for deploy command (e.g. --release, --debug, --pub-cache etc.)
+    void showDeploymentLinks(Deployment deployment, Logger logger) {
+      logger.info(
+        '${lightGreen.wrap('✓')} Preview URL: https://${deployment.url}',
+      );
+
+      if (deployment.environment == DeploymentEnvironment.production) {
+        final prodUrl = '${validated.project.slug}.globeapp.dev';
+        logger.info(
+          '${lightGreen.wrap('✓')} Production URL: https://$prodUrl',
+        );
+      }
+    }
 
     try {
       // Archive the current directory.
@@ -87,7 +98,8 @@ class DeployCommand extends BaseGlobeCommand {
         '🔍 View deployment: ${metadata.endpoint}/${validated.organization.slug}/${validated.project.slug}/deployments/${deployment.id}',
       );
 
-      var status = logger.progress(deployment.state.message);
+      var message = deployment.message ?? deployment.state.message;
+      var status = logger.progress(message);
       final completer = Completer<Deployment>();
 
       final shouldShowLogs = argResults!['logs'] as bool;
@@ -103,22 +115,22 @@ class DeployCommand extends BaseGlobeCommand {
 
             if (deployment.state == update.state) return;
 
+            message = update.message ?? update.state.message;
+
             switch (update.state) {
               case DeploymentState.working:
                 status.complete();
-                status = logger.progress(update.state.message);
+                status = logger.progress(message);
               case DeploymentState.deploying:
                 status.complete();
-                status = logger.progress(update.state.message);
+                status = logger.progress(message);
               case DeploymentState.success:
                 status.complete();
-                logger.info(
-                  '${lightGreen.wrap('✓')} Deployment URL: https://${update.url}',
-                );
+                showDeploymentLinks(deployment, logger);
                 timer.cancel();
                 completer.complete(update);
               case DeploymentState.error:
-                status.fail(update.state.message);
+                status.fail(message);
                 timer.cancel();
                 completer.complete(update);
               case DeploymentState.cancelled:
@@ -130,7 +142,7 @@ class DeployCommand extends BaseGlobeCommand {
                 status.fail('Invalid Deployment State Received.');
                 timer.cancel();
               case DeploymentState.pending:
-                status = logger.progress(update.state.message);
+                status = logger.progress(message);
             }
 
             deployment = update;
@@ -139,6 +151,8 @@ class DeployCommand extends BaseGlobeCommand {
 
         try {
           final deployment = await completer.future;
+          final newmsg = deployment.message;
+          if (newmsg != null) message = newmsg;
 
           // Immediately show error if deployment failed
           if (deployment.state == DeploymentState.error) {
@@ -149,10 +163,13 @@ class DeployCommand extends BaseGlobeCommand {
               projectId: validated.project.id,
               deploymentId: deployment.id,
               buildId: deployment.buildId!,
+              stepId: RegExp(r'(\w+) step').firstMatch(message)?.group(1),
             );
           }
 
-          return ExitCode.success.code;
+          return deployment.state == DeploymentState.success
+              ? ExitCode.success.code
+              : ExitCode.software.code;
         } catch (_) {
           return ExitCode.software.code;
         }
@@ -161,7 +178,7 @@ class DeployCommand extends BaseGlobeCommand {
       Stream<BuildLogEvent>? logs;
 
       // Check the deployment status every x seconds.
-      Timer.periodic(const Duration(milliseconds: 2000), (timer) async {
+      Timer.periodic(const Duration(seconds: 2), (timer) async {
         final update = await api.getDeployment(
           orgId: validated.organization.id,
           projectId: validated.project.id,
@@ -203,17 +220,13 @@ class DeployCommand extends BaseGlobeCommand {
 
         if (update.state == DeploymentState.success) {
           status.complete();
-          logger.info(
-            '${lightGreen.wrap('✓')} Deployment URL: https://${update.url}',
-          );
+          showDeploymentLinks(deployment, logger);
         }
 
+        message = update.message ?? update.state.message;
+
         if (update.state == DeploymentState.error) {
-          var message = 'Deployment failed';
-          if (update.message.isNotEmpty) {
-            message = '$message: ${update.message}';
-          }
-          status.fail(message);
+          status.fail('Deployment failed: $message');
         }
 
         if (update.state == DeploymentState.cancelled) {

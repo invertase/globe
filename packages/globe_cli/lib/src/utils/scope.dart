@@ -31,7 +31,8 @@ class GlobeScope {
   late final List<ScopeMetadata> workspace;
 
   ScopeMetadata? get current => _current;
-  ScopeMetadata? _current;
+  static ScopeMetadata? _current;
+  static ScopeMetadata? get value => _current;
 
   late final _projectDirectory = Directory(
     p.join('.dart_tool', 'dart_globe'),

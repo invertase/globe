@@ -14,9 +14,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: subosito/flutter-action@v2
-      - uses: bluefireteam/melos-action@v3
-      - run: dart run "${{ github.workspace }}/packages/globe_cli/bin/globe.dart" deploy --token=${{ secrets.GLOBE_TEST_DEPLOY_TOKEN }} --project="e785cd34-0743-4c4b-a4f7-d7a7c950d2ca"
+      - uses: dart-lang/setup-dart@v1
+      - name: Install dependencies
+        run: dart pub get
+        working-directory: ./packages/globe_cli
+      - name: Deploy
+        run: dart run "${{ github.workspace }}/packages/globe_cli/bin/globe.dart" deploy --token=${{ secrets.GLOBE_TEST_DEPLOY_TOKEN }} --project="e785cd34-0743-4c4b-a4f7-d7a7c950d2ca"
         working-directory: ./examples/shelf/
 
 
@@ -25,6 +28,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: subosito/flutter-action@v2
-      - uses: bluefireteam/melos-action@v3
-      - run: dart run "${{ github.workspace }}/packages/globe_cli/bin/globe.dart" deploy --token=${{ secrets.GLOBE_TEST_DEPLOY_TOKEN }} --project="1c73e6b9-6ce4-4a2f-a0a3-1f096d6bc1e5"
+      - uses: dart-lang/setup-dart@v1
+      - name: Install dependencies
+        run: dart pub get
+        working-directory: ./packages/globe_cli
+      - name: Deploy
+        run: dart run "${{ github.workspace }}/packages/globe_cli/bin/globe.dart" deploy --token=${{ secrets.GLOBE_TEST_DEPLOY_TOKEN }} --project="1c73e6b9-6ce4-4a2f-a0a3-1f096d6bc1e5"
+        working-directory: ./examples/flutter_web/

@@ -51,9 +51,7 @@ sealed class BuildLogEvent {
 }
 
 class BuildLogsError extends BuildLogEvent {
-  BuildLogsError({
-    required this.error,
-  });
+  BuildLogsError({required this.error});
 
   factory BuildLogsError.fromJson(Map<String, dynamic> json) {
     return BuildLogsError(
@@ -163,14 +161,16 @@ Future<Stream<BuildLogEvent>> streamBuildLogs({
   return ctrl.stream;
 }
 
-Future<void> printLogs(Logger logger, Stream<BuildLogEvent> logs) async {
+Future<void> printLogs(
+  Logger logger,
+  Stream<BuildLogEvent> logs, {
+  String? stepToShow,
+}) async {
   await for (final event in logs) {
-    printLog(logger, event);
+    printLog(logger, event, stepToShow: stepToShow);
 
-    if (event case BuildLogs(done: final done)) {
-      if (done) {
-        break;
-      }
+    if (event case BuildLogs(done: true)) {
+      break;
     }
   }
 }
@@ -183,6 +183,7 @@ Future<void> showBuildLogs({
   required String projectId,
   required String deploymentId,
   required String buildId,
+  String? stepId,
 }) async {
   final logs = await streamBuildLogs(
     api: api,
@@ -192,15 +193,18 @@ Future<void> showBuildLogs({
     buildId: buildId,
   );
 
-  await printLogs(logger, logs);
+  await printLogs(logger, logs, stepToShow: stepId);
 }
 
-void printLog(Logger logger, BuildLogEvent log) {
+void printLog(Logger logger, BuildLogEvent log, {String? stepToShow}) {
   switch (log) {
     case BuildLogsError(error: final error):
       logger.err(error);
     case BuildLogs(items: final logs):
       for (final log in logs) {
+        if (stepToShow != null && stepToShow != log.stepId) {
+          continue;
+        }
         logger.info(log.toString());
       }
 
