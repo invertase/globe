@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2025-09-03
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`globe_cli` - `v0.0.16+2`](#globe_cli---v00162)
+
+---
+
+#### `globe_cli` - `v0.0.16+2`
+
+ - **DOCS**: Add the globe.yaml page in core concepts ([#213](https://github.com/invertase/globe/issues/213)). ([597282f7](https://github.com/invertase/globe/commit/597282f78dca9da6c1d9978409dda0b77d9bed13))
+ - **DOCS**: Add how to deploy Jaspr apps ([#195](https://github.com/invertase/globe/issues/195)). ([01195ad1](https://github.com/invertase/globe/commit/01195ad14d16ef393856e953fd2e3fcc05836a2b))
+
+
 ## 2025-06-17
 
 ### Changes

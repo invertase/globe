@@ -1,3 +1,8 @@
+## 0.0.16+2
+
+ - **DOCS**: Add the globe.yaml page in core concepts ([#213](https://github.com/invertase/globe/issues/213)). ([597282f7](https://github.com/invertase/globe/commit/597282f78dca9da6c1d9978409dda0b77d9bed13))
+ - **DOCS**: Add how to deploy Jaspr apps ([#195](https://github.com/invertase/globe/issues/195)). ([01195ad1](https://github.com/invertase/globe/commit/01195ad14d16ef393856e953fd2e3fcc05836a2b))
+
 ## 0.0.16+1
 
  - **FIX**(globe_cli): fix build-runner detection flag in CLI  ([#199](https://github.com/invertase/globe/issues/199)). ([fcc42a5c](https://github.com/invertase/globe/commit/fcc42a5c7f7e480f7d52ed4058c61436ce7fb8d4))
