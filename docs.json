@@ -298,6 +298,10 @@
         {
           "title": "Build Snippet App with Globe KV",
           "href": "/guides/build-snippet-app"
+        },
+        {
+          "title": "Use Serinus for Backend",
+          "href": "/guides/serinus-backend-globe"
         }
       ]
     },
