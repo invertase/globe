@@ -8,9 +8,10 @@ import 'package:flutter/material.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  const apiUrl = !kReleaseMode
-      ? 'http://localhost:3000'
-      : 'https://your-shelf-api.globeapp.dev';
+  const apiUrl =
+      !kReleaseMode
+          ? 'http://localhost:3000'
+          : 'https://your-shelf-api.globeapp.dev';
 
   final client = APIClient(apiUrl);
 
@@ -33,10 +34,11 @@ class MainApp extends StatelessWidget {
             );
           case '/repo':
             return MaterialPageRoute(
-              builder: (context) => RepositoryPage(
-                client: client,
-                repositoryId: settings.arguments as int,
-              ),
+              builder:
+                  (context) => RepositoryPage(
+                    client: client,
+                    repositoryId: settings.arguments as int,
+                  ),
             );
           case '/new':
             return MaterialPageRoute(

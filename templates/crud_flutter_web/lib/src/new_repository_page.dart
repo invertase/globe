@@ -43,30 +43,31 @@ class _NewRepositoryPageState extends State<NewRepositoryPage> {
               const SizedBox(height: 16),
               ValueListenableBuilder(
                 valueListenable: isLoading,
-                builder: (_, value, ___) => Button(
-                  isBusy: value,
-                  onPressed: () async {
-                    final navigator = Navigator.of(context);
-                    final scaffoldMessenger = ScaffoldMessenger.of(context);
+                builder:
+                    (_, value, ___) => Button(
+                      isBusy: value,
+                      onPressed: () async {
+                        final navigator = Navigator.of(context);
+                        final scaffoldMessenger = ScaffoldMessenger.of(context);
 
-                    try {
-                      isLoading.value = true;
+                        try {
+                          isLoading.value = true;
 
-                      await widget.client.createRepository(
-                        name: nameController.text,
-                        url: urlController.text,
-                      );
+                          await widget.client.createRepository(
+                            name: nameController.text,
+                            url: urlController.text,
+                          );
 
-                      isLoading.value = false;
-                      navigator.pop();
-                    } catch (e) {
-                      scaffoldMessenger.showSnackBar(
-                        SnackBar(content: Text(e.toString())),
-                      );
-                    }
-                  },
-                  label: 'Create',
-                ),
+                          isLoading.value = false;
+                          navigator.pop();
+                        } catch (e) {
+                          scaffoldMessenger.showSnackBar(
+                            SnackBar(content: Text(e.toString())),
+                          );
+                        }
+                      },
+                      label: 'Create',
+                    ),
               ),
             ],
           ),

@@ -2,5 +2,6 @@
 
 const name = 'globe_cli';
 const version = '0.0.16+2';
-const description = 'The global deployment platform for Dart & Flutter applications.';
+const description =
+    'The global deployment platform for Dart & Flutter applications.';
 const executable = 'globe';
