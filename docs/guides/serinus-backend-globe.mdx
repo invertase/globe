@@ -1,0 +1,245 @@
+---
+title: Deploy Your Serinus Backend on Globe
+description: Create, test, and deploy a Dart backend using the Serinus framework on Globe.
+---
+
+Serinus is a modern framework for building scalable and maintainable server-side applications in Dart. Its structured, modular architecture makes it a great choice for building robust APIs. **Globe** supports deploying Serinus applications with zero code changes, allowing you to get a server running on a global infrastructure in minutes.
+
+This guide walks through setting up a full CRUD (Create, Read, Update, Delete) API server using Serinus and deploying it to Globe.
+
+**15 min read**
+
+---
+
+### Features Covered
+
+- Creating a Serinus project with the CLI.
+- Building a simple in-memory CRUD API using Controllers and Providers.
+- Testing the API endpoints locally with `curl`.
+- Deploying to Globe with a single command.
+
+### Prerequisites
+
+- **Dart SDK Installed**: If you have Flutter installed, the Dart SDK is already included. If not, [Install Dart](https://dart.dev/get-dart).
+- **Globe Account**: You'll need an account to deploy projects. [Sign up or log in to Globe](https://globe.dev/login).
+- **Globe CLI Installed and Authenticated**: Install the CLI by running `dart pub global activate globe_cli` and log in using `globe login`.
+
+## Step 1: Create and Set Up Your Serinus Project
+
+First, install the Serinus CLI (if you haven't already), scaffold a new application, and fetch its dependencies.
+
+- In your terminal, run the following commands:
+
+  ```bash
+  dart pub global activate serinus_cli
+  serinus create my_serinus_api
+  cd my_serinus_api
+  ```
+
+- Next, open the newly created `my_serinus_api` folder in your favorite code editor.
+- Finally, fetch the project's dependencies by running:
+
+  ```bash
+  dart pub get
+  ```
+
+## Step 2: Implement the CRUD Logic (The Provider)
+
+In Serinus, business logic lives in [Providers](https://serinus.app/providers.html). We'll create a provider to manage our in-memory list of repositories.
+
+- Open the file at `lib/app_provider.dart` and replace its content with the following:
+
+  ```dart
+  import 'package:serinus/serinus.dart';
+
+  class AppProvider extends Provider {
+    final List<Map<String, String>> _repositories = [
+      {'id': '1', 'name': 'shelf', 'url': 'https://github.com/dart-lang/shelf'},
+      {'id': '2', 'name': 'globe_cli', 'url': 'https://github.com/invertase/globe'},
+    ];
+
+    List<Map<String, String>> getAll() => _repositories;
+
+    Map<String, String>? getById(String id) {
+      try {
+        return _repositories.firstWhere((repo) => repo['id'] == id);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    Map<String, String> create(Map<String, dynamic> data) {
+      final newId = (_repositories.length + 1).toString();
+      final newRepo = {
+        'id': newId,
+        'name': data['name'] as String,
+        'url': data['url'] as String,
+      };
+      _repositories.add(newRepo);
+      return newRepo;
+    }
+
+    Map<String, String>? update(String id, Map<String, dynamic> data) {
+      final repoIndex = _repositories.indexWhere((repo) => repo['id'] == id);
+      if (repoIndex == -1) return null;
+      _repositories[repoIndex] = {
+        'id': id,
+        'name': data['name'] as String,
+        'url': data['url'] as String,
+      };
+      return _repositories[repoIndex];
+    }
+
+    void delete(String id) {
+      _repositories.removeWhere((repo) => repo['id'] == id);
+    }
+  }
+  ```
+
+## Step 3: Define the API Routes (The Controller)
+
+Next, we'll define our API endpoints in the **Controller**. The controller will parse the request body and use the `AppProvider` to perform the CRUD operations.
+
+- Open the file at `lib/app_controller.dart` and replace its content:
+
+  ```dart
+  import 'package:serinus/serinus.dart';
+  import 'app_provider.dart';
+
+  class AppController extends Controller {
+    AppController({super.path = '/repos'}) {
+      on(Route.get('/'), _getReposHandler);
+      on(Route.get('/<id>'), _getRepoByIdHandler);
+      on(Route.post('/'), _createRepoHandler);
+      on(Route.put('/<id>'), _updateRepoHandler);
+      on(Route.delete('/<id>'), _deleteRepoHandler);
+    }
+
+    // READ (all)
+    Future<List<Map<String, String>>> _getReposHandler(
+      RequestContext context,
+    ) async {
+      return context.use<AppProvider>().getAll();
+    }
+
+    // READ (one)
+    Future<Map<String, String>> _getRepoByIdHandler(
+      RequestContext context,
+    ) async {
+      final id = context.params['id'];
+      if (id == null) {
+        throw BadRequestException(message: 'Repository ID is required.');
+      }
+      final repo = context.use<AppProvider>().getById(id);
+      if (repo == null) {
+        throw NotFoundException(message: 'Repository not found.');
+      }
+      return repo;
+    }
+
+    // CREATE
+    Future<Map<String, String>> _createRepoHandler(RequestContext context) async {
+      final body = context.body.json;
+      if (body == null ||
+          body.value['name'] == null ||
+          body.value['url'] == null) {
+        throw BadRequestException(message: 'Invalid request body.');
+      }
+      final data = body.value as Map<String, dynamic>;
+      return context.use<AppProvider>().create(data);
+    }
+
+    // UPDATE
+    Future<Map<String, String>> _updateRepoHandler(RequestContext context) async {
+      final id = context.params['id'];
+      if (id == null) {
+        throw BadRequestException(message: 'Repository ID is required.');
+      }
+      final body = context.body.json;
+      if (body == null ||
+          body.value['name'] == null ||
+          body.value['url'] == null) {
+        throw BadRequestException(message: 'Invalid request body.');
+      }
+      final data = body.value as Map<String, dynamic>;
+      final updatedRepo = context.use<AppProvider>().update(id, data);
+      if (updatedRepo == null) {
+        throw NotFoundException(message: 'Repository not found.');
+      }
+      return updatedRepo;
+    }
+
+    // DELETE
+    Future<void> _deleteRepoHandler(RequestContext context) async {
+      final id = context.params['id'];
+      if (id == null) {
+        throw BadRequestException(message: 'Repository ID is required.');
+      }
+      context.use<AppProvider>().delete(id);
+    }
+  }
+  ```
+
+## Step 4: Test Your Server Locally
+
+Run your server locally to ensure all CRUD endpoints work before deploying.
+
+- Start the development server with hot-reload:
+
+  ```bash
+  serinus run --dev
+  ```
+
+- In a new terminal window, use curl to test the API:
+
+  - List all repositories (GET):
+
+    ```bash
+    curl http://localhost:3000/repos
+    ```
+
+  - Create a new repository (POST):
+
+    ```bash
+    curl -X POST -H "Content-Type: application/json" \
+    -d '{"name": "new_repo", "url": "github.com/user/new_repo"}' \
+    http://localhost:3000/repos
+    ```
+
+  - Update a repository (PUT):
+
+    ```bash
+    curl -X PUT -H "Content-Type: application/json" \
+    -d '{"name": "updated_repo", "url": "github.com/user/updated_repo"}' \
+    http://localhost:3000/repos/2
+    ```
+
+  - Delete a repository (DELETE):
+
+    ```bash
+    curl -X DELETE http://localhost:3000/repos/1
+    ```
+
+## Step 5: Deploy to Globe
+
+Finally, deploy your Serinus API to Globe's global network. A new Serinus project requires **zero code changes** for deployment.
+
+- From your project's root directory, run the deploy command:
+
+  ```bash
+  globe deploy
+  ```
+
+- If this is your first time deploying this project, the Globe CLI will guide you through creating and linking a new project on your account. Once complete, you will receive a unique URL for your live API.
+
+## What's Next
+
+- **Exploring Serinus**: Dive deeper into the framework's features like middleware and modules in the [official Serinus documentation](https://serinus.app/introduction.html).
+- **Adding Globe DB**: Replace the in-memory list with a persistent, global database by following the [Globe DB Quickstart](/products/database/quickstart).
+
+---
+
+<Info>
+  Couldn't find the guide you need? [Talk to us in
+  Discord](https://invertase.link/globe-discord)
+</Info>
