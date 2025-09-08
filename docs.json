@@ -316,6 +316,10 @@
         {
           "title": "What To Store in Globe KV",
           "href": "/tutorials/what-to-store-in-globe-kv"
+        },
+        {
+          "title": "What is OAuth 2.0",
+          "href": "/tutorials/what-is-oauth"
         }
       ]
     },
