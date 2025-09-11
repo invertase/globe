@@ -1,0 +1,19 @@
+# Environment variables
+.env
+
+# Dart
+.dart_tool/
+.packages
+build/
+pubspec.lock
+
+# IDE
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# OS
+.DS_Store
+Thumbs.db
