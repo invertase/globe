@@ -1,0 +1,196 @@
+---
+title: Implement Sign in with GitHub using Dart Frog
+description: Learn to build a complete OAuth 2.0 flow, allowing users to sign in to your application securely with their GitHub account.
+---
+
+Social logins are a must-have feature for modern applications. They provide a fast, trusted, and secure way for users to sign up and log in without creating a new set of credentials. [GitHub](https://github.com/) is a popular choice, especially for developer-focused tools.
+
+This guide will walk you through building the complete backend flow for "Sign in with GitHub" using [Dart Frog](https://dart-frog.dev/). You'll learn how to configure a GitHub OAuth App, handle the redirect flow, securely exchange an authorization code for an access token, and use that token to fetch a user's profile.
+
+<Info>
+  If you're new to the concepts behind OAuth, we recommend reading our
+  foundational tutorial, [What is OAuth 2.0?](/tutorials/what-is-oauth), before
+  you start.
+</Info>
+
+**15 min read**
+
+---
+
+### Features Covered
+
+- Configuring a GitHub OAuth App
+- Handling OAuth 2.0 redirects in Dart Frog
+- Securely loading secrets from a .env file using middleware
+- Using an access token to fetch user data from GitHub's API
+
+### Prerequisites
+
+- A **GitHub account**: Sign up or log in to [GitHub](https://github.com/).
+- **Dart Frog CLI Installed**: Install the Dart Frog CLI by running `dart pub global activate dart_frog_cli`.
+
+## Step 1: Configure Your GitHub OAuth App
+
+First, you need to register your application with GitHub to get your API credentials.
+
+1. Navigate to your GitHub **Developer settings** (Profile Picture > Settings > Developer settings).
+2. Click on **OAuth Apps**, then **New OAuth App**.
+3. Fill out the form:
+   - **Application name**: My Dart Frog App
+   - **Homepage URL**: `http://localhost:8080`
+   - **Authorization callback URL**: `http://localhost:8080/auth/callback`
+4. Click **Register application**.
+5. On the next screen, you'll see your **Client ID**. Click **Generate a new client secret**.
+6. **Copy both the Client ID and the new Client Secret**. Keep them safe.
+
+## Step 2: Create and Set Up Your Dart Frog Project
+
+Now, let's create our Dart Frog backend and add the necessary dependencies.
+
+- Create the project:
+
+  ```bash
+  dart_frog create github_auth_app
+  cd github_auth_app
+  ```
+
+- Open the newly created `github_auth_app` folder in your favorite code editor.
+- Add the dependencies for making API calls and loading environment variables:
+
+  ```bash
+  dart pub add http
+  dart pub add dotenv
+  ```
+
+## Step 3: Store and Load Your Secrets
+
+We will use a `.env` file for your secret credentials and a middleware to load them into your application's context.
+
+- In the root of your project, create a file named `.env`.
+- Add your GitHub credentials to this file:
+
+  ```env
+  GITHUB_CLIENT_ID=your_client_id_here
+  GITHUB_CLIENT_SECRET=your_client_secret_here
+  ```
+
+- **Important**: Add `.env` to your `.gitignore` file.
+- Next, create a root middleware to make these variables available to all routes. Create a file at `routes/middleware.dart`:
+
+  ```dart
+  import 'package:dart_frog/dart_frog.dart';
+  import 'package:dotenv/dotenv.dart';
+
+  // Create a single, top-level instance of DotEnv and load the file.
+  final _env = DotEnv(includePlatformEnvironment: true)..load();
+
+  Handler middleware(Handler handler) {
+    // Provide the DotEnv instance to all routes.
+    return handler.use(provider<DotEnv>((_) => _env));
+  }
+  ```
+
+## Step 4: Create the Redirect Endpoint
+
+This route will kick off the login process by redirecting the user to GitHub.
+
+- Create a new file at `routes/auth/github.dart`.
+- Add the following code, which correctly constructs the redirect response:
+
+  ```dart
+  import 'dart:io';
+  import 'package:dart_frog/dart_frog.dart';
+  import 'package:dotenv/dotenv.dart';
+
+  Response onRequest(RequestContext context) {
+    final env = context.read<DotEnv>();
+    final clientId = env['GITHUB_CLIENT_ID'];
+
+    final uri = Uri.https('github.com', '/login/oauth/authorize', {
+      'client_id': clientId,
+      'scope': 'read:user', // Request permission to read user profile data
+    });
+
+    // Construct the redirect response.
+    return Response(
+      statusCode: HttpStatus.found,
+      headers: {
+        HttpHeaders.locationHeader: uri.toString(),
+      },
+    );
+  }
+  ```
+
+## Step 5: Create the Callback Endpoint
+
+This is where GitHub redirects the user back after they approve your app. This route contains the core logic.
+
+- Create a new file at `routes/auth/callback.dart`.
+- Add the following code:
+
+  ```dart
+  import 'dart:convert';
+  import 'dart:io';
+  import 'package:dart_frog/dart_frog.dart';
+  import 'package:dotenv/dotenv.dart';
+  import 'package:http/http.dart' as http;
+
+  Future<Response> onRequest(RequestContext context) async {
+    final code = context.request.uri.queryParameters['code'];
+    if (code == null) {
+      return Response(statusCode: HttpStatus.badRequest, body: 'Missing code');
+    }
+
+    final env = context.read<DotEnv>();
+    final clientId = env['GITHUB_CLIENT_ID'];
+    final clientSecret = env['GITHUB_CLIENT_SECRET'];
+
+    // Exchange the code for an access token.
+    final tokenResponse = await http.post(
+      Uri.parse('https://github.com/login/oauth/access_token'),
+      headers: {'Accept': 'application/json'},
+      body: {'client_id': clientId, 'client_secret': clientSecret, 'code': code},
+    );
+
+    // Cast the decoded JSON to a Map for type safety.
+    final tokenJson = jsonDecode(tokenResponse.body) as Map<String, dynamic>;
+    final accessToken = tokenJson['access_token'] as String;
+
+    // Use the access token to get the user's profile.
+    final userResponse = await http.get(
+      Uri.parse('https://api.github.com/user'),
+      headers: {'Authorization': 'Bearer $accessToken'},
+    );
+
+    // Cast the decoded JSON for type safety.
+    final userJson = jsonDecode(userResponse.body) as Map<String, dynamic>;
+    final username = userJson['login'] as String;
+
+    return Response(
+      body: '<html><h1>Success!</h1><p>Logged in as $username.</p></html>',
+      headers: {'Content-Type': 'text/html'},
+    );
+  }
+  ```
+
+## Step 6: Test the Full Flow
+
+- Start the Dart Frog development server:
+  ```bash
+  dart_frog dev
+  ```
+- Open your web browser and navigate to: `http://localhost:8080/auth/github`
+- You will be redirected to GitHub to log in and authorize the application.
+- After authorizing, you will be redirected back to `http://localhost:8080/auth/callback` and see the "Success!" message with your GitHub username.
+
+## What's Next
+
+- **Implement Google Sign-In**: Apply the same OAuth 2.0 pattern by following our How to Implement Sign in with Google using Dart Frog guide.
+- **Create a Session**: Instead of just showing a success page, create a JWT for the user to manage a real session in your application.
+
+---
+
+<Info>
+  Couldn't find the guide you need? [Talk to us in
+  Discord](https://invertase.link/globe-discord)
+</Info>
