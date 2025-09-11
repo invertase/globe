@@ -22,14 +22,13 @@ class _RepositoryPageState extends State<RepositoryPage> {
   late TextEditingController urlController;
   late final isLoading = ValueNotifier(false);
 
-  late Future<Repository> repoFuture = widget.client
-      .getRepository(widget.repositoryId)
-      .then((repository) {
-        nameController = TextEditingController(text: repository.name);
-        urlController = TextEditingController(text: repository.url);
+  late Future<Repository> repoFuture =
+      widget.client.getRepository(widget.repositoryId).then((repository) {
+    nameController = TextEditingController(text: repository.name);
+    urlController = TextEditingController(text: repository.url);
 
-        return repository;
-      });
+    return repository;
+  });
 
   @override
   void dispose() {
