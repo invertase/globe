@@ -1,7 +1,7 @@
 ---
-name: Google OAuth Authentication
+name: Dart-Frog Google Auth
 description: Google OAuth 2.0 authentication implementation using Dart Frog
-tags: ["dart-frog", "oauth", "google", "authentication"]
+tags: ['dart-frog', 'oauth', 'google', 'authentication']
 username: Invertase
 ---
 
