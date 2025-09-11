@@ -1,0 +1,203 @@
+---
+title: Implement Sign in with Google using Dart Frog
+description: Learn to build a complete OAuth 2.0 flow, allowing users to sign in to your application securely with their Google account.
+---
+
+Social logins are a must-have feature for modern applications. They provide a fast, trusted, and secure way for users to sign up and log in without creating a new set of credentials. [Google](https://www.google.com/) is one of the most popular and trusted identity providers available.
+
+This guide will walk you through building the complete backend flow for "Sign in with Google" using [Dart Frog](https://dart-frog.dev/). You'll learn how to configure a Google Cloud project, handle the redirect flow, securely exchange an authorization code for an access token, and use that token to fetch a user's profile.
+
+<Info>
+  If you're new to the concepts behind OAuth, we recommend reading our
+  foundational tutorial, [What is OAuth 2.0?](/tutorials/what-is-oauth), before
+  you start.
+</Info>
+
+**20 min read**
+
+---
+
+### Features Covered
+
+- Configuring a Google Cloud OAuth 2.0 Client ID
+- Handling OAuth 2.0 redirects in Dart Frog
+- Securely loading secrets from a `.env` file using middleware
+- Using an access token to fetch user data from Google's API
+
+### Prerequisites
+
+- A **Google account**: Sign up or log in to [Google](https://accounts.google.com/).
+- **Dart Frog CLI Installed**: Install the Dart Frog CLI by running `dart pub global activate dart_frog_cli`.
+
+## Step 1: Configure Your Google Cloud Credentials
+
+First, you need to register your application with Google to get your API credentials.
+
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/) and create a new project.
+2. Navigate to **APIs & Services** > **Credentials**.
+3. Click **+ CREATE CREDENTIALS** and select **OAuth client ID**.
+4. If prompted, click **CONFIGURE CONSENT SCREEN**.
+   - Choose **External** and click **Create**.
+   - Fill in the required fields: **App name**, **User support email**, and **Developer contact information**. Click **SAVE AND CONTINUE** through the next steps.
+5. Go back to **APIs & Services** > **Credentials** and repeat step 3.
+6. Select **Web application** as the Application type.
+7. Under **Authorized redirect URIs**, click **+ ADD URI** and enter `http://localhost:8080/auth/callback`.
+8. Click **CREATE**.
+9. A pop-up will appear with your **Client ID** and **Client Secret**. **Copy both** and keep them safe.
+
+## Step 2: Create and Set Up Your Dart Frog Project
+
+Now, let's create our Dart Frog backend and add the necessary dependencies.
+
+- Create the project:
+
+  ```bash
+  dart_frog create google_auth_app
+  cd google_auth_app
+  ```
+
+- Open the newly created `google_auth_app` folder in your favorite code editor.
+- Add the dependencies for making API calls and loading environment variables:
+
+  ```bash
+  dart pub add http
+  dart pub add dotenv
+  ```
+
+## Step 3: Store and Load Your Secrets
+
+We will use a `.env` file for your secret credentials and a middleware to load them into your application's context.
+
+- In the root of your project, create a file named `.env`.
+- Add your Google credentials to this file:
+
+  ```env
+  GOOGLE_CLIENT_ID=your_client_id_here
+  GOOGLE_CLIENT_SECRET=your_client_secret_here
+  ```
+
+- **Important**: Add `.env` to your `.gitignore` file.
+- Next, create a root middleware to make these variables available to all routes. Create a file at `routes/middleware.dart`:
+
+  ```dart
+  import 'package:dart_frog/dart_frog.dart';
+  import 'package:dotenv/dotenv.dart';
+
+  // Create a single, top-level instance of DotEnv and load the file.
+  final _env = DotEnv(includePlatformEnvironment: true)..load();
+
+  Handler middleware(Handler handler) {
+    // Provide the DotEnv instance to all routes.
+    return handler.use(provider<DotEnv>((_) => _env));
+  }
+  ```
+
+## Step 4: Create the Redirect Endpoint
+
+This route will kick off the login process by redirecting the user to Google.
+
+- Create a new file at `routes/auth/google.dart`.
+- Add the following code, which correctly constructs the redirect response:
+
+  ```dart
+  import 'dart:io';
+  import 'package:dart_frog/dart_frog.dart';
+  import 'package:dotenv/dotenv.dart';
+
+  Response onRequest(RequestContext context) {
+    final env = context.read<DotEnv>();
+    final clientId = env['GOOGLE_CLIENT_ID'];
+
+    final uri = Uri.https('accounts.google.com', '/o/oauth2/v2/auth', {
+      'client_id': clientId,
+      'redirect_uri': 'http://localhost:8080/auth/callback',
+      'response_type': 'code',
+      'scope':
+          'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
+    });
+
+    return Response(
+      statusCode: HttpStatus.found,
+      headers: {
+        HttpHeaders.locationHeader: uri.toString(),
+      },
+    );
+  }
+  ```
+
+## Step 5: Create the Callback Endpoint
+
+This is where Google redirects the user back after they approve your app.
+
+- Create a new file at `routes/auth/callback.dart`.
+- Add the following code:
+
+  ```dart
+  import 'dart:convert';
+  import 'dart:io';
+  import 'package:dart_frog/dart_frog.dart';
+  import 'package:dotenv/dotenv.dart';
+  import 'package:http/http.dart' as http;
+
+  Future<Response> onRequest(RequestContext context) async {
+    final code = context.request.uri.queryParameters['code'];
+    if (code == null) {
+      return Response(statusCode: HttpStatus.badRequest, body: 'Missing code');
+    }
+
+    final env = context.read<DotEnv>();
+    final clientId = env['GOOGLE_CLIENT_ID'];
+    final clientSecret = env['GOOGLE_CLIENT_SECRET'];
+
+    // Exchange the code for an access token.
+    final tokenResponse = await http.post(
+      Uri.parse('https://oauth2.googleapis.com/token'),
+      body: {
+        'client_id': clientId,
+        'client_secret': clientSecret,
+        'code': code,
+        'grant_type': 'authorization_code',
+        'redirect_uri': 'http://localhost:8080/auth/callback',
+      },
+    );
+
+    final tokenJson = jsonDecode(tokenResponse.body) as Map<String, dynamic>;
+    final accessToken = tokenJson['access_token'] as String;
+
+    // Use the access token to get the user's profile.
+    final userResponse = await http.get(
+      Uri.parse('https://www.googleapis.com/oauth2/v1/userinfo?alt=json'),
+      headers: {'Authorization': 'Bearer $accessToken'},
+    );
+
+    final userJson = jsonDecode(userResponse.body) as Map<String, dynamic>;
+    final username = userJson['name'] as String;
+
+    return Response(
+      body: '<html><h1>Success!</h1><p>Logged in as $username.</p></html>',
+      headers: {'Content-Type': 'text/html'},
+    );
+  }
+  ```
+
+## Step 6: Test the Full Flow
+
+- Start the Dart Frog development server:
+  ```bash
+  dart_frog dev
+  ```
+- Open your web browser and navigate to: `http://localhost:8080/auth/google`
+- You will be redirected to Google to log in and authorize the application.
+- After authorizing, you will be redirected back to `http://localhost:8080/auth/callback` and see the "Success!" message with your Google username.
+
+## What's Next
+
+- **Implement GitHub Sign-In**: See the same pattern in action by following our [Implement Sign in with GitHub using Dart Frog](/guides/sign-in-with-google) guide
+- **Create a Session**: Instead of just showing a success page, create a JWT for the user to manage a real session in your application.
+
+---
+
+<Info>
+  Couldn't find the guide you need? [Talk to us in
+  Discord](https://invertase.link/globe-discord)
+</Info>
