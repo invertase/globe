@@ -306,6 +306,10 @@
         {
           "title": "Sign in with GitHub",
           "href": "/guides/sign-in-with-github"
+        },
+        {
+          "title": "Sign in with Google",
+          "href": "/guides/sign-in-with-google"
         }
       ]
     },
