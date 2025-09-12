@@ -302,6 +302,10 @@
         {
           "title": "Use Serinus for Backend",
           "href": "/guides/serinus-backend-globe"
+        },
+        {
+          "title": "Sign in with GitHub",
+          "href": "/guides/sign-in-with-github"
         }
       ]
     },
