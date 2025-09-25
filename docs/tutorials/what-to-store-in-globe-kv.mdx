@@ -3,7 +3,7 @@ title: What Can You Store in Globe KV?
 description: Discover the ideal use cases for Globe KV, from caching and feature flags to user settings, and learn when to choose it for your Dart and Flutter apps.
 ---
 
-<Image src="/assets/guides/globe-kv.png" />
+<Image src="/assets/tutorials/globe-kv.png" />
 
 When building an application, choosing the right tool for storing your data is a critical decision. While traditional databases are powerful, not all data needs that level of complexity. For frequently accessed data that needs to be available quickly and globally, a key-value store is often a better choice.
 
@@ -35,7 +35,7 @@ A **key-value store** solves this by providing a simple, extremely fast way to s
 
 Globe KV is a **globally distributed key-value store** designed for high-performance reads. This means data can be stored in an edge location close to your user, resulting in very low latency.
 
-![Globe KV Namespaces](/assets/guides/globe-kv-illustration.jpg)
+![Globe KV Namespaces](/assets/tutorials/globe-kv-illustration.jpg)
 
 Its primary trade-off is **eventual consistency**. When you write or update a value, it can take up to 60 seconds for that change to be visible across all edge locations globally. Understanding this trade-off is the key to using Globe KV effectively.
 
@@ -82,7 +82,7 @@ Let's look at the most common types of data you can store in Globe KV and why th
   You can group related keys by creating a Namespace in the dashboard, such as
   `feature_flags` for managing remote configuration
 </Info>
-![Globe KV Namespaces](/assets/guides/globe-kv-namespace.png)
+![Globe KV Namespaces](/assets/tutorials/globe-kv-namespace.png)
 
 #### Use Cases to Avoid (Requires Strong Consistency)
 

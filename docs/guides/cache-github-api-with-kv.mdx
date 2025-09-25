@@ -3,6 +3,8 @@ title: Build a GitHub Stats Cacher with Globe KV
 description: Learn how to cache slow API responses with Globe KV to improve your app's performance and reliability.
 ---
 
+<Image src="/assets/guides/github-stats-cacher.png" />
+
 When your application relies on third-party APIs, you often introduce external dependencies that can be slow or have rate limits. A way to mitigate this is by implementing a caching layer.
 
 This guide will walk you through building a simple Dart backend application that fetches repository statistics from the GitHub API. We will use **Globe KV** to cache these responses for five minutes, improving performance and reducing our reliance on the external API.
