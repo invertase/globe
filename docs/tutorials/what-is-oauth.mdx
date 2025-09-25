@@ -48,6 +48,8 @@ The OAuth flow involves four key participants. Let's imagine "MyCoolApp" wants t
 
 ### 3. The Authorization Code Flow (Step-by-Step)
 
+<Image src="/assets/tutorials/oauth-flow.png" />
+
 This is a carefully choreographed sequence of redirects that ensures security.
 
 1. **The Redirect to the Provider**: The user clicks "Sign in with Google." Your app immediately sends them to Google's login page, along with your app's public Client ID.
@@ -56,8 +58,6 @@ This is a carefully choreographed sequence of redirects that ensures security.
 4. **The Secure Backend Exchange**: Your backend server receives this code. It then sends a secure, direct request to Google that includes the authorization code and its Client Secret (a password that only your backend and Google know).
 5. **The Access Token is Granted**: Google verifies the code and the secret. If everything matches, it sends back an access token. This is the valet key.
 6. **The API Call**: Your backend can now use this access token to make requests to Google's Resource Server (the Contacts API) to fetch the user's data.
-
-<Image src="/assets/tutorials/oauth-flow.png" />
 
 ### 4. Key Takeaways
 
