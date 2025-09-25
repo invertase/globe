@@ -3,9 +3,7 @@ title: "What is CORS?"
 description: "A developer's guide to understanding and fixing Cross-Origin Resource Sharing errors."
 ---
 
-If you've ever worked with a web frontend and a backend API, you've almost certainly seen this infamous error in your browser console:
-
-`Access to fetch at 'https://api.example.com/data' from origin 'https://my-app.com' has been blocked by CORS policy...`
+If you've ever worked with a web frontend and a backend API, you've almost certainly seen this infamous error in your browser console: `Access to fetch at 'https://api.example.com/data' from origin 'https://my-app.com' has been blocked by CORS policy...`
 
 This error is caused by **CORS**, which stands for **Cross-Origin Resource Sharing**. It's not a bug in your code, but a crucial security feature built into all modern web browsers. Think of it as a **bouncer at a club** 👮. Before your frontend app (a guest) can get data from your API (the club), the bouncer (your browser) first checks if the guest is on the list.
 
@@ -59,7 +57,7 @@ A request is "simple" if it's a `GET` or `POST` request with standard headers.
 
 #### B. Preflight Requests (The Important One)
 
-For any "complex" request—like `PUT`, `DELETE`, `PATCH`, or requests with custom headers (like `Authorization`)—the browser adds an extra security step called a **preflight request**.
+For any "complex" request like `PUT`, `DELETE`, `PATCH`, or requests with custom headers (like `Authorization`), the browser adds an extra security step called a **preflight request**.
 
 It's like calling the club ahead of time to ask if you're on the guest list before you drive all the way there.
 
@@ -81,27 +79,27 @@ Here's how you would do it in a **Dart Frog** application using middleware.
 -   **Create a file:** `routes/_middleware.dart` in your Dart Frog project.
 -   **Add the CORS headers:** This middleware will intercept every request and add the necessary headers.
 
-```dart
-import 'package:dart_frog/dart_frog.dart';
+    ```dart
+    import 'package:dart_frog/dart_frog.dart';
 
-Handler middleware(Handler handler) {
-  return (context) async {
-    // Handle the request as usual.
-    final response = await handler(context);
+    Handler middleware(Handler handler) {
+      return (context) async {
+        // Handle the request as usual.
+        final response = await handler(context);
 
-    // Add CORS headers to the response.
-    return response.copyWith(
-      headers: {
-        // NOTE: You can replace `*` with your specific frontend origin
-        // for better security in production.
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-        'Access-Control-Allow-Headers': 'Origin, Content-Type, Authorization',
-      },
-    );
-  };
-}
-```
+        // Add CORS headers to the response.
+        return response.copyWith(
+          headers: {
+            // NOTE: You can replace `*` with your specific frontend origin
+            // for better security in production.
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Origin, Content-Type, Authorization',
+          },
+        );
+      };
+    }
+    ```
 
 This middleware tells the browser that requests from **any origin (`*`)** are allowed, and it specifies the permitted methods and headers, which will satisfy the preflight check.
 
