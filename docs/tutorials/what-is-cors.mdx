@@ -1,0 +1,116 @@
+---
+title: "What is CORS?"
+description: "A developer's guide to understanding and fixing Cross-Origin Resource Sharing errors."
+---
+
+If you've ever worked with a web frontend and a backend API, you've almost certainly seen this infamous error in your browser console: `Access to fetch at 'https://api.example.com/data' from origin 'https://my-app.com' has been blocked by CORS policy...`
+
+This error is caused by **CORS**, which stands for **Cross-Origin Resource Sharing**. It's not a bug in your code, but a crucial security feature built into all modern web browsers. Think of it as a **bouncer at a club**. Before your frontend app (a guest) can get data from your API (the club), the bouncer (your browser) first checks if the guest is on the list.
+
+This tutorial will explain why this bouncer exists, how it decides who's on the list, and how you, the developer, can properly configure the guest list.
+
+**10 min read**
+
+---
+
+## What You Will Learn:
+
+- The security problem that CORS solves (the Same-Origin Policy).
+- The difference between a "simple" and a "preflight" request.
+- How to fix CORS errors by configuring your backend server.
+
+## Prerequisites:
+
+- A basic understanding of web APIs and how applications use them.
+
+## Exploring CORS
+
+### 1. Why Does CORS Even Exist? (The Security Reason)
+
+To understand CORS, you first need to understand the browser's default security rule: the **Same-Origin Policy**.
+
+This policy states that a web page can only make requests to the **same origin** from which it was loaded. An "origin" is the combination of the **protocol** (http/https), **domain** (example.com), and **port** (8080).
+
+| URL                      | Same Origin as `https://globe.dev`? | Reason                              |
+| :----------------------- | :---------------------------------: | :---------------------------------- |
+| `https://globe.dev/docs` |               ✅ Yes                | Same protocol, domain, and port.    |
+| `http://globe.dev`       |                ❌ No                | Different protocol (http vs https). |
+| `https://docs.globe.dev` |                ❌ No                | Different domain (subdomain).       |
+| `https://globe.dev:8080` |                ❌ No                | Different port.                     |
+
+**Why is this the default?** Imagine you're logged into your banking site, `mybank.com`. In another tab, you open a malicious site, `evil.com`. Without the Same-Origin Policy, a script on `evil.com` could send a request to `mybank.com/transfer-money`. Your browser would attach your login cookies to that request, and the transfer could go through without you ever knowing.
+
+The Same-Origin Policy prevents this by default. **CORS** is the mechanism that allows a server to _safely relax_ this policy and give permission to specific, trusted origins.
+
+### 2. How CORS Works: The Two Request Types
+
+When your frontend at `https://my-app.com` tries to fetch data from your API at `https://api.example.com`, the browser steps in and handles the CORS check in one of two ways.
+
+#### A. Simple Requests
+
+A request is "simple" if it's a `GET` or `POST` request with standard headers.
+
+1.  **Request:** Your browser sends the `GET` request to the API but adds a special header: `Origin: https://my-app.com`.
+2.  **Server Check:** The API server looks at the `Origin` header. It checks its configuration to see if `https://my-app.com` is on its list of allowed origins.
+3.  **Response:** If the origin is allowed, the server processes the request and adds a special header to its response: `Access-Control-Allow-Origin: https://my-app.com`.
+4.  **Browser Check:** The browser sees this response header, confirms that the origin is allowed, and gives the data to your frontend code. If the header is missing or has the wrong origin, the browser blocks the response and shows the CORS error.
+
+#### B. Preflight Requests (The Important One)
+
+For any "complex" request like `PUT`, `DELETE`, `PATCH`, or requests with custom headers (like `Authorization`), the browser adds an extra security step called a **preflight request**.
+
+It's like calling a club ahead of time to ask if you're on the guest list before you drive all the way there.
+
+1.  **Preflight Request (`OPTIONS`):** Before sending the actual `DELETE` request, the browser first sends a lightweight `OPTIONS` request to the same URL. This request essentially asks: "Hey server, is it okay if `https://my-app.com` sends a `DELETE` request with an `Authorization` header?"
+2.  **Server Check:** The server looks at the `OPTIONS` request and checks its CORS configuration to see if that origin, method, and those headers are allowed.
+3.  **Preflight Response:** The server sends back an empty response with the permission headers, like:
+    - `Access-Control-Allow-Origin: https://my-app.com`
+    - `Access-Control-Allow-Methods: GET, POST, DELETE`
+    - `Access-Control-Allow-Headers: Authorization, Content-Type`
+4.  **Browser Check:** The browser inspects this preflight response. If the permissions match what the actual request needs, it proceeds. If not, it stops and throws the CORS error.
+5.  **Actual Request:** Only after the preflight check succeeds does the browser send the _actual_ `DELETE` request.
+
+### 3. How to Fix CORS Errors (The Solution)
+
+The most important thing to remember is that **CORS errors are fixed on the server, not the client.** You need to configure your backend API to send the correct CORS headers.
+
+Here's how you would do it in a **Dart Frog** application using middleware.
+
+- **Create a file:** `routes/_middleware.dart` in your Dart Frog project.
+- **Add the CORS headers:** This middleware will intercept every request and add the necessary headers.
+
+  ```dart
+  import 'package:dart_frog/dart_frog.dart';
+
+  Handler middleware(Handler handler) {
+    return (context) async {
+      // Handle the request as usual.
+      final response = await handler(context);
+
+      // Add CORS headers to the response.
+      return response.copyWith(
+        headers: {
+          // NOTE: You can replace `*` with your specific frontend origin
+          // for better security in production.
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+          'Access-Control-Allow-Headers': 'Origin, Content-Type, Authorization',
+        },
+      );
+    };
+  }
+  ```
+
+This middleware tells the browser that requests from **any origin (`*`)** are allowed, and it specifies the permitted methods and headers, which will satisfy the preflight check.
+
+## What next:
+
+- **Learn about Credentials**: For applications that use cookies, you'll need to explore the `Access-Control-Allow-Credentials` header.
+- **Read the Docs**: The [MDN Web Docs on CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS) are the definitive source for a deep dive.
+
+---
+
+<Info>
+  Didn’t find what you were looking for? [Talk to us on
+  Discord](https://invertase.link/globe-discord)
+</Info>

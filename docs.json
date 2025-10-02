@@ -58,8 +58,14 @@
       "group": "Getting Started",
       "tab": "root",
       "pages": [
-        { "title": "Overview", "href": "/" },
-        { "title": "Getting Started", "href": "/getting-started" },
+        {
+          "title": "Overview",
+          "href": "/"
+        },
+        {
+          "title": "Getting Started",
+          "href": "/getting-started"
+        },
         {
           "group": "Environment Setup",
           "pages": [
@@ -73,14 +79,20 @@
             }
           ]
         },
-        { "title": "Quickstart", "href": "/getting-started/quickstart" }
+        {
+          "title": "Quickstart",
+          "href": "/getting-started/quickstart"
+        }
       ]
     },
     {
       "group": "Core Concepts",
       "tab": "root",
       "pages": [
-        { "title": "Deployments", "href": "/core-concepts/deployments" },
+        {
+          "title": "Deployments",
+          "href": "/core-concepts/deployments"
+        },
         {
           "group": "Observability",
           "pages": [
@@ -94,19 +106,34 @@
             }
           ]
         },
-        { "title": "Build Settings", "href": "/core-concepts/build-settings" },
+        {
+          "title": "Build Settings",
+          "href": "/core-concepts/build-settings"
+        },
         {
           "title": "Environment Variables",
           "href": "/core-concepts/environment-variables"
         },
-        { "title": "Domains", "href": "/core-concepts/domains" },
+        {
+          "title": "Domains",
+          "href": "/core-concepts/domains"
+        },
         {
           "title": "GitHub Integration",
           "href": "/core-concepts/github-integration"
         },
-        { "title": "Static Assets", "href": "/core-concepts/static-assets" },
-        { "title": "Cron Jobs", "href": "/core-concepts/cron-jobs" },
-        { "title": "Globe.yaml", "href": "/core-concepts/globe-yaml" },
+        {
+          "title": "Static Assets",
+          "href": "/core-concepts/static-assets"
+        },
+        {
+          "title": "Cron Jobs",
+          "href": "/core-concepts/cron-jobs"
+        },
+        {
+          "title": "Globe.yaml",
+          "href": "/core-concepts/globe-yaml"
+        },
         {
           "group": "Globe CLI",
           "pages": [
@@ -150,19 +177,40 @@
       "group": "Frameworks",
       "tab": "root",
       "pages": [
-        { "title": "Overview", "href": "/frameworks" },
-        { "title": "Dart Shelf", "href": "/frameworks/shelf-server" },
-        { "title": "Dart Frog", "href": "/frameworks/dart-frog" },
-        { "title": "Flutter Web", "href": "/frameworks/flutter-web" },
-        { "title": "Jaspr", "href": "/frameworks/jaspr" }
+        {
+          "title": "Overview",
+          "href": "/frameworks"
+        },
+        {
+          "title": "Dart Shelf",
+          "href": "/frameworks/shelf-server"
+        },
+        {
+          "title": "Dart Frog",
+          "href": "/frameworks/dart-frog"
+        },
+        {
+          "title": "Flutter Web",
+          "href": "/frameworks/flutter-web"
+        },
+        {
+          "title": "Jaspr",
+          "href": "/frameworks/jaspr"
+        }
       ]
     },
     {
       "group": "Products",
       "tab": "root",
       "pages": [
-        { "title": "Globe KV", "href": "/products" },
-        { "title": "Globe AI", "href": "/products/ai" },
+        {
+          "title": "Globe KV",
+          "href": "/products"
+        },
+        {
+          "title": "Globe AI",
+          "href": "/products/ai"
+        },
         {
           "group": "Globe DB",
           "pages": [
@@ -328,6 +376,10 @@
         {
           "title": "What is OAuth 2.0",
           "href": "/tutorials/what-is-oauth"
+        },
+        {
+          "title": "What is CORS",
+          "href": "/tutorials/what-is-cors"
         }
       ]
     },
@@ -335,28 +387,85 @@
       "group": "Release Notes",
       "tab": "releases",
       "pages": [
-        { "title": "Releases", "href": "/releases" },
-        { "title": "Known Bugs", "href": "/releases/known-bugs" },
+        {
+          "title": "Releases",
+          "href": "/releases"
+        },
+        {
+          "title": "Known Bugs",
+          "href": "/releases/known-bugs"
+        },
         {
           "group": "Version History",
           "pages": [
-            { "title": "0.19.0 (Aug 25)", "href": "/releases/v/0.19.0" },
-            { "title": "0.18.0 (Jul 25)", "href": "/releases/v/0.18.0" },
-            { "title": "0.17.0 (Jun 25)", "href": "/releases/v/0.17.0" },
-            { "title": "0.16.0 (May 25)", "href": "/releases/v/0.16.0" },
-            { "title": "0.15.0 (Apr 25)", "href": "/releases/v/0.15.0" },
-            { "title": "0.14.0 (Mar 25)", "href": "/releases/v/0.14.0" },
-            { "title": "0.13.0 (Feb 25)", "href": "/releases/v/0.13.0" },
-            { "title": "0.12.0 (Jan 25)", "href": "/releases/v/0.12.0" },
-            { "title": "0.11.0 (Dec 24)", "href": "/releases/v/0.11.0" },
-            { "title": "0.10.0 (Nov 24)", "href": "/releases/v/0.10.0" },
-            { "title": "0.9.0 (Oct 24)", "href": "/releases/v/0.9.0" },
-            { "title": "0.8.0 (Sep 24)", "href": "/releases/v/0.8.0" },
-            { "title": "0.7.0 (Aug 24)", "href": "/releases/v/0.7.0" },
-            { "title": "0.6.0 (Jul 24)", "href": "/releases/v/0.6.0" },
-            { "title": "0.5.0 (Jun 24)", "href": "/releases/v/0.5.0" },
-            { "title": "0.4.0 (May 24)", "href": "/releases/v/0.4.0" },
-            { "title": "0.3.0 (Apr 24)", "href": "/releases/v/0.3.0" }
+            {
+              "title": "0.19.0 (Aug 25)",
+              "href": "/releases/v/0.19.0"
+            },
+            {
+              "title": "0.18.0 (Jul 25)",
+              "href": "/releases/v/0.18.0"
+            },
+            {
+              "title": "0.17.0 (Jun 25)",
+              "href": "/releases/v/0.17.0"
+            },
+            {
+              "title": "0.16.0 (May 25)",
+              "href": "/releases/v/0.16.0"
+            },
+            {
+              "title": "0.15.0 (Apr 25)",
+              "href": "/releases/v/0.15.0"
+            },
+            {
+              "title": "0.14.0 (Mar 25)",
+              "href": "/releases/v/0.14.0"
+            },
+            {
+              "title": "0.13.0 (Feb 25)",
+              "href": "/releases/v/0.13.0"
+            },
+            {
+              "title": "0.12.0 (Jan 25)",
+              "href": "/releases/v/0.12.0"
+            },
+            {
+              "title": "0.11.0 (Dec 24)",
+              "href": "/releases/v/0.11.0"
+            },
+            {
+              "title": "0.10.0 (Nov 24)",
+              "href": "/releases/v/0.10.0"
+            },
+            {
+              "title": "0.9.0 (Oct 24)",
+              "href": "/releases/v/0.9.0"
+            },
+            {
+              "title": "0.8.0 (Sep 24)",
+              "href": "/releases/v/0.8.0"
+            },
+            {
+              "title": "0.7.0 (Aug 24)",
+              "href": "/releases/v/0.7.0"
+            },
+            {
+              "title": "0.6.0 (Jul 24)",
+              "href": "/releases/v/0.6.0"
+            },
+            {
+              "title": "0.5.0 (Jun 24)",
+              "href": "/releases/v/0.5.0"
+            },
+            {
+              "title": "0.4.0 (May 24)",
+              "href": "/releases/v/0.4.0"
+            },
+            {
+              "title": "0.3.0 (Apr 24)",
+              "href": "/releases/v/0.3.0"
+            }
           ]
         }
       ]
@@ -365,7 +474,10 @@
       "group": "Roadmap & Feedback",
       "tab": "releases",
       "pages": [
-        { "title": "Overview", "href": "/releases/roadmap-and-feedback" }
+        {
+          "title": "Overview",
+          "href": "/releases/roadmap-and-feedback"
+        }
       ]
     },
     {
@@ -376,7 +488,10 @@
           "title": "Terms of Service",
           "href": "/terms-privacy/terms-of-service"
         },
-        { "title": "Privacy Policy", "href": "/terms-privacy/privacy-policy" }
+        {
+          "title": "Privacy Policy",
+          "href": "/terms-privacy/privacy-policy"
+        }
       ]
     }
   ],
