@@ -1,0 +1,276 @@
+---
+title: Build a Notes CRUD API with Globe Database and Dart Frog
+description: Deploy a Dart backend with a serverless SQLite database in under 10 minutes using Dart Frog and Drift.
+---
+
+Using this guide, you’ll build and deploy a CRUD API using Globe’s serverless SQLite database, Dart Frog, and Drift. It covers database setup, schema definition, endpoints creation, and deployment to Globe’s global network.
+
+**10 min read**
+
+---
+
+### Features Covered
+
+- Creating a new Globe Database instance from the dashboard
+- Defining a database schema with Drift
+- Building a full CRUD API with Dart Frog.
+- Testing the API locally and live with `curl`
+- Deploying a data-driven app to Globe.
+
+### Prerequisites
+
+- **Dart SDK Installed**: If you have Flutter installed, the Dart SDK is already included. If not, [Install Dart](https://dart.dev/get-dart).
+- **Globe Account**: You'll need an account to deploy projects. [Sign up or log in to Globe](https://globe.dev/login).
+- **Globe CLI Installed and Authenticated**: Install the CLI by running `dart pub global activate globe_cli` and log in using `globe login`.
+
+## Step 1: Create Your Globe Database
+
+First, create the database on the Globe dashboard.
+
+- Navigate to the [Globe dashboard](https://globe.dev/login)
+- Go to the **Databases** tab and click **Create Database**
+- Select a location, click **Create**, and a name will be automatically assigned
+- Copy the **auto-generated database name** (e.g., `gold-butterfly-1234`)
+
+## Step 2: Set Up the Dart Frog Project
+
+Create a new Dart Frog project and add the necessary Drift and SQLite dependencies.
+
+- In your terminal, run the following commands:
+
+  ```bash
+  dart_frog create my_notes_api
+  cd my_notes_api
+  dart pub add drift sqlite3
+  dart pub add --dev drift_dev build_runner
+  ```
+
+- Now, open the newly created `my_notes_api` folder in your favorite code editor.
+
+## Step 3: Define the Database and Tables
+
+Create a new file at `lib/database.dart` to define your schema with Drift. **Remember to replace** `your-db-name` with the name of the database you copied in Step 1.
+
+```dart
+import 'package:drift/drift.dart';
+import 'package:drift/native.dart';
+import 'package:sqlite3/sqlite3.dart';
+part 'database.g.dart';
+
+// Defines the 'notes' table.
+class Notes extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get title => text()();
+  TextColumn get content => text()();
+}
+
+@DriftDatabase(tables: [Notes])
+class AppDatabase extends _$AppDatabase {
+  AppDatabase() : super(_openConnection());
+
+  @override
+  int get schemaVersion => 1;
+
+  static QueryExecutor _openConnection() {
+    // Before deployment, replace this name with the Globe live database.
+    return NativeDatabase.opened(sqlite3.open('your-db-name.db'));
+  }
+}
+```
+
+<Info>
+  Analyzer errors will be present in `database.dart` until the necessary helper
+  code is generated in the next step.
+</Info>
+
+## Step 4: Generate the Drift Code
+
+Run the `build_runner` to generate the `database.g.dart` file.
+
+```bash
+dart run build_runner build --delete-conflicting-outputs
+```
+
+## Step 5: Write the API Logic
+
+We will create the route files to handle all CRUD operations for our "notes" table.
+
+### A. Provide the Database and Handle `GET` / `POST`
+
+This route will provide the database to all routes below it, handle `GET` requests to fetch all notes, and `POST` requests to create a new one.
+
+- Create a new file at `routes/notes/_middleware.dart` and add the following:
+
+  ```dart
+  import 'package:dart_frog/dart_frog.dart';
+  import '../../lib/database.dart';
+
+  final _db = AppDatabase();
+
+  Handler middleware(Handler handler) {
+    return handler.use(provider<AppDatabase>((_) => _db));
+  }
+  ```
+
+- Create a file at `routes/notes/index.dart` and add this code:
+
+  ```dart
+  import 'dart:io';
+  import 'package:dart_frog/dart_frog.dart';
+  import '../../lib/database.dart';
+
+  Future<Response> onRequest(RequestContext context) {
+    return switch (context.request.method) {
+      HttpMethod.get => _getNotes(context),
+      HttpMethod.post => _createNote(context),
+      _ => Future.value(Response(statusCode: HttpStatus.methodNotAllowed)),
+    };
+  }
+
+  Future<Response> _getNotes(RequestContext context) async {
+    final db = context.read<AppDatabase>();
+    final allNotes = await db.select(db.notes).get();
+    return Response.json(
+      body: allNotes.map((note) => note.toJson()).toList(),
+    );
+  }
+
+  Future<Response> _createNote(RequestContext context) async {
+    final db = context.read<AppDatabase>();
+    final body = await context.request.json() as Map<String, dynamic>;
+    final newNote = await db.into(db.notes).insertReturning(
+          NotesCompanion.insert(
+            title: body['title'] as String,
+            content: body['content'] as String,
+          ),
+        );
+
+    return Response.json(
+      statusCode: HttpStatus.created,
+      body: newNote.toJson(),
+    );
+  }
+  ```
+
+### B. Handle `GET` (one), `PATCH`, and `DELETE`
+
+This dynamic route handles operations for a specific note.
+
+- Create a file at `routes/notes/[id].dart` and add this code:
+
+  ```dart
+  import 'dart:io';
+  import 'package:dart_frog/dart_frog.dart';
+  import 'package:drift/drift.dart';
+  import '../../lib/database.dart';
+
+  Future<Response> onRequest(RequestContext context, String id) {
+    return switch (context.request.method) {
+      HttpMethod.get => _getNoteById(context, id),
+      HttpMethod.patch => _updateNote(context, id),
+      HttpMethod.delete => _deleteNote(context, id),
+      _ => Future.value(Response(statusCode: HttpStatus.methodNotAllowed)),
+    };
+  }
+
+  Future<Response> _getNoteById(RequestContext context, String id) async {
+    final db = context.read<AppDatabase>();
+    final noteId = int.parse(id);
+    final note = await (db.select(db.notes)..where((t) => t.id.equals(noteId)))
+        .getSingleOrNull();
+    return note == null
+        ? Response(statusCode: HttpStatus.notFound)
+        : Response.json(body: note.toJson());
+  }
+
+  Future<Response> _updateNote(RequestContext context, String id) async {
+    final db = context.read<AppDatabase>();
+    final noteId = int.parse(id);
+    final body = await context.request.json() as Map<String, dynamic>;
+    final success =
+        await (db.update(db.notes)..where((t) => t.id.equals(noteId))).write(
+      NotesCompanion(
+        content: Value(body['content'] as String),
+      ),
+    );
+    return success > 0
+        ? Response(statusCode: HttpStatus.noContent)
+        : Response(statusCode: HttpStatus.notFound);
+  }
+
+  Future<Response> _deleteNote(RequestContext context, String id) async {
+    final db = context.read<AppDatabase>();
+    final noteId = int.parse(id);
+    final success =
+        await (db.delete(db.notes)..where((t) => t.id.equals(noteId))).go();
+    return success > 0
+        ? Response(statusCode: HttpStatus.noContent)
+        : Response(statusCode: HttpStatus.notFound);
+  }
+  ```
+
+## Step 6: Test Your API Locally
+
+Run your server to ensure all endpoints work.
+
+- Start the development server:
+
+  ```bash
+  dart_frog dev --port 8080
+  ```
+
+- In a **new terminal window**, use `curl` to test.
+
+  - **Create a note**:
+
+    ```bash
+    curl -X POST -H "Content-Type: application/json" \
+      -d '{"title": "My First Note", "content": "Hello Globe DB!"}' \
+      http://localhost:8080/notes
+    ```
+
+  - **List all notes**:
+
+    ```bash
+    curl http://localhost:8080/notes
+    ```
+
+## Step 7: Deploy to Globe
+
+Deploy the API to the Globe platform.
+
+```bash
+globe deploy
+```
+
+The Globe CLI will guide you through linking the project and will automatically connect your database. Once complete, you will receive a unique URL for your live API.
+
+## Step 8: Test the Live API
+
+After deployment, test the live API endpoints using `curl` and your new URL.
+
+- **Create a note on your live API**:
+
+  ```bash
+  curl -X POST https://<YOUR_LIVE_URL>/notes \
+    -H "Content-Type: application/json" \
+    -d '{"title": "Live Note", "content": "This is on Globe!"}'
+  ```
+
+- **Get the list of live notes**:
+
+  ```bash
+  curl https://<YOUR_LIVE_URL>/notes
+  ```
+
+## What's Next
+
+- **Explore a Full-Stack Example**: See Globe DB in a more advanced, real-world application by checking out [Recall](https://github.com/invertase/recall), a complete note-taking PWA we built to showcase its capabilities.
+- We want your feedback! Globe DB is in Beta, and your experience is crucial. Please share your thoughts and questions with us on [Discord](https://invertase.link/globe-discord).
+
+---
+
+<Info>
+  Couldn't find the guide you need? [Talk to us in
+  Discord](https://invertase.link/globe-discord)
+</Info>
