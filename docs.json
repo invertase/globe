@@ -358,6 +358,10 @@
         {
           "title": "Sign in with Google",
           "href": "/guides/sign-in-with-google"
+        },
+        {
+          "title": "Build Notes API with Globe DB",
+          "href": "/guides/build-notes-app"
         }
       ]
     },
