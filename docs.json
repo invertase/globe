@@ -292,6 +292,20 @@
       ]
     },
     {
+      "group": "Troubleshooting",
+      "tab": "root",
+      "pages": [
+        {
+          "title": "Overview",
+          "href": "/troubleshooting"
+        },
+        {
+          "title": "Project Size Limit (413)",
+          "href": "/troubleshooting/error-413"
+        }
+      ]
+    },
+    {
       "group": "Project Management",
       "tab": "guides",
       "pages": [
