@@ -292,7 +292,7 @@
       ]
     },
     {
-      "group": "Guides",
+      "group": "Project Management",
       "tab": "guides",
       "pages": [
         {
@@ -300,37 +300,37 @@
           "href": "/guides"
         },
         {
-          "title": "Deploy a Dart Frog App",
-          "href": "/guides/dart-frog-deployment"
-        },
-        {
-          "title": "Connect a Flutter App to Backend",
-          "href": "/guides/connect-flutter-app"
-        },
-        {
-          "title": "Set up CI/CD with GitHub Integration",
-          "href": "/guides/github-integration"
-        },
-        {
           "title": "Add a Custom Domain",
           "href": "/guides/add-custom-domain"
-        },
+        }
+      ]
+    },
+    {
+      "group": "Deployment & Frameworks",
+      "tab": "guides",
+      "pages": [
         {
-          "title": "Use an External Service",
-          "href": "/guides/use-external-service"
+          "title": "Deploy a Dart Frog App",
+          "href": "/guides/dart-frog-deployment"
         },
         {
           "title": "Deploy a Jaspr App",
           "href": "/guides/jaspr-globe-deployment"
         },
         {
-          "title": "Use Shelf for Backend",
-          "href": "/guides/shelf-backend-globe"
+          "title": "Use Serinus for Backend",
+          "href": "/guides/serinus-backend-globe"
         },
         {
-          "title": "Schedule Cron Jobs on Globe",
-          "href": "/guides/globe-cron-jobs"
-        },
+          "title": "Use Shelf for Backend",
+          "href": "/guides/shelf-backend-globe"
+        }
+      ]
+    },
+    {
+      "group": "Authentication & Security",
+      "tab": "guides",
+      "pages": [
         {
           "title": "Secure Dart APIs",
           "href": "/guides/secure-dart-apis"
@@ -340,28 +340,58 @@
           "href": "/guides/auth-email-verification"
         },
         {
-          "title": "Cache GitHub API with Globe KV",
-          "href": "/guides/cache-github-api-with-kv"
-        },
-        {
-          "title": "Build Snippet App with Globe KV",
-          "href": "/guides/build-snippet-app"
-        },
-        {
-          "title": "Use Serinus for Backend",
-          "href": "/guides/serinus-backend-globe"
-        },
-        {
           "title": "Sign in with GitHub",
           "href": "/guides/sign-in-with-github"
         },
         {
           "title": "Sign in with Google",
           "href": "/guides/sign-in-with-google"
+        }
+      ]
+    },
+    {
+      "group": "Full-Stack Development",
+      "tab": "guides",
+      "pages": [
+        {
+          "title": "Connect a Flutter App to Backend",
+          "href": "/guides/connect-flutter-app"
         },
         {
           "title": "Build Notes API with Globe DB",
           "href": "/guides/build-notes-app"
+        },
+        {
+          "title": "Build Snippet App with Globe KV",
+          "href": "/guides/build-snippet-app"
+        },
+        {
+          "title": "Cache GitHub API with Globe KV",
+          "href": "/guides/cache-github-api-with-kv"
+        }
+      ]
+    },
+    {
+      "group": "CI/CD & Automation",
+      "tab": "guides",
+      "pages": [
+        {
+          "title": "Set up CI/CD with GitHub Integration",
+          "href": "/guides/github-integration"
+        },
+        {
+          "title": "Schedule Cron Jobs on Globe",
+          "href": "/guides/globe-cron-jobs"
+        }
+      ]
+    },
+    {
+      "group": "Integrations",
+      "tab": "guides",
+      "pages": [
+        {
+          "title": "Use an External Service",
+          "href": "/guides/use-external-service"
         }
       ]
     },
