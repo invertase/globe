@@ -1,0 +1,76 @@
+---
+title: "Deployment Fails Due to Project Size"
+description: "Learn how to fix the '413 Request Entity Too Large' error when deploying a project that is over the 100 MB limit."
+---
+
+If your `globe deploy` command fails with a **413 Request Entity Too Large** error, it means your project folder has exceeded Cloudflare's 100 MB upload limit. This page will walk you through how to fix it.
+
+## Symptoms
+
+When you run `globe deploy`, the process fails during the file upload step. You might see an error in your terminal, and the build logs on your Globe dashboard will show a **`413 Request Entity Too Large`** status code.
+
+## Cause
+
+This error occurs because the total size of your project directory exceeds **Cloudflare's 100 MB upload limit**. Globe is built on Cloudflare's infrastructure, which enforces this limit. When your project is too large, the request is blocked before a deployment can be created.
+
+## Solution
+
+To resolve this, you need to reduce the size of your project folder by telling Globe which files and directories to ignore during deployment.
+
+### Option 1: Deploy from the Project's Directory
+
+The most common cause of this error is running the `globe deploy` command from the wrong directory. You should run the command from the root of the specific project you intend to deploy.
+
+For example, if your project is located at `~/dev/my_app`, you should navigate to that directory first:
+
+```bash
+# Navigate to your project's root folder
+cd ~/dev/my_app
+
+# Run the deploy command from here
+globe deploy
+```
+
+This ensures only the files inside `my_app` are included in the upload.
+
+### Option 2: Exclude Unnecessary Files
+
+If your project directory itself is over 100 MB, you need to exclude unnecessary files from the deployment bundle.
+
+#### 1. Identify Large Files and Directories
+
+First, find out what's taking up the most space. You can use your terminal to list the largest files and directories.
+
+```bash
+# Run this command in your project's root directory
+du -sh * | sort -rh
+```
+
+Common culprits in a Dart or Flutter project include:
+
+- **Build artifacts**: `build/`, `.dart_tool/`, `.packages`
+- **Platform-specific build folders**: `ios/`, `android/`, `linux/`, `windows/`, `macos/` (if you're not deploying for these platforms).
+- **Large assets**: High-resolution images, videos, or other media.
+- **Local databases or caches**.
+
+#### 2. Exclude Files Using .gitignore
+
+Once you've identified the large files and directories, you can exclude them by adding them to your project's `.gitignore` file. The Globe CLI automatically respects these rules and will not include matching files in the deployment.
+
+**Example .gitignore entries**:
+
+```.gitignore
+# Large assets not needed in production
+/public/videos/
+/data/large_dataset.csv
+
+# Local build artifacts
+.dart_tool/
+build/
+dist/
+
+# Local dependencies
+node_modules/
+```
+
+By adding these patterns to your `.gitignore` file, you can significantly reduce the final upload size and resolve the error.
