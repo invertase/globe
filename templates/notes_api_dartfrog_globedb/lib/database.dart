@@ -22,5 +22,3 @@ class AppDatabase extends _$AppDatabase {
     return NativeDatabase.opened(sqlite3.open('your-db-name.db'));
   }
 }
-
-
