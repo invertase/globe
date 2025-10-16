@@ -328,6 +328,10 @@
           "href": "/guides/dart-frog-deployment"
         },
         {
+          "title": "How to Test Dart Frog Routes",
+          "href": "/guides/test-dart-frog-backend"
+        },
+        {
           "title": "Deploy a Jaspr App",
           "href": "/guides/jaspr-globe-deployment"
         },
