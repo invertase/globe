@@ -1,0 +1,134 @@
+---
+title: What is a JWT?
+description: A comprehensive guide to understanding how JSON Web Tokens are structured, signed, and used to secure modern APIs.
+---
+
+After a user signs in, how does your backend know who they are on every subsequent request? For modern applications, the most common answer is the **JSON Web Token**, or **JWT**.
+
+Think of a JWT as a **secure digital passport**. When a user logs in, your server issues them a passport. For every future request, they show this passport to prove their identity and permissions. Because the passport is digitally signed by the server, it can be instantly trusted without the server needing to look up session data in a database every single time.
+
+This tutorial will break down the structure of a JWT, explain the stateless authentication workflow it enables, and cover the benefits and best practices you need to know to use them effectively.
+
+**10 min read**
+
+---
+
+## What You Will Learn:
+
+- The problem JWTs solve (stateless authentication)
+- The three-part structure of every JWT: Header, Payload, and Signature
+- How a JWT is securely created, signed, and verified
+- The benefits and common challenges of using JWTs
+
+## Prerequisites:
+
+- A basic understanding of APIs and how applications use them.
+
+## Exploring JWT
+
+### 1. What is a JWT and Why Use It?
+
+A JWT is a compact, URL-safe string of text, divided into three parts by periods (`.`), that securely transmits information between parties as a JSON object.
+
+```
+header.payload.signature
+```
+
+Its primary use case is **stateless authentication**. In traditional session-based authentication, the server has to store information about every logged-in user. If you have thousands of users, this can become a bottleneck.
+
+With JWTs, the server doesn't need to store anything. All the necessary information about the user (like their ID and permissions) is contained within the token itself. This makes your application much more scalable and efficient, especially in microservice or serverless architectures.
+
+### 2. The Structure of a JWT
+
+A JWT consists of three Base64-encoded parts. Let's decode each one.
+
+#### A. The Header (The "Rules")
+
+The first part declares the token type and, most importantly, the signing algorithm used to ensure the token's integrity.
+
+- **alg**: The signing algorithm (e.g., `HS256`, which stands for HMAC-SHA256).
+- **typ**: The type of the token, which is always `"JWT"`.
+
+**Decoded Header Example:**
+
+```json
+{
+  "alg": "HS256",
+  "typ": "JWT"
+}
+```
+
+#### B. The Payload (The "Claims")
+
+The second part contains the "claims," which are statements about an entity (typically the user). This is the data you are securely transmitting. Claims can be categorized into three types:
+
+- **Registered Claims**: These are a set of standard, recommended claims to ensure interoperability.
+  - **sub** (Subject): The ID of the user. (Often the most important claim).
+  - **exp** (Expiration Time): A numeric timestamp after which the token is no longer valid.
+  - **iat** (Issued At): The timestamp when the token was created.
+
+- **Private Claims**: These are custom claims you create to share information specific to your application. This is where you'd put application-specific data.
+  - `role: 'admin'`
+  - `username: 'Ada'`
+  - `premium_access: true`
+
+**Decoded Payload Example:**
+
+```json
+{
+  "sub": "user-123",
+  "name": "Ada Lovelace",
+  "role": "admin",
+  "iat": 1516239022,
+  "exp": 1516242622
+}
+```
+
+<Info>
+The payload is only Base64 encoded, **not encrypted**. Anyone can decode it. **Never put sensitive information like passwords in the payload**.
+</Info>
+
+#### C. The Signature (The "Tamper-Proof Seal")
+
+This is the most critical part for security. The signature is created by taking the encoded header, the encoded payload, a secret key known only to your server, and signing them with the algorithm specified in the header.
+
+```
+HMACSHA256(base64UrlEncode(header) + "." + base64UrlEncode(payload), secret)
+```
+
+This signature ensures the token is authentic and hasn't been tampered with. If a user tries to change any part of the payload (like changing their role to `"admin"`), the signature will no longer match when the server re-calculates it, and the server will immediately reject the token as invalid.
+
+### 3. How Does It Work in Practice?
+
+The authentication flow is a straightforward, stateless process:
+
+1. **User Logs In**: The user sends their username and password to your server.
+2. **Server Creates & Signs JWT**: The server verifies the credentials. If correct, it creates a JWT containing the user's ID (`sub`) and other claims, signs it with its **secret key**, and sends the JWT back to the client.
+3. **Client Stores JWT**: The client (e.g., a Flutter app) stores this JWT securely (for example, in `flutter_secure_storage`).
+4. **Client Sends JWT with Requests**: On every subsequent request to a protected API endpoint, the client includes the JWT in the `Authorization` header, prefixed with `Bearer`.
+   ```
+   Authorization: Bearer <your_jwt_here>
+   ```
+5. **Server Verifies JWT**: For each incoming request, the server's middleware performs these checks:
+   - Does the `Authorization` header contain a JWT?
+   - Is the JWT's signature valid (re-calculated using the server's secret key)?
+   - Has the JWT expired (by checking the `exp` claim)? If all checks pass, the server trusts the information in the payload and processes the request for that user.
+
+### 4. Benefits and Best Practices
+
+- **Benefit: Scalability.** Because JWTs are stateless, you don't need a central session store. This makes it easy to scale your backend across multiple servers.
+- **Benefit: Decoupling.** A token can be issued by one service and verified by a completely different one, as long as they share the secret key. This is great for microservices.
+- **Best Practice: Use HTTPS.** Always transmit JWTs over a secure HTTPS connection to prevent them from being intercepted.
+- **Best Practice: Keep Secrets Safe.** Your signing secret should be a long, complex, randomly generated string stored securely as an environment variable on your server.
+- **Best Practice: Set Expiration Times.** All tokens should have an `exp` claim with a reasonably short lifetime (e.g., 15 minutes to 1 hour) to limit the damage if a token is compromised.
+
+## What next:
+
+- **Build a Secure API**: Learn how to implement a complete authentication flow with JWTs in our guide: [How to Secure a Dart API with JWT](/guides/secure-dart-apis).
+- **Explore Libraries**: Check out popular Dart packages like `dart_jsonwebtoken` for creating and verifying JWTs on your server.
+
+---
+
+<Info>
+  Didn't find what you were looking for? [Talk to us on Discord](https://invertase.link/globe-discord)
+</Info>

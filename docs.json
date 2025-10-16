@@ -428,6 +428,10 @@
         {
           "title": "What is CORS",
           "href": "/tutorials/what-is-cors"
+        },
+        {
+          "title": "What is a JWT",
+          "href": "/tutorials/what-is-jwt"
         }
       ]
     },
