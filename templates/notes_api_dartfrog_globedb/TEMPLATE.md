@@ -163,11 +163,4 @@ notes_api_dartfrog_globedb/
 - **Add Tests**: Write unit and integration tests
 - **Add Documentation**: Generate API documentation
 
-### Resources
-
-- [Dart Frog Documentation](https://dartfrog.vgv.dev/)
-- [Drift Documentation](https://drift.simonbinder.eu/)
-- [Globe Database Documentation](https://docs.globe.dev/products/database)
-- [Globe CLI Documentation](https://docs.globe.dev/core-concepts/cli)
-
 
