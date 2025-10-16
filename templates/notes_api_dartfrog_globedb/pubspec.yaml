@@ -1,0 +1,19 @@
+name: notes_api_dartfrog_globedb
+description: A CRUD API for notes using Dart Frog and Globe Database
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  dart_frog: ^1.0.0
+  drift: ^2.14.0
+  sqlite3: ^2.3.0
+
+dev_dependencies:
+  drift_dev: ^2.14.0
+  build_runner: ^2.4.7
+  test: ^1.24.0
+  lints: ^3.0.0
+
+
