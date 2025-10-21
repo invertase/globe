@@ -1,0 +1,233 @@
+---
+title: How to Test Your Dart Frog API
+description: Learn to test your Dart Frog API endpoints and their interactions with a data repository, ensuring your backend behaves as expected.
+---
+
+Once your API is built, how can you be sure it works correctly? By writing tests for your routes, you can verify that your endpoints behave exactly as expected when they receive requests.
+
+This guide will teach you how to write tests for the API routes in the [notes_api_dartfrog_globedb](https://globe.dev/templates/notes_api_dartfrog_globedb/) template. You'll learn how to use the `mocktail` package to simulate incoming `HTTP` requests and provide a "mock" version of your `NotesRepository`. This allows you to test your route logic in complete isolation without needing a real database.
+
+**15 min read**
+
+---
+
+### Features Covered
+
+- Setting up a testing environment with `mocktail`
+- Using a mock repository to isolate routes from the data layer
+- Writing tests for `GET`, `POST`, and `DELETE` API endpoints
+- Verifying `HTTP` status codes and `JSON` responses
+
+### Prerequisites
+
+- A working Dart Frog project, like the [notes_api_dartfrog_globedb](https://globe.dev/templates/notes_api_dartfrog_globedb/) template. You can create one with the Globe `CLI`:
+
+  ```bash
+  globe create -t notes_api_dartfrog_globedb
+  ```
+
+## Step 1: Set Up the Testing Environment
+
+First, add the necessary development dependencies for testing and mocking.
+
+- In your terminal, from your project's root directory, run:
+
+  ```bash
+  dart pub add --dev test mocktail
+  ```
+
+- Next, create your first test file inside the `test` directory. It's a good practice to mirror your `routes` structure.
+
+  ```bash
+  mkdir -p 'test/routes/notes'
+  touch 'test/routes/notes/index_test.dart'
+  ```
+
+## Step 2: Create Your Mocks
+
+To test our routes without a real database, we'll create "mock" versions of `RequestContext` and our `NotesRepository` using the `mocktail` package.
+
+- Create a new file at `test/mocks.dart`:
+
+  ```dart
+  import 'package:dart_frog/dart_frog.dart';
+  import 'package:mocktail/mocktail.dart';
+  import 'package:notes_api_dartfrog_globedb/notes_repository.dart';
+
+  // A mock RequestContext that we can control in our tests.
+  class MockRequestContext extends Mock implements RequestContext {}
+
+  // A mock NotesRepository to isolate our route from the real database.
+  class MockNotesRepository extends Mock implements NotesRepository {}
+  ```
+
+## Step 3: Test the GET /notes Endpoint
+
+Now, let's write our first test for the GET (all) route.
+
+- Open `test/routes/notes/index_test.dart` and add the following code:
+
+  ```dart
+  import 'dart:io';
+
+  import 'package:dart_frog/dart_frog.dart';
+  import 'package:mocktail/mocktail.dart';
+  import 'package:notes_api_dartfrog_globedb/database.dart';
+  import 'package:notes_api_dartfrog_globedb/notes_repository.dart';
+  import 'package:test/test.dart';
+
+  // The route file we are testing.
+  import '../../../routes/notes/index.dart' as route;
+  import '../../mocks.dart';
+
+  void main() {
+    group('GET /notes', () {
+      test('returns a list of notes.', () async {
+        // 1. Arrange: Create the mock instances we'll need.
+        final mockRepo = MockNotesRepository();
+        final context = MockRequestContext();
+        final notes = [Note(id: 1, title: 'Test', content: 'Test content')];
+
+        // 2. Arrange: Stub the context to return our mock repository when read.
+        // This simulates the middleware providing the NotesRepository.
+        when(() => context.read<NotesRepository>()).thenReturn(mockRepo);
+
+        // 3. Arrange: Stub the request to have the correct HTTP method.
+        // The route handler uses this to decide which logic to run.
+        when(() => context.request).thenReturn(
+          Request.get(Uri.parse('http://localhost/notes')),
+        );
+
+        // 4. Arrange: Stub the repository's method to return our test data.
+        // This ensures our test is predictable and doesn't hit a real database.
+        when(() => mockRepo.getAllNotes()).thenAnswer((_) async => notes);
+
+        // 5. Act: Call the route handler with the mocked context.
+        final response = await route.onRequest(context);
+
+        // 6. Assert: Check that the status code and JSON body are correct.
+        expect(response.statusCode, HttpStatus.ok);
+        expect(
+          await response.json(),
+          equals(notes.map((e) => e.toJson()).toList()),
+        );
+      });
+    });
+  }
+  ```
+
+## Step 4: Test the POST /notes Endpoint
+
+Testing a `POST` request is similar, but we also need to mock the incoming request body.
+
+- Add this test group inside the main function in `test/routes/notes/index_test.dart`:
+
+  ```dart
+  group('POST /notes', () {
+    test('creates a new note.', () async {
+      // 1. Arrange: Set up mocks and test data.
+      final mockRepo = MockNotesRepository();
+      final context = MockRequestContext();
+      final request = Request.post(
+        Uri.parse('http://localhost/notes'),
+        body: '{"title": "New", "content": "New content"}',
+      );
+      final newNote = Note(id: 2, title: 'New', content: 'New content');
+
+      // 2. Arrange: Stub the context to provide the mock repo and request.
+      when(() => context.read<NotesRepository>()).thenReturn(mockRepo);
+      when(() => context.request).thenReturn(request);
+
+      // 3. Arrange: Stub the repository's createNote method.
+      // We use `any()` because we don't care about the exact
+      // NotesCompanion instance, just that the method was called.
+      when(() => mockRepo.createNote(any(), any()))
+          .thenAnswer((_) async => newNote);
+
+      // 4. Act: Call the route handler.
+      final response = await route.onRequest(context);
+
+      // 5. Assert: Check for a 201 Created status and the correct body.
+      expect(response.statusCode, HttpStatus.created);
+      expect(await response.json(), equals(newNote.toJson()));
+    });
+  });
+  ```
+
+## Step 5: Test a Dynamic Route (DELETE)
+
+Testing dynamic routes like `/notes/[id]` requires us to also mock context.params.
+
+- First, create the new test file:
+
+  ```bash
+  touch 'test/routes/notes/[id]_test.dart'
+  ```
+
+- Open `test/routes/notes/[id]_test.dart` and add the following code:
+
+  ```dart
+  import 'dart:io';
+
+  import 'package:dart_frog/dart_frog.dart';
+  import 'package:mocktail/mocktail.dart';
+  import 'package:notes_api_dartfrog_globedb/notes_repository.dart';
+  import 'package:test/test.dart';
+
+  import '../../../routes/notes/[id].dart' as route;
+  import '../../mocks.dart';
+
+  void main() {
+    group('DELETE /notes/[id]', () {
+      test('deletes a note.', () async {
+        // 1. Arrange
+        final mockRepo = MockNotesRepository();
+        final context = MockRequestContext();
+        const noteId = '1';
+
+        // 2. Arrange: Stub the context to provide the repo, request, and params.
+        when(() => context.read<NotesRepository>()).thenReturn(mockRepo);
+        when(() => context.request).thenReturn(
+          Request.delete(Uri.parse('http://localhost/notes/$noteId')),
+        );
+
+        // 3. Arrange: Stub the repository's deleteNote method to indicate success.
+        when(() => mockRepo.deleteNote(1)).thenAnswer((_) async => true);
+
+        // 4. Act: Call the route handler, passing both context and the ID.
+        final response = await route.onRequest(context, noteId);
+
+        // 5. Assert: Check for a 204 No Content status code.
+        expect(response.statusCode, HttpStatus.noContent);
+      });
+    });
+  }
+  ```
+
+## Step 6: Run Your Tests
+
+Now that your tests are written, run them from the terminal to see them pass.
+
+- Execute the dart test command from your project's root:
+
+  ```bash
+  dart test
+  ```
+
+- You should see a green output indicating that all tests have passed!
+
+  ```
+  00:01 +3: All tests passed!
+  ```
+
+## What's Next
+
+- **Test All Cases**: Expand your test suite to cover all your endpoints (`GET` by `ID`, `PATCH`) and failure scenarios, like a `404 Not Found` when an ID doesn't exist.
+- **End-to-End Testing**: Learn how to test your entire running API by making real HTTP requests.
+
+---
+
+<Info>
+  Didn't find what you were looking for? [Talk to us on
+  Discord](https://invertase.link/globe-discord)
+</Info>
