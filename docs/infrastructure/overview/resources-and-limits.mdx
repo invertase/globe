@@ -10,19 +10,22 @@ Understanding these limits helps you design resilient applications and avoid une
 
 Your Globe account operates with the following default resource thresholds and behaviours:
 
-| **Resource**       | **Current Thresholds**    | **Notes**                                                    |
-| ------------------ | ------------------------- | ------------------------------------------------------------ |
-| **Requests**       | 1 million per month       | All HTTP requests count toward this limit                    |
-| **Bandwidth**      | 10GB per month (uncached) | Static assets served from cache don't count toward bandwidth |
-| **Memory**         | 512MB per container       | Applies per running instance of your application             |
-| **CPU Usage**      | Varies based on load      | Avoid CPU-heavy tasks for extended periods                   |
-| **Execution time** | 30 seconds per request    | Maximum processing time allowed per single request           |
+| **Resource**          | **Current Thresholds** | **Notes**                                          |
+| --------------------- | ---------------------- | -------------------------------------------------- |
+| **Requests**          | 50K per month          | All HTTP requests count toward this limit          |
+| **Compute Bandwidth** | 1GB per month          | API responses and server-rendered content          |
+| **Asset Bandwidth**   | 1GB per month          | Static assets (images, scripts, fonts)             |
+| **Memory**            | 256MB per container    | Per running instance of your application           |
+| **Databases**         | 2 active databases     | Per organization limit                             |
+| **Cron Jobs**         | 1 cron job             | With unlimited invocations                         |
+| **CPU Usage**         | Varies based on load   | Avoid CPU-heavy tasks for extended periods         |
+| **Execution time**    | 30 seconds per request | Maximum processing time allowed per single request |
 
 These baseline thresholds are intended for general use. Production apps should monitor usage and optimise accordingly.
 
 ## Requests
 
-Your Globe account includes **1 million requests per month**. Every HTTP interaction with your app counts toward this total, including:
+Your Globe account includes **50K requests per month**. Every HTTP interaction with your app counts toward this total, including:
 
 - API endpoint calls
 - Page views rendered by your application
@@ -33,19 +36,29 @@ When your application reaches this request limit, any new incoming requests will
 
 ## Bandwidth
 
-Your account includes **10GB of uncached bandwidth** per month. Bandwidth usage is calculated based on the total size of:
+Your account includes two separate bandwidth allowances:
 
-- Response payload
-- Request payload
+### Compute Bandwidth (1GB per month)
+
+Compute bandwidth covers API responses and server-rendered content. Usage is calculated based on the total size of:
+
+- Response payload from your application
+- Request payload to your application
 - HTTP headers
 
-Static assets served directly from Globe's optimized edge cache **do not** count against your bandwidth limit — but the initial request to fetch or revalidate a cached asset **does** count toward your requests.
+### Asset Bandwidth (1GB per month)
 
-If you exceed your bandwidth allowance, you may experience request rejections or slower service. Bandwidth usage resets monthly.
+Asset bandwidth covers static assets like images, scripts, fonts, and other files. This includes:
+
+- Images, CSS, JavaScript files
+- Font files and other static resources
+- Any static content served by your application
+
+If you exceed either bandwidth allowance, you may experience request rejections or slower service. Both bandwidth allowances reset monthly.
 
 ## Memory Usage
 
-Each running instance of your application in Globe has access to **512MB of memory**.
+Each running instance of your application in Globe has access to **256MB of memory**.
 
 If your application exceeds this memory limit, Globe will terminate your application instance. Also, any active requests will fail as a result.
 
@@ -58,3 +71,28 @@ Globe dynamically monitors CPU load across the platform. There's no hard limit p
 Each request to your application is allowed a maximum of **30 seconds** from start to finish, from the time Globe receives the request to when the response is completed.
 
 If a request takes longer than 30 seconds, it will be **automatically terminated**, regardless of its progress.
+
+## Databases
+
+Your Globe account includes **2 active databases** per organization. Each database provides:
+
+- **Serverless SQLite compatibility** with LibSQL protocol
+- **Integrated dashboard** for data management and querying
+- **External client support** for connecting from any LibSQL-compatible tool
+
+When you reach your database limit, you must delete an existing database before creating a new one.
+
+## Cron Jobs
+
+Your Globe account includes **1 cron job** with unlimited invocations. Cron jobs allow you to:
+
+- **Schedule recurring tasks** using standard cron syntax
+- **Execute HTTP requests** to specific endpoints in your application
+- **Run automatically** after production deployments
+- **Monitor execution** through the Globe dashboard
+
+Cron jobs run in **UTC timezone** and are synchronized with your production deployments.
+
+## No Overage Charges
+
+Globe provides predictable pricing with **no overage charges**. When you reach your limits, requests are rejected rather than incurring additional fees, giving you full control over your costs.
