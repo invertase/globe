@@ -1,0 +1,194 @@
+---
+title: What is a Middleware?
+description: Learn how middleware intercepts, processes, and shapes requests and responses in your API, using analogies and code examples from Dart frameworks.
+---
+
+When building a backend API, you quickly realize many requests need similar processing before your main logic runs (like checking authentication) or after (like logging the result). Putting this common code in every single route handler would be repetitive and hard to maintain (violating the [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) - Don't Repeat Yourself - principle). So, how do backend frameworks solve this? The answer is **Middleware**.
+
+Middleware is a fundamental pattern in backend development that provides a clean, reusable way to manage the flow of requests and responses. It acts like a series of checkpoints or processing stations that requests pass through.
+
+For **Flutter developers**, a familiar parallel is using `Dio` **Interceptors** to globally modify or log network requests on the client-side. Backend middleware applies this interception concept to the server, often creating a more structured **processing chain** for incoming requests and outgoing responses.
+
+This guide explains middleware through analogies and Dart examples.
+
+**10 min read**
+
+---
+
+## What You Will Learn
+
+- What middleware is and the problems it solves (**code reuse, separation of concerns**)
+- How middleware fits into the **request/response lifecycle** using various analogies
+- The basic **structure of middleware functions** in Shelf and Dart Frog with code examples
+- How backend middleware relates to concepts like **Dio Interceptors**
+
+## Prerequisites
+
+- A basic understanding of how APIs handle HTTP requests and responses
+
+## Exploring Middleware
+
+### 1. The Core Concept: Interception and Chaining
+
+At its heart, middleware is a function (or object) that sits between the server **receiving an incoming HTTP request** and your final **route handler that sends the response**. It **intercepts** the request/response cycle.
+
+Crucially, middlewares are often **chained together**. A request might pass through several middleware functions before it reaches the specific code written for that endpoint. Each middleware in the chain has the power to:
+
+1. **Inspect the Request**: Read headers, query parameters, or the request body
+2. **Modify the Request**: Add headers, parse the body, or add processed data for later middleware or the handler to use
+3. **Pass Control**: Decide to pass the request along to the next middleware or handler in the chain
+4. **Short-Circuit**: End the request early by sending a response immediately (e.g., return a `401 Unauthorized` if authentication fails)
+5. **Process the Response**: After the route handler (and any subsequent middleware) has generated a response, middleware can inspect or modify that response on its way back to the client (e.g., add CORS headers, compress the body)
+
+### 2. Understanding Middleware Through Analogies
+
+Here are common analogies to understand how middleware works.
+
+#### Analogy 1: The Assembly Line
+
+Imagine an HTTP request as a product moving down an assembly line. Each middleware is a **station** on that line.
+
+- **Station 1 (Logging Middleware)**: Records details about the incoming product (request). Passes it on.
+- **Station 2 (Auth Middleware)**: Checks the product's credentials. If invalid, rejects it (short-circuits). If valid, passes it on.
+- **Station 3 (Data Parsing Middleware)**: Extracts and prepares data from the product. Passes it on.
+- **Final Station (Route Handler)**: Builds the final output (response) based on the processed product.
+- **Return Trip**: The output (response) might travel back through some stations (e.g., Station 4 adds CORS headers) before being shipped to the client.
+
+#### Analogy 2: Onion Layers / Russian Dolls
+
+Think of your route handler as the core of an onion (or the smallest Russian doll). Middleware functions are the **layers** wrapped around it.
+
+- A request starts at the outermost layer
+- It must pass inward through each middleware layer (authentication, logging, data validation)
+- Each layer can decide to stop the request or pass it to the next inner layer
+- Once the core handler processes the request and creates a response, the response travels back outward through the same layers
+- These layers can modify the response on its way out (e.g., adding headers, formatting data)
+
+#### Analogy 3: Airport Security Checkpoints
+
+A request is like a **passenger** trying to get to their flight gate (the route handler). Middleware functions are the security checkpoints they must pass through.
+
+- **Checkpoint 1 (Authentication)**: Checks the passenger's boarding pass and ID. Can deny entry (short-circuit).
+- **Checkpoint 2 (Rate Limiting)**: Checks if the passenger is making too many trips too quickly. Can deny entry.
+- **Checkpoint 3 (Request Logging)**: Notes down the passenger's details.
+- **Gate (Route Handler)**: The final destination where the passenger's specific request (boarding the plane) is handled.
+- The response (confirmation of boarding) might get a final stamp (CORS header) on the way out.
+
+### 3. Basic Structure in Dart Backend Frameworks
+
+Let's see how this looks in actual code for Shelf and Dart Frog. Both allow you to intercept and process requests/responses.
+
+#### Shelf Middleware
+
+Shelf defines middleware as a function that takes the next handler (`innerHandler`) in the processing chain and returns a new handler. This new handler receives the `Request` and decides what to do before, after, or instead of calling the `innerHandler`.
+
+```dart
+import 'package:shelf/shelf.dart';
+
+Middleware createLoggingMiddleware() {
+  return (Handler innerHandler) {
+    return (Request request) async {
+      // Before: Log the incoming request
+      print('Incoming request: ${request.method} ${request.url}');
+
+      // Call the next handler in the chain
+      final response = await innerHandler(request);
+
+      // After: Log the response
+      print('Response status: ${response.statusCode}');
+
+      return response;
+    };
+  };
+}
+```
+
+<Info>
+**Explanation**: The `createLoggingMiddleware` returns a function that takes the `innerHandler`. This function, in turn, returns the actual request handler function `(Request request) async { ... }` that contains the middleware logic, wrapping the call to `innerHandler`.
+</Info>
+
+#### Dart Frog Middleware
+
+Dart Frog's middleware structure is very similar but uses a `RequestContext`. A middleware is a function named `middleware` within a `_middleware.dart` file. It takes the next `Handler` and returns a new `Handler`.
+
+```dart
+import 'package:dart_frog/dart_frog.dart';
+
+Handler middleware(Handler handler) {
+  return (RequestContext context) async {
+    // Before: Log the incoming request
+    print('Incoming request: ${context.request.method} ${context.request.url}');
+
+    // Call the next handler in the chain
+    final response = await handler(context);
+
+    // After: Log the response
+    print('Response status: ${response.statusCode}');
+
+    return response;
+  };
+}
+```
+
+<Info>
+**Explanation**: The `middleware` function directly returns the new `Handler` `((RequestContext context) async => ...)`. This handler receives the `RequestContext`, which contains the `Request` and allows access to dependencies via `context.read<T>()`.
+</Info>
+
+#### Key Similarities
+
+- Both receive the next piece of logic in the chain (`innerHandler` or `handler`)
+- Both execute code before calling that next piece
+- Both execute code after the next piece completes and returns a `Response`
+- Both can modify the request (or context) before passing it down
+- Both can modify the response before sending it back up
+- Both can decide to not call the next piece and return a response early (short-circuiting)
+
+### 4. Connecting to Flutter: Dio Interceptors
+
+If you've used the popular Dio package for HTTP requests in Flutter, you've likely encountered **Interceptors**. They serve a very similar purpose in the client-side request lifecycle.
+
+```dart
+import 'package:dio/dio.dart';
+
+class LoggingInterceptor extends Interceptor {
+  @override
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    print('Sending request: ${options.method} ${options.path}');
+    handler.next(options); // Continue to the next interceptor
+  }
+
+  @override
+  void onResponse(Response response, ResponseInterceptorHandler handler) {
+    print('Received response: ${response.statusCode}');
+    handler.next(response); // Continue to the next interceptor
+  }
+}
+```
+
+**The Parallel**: Just like backend middleware, Dio interceptors intercept the network flow (`onRequest`, `onResponse`, `onError`). They can inspect and modify the request (`options`) or response, and crucially, they decide whether to continue the flow (`handler.next(...)`) or short-circuit (e.g., by resolving the handler with a custom `Response` or `DioException`, though less common in `onRequest`).
+
+**The Difference**: Backend middleware typically forms a more explicit **chain** or **pipeline** where the output of one middleware becomes the input for the next, flowing inward and then outward. Dio interceptors are more like a list of observers that all get invoked at specific lifecycle points (`onRequest`, `onResponse`, `onError`), although the order they are added still matters.
+
+### 5. Why Use Middleware? The Benefits
+
+- **Reusability (DRY)**: Write common logic (logging, authentication, CORS handling, data validation) once and apply it to multiple routes or even globally
+- **Separation of Concerns**: Keep your route handlers focused only on the specific business logic for that endpoint. Middleware handles the cross-cutting concerns (things that affect many parts of the application)
+- **Composability**: Build complex request-handling pipelines by combining simple, single-purpose middleware functions. Easily add, remove, or reorder steps in your processing pipeline
+- **Centralized Logic**: Manage tasks like authentication, authorization, error handling, and logging in designated middleware files, making updates and maintenance much easier than scattering the logic across all routes
+
+Middleware is a powerful and essential pattern for building clean, maintainable, and robust backend applications in Dart (and many other languages!). Understanding it unlocks a more structured way to handle API requests.
+
+## What's Next
+
+- **See Middleware in Action**: Explore our templates that showcase real-world middleware implementations:
+  - **[Shelf JWT Auth](https://globe.dev/templates/shelf_jwt_auth)**: Authentication middleware with JWT token validation
+  - **[Dart Frog JWT Auth](https://globe.dev/templates/dartfrog_jwt_auth)**: Route-specific middleware for protected endpoints
+  - **[Notes App Shelf](https://globe.dev/templates/notes_app_shelf)**: Complete middleware pipeline with logging, CORS, and authentication
+- **Build Your Own**: Start with our [Simple Shelf Server](https://globe.dev/templates/crud_rest_api_shelf) template and add your own middleware
+
+---
+
+<Info>
+  Didn’t find what you were looking for? [Talk to us on
+  Discord](https://invertase.link/globe-discord)
+</Info>
