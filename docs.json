@@ -436,6 +436,10 @@
         {
           "title": "What is a JWT",
           "href": "/tutorials/what-is-jwt"
+        },
+        {
+          "title": "What is a Middleware",
+          "href": "/tutorials/what-is-middleware"
         }
       ]
     },
