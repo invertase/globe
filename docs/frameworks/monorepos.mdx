@@ -41,9 +41,9 @@ When a Dart project is deployed from a workspace that contains a Flutter project
 
 ## Why is this required?
 
-**Flutter Presence**: The **Monorepo** preset ensures the Flutter SDK is available during the build. This allows your backend project to resolve dependencies that might be shared with Flutter applications (like `flutter_app` in the example).
+- **Flutter Presence**: The **Monorepo** preset ensures the Flutter SDK is available during the build. This allows your backend project to resolve dependencies that might be shared with Flutter applications (like `flutter_app` in the example).
 
-**Entrypoint Precision**: In a large workspace, Globe may not correctly guess which file is your intended entrypoint. Specifying `bin/server.dart` ensures the correct application starts.
+- **Entrypoint Precision**: In a large workspace, Globe may not correctly guess which file is your intended entrypoint. Specifying `bin/server.dart` ensures the correct application starts.
 
 ## Build Configuration
 
