@@ -24,7 +24,7 @@ class StderrLogEntry implements LogEntry {
   String toString() => message;
 }
 
-class TestIOOverride extends IOOverrides {
+final class TestIOOverride extends IOOverrides {
   TestIOOverride(
     this.fs, {
     required this.supportsAnsiEscapes,
