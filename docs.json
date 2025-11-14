@@ -196,6 +196,10 @@
         {
           "title": "Jaspr",
           "href": "/frameworks/jaspr"
+        },
+        {
+          "title": "Monorepo",
+          "href": "/frameworks/monorepos"
         }
       ]
     },
