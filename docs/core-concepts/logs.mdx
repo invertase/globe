@@ -1,17 +1,18 @@
 ---
 title: Logs
+description: Monitor runtime logs for your Globe deployments to debug errors, track application behavior, and validate configuration changes.
 ---
 
-Logs show what's happening during your build and runtime. Use them to **debug errors**, **monitor behaviour**, and **validate configuration** across environments.
+Logs show what's happening in your running application. Use them to **debug errors**, **monitor behaviour**, and **validate configuration** across environments.
 
 ## Why Logs Matter
 
 Logs help you:
 
-- Debug build and runtime issues quickly
+- Debug runtime issues quickly
 - Monitor application behavior in real-time
-- Validate deployments and configuration changes
 - Track backend activity and user interactions
+- Validate configuration changes
 
 ## Viewing Logs in the Dashboard
 
@@ -23,6 +24,8 @@ To view logs for any deployment:
 4. Use the search bar to find specific messages
 5. Click into any deployment for more details
 
+<Image src="/assets/core-concepts/logs.png" />
+
 Each log entry shows:
 
 - **Timestamps**: Every log entry is tagged with an accurate timestamp to trace events precisely
@@ -30,14 +33,14 @@ Each log entry shows:
 - **Search**: Instantly search through logs to find relevant messages
 - **Time Range Selection**: Focus on specific timeframes to narrow down issues
 
-## Types of Logs
+## Log Severity Levels
 
 Logs are grouped by **severity** to simplify triage:
 
-| **Level** | **Description**                                                                                |
-| --------- | ---------------------------------------------------------------------------------------------- |
-| **Info**  | Routine activity messages, i.e., requests received or background jobs completed.               |
-| **Error** | Issues that disrupt functionality, i.e. failed builds, server errors, or unhandled exceptions. |
+| **Level** | **Description**                                                                  |
+| --------- | -------------------------------------------------------------------------------- |
+| **Info**  | Routine activity messages, i.e., requests received or background jobs completed. |
+| **Error** | Issues that disrupt functionality, i.e. server errors or unhandled exceptions.   |
 
 Use logging levels in your app code to control what gets recorded and what's relevant in production vs local debugging.
 
@@ -51,6 +54,9 @@ To get the most out of your logs:
 - Never log sensitive data such as passwords or personal information
 - Write clear, descriptive messages that explain what happened and why
 
-## Next
+## Related Topics
 
-Track **requests**, **resource usage**, and **performance** across projects and environments.
+- [Viewing Build Logs](/core-concepts/cli/viewing-build-logs) - View build logs using the CLI
+- [Deployments](/core-concepts/deployments) - Understand deployment status and lifecycle
+- [Usage](/core-concepts/usage) - Track requests, resource usage, and performance metrics
+- [Troubleshooting](/troubleshooting) - Common issues and solutions
