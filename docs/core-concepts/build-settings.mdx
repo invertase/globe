@@ -1,5 +1,6 @@
 ---
 title: Build Settings
+description: Configure how your Dart and Flutter apps are built and deployed, including framework presets, SDK versions, build commands, and entry points.
 ---
 
 Build settings control how your app is built and deployed in each environment. You can define them in the Globe dashboard or in a version-controlled globe.yaml file to keep environments consistent.
@@ -9,7 +10,7 @@ Build settings control how your app is built and deployed in each environment. Y
 Configuring build settings allows you to:
 
 - Ensure consistent builds across all environments
-- Tailor commands and presets to your framework (e.g., Flutter, Dart Frog)
+- Tailor commands and presets to your framework (e.g., `Flutter`, `Dart Frog`)
 - Lock SDK versions to prevent breaking changes
 - Set correct entry points and directories for accurate builds
 - Standardize configurations across your team with version control
@@ -20,20 +21,23 @@ You can change your build settings in the dashboard:
 
 1. In the **Globe dashboard**, go to your project
 2. Open **Settings** → **General** → **Build Settings**
-3. Edit values
+3. Edit the build settings you want to change (see available settings below)
 4. Select **Save Changes** to apply
+
+<Image src="/assets/core-concepts/build-settings.png" />
 
 ## Available Build Settings
 
-| **Setting**              | **Description**                                              | **Default**           |
-| ------------------------ | ------------------------------------------------------------ | --------------------- |
-| **Framework Preset**     | Preset values for the supported frameworks                   | Auto-detected         |
-| **Build Command**        | Command runs after dependencies are installed                | Based on framework    |
-| **Entrypoint**           | File used to bootstrap your app, e.g. `lib/main.dart`        | Based on framework    |
-| **Dart/Flutter Version** | The version of the Dart or Flutter SDK to use for the builds | Latest stable release |
-| **Build Runner**         | Whether to run Build Runner before your project builds       | Auto-detected         |
-| **Melos**                | Whether to bootstrap your project at the root                | Auto-detected         |
-| **Root Directory**       | Directory where the project code to deploy is located        | Root directory        |
+| **Setting**              | **Description**                                                     | **Default**           |
+| ------------------------ | ------------------------------------------------------------------- | --------------------- |
+| **Framework Preset**     | Preset values for the supported frameworks                          | Auto-detected         |
+| **Framework Version**    | The version of the framework preset to use (e.g., Dart Frog, Jaspr) | Latest stable version |
+| **Build Command**        | Command runs after dependencies are installed                       | Based on framework    |
+| **Entrypoint**           | File used to bootstrap your app, e.g. `lib/main.dart`               | Based on framework    |
+| **Dart/Flutter Version** | The version of the Dart or Flutter SDK to use for the builds        | Latest stable release |
+| **Build Runner**         | Whether to run Build Runner before your project builds              | Auto-detected         |
+| **Melos**                | Whether to bootstrap your project at the root                       | Auto-detected         |
+| **Root Directory**       | Directory where the project code to deploy is located               | Root directory        |
 
 ## Best Practices
 
@@ -41,6 +45,8 @@ You can change your build settings in the dashboard:
 - Tailor your **buildCommand** for production (e.g., `--release`, `tree-shaking`, etc.)
 - Use the default framework presets where possible override only when needed
 
-## Next
+## Related Topics
 
-Manage **sensitive data** and **environment-specific values** using Environment Variables.
+- [Environment Variables](/core-concepts/environment-variables) - Manage secrets and environment-specific configuration
+- [The globe.yaml File](/core-concepts/globe-yaml) - Define build settings in version control
+- [Deployments](/core-concepts/deployments) - Learn about preview and production deployments
