@@ -1,34 +1,41 @@
 ---
 title: Logging In and Out
+description: Authenticate the Globe CLI with your account using globe login, and securely log out with globe logout to manage CLI access.
 ---
 
 ## `globe login`
 
-**Purpose**: Authenticates the **Globe CLI** with your Globe account, storing a secure token locally.
+Authenticates the Globe CLI with your Globe account, storing a secure token locally.
 
-### **Usage**:
+### Usage
 
 ```bash
 globe login [flags]
 ```
 
-### **Flags**:
+### Flags
 
-- `--help`: Displays help information.
-- `--verbose`: Displays verbose output.
-- `--token`: Use API token for CLI Auth.
+- `--help`: Display help information
+- `--verbose`: Display verbose output
+- `--token`: Use API token for CLI authentication
 
 ## `globe logout`
 
-**Purpose**: Removes the **locally stored** authentication token, **logging you out** of the Globe CLI.
+Removes the locally stored authentication token, logging you out of the Globe CLI.
 
-### **Usage**:
+### Usage
 
 ```bash
 globe logout [flags]
 ```
 
-### **Flags**:
+### Flags
 
-- `--help`: Displays help information.
-- `--verbose`: Displays verbose output.
+- `--help`: Display help information
+- `--verbose`: Display verbose output
+
+## Related Topics
+
+- [Globe CLI Overview](/core-concepts/cli) - Learn about all available CLI commands
+- [Managing Tokens](/core-concepts/cli/managing-tokens) - Create and manage API tokens
+- [Deploying a Project](/core-concepts/cli/deploying-a-project) - Deploy your application using the CLI
