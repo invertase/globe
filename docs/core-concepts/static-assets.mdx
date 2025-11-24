@@ -1,8 +1,9 @@
 ---
 title: Static Assets
+description: Serve static files like images, fonts, and HTML from your Globe deployment using automatic detection or manual configuration in globe.yaml.
 ---
 
-Serve static files like **images**, **fonts**, or **HTML** from your deployment. Globe **auto-detects** common folders, or you can define exactly what to include in your app.
+When deploying to Globe, static assets configured in your code are excluded from the deployment. Use Globe's static assets configuration to specify which files and directories should be served, ensuring your images, fonts, and other static resources are available to your application.
 
 ## What Are Static Assets?
 
@@ -95,9 +96,8 @@ And your static site is live from the edge.
 
 ## Important Considerations
 
-- Static assets only work if **they are correctly configured**. Globe won’t magically serve them unless they’re detected or explicitly listed.
-- If both **automatic** and **manual** configurations are used, globe.yaml settings override **automatic detection**.
-- The order of items in globe.yaml matters; later rules can override earlier ones.
+- Static assets only work if **they are correctly configured**; Globe won't serve them unless they're detected or explicitly listed
+- If both **automatic** and **manual** configurations are used, `globe.yaml` settings override **automatic detection**
 
 ## Best Practices
 
@@ -105,8 +105,9 @@ And your static site is live from the edge.
 - Use **glob patterns** for file groups, but always confirm matched files
 - Avoid deeply nested structures for critical assets
 - Be mindful of asset size and redundancy
-- Stay organized, name assets clearly for easier maintenance
+- Stay organized and name assets clearly for easier maintenance
 
-## Next
+## Related Topics
 
-Schedule **recurring HTTP tasks** using **cron jobs** in your project config.
+- [The globe.yaml File](/core-concepts/globe-yaml) - Configure static assets in your project configuration
+- [Deployments](/core-concepts/deployments) - Understand how static assets are served in deployments
