@@ -1,0 +1,75 @@
+---
+title: "Domain Verification and Connection Issues"
+description: "Troubleshoot domain verification failures, pending verification status, and connection errors when setting up custom domains on Globe."
+---
+
+If you encounter errors when adding, verifying, or connecting a custom domain to your Globe project, this guide will help you identify and resolve the issue.
+
+## Domain Verification Failed
+
+### Symptoms
+
+Your domain shows a **"Verification Failed"** status in the Globe dashboard after adding it. The domain cannot be activated, and SSL certificates are not provisioned.
+
+### Cause
+
+This error occurs when Cloudflare cannot verify your DNS configuration. Common causes include:
+
+- Missing or incorrect CNAME record pointing to `domains.globeapp.dev`
+- DNS records not yet propagated (can take up to 24 hours)
+- Incorrect DNS record configuration at your domain registrar
+
+### Solution
+
+1. **Check your DNS settings** with your domain provider; make sure the CNAME record exists and is correctly configured
+2. **Verify the CNAME record** points to `domains.globeapp.dev` exactly (no trailing dots or typos)
+3. **Wait for DNS propagation** (up to 24 hours) if you recently updated your DNS records
+4. **Remove and re-add the domain** in Globe if the DNS records are confirmed correct but verification still fails
+
+## Domain Stuck in Pending Verification
+
+### Symptoms
+
+Your domain remains in **"Pending Verification"** status for an extended period (more than a few hours). The domain appears to be processing but never transitions to "Active" status.
+
+### Cause
+
+This typically happens when DNS changes are still propagating across the global DNS network. DNS propagation can take anywhere from a few minutes to 24 hours, depending on your domain registrar and geographic location.
+
+### Solution
+
+1. **Wait up to 24 hours** for DNS changes to fully propagate globally
+2. **Check with your domain provider** to confirm the DNS changes have been saved and are active
+3. **Verify the CNAME record** is correctly configured and visible in your DNS management panel
+4. **Use DNS lookup tools** (like `dig` or online DNS checkers) to verify the CNAME record is resolving correctly
+
+## Connection Errors After Domain Setup
+
+### Symptoms
+
+After successfully adding and verifying a domain, you experience connection errors when trying to access your application via the custom domain. The domain may show as "Active" but requests fail or time out.
+
+### Cause
+
+Connection errors can occur due to:
+
+- Temporary DNS propagation delays
+- Cached DNS records pointing to old configurations
+- Incorrect DNS record configuration that passed initial verification
+
+### Solution
+
+1. **Remove and re-add the domain** in Globe; this can fix temporary connection errors and refresh the DNS verification
+2. **Double-check your DNS records** match the requirements exactly (CNAME pointing to `domains.globeapp.dev`)
+3. **Clear your DNS cache** locally and wait for your domain registrar to fully propagate the DNS changes
+4. **Verify DNS propagation** using online tools to ensure the CNAME record is resolving correctly worldwide
+
+## Additional Resources
+
+- **Review [Cloudflare's Troubleshooting Guide](https://developers.cloudflare.com/dns/troubleshooting/)** for help with DNS-specific errors
+- Ask for help on Globe's [Discord](https://discord.gg/UCcCYjDaTy)
+
+## Related Topics
+
+- [Domains](/core-concepts/domains) - Learn how to set up custom domains
+- [Add a Custom Domain Guide](/guides/add-custom-domain) - Step-by-step guide for setting up custom domains

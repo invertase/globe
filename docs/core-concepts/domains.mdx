@@ -1,5 +1,6 @@
 ---
 title: Domains
+description: Configure custom domains for your Globe deployments with automatic HTTPS, DNS verification, and integration with production deployments.
 ---
 
 A **domain** is the address used to access your Globe-hosted project. Each project is assigned a unique domain (e.g., `your-project.globeapp.dev`).
@@ -57,6 +58,8 @@ Once your DNS records are configured:
 4. Select the project you want to link to this domain
 5. Click **Next** and then **Create**
 
+<Image src="/assets/core-concepts/domains.png" />
+
 <Info>
   DNS changes can take up to 24 hours to propagate globally, though most updates
   happen within an hour.
@@ -76,7 +79,6 @@ To view and manage your domains:
 
 - Open the **Domains** tab in your project dashboard
 - Check the list of connected domains and their current status
-- To remove a domain, select **Delete** from the options menu
 - You can add, update, or reassign domains at any time
 
 ## Best Practices
@@ -86,6 +88,9 @@ To view and manage your domains:
 - Use descriptive domain names for better clarity and branding
 - Limit frequent DNS changes to avoid propagation delays
 
-## Next
+## Related Topics
 
-Link your **GitHub repository** to **trigger deployments automatically** from your existing workflow.
+- [GitHub Integration](/core-concepts/github-integration) - Automate deployments from your GitHub repository
+- [Deployments](/core-concepts/deployments) - Understand preview and production deployments
+- [Add a Custom Domain Guide](/guides/add-custom-domain) - Step-by-step guide for setting up custom domains
+- [Domain Troubleshooting](/troubleshooting/domains) - Troubleshoot domain verification and connection issues
