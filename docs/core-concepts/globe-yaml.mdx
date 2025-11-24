@@ -1,5 +1,6 @@
 ---
 title: The globe.yaml File
+description: Define your project configuration in a version-controlled globe.yaml file to manage build settings, assets, cron jobs, and deployment settings as code.
 ---
 
 Define your project’s configuration in a version-controlled `globe.yaml` file. This allows you to keep settings consistent across environments, automate deployments, and manage configurations as code.
@@ -43,7 +44,7 @@ A nested object containing settings related to the **build** process, such as fr
 
 ### `preset`
 
-Configure a framework-specific preset to streamline your build. Supported types include `dart_frog`, `flutter`, `jaspr`, `jaspr_static`, and `serverpod`. You can also specify a `version` and override the default `buildCommand`.
+Configure a framework-specific preset to streamline your build. Supported types include `dart_frog`, `flutter`, `flutter_server`, `jaspr`, `jaspr_static`, and `serverpod`. You can also specify a `version` and override the default `buildCommand`.
 
 ```yaml
 build:
@@ -155,6 +156,9 @@ preferred_regions:
 - **Document** complex configurations or non-obvious settings with comments.
 - Start with a minimal configuration and only add properties as you need to override defaults.
 
-### Next
+## Related Topics
 
-Use the **Globe CLI** to deploy, manage, and inspect projects directly from your terminal.
+- [Build Settings](/core-concepts/build-settings) - Configure how your app is built
+- [Static Assets](/core-concepts/static-assets) - Configure static file serving
+- [Cron Jobs](/core-concepts/cron-jobs) - Schedule recurring background tasks
+- [Globe CLI](/core-concepts/cli) - Deploy and manage projects from your terminal
