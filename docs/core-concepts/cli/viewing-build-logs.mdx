@@ -1,26 +1,27 @@
 ---
 title: Viewing Build Logs
+description: View build logs for your Globe deployments using the globe build-logs command or stream logs during deployment with the --logs flag.
 ---
 
-You can view the build logs for your deployments in two ways:
+## `globe build-logs`
 
-## 1. During Deployment (with `--logs`)
+View the build logs for a specific deployment using its deployment ID.
 
-    Use the `--logs` flag with `globe deploy` to stream the build logs directly to your terminal:
+### Usage
 
-    ```bash
-    # Stream logs during the deployment process
-    globe deploy --logs
-    ```
+```bash
+globe build-logs [flags]
+```
 
-## 2. After Deployment (with `globe build-logs`)
+### Flags
 
-    Use the `globe build-logs` command to view the logs for a specific deployment. You'll need the deployment ID for this.
+- `--deployment`: Required. The ID of the deployment
 
-    ```bash
-    # Fetch logs for a specific deployment using its ID
-    globe build-logs -d <DEPLOYMENT_ID>
-    ```
+### Example
+
+```bash
+globe build-logs --deployment <DEPLOYMENT_ID>
+```
 
 <Info>
   You can find the deployment ID in the Globe dashboard (usually within the
@@ -28,16 +29,18 @@ You can view the build logs for your deployments in two ways:
   the `globe deploy` command.
 </Info>
 
-## Usage
+## `globe deploy --logs`
+
+Stream build logs directly to your terminal during deployment using the `--logs` flag with `globe deploy`.
+
+### Usage
 
 ```bash
-globe build-logs [flags]
+globe deploy --logs
 ```
 
-## Flags
+## Related Topics
 
-- `-d`, `--deployment`: **Required.** The ID of the deployment.
-- `--help`: Displays help information.
-- `--verbose`: Displays verbose output.
-- `--token`: Use API token for CLI Auth.
-- `--project`: Set the Project ID used by this command. Defaults to what was previously linked using `globe link`.
+- [Globe CLI Overview](/core-concepts/cli) - Learn about all available CLI commands
+- [Deploying a Project](/core-concepts/cli/deploying-a-project) - Deploy your application with build logs
+- [Logs](/core-concepts/logs) - Monitor runtime logs in the dashboard
