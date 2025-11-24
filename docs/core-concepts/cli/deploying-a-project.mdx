@@ -1,8 +1,9 @@
 ---
 title: Deploying a project
+description: Deploy your Dart and Flutter applications to Globe directly from the command line using the globe deploy command, with support for preview and production deployments.
 ---
 
-The `deploy` command allows you to deploy your Dart application to Globe directly from the command line.
+The `globe deploy` command allows you to deploy your Dart application to Globe directly from the command line.
 
 ## Usage
 
@@ -12,16 +13,18 @@ globe deploy [flags]
 
 ## Flags
 
-- `--prod`: Creates a **production deployment**. Without this flag, a preview deployment is created.
-- `--logs`: Streams the **build logs** to your terminal.
-- `--project`: Specify a **project ID** or name (useful for monorepos or when you have multiple linked projects).
-- `--help`, `--verbose`, `--token`: (See "Global Flags" above)
+- `--prod`: Creates a production deployment. Without this flag, a preview deployment is created
+- `--logs`: Streams the build logs to your terminal
+- `--project`: Specify a project ID or name (useful for monorepos or when you have multiple linked projects)
+- `--help`: Display help information
+- `--verbose`: Display verbose output
+- `--token`: Use API token for CLI authentication
 
 ## Workflow
 
-1. **Navigate to your project directory**: Open your terminal and go into the **root directory** of your Dart project (the directory containing your `pubspec.yaml` file).
+1. **Navigate to your project directory**: Open your terminal and go into the root directory of your Dart project (the directory containing your `pubspec.yaml` file)
 
-2. **Link your project (if not already linked)**: If this is the first time you're deploying this project, run `globe link`. This will guide you through the process of linking your local directory to a Globe project (either an existing project or a new one).
+2. **Link your project (if not already linked)**: If this is the first time you're deploying this project, run `globe link`. This will guide you through the process of linking your local directory to a Globe project (either an existing project or a new one)
 
 3. **Run globe deploy:**
    - For a preview deployment (recommended for testing):
@@ -33,28 +36,37 @@ globe deploy [flags]
      globe deploy --prod
      ```
 
-4. **Follow the prompts:** The CLI may prompt you for confirmation or to select a project (if you have multiple linked projects and haven't used the `--project` flag).
+4. **Follow the prompts**: The CLI may prompt you for confirmation or to select a project (if you have multiple linked projects and haven't used the `--project` flag)
 
-5. **Wait for deployment:** The CLI will package your code, upload it to Globe, build your application, and **deploy** it. You'll see progress updates in the terminal.
+5. **Wait for deployment**: The CLI will package your code, upload it to Globe, build your application, and deploy it. You'll see progress updates in the terminal
 
-6. **Access your deployment**: Once the deployment is complete, the CLI will display a **URL** where you can access your application.
+6. **Access your deployment**: Once the deployment is complete, the CLI will display a URL where you can access your application
 
 ## Examples
 
 **Preview Deployment:**
+
 ```bash
 cd my_dart_project
 globe deploy
 ```
 
 **Production Deployment:**
+
 ```bash
 cd my_dart_project
 globe deploy --prod
 ```
 
 **Deploying a specific project in a multi-project directory:**
+
 ```bash
 cd my_monorepo
 globe deploy --project="my-backend-project"
 ```
+
+## Related Topics
+
+- [Globe CLI Overview](/core-concepts/cli) - Learn about all available CLI commands
+- [Linking and Unlinking Projects](/core-concepts/cli/link-and-unlink) - Link your local project to a Globe project
+- [Viewing Build Logs](/core-concepts/cli/viewing-build-logs) - Monitor build progress from the terminal
