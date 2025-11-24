@@ -1,13 +1,11 @@
 ---
 title: Globe CLI Overview
-description: Install and start deploying using the Globe CLI.
+description: Install and use the Globe CLI to deploy Dart and Flutter apps, manage projects, view build logs, and integrate with CI/CD pipelines from your terminal.
 ---
 
-Use the Globe CLI to deploy and manage projects from your **terminal**. Ideal for automation, scripting, or working locally without switching to the dashboard.
+The Globe CLI is a command-line tool that lets you deploy and manage your Globe projects directly from your terminal. Use it to deploy applications, view build logs, manage authentication tokens, create projects from templates, and integrate with CI/CD pipelines—all without leaving your command line.
 
-The CLI also provides a consistent and flexible way to manage your projects, view build logs, create templates, and more.
-
-## Pre-Requisites
+## Prerequisites
 
 To get started, you must have the Dart SDK installed on your machine.
 
@@ -37,12 +35,12 @@ If there's a newer version available, you’ll see a notification when running a
 
 ## Why Use the Globe CLI?
 
-- Deploy Flutter and Dart apps in seconds.
-- Manage deployments without leaving your terminal.
-- Link and manage multiple apps or mono-repos.
-- Securely manage project-specific tokens.
-- View build logs directly from your terminal.
-- Easily integrate into shell scripts or CI/CD pipelines.
+- **Deploy quickly:** Deploy Flutter and Dart apps in seconds from your terminal
+- **Terminal-first workflow:** Manage deployments without leaving your terminal
+- **Multi-project support:** Link and manage multiple apps or mono-repos
+- **Secure authentication:** Securely manage project-specific tokens
+- **Real-time monitoring:** View build logs directly from your terminal
+- **CI/CD integration:** Easily integrate into shell scripts or CI/CD pipelines
 
 ## CLI Commands
 
@@ -66,8 +64,18 @@ You can get help for any command by adding the --help flag (e.g., globe deploy -
 
 All CLI commands have global flags that can be used to modify the behavior of the command, which can be accessed by running globe `command` `--flag`.
 
-- `--help`: Display help information for the command.
-- `--verbose`: Display verbose output for the command, such as API calls and debug information.
-- `--token`: Use API token for CLI Auth.
-- `--project`: Set the Project ID used by this command. Defaults to what was previously linked using the globe link.
-- `--org`: Set the Organization ID used by this command. Defaults to what was previously linked using the globe link.
+- `--help`: Display help information for the command
+- `--verbose`: Display verbose output for the command, such as API calls and debug information
+- `--token`: Use API token for CLI authentication
+- `--project`: Set the Project ID used by this command. Defaults to what was previously linked using `globe link`
+- `--org`: Set the Organization ID used by this command. Defaults to what was previously linked using `globe link`
+
+## Related Topics
+
+- [Creating a New Project](/core-concepts/cli/creating-a-new-project) - Create a new project from a template
+- [Deploying a Project](/core-concepts/cli/deploying-a-project) - Deploy your application to Globe
+- [Login and Logout](/core-concepts/cli/login-and-logout) - Authenticate with your Globe account
+- [Link and Unlink](/core-concepts/cli/link-and-unlink) - Connect local projects to Globe projects
+- [Managing Tokens](/core-concepts/cli/managing-tokens) - Create and manage authentication tokens
+- [Viewing Build Logs](/core-concepts/cli/viewing-build-logs) - Monitor build progress from the terminal
+- [The globe.yaml File](/core-concepts/globe-yaml) - Define project configuration as code
