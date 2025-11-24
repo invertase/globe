@@ -1,8 +1,9 @@
 ---
 title: Environment Variables
+description: Manage secrets and environment-specific configuration for your Globe deployments using environment variables, with support for preview and production environments.
 ---
 
-Use environment variables to **manage secrets** and **environment-specific** config without hardcoding values in your app.
+Environment variables let you **manage secrets** and **environment-specific** configuration without hardcoding values in your app. Use them to store API keys, database URLs, and other sensitive or environment-specific settings securely.
 
 ## Why Use Environment Variables?
 
@@ -26,6 +27,8 @@ Environment variables help you:
 4. Enter a **name** and **value**
 5. Choose environments: `preview`, `production`, or both
 6. Select **Save**
+
+<Image src="/assets/core-concepts/env-var.png" />
 
 <Info>
   All values are encrypted at rest and can only be viewed directly through the
@@ -93,26 +96,70 @@ class AppConfig {
 
 Globe automatically provides these system environment variables in all deployments:
 
-| Name            | Description                                             |
-| --------------- | ------------------------------------------------------- |
-| `PORT`          | The port your application should listen on              |
-| `GLOBE`         | Set to `'1'` to indicate app running in Globe           |
-| `HOSTNAME`      | The hostname of your deployed application               |
-| `CRON_NAME`     | Name of the cron job from `globe.yaml` file             |
-| `CRON_SCHEDULE` | The cron schedule pattern (e.g., `* * * * *`)           |
-| `CRON_ID`       | Unique identifier for the defined cron job              |
-| `CRON_EVENT_ID` | Unique identifier for the current running cron instance |
+| Name              | Description                                                  |
+| ----------------- | ------------------------------------------------------------ |
+| `PORT`            | The port your application should listen on                   |
+| `GLOBE`           | Set to `'1'` to indicate app running in Globe                |
+| `GLOBE_BUILD_ENV` | Set to `'1'` when code is running in Globe Build Environment |
+| `HOSTNAME`        | The hostname of your deployed application                    |
+| `CRON_NAME`       | Name of the cron job from `globe.yaml` file                  |
+| `CRON_SCHEDULE`   | The cron schedule pattern (e.g., `* * * * *`)                |
+| `CRON_ID`         | Unique identifier for the defined cron job                   |
+| `CRON_EVENT_ID`   | Unique identifier for the current running cron instance      |
 
 <Info>
   Cron environment variables are only available when a cron job is running.
 </Info>
 
+### Detecting Globe Environment
+
+Use the `GLOBE` variable to check if your application is running in Globe:
+
+```dart
+import 'dart:io';
+
+void main() {
+  final isGlobe = Platform.environment['GLOBE'] == '1';
+
+  if (isGlobe) {
+    // Running in Globe - use production configuration
+    print('Running in Globe environment');
+  } else {
+    // Running locally - use development configuration
+    print('Running in local environment');
+  }
+}
+```
+
+### Using `GLOBE_BUILD_ENV` for Pre-Deployment Tasks
+
+The `GLOBE_BUILD_ENV` variable allows you to run migrations and other pre-deployment checks during the build phase, before your application starts serving traffic. This helps avoid slow startup times at runtime.
+
+```dart
+import 'dart:io';
+
+void main() async {
+  final isBuildEnv = Platform.environment['GLOBE_BUILD_ENV'] == '1';
+
+  if (isBuildEnv) {
+    stdout.writeln('Running in build environment, setting up DB.');
+    // Run database migrations
+    await migrations.migrate(db);
+    // Perform other pre-deployment setup
+  }
+
+  // Your application code continues here
+}
+```
+
+Running migrations and setup tasks during build time rather than at runtime helps improve application startup speed.
+
 ## Important Considerations
 
-- **Environment-Specific Variables**: Configure variables to appear only in specific environments (**preview**, **production**, or both).
-- **Redeployment Required**: After adding, changing, or removing variables, redeploy your project.
-- **Encrypted Storage**: All variable values are encrypted at rest and in transit.
-- **No Version History**: Globe doesn't maintain history of variable values; document important changes.
+- **Environment-Specific Variables**: Configure variables to appear only in specific environments (**preview**, **production**, or both)
+- **Redeployment Required**: After adding, changing, or removing variables, redeploy your project for changes to take effect
+- **Encrypted Storage**: All variable values are encrypted at rest and in transit
+- **No Version History**: Globe doesn't maintain history of variable values; document important changes
 
 ## Best Practices
 
@@ -122,6 +169,8 @@ Globe automatically provides these system environment variables in all deploymen
 - Use different values for **preview** and **production** environments when appropriate
 - Document required variables in your project’s **README**
 
-## Next
+## Related Topics
 
-Connect a **custom domain** to make your deployed app accessible at a **branded URL**.
+- [Domains](/core-concepts/domains) - Connect custom domains to your deployments
+- [Build Settings](/core-concepts/build-settings) - Configure how your app is built and deployed
+- [Deployments](/core-concepts/deployments) - Understand preview and production deployments
