@@ -1,8 +1,9 @@
 ---
 title: Static Assets
+description: Serve static files like images, fonts, and HTML from your Globe deployment using automatic detection or manual configuration in globe.yaml.
 ---
 
-Serve static files like **images**, **fonts**, or **HTML** from your deployment. Globe **auto-detects** common folders, or you can define exactly what to include in your app.
+When deploying to Globe, static assets configured in your code are excluded from the deployment. Use Globe's static assets configuration to specify which files and directories should be served, ensuring your images, fonts, and other static resources are available to your application.
 
 ## What Are Static Assets?
 
@@ -51,7 +52,7 @@ This will include every `.png` file in the public/ directory.
 
 #### Map Files to Custom Paths
 
-Want more control over where your assets end up at runtime? You can map a local source path to a destination path in Globe’s runtime using `source_path:destination_path`:
+Want more control over where your assets end up at runtime? You can map a local source path to a destination path in Globe's runtime using `source_path:destination_path`:
 
 ```yaml
 assets:
@@ -93,20 +94,24 @@ Globe supports static file serving with popular Dart web frameworks like **Shelf
 
 And your static site is live from the edge.
 
-## Important Considerations
+## Prerequisites
 
-- Static assets only work if **they are correctly configured**. Globe won’t magically serve them unless they’re detected or explicitly listed.
-- If both **automatic** and **manual** configurations are used, globe.yaml settings override **automatic detection**.
-- The order of items in globe.yaml matters; later rules can override earlier ones.
+Before static assets can be served, they must meet these requirements:
+
+- **Assets must be explicitly configured or detected:** Static assets only work if they are correctly configured. Globe won't serve them unless they're automatically detected in common directories (like `public/`, `static/`, `assets/`) or explicitly listed in your `globe.yaml` file under the `assets` key
+- **Manual rules override detection:** If both automatic detection and manual configuration are used, `globe.yaml` settings override automatic detection
+- **Rule order matters:** The order of items in `globe.yaml` matters; later rules can override earlier ones
 
 ## Best Practices
 
-- Keep assets in a dedicated directory like `public/` or `assets/`
+- Keep assets in a dedicated directory like `public/` or `assets/` for better organization
 - Use **glob patterns** for file groups, but always confirm matched files
 - Avoid deeply nested structures for critical assets
-- Be mindful of asset size and redundancy
-- Stay organized, name assets clearly for easier maintenance
+- Be mindful of asset sizes to optimize delivery performance
+- Test your static assets after deployment to ensure they're being served correctly
+- Keep your asset configuration simple and organized to avoid conflicts
 
-## Next
+## Related Topics
 
-Schedule **recurring HTTP tasks** using **cron jobs** in your project config.
+- [The globe.yaml File](/core-concepts/globe-yaml) - Configure static assets in your project configuration
+- [Deployments](/core-concepts/deployments) - Understand how static assets are served in deployments
