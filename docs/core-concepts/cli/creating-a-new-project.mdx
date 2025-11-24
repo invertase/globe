@@ -1,36 +1,37 @@
 ---
 title: Creating Projects from Templates
+description: Create new Dart and Flutter projects quickly using predefined templates with the globe create command, supporting various frameworks and project types.
 ---
 
 ## `globe create`
 
-**Purpose**: Creates a new Dart project based on a predefined template. This can significantly speed up the initial setup for common project types.
+Creates a new Dart project based on a predefined template. This can significantly speed up the initial setup for common project types.
 
-### Usage:
+### Usage
 
 ```bash
 globe create -t <TEMPLATE_NAME> [project-name] [flags]
 ```
 
-### Flags:
+### Flags
 
-- `-t`, `--template`: **Required**. The name of the template to use.
-- `[project-name]`: Optional. The name of your new project directory. If omitted, the template name will be used.
-- `--help`: Displays help information.
-- `--verbose`: Displays verbose output.
-- `--token`: Use API token for CLI Auth.
+- `-t`, `--template`: Required. The name of the template to use
+- `[project-name]`: Optional. The name of your new project directory. If omitted, the template name will be used
 
-### Example:
+### Example
 
 ```bash
 # Create a new project using the 'shelf-basic' template, named 'my-api'
 globe create -t shelf-basic my-api
+
 # Create a new project using the 'flutter-web-basic' template, using the default name
 globe create -t flutter-web-basic
 ```
 
-### Workflow:
+The CLI downloads the specified template, creates a new directory with the project name (or the template name if no project name is provided), and initializes the project (e.g., runs pub get).
 
-- The CLI downloads the specified template.
-- The CLI creates a new directory with the project name (or the template name if no project name is provided).
-- The CLI initializes the project (e.g., runs pub get).
+## Related Topics
+
+- [Globe CLI Overview](/core-concepts/cli) - Learn about all available CLI commands
+- [Deploying a Project](/core-concepts/cli/deploying-a-project) - Deploy your newly created project
+- [Linking and Unlinking Projects](/core-concepts/cli/link-and-unlink) - Link your project to a Globe project
