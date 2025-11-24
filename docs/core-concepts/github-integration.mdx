@@ -1,71 +1,84 @@
 ---
 title: GitHub Integration
+description: Connect your GitHub repository to automatically deploy Dart and Flutter apps on every push, with support for production and preview deployments.
 ---
 
-Connect your GitHub repository to **deploy automatically** from **pushes** and **merges**. It replaces manual deployment steps and keeps your workflow continuous.
+Connect your GitHub repository to **deploy automatically** from **pushes** and **merges**. GitHub integration replaces manual deployment steps and keeps your workflow continuous, enabling automatic deployments for both preview and production environments.
 
-### With GitHub integration, you can:
+## With GitHub integration, you can:
 
-- Import a GitHub repository to create and deploy a new Globe project
-- Automatically trigger deployments on every push
-- Designate a production branch for live releases
-- Connect existing Globe projects to GitHub
-- Disconnect or switch repositories anytime
-- View deployment status for each commit
+- **Import a GitHub repository** to create and deploy a new Globe project
+- **Automatically trigger deployments** on every push to any branch
+- **Designate a production branch** for live releases
+- **Connect existing Globe projects** to GitHub repositories
+- **Disconnect or switch repositories** anytime
+- **View deployment status** for each commit
 
 <Info>
   Globe integrates with GitHub via the [GitHub
   Application](https://github.com/apps/dart-globe).
 </Info>
 
-## How to Connect Your GitHub Repository
+## How to Create a Project from a GitHub Repository
 
-### 1. Authorize GitHub Access
+When creating a new project, you can import a GitHub repository during the setup process.
 
-- From the Globe dashboard, go to **Projects → Create Project**
-- Select **Connect your GitHub account** and authorize the **Globe GitHub App**
-- You'll be redirected back to the **Project Create** screen afterward
+### Step 1. Authorize GitHub Access
 
-### 2. Choose Repositories
+1. From the Globe dashboard, go to **Projects → Create Project**
+2. Select **Connect your GitHub account** and authorize the **Globe GitHub App**
+3. You'll be redirected back to the **Project Create** screen afterward
 
-After authorizing the GitHub app, you will need to configure the repositories that are available to Globe:
+<Image src="/assets/core-concepts/connect-github.png" />
 
-- Select **Configure the GitHub app**.
-- Select specific or all repositories you want Globe to access.
-- You will be redirected to the **Project Create** screen.
+### Step 2. Choose Repositories
 
-### 3. Import & Configure
+After authorizing the GitHub app, configure the repositories that are available to Globe:
 
-- Select **Import** next to the repo you want to use
-- Configure the following:
-  - **Import settings:** organization, name, root directory, branch
-  - **Build settings:** framework preset, build command, entry point
-  - **Build config:** SDK version, build runner, Melos
-  - **Environment variables**
-- Select **Deploy** to trigger the first deployment
+1. Select **Configure the GitHub app**
+2. Select specific or all repositories you want Globe to access
+3. You will be redirected to the **Project Create** screen
+
+<Image src="/assets/core-concepts/select-project-github.png" />
+
+### Step 3. Import & Configure
+
+1. Select **Import** next to the repository you want to use
+2. Configure the following:
+   - **Import settings:** organization, name, root directory, branch
+   - **Build settings:** framework preset, build command, entry point
+   - **Build config:** SDK version, build runner, Melos
+   - **Environment variables**
+3. Select **Deploy** to trigger the first deployment
+
+<Image src="/assets/core-concepts/configure-github.png" />
 
 From now on, every time you push to GitHub, Globe will automatically create a new deployment:
 
 - For your production branch, a **production deployment** is created
 - For all other branches, a **preview deployment** is triggered
 
-## Connecting an Existing Project
+## How to Connect a Repository to an Existing Project
 
-If you've already deployed a project (e.g., via CLI):
+If you've already deployed a project (e.g., via CLI) and want to connect it to a GitHub repository:
 
 1. Open the project → Go to **Settings** → **Git**
 2. Select **Connect** and choose your repository
 3. Set deployment configurations as needed
 
-## Deployment Workflow
+<Image src="/assets/core-concepts/connect-git.png" />
+
+Once connected, pushes to your GitHub repository will automatically trigger deployments for this project.
+
+## How GitHub Integration Works
 
 The GitHub integration enables automatic deployments based on your repository activity:
 
-- **Preview Deployments:** Triggered by pushes to any branch _except_ your production branch
+- **Preview Deployments:** Triggered by pushes to any branch except your production branch
 - **Production Deployments:** Triggered by pushes to your designated production branch
 - **Commit Status:** Globe adds deployment status indicators to your GitHub commits
 
-## Disconnecting a GitHub Repository
+## How to Disconnect a GitHub Repository
 
 To stop automatic deployments:
 
@@ -82,8 +95,10 @@ To stop automatic deployments:
 - Use a clear branching strategy (e.g., `main` for production, `dev` for testing)
 - Protect your production branch if collaborating in teams
 - Consider pairing this with the CLI for local preview builds
-- Only connect necessary repositories for clarity and security. Follow the principle of least privilege
+- Only connect necessary repositories for clarity and security; follow the principle of least privilege
 
-## Next
+## Related Topics
 
-Serve files like **images**, **fonts**, and **HTML** from your deployment via **Globe’s edge network**.
+- [Deployments](/core-concepts/deployments) - Understand how GitHub integration triggers deployments
+- [Static Assets](/core-concepts/static-assets) - Serve static files from your deployment
+- [Set up CI/CD with GitHub Integration](/guides/github-integration) - Detailed guide for GitHub integration setup
