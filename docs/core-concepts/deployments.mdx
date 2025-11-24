@@ -1,8 +1,9 @@
 ---
 title: Deployments
+description: Learn how Globe creates versioned builds of your app, manage preview and production deployments, and track your application across environments.
 ---
 
-When you run `globe deploy` or push to GitHub, Globe creates a deployment, a versioned build of your app that runs on its global edge network. Use deployments to preview changes, push live updates, and track your app across environments.
+A **deployment** is a versioned build of your application that runs on Globe's global edge network. When you run `globe deploy` or push to GitHub, Globe creates a new deployment with a unique URL and a human-readable name (e.g., `calm-river`, `bright-mountain`). Use deployments to preview changes, push live updates, and track your application across different environments.
 
 ## Preview vs Production Deployments
 
@@ -10,49 +11,70 @@ Globe supports two types of deployments: **preview** and **production**.
 
 ### Preview Deployments
 
-Preview deployments are useful to test, review, and share work in progress without affecting the live app. These are ideal for **internal review**, **staging**, or **QA**. They:
+Preview deployments let you test, review, and share work in progress without affecting your live application. They're ideal for **internal review**, **staging**, or **QA** before releasing to users.
 
-- Do not impact the live app
-- Use temporary URLs (e.g. random-id.globeapp.dev)
-- Auto-expire after a period of inactivity
+Preview deployments:
+
+- Won't affect your live production app
+- Use temporary URLs (e.g., `abc123xyz.globeapp.dev`)
+- Are perfect for testing changes before going live
 
 **Create a preview deployment by:**
 
-- Running `globe deploy` in your terminal
+- Running `globe deploy` in your terminal (without the `--prod` flag)
 - Pushing to any branch that is **not** set as your production branch in project settings
 
 ### Production Deployments
 
-Production deployments serve the live version of your app. Trigger one when you're ready to release updates to users. They:
+Production deployments serve the live version of your application to end users. Trigger one when you're ready to release updates. Each new production deployment replaces the previous one.
+
+Production deployments:
 
 - Replace the current live version of your app
-- Persist until manually replaced
-- Use your custom domain (if connected), or a default URL like project-name.globeapp.dev
+- Persist until replaced by a new production deployment
+- Use your custom domain (if connected), or a default URL like `your-project.globeapp.dev`
 
-**Trigger a production deployment by:**
+**Create a production deployment by:**
 
 - Running `globe deploy --prod` in your terminal
-- Pushing to the branch marked as your **production branch** (default: `main`)
+- Pushing to the branch marked as your **production branch** (default: `main`) when GitHub integration is enabled
+
+## Deployment Names
+
+Each deployment receives a human-readable name (e.g., `calm-river`, `bright-mountain`) instead of random character strings. These friendly names make it easier to identify, reference, and discuss specific deployments in your team. Deployment names are automatically generated and appear in the dashboard and CLI output for both preview and production deployments.
 
 ## How to Manage Deployments
 
-You can view and manage deployments in the Globe dashboard:
+You can view and manage all your deployments in the Globe dashboard:
 
 1. In the **Globe dashboard**, go to your project
 2. Open the **Deployments** tab
-3. Toggle between **Preview** and **Production** to see all versions
-4. Select any deployment to view logs and details
-5. Open your deployment via the direct URL
+3. Toggle between **Preview** and **Production** to filter deployments by type
+4. Toggle between statuses (Queued, In Progress, Deployed, Failed, Cancelled) to filter deployments by status
+5. Select any deployment to view:
+   - Deployment status and timing
+   - Commit information (for GitHub deployments)
+   - Direct URL to access the deployment
+   - Build logs and runtime logs
+6. Click the deployment URL to open it in your browser
+
+<Image src="/assets/core-concepts/deployments.png" />
 
 ## How Deployments Work
 
-Every deployment goes through five stages:
+Every deployment goes through five stages from start to finish:
 
-1. **Source Acquisition:** Code is fetched from your local machine or GitHub repository
-2. **Build Process:** Code is compiled and built according to your project's configuration
-3. **Containerization:** The build output is packaged into a container
-4. **Distribution**: The container is distributed to Globe's global edge network
-5. **Activation:** The deployment becomes accessible via a unique URL
+1. **Source Acquisition:** Globe fetches your code from your local machine (CLI) or GitHub repository (GitHub integration)
+2. **Build Process:** Your code is compiled and built according to your project's configuration, including framework presets, build commands, and dependencies
+3. **Containerization:** The build output is packaged into a container optimized for Globe's infrastructure
+4. **Distribution:** The container is distributed to Globe's global edge network across multiple regions
+5. **Activation:** The deployment becomes accessible via a unique URL and is ready to serve traffic
+
+<Info>
+  Deployment times vary based on your project size and complexity. Most
+  deployments complete in 1-3 minutes. You can monitor progress in the dashboard
+  or via CLI with the `--logs` flag.
+</Info>
 
 ## Deployment Status Reference
 
@@ -66,11 +88,16 @@ Every deployment goes through five stages:
 
 ## Best Practices
 
-- Use **preview deployments** to test every major change
-- Protect **production branches** in GitHub to avoid accidental deploys
-- Use different environment variables for **preview** and **production**
-- Check logs on failed deployments for quick debugging
+- Use preview deployments to test every major change before deploying to production
+- Enable branch protection in GitHub to prevent accidental production deploys
+- Use different environment variables for preview and production deployments
+- Check logs on failed deployments for quick debugging and troubleshooting
+- Always verify preview deployments work correctly before promoting to production
 
-## Next
+## Related Topics
 
-Monitor **build outputs**, **runtime errors**, and **real-time activity** from your live app, all in one place with **Logs**.
+- [Logs](/core-concepts/logs) - Monitor build outputs, runtime errors, and real-time activity
+- [Build Settings](/core-concepts/build-settings) - Configure how your app is built and deployed
+- [Environment Variables](/core-concepts/environment-variables) - Set environment-specific values for deployments
+- [Domains](/core-concepts/domains) - Configure custom domains for your deployments
+- [GitHub Integration](/core-concepts/github-integration) - Automate deployments from GitHub
