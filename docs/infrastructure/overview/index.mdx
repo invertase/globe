@@ -1,5 +1,6 @@
 ---
 title: "Infrastructure Overview"
+description: Learn how Globe's serverless infrastructure runs Dart code in isolated containers with automatic scaling, global edge network, and zero infrastructure management.
 ---
 
 Globe's infrastructure runs your Dart code in containers that start on demand and stop when idle. There are no servers to manage, and nothing runs unless it's handling a request. It's built this way to give you automatic scaling, global performance, and minimal setup.
@@ -8,14 +9,14 @@ Globe's infrastructure runs your Dart code in containers that start on demand an
 
 When you deploy your application to Globe, the following happens:
 
-- **Build**: Your Dart code is compiled into a native executable targeting `x86_64`.
-- **Distribute**: The binary is uploaded to Globe's private registry and made available across [global compute regions](/infrastructure/overview/compute-regions).
-- **Request Handling**: Incoming HTTP requests are routed through [Globe's edge network](https://www.cloudflare.com/en-gb/network/) (300+ locations) and sent to the **nearest compute region**.
-- **Execute**: If no container is running, one is started on demand. Your app runs in isolation, handles the request, and shuts down when idle.
+- **Build**: Your Dart code is compiled into a native executable targeting `x86_64`
+- **Distribute**: The binary is uploaded to Globe's private registry and made available across [global compute regions](/infrastructure/overview/compute-regions)
+- **Request Handling**: Incoming HTTP requests are routed through [Globe's edge network](https://www.cloudflare.com/en-gb/network/) (300+ locations) and sent to the nearest compute region
+- **Execute**: If no container is running, one is started on demand. Your app runs in isolation, handles the request, and shuts down when idle
 
 <Info>
-  This setup ensures your application is resilient, **globally available**, and
-  **efficiently uses resources** only when needed, eliminating idle server costs
+  This setup ensures your application is resilient, globally available, and
+  efficiently uses resources only when needed, eliminating idle server costs
   and maintenance overhead.
 </Info>
 
@@ -23,9 +24,9 @@ When you deploy your application to Globe, the following happens:
 
 Globe runs your Dart code in isolated containers using proprietary runner technology.
 
-- **Execution environment**: Your app runs inside a sandboxed container with no shared memory or persistent disk, but supports [static assets](/core-concepts/static-assets) with built-in compatibility for file system access and shelf_static for serving web content.
-- **Compiled output**: Deployments are compiled as native `x86_64` binaries for **optimal performance**.
-- **Scaling**: CPU and memory are **automatically allocated** per request based on **demand**.
+- **Execution environment**: Your app runs inside a sandboxed container with no shared memory or persistent disk, but supports [static assets](/core-concepts/static-assets) with built-in compatibility for file system access and shelf_static for serving web content
+- **Compiled output**: Deployments are compiled as native `x86_64` binaries for optimal performance
+- **Scaling**: CPU and memory are automatically allocated per request based on demand
 
 This setup delivers fast startup times, secure parallel execution, and automatic resource scaling without manual configuration. Ideal for Flutter and Dart applications that need to scale rapidly with changing traffic patterns.
 
@@ -47,23 +48,30 @@ Globe checks during the build process that your app binds to a port using the `P
 
 ### If you use FFI, it must be compiled for x86_64
 
-FFI is optional. But if you use native extensions, all binaries must target the `x86_64` architecture. Some system calls may be **blocked**; test early if your code depends on native **system-level behaviour**.
+FFI is optional. But if you use native extensions, all binaries must target the `x86_64` architecture. Some system calls may be blocked; test early if your code depends on native system-level behavior.
 
 ### Your app must be stateless
 
-Each request runs in a fresh container with no **persistent memory** or **file system**. Store state externally in **databases** or **remote services**.
+Each request runs in a fresh container with no persistent memory or file system. Store state externally in databases or remote services.
 
 ## Benefits of Globe's Infrastructure
 
-- **Zero infrastructure management**: Focus on app development instead of **server configuration**, **scaling logic**, or **deployment workflows**.
-- **Optimized for Dart**: The execution environment is specifically designed for **Dart applications**, providing **efficient** runtime performance.
-- **Global by default**: Your application instantly becomes available **worldwide** with **regional compute** for lower latency.
-- **Cost efficiency**: Pay only for actual usage—**no charges** for **idle capacity** or **over-provisioned** resources.
-- **Security at scale**: [DDoS](https://www.cloudflare.com/learning/ddos/what-is-a-ddos-attack/) protection and **edge network security** features protect your application by default.
+- **Zero infrastructure management**: Focus on app development instead of server configuration, scaling logic, or deployment workflows
+- **Optimized for Dart**: The execution environment is specifically designed for Dart applications, providing efficient runtime performance
+- **Global by default**: Your application instantly becomes available worldwide with regional compute for lower latency
+- **Cost efficiency**: Pay only for actual usage—no charges for idle capacity or over-provisioned resources
+- **Security at scale**: [DDoS](https://www.cloudflare.com/learning/ddos/what-is-a-ddos-attack/) protection and edge network security features protect your application by default
 
 ## Technical Limitations
 
-- **No persistent file system**: Anything written to disk during a request is discarded when the container shuts down. Use external storage for persistent data.
-- **No persistent memory**: In-memory state is not retained between requests. Store shared state externally in databases or caches.
-- **Restricted system-level access**: Some system calls are blocked in Globe's runtime. Test compatibility in advance if your app uses native code via FFI.
-- **Cold starts can affect latency**: If your app hasn't received traffic in a region recently, initial requests may experience slightly higher latency while containers start. See [Cold Starts](/infrastructure/overview/cold-starts) documentation for strategies to minimize this impact.
+- **No persistent file system**: Anything written to disk during a request is discarded when the container shuts down. Use external storage for persistent data
+- **No persistent memory**: In-memory state is not retained between requests. Store shared state externally in databases or caches
+- **Restricted system-level access**: Some system calls are blocked in Globe's runtime. Test compatibility in advance if your app uses native code via FFI
+- **Cold starts can affect latency**: If your app hasn't received traffic in a region recently, initial requests may experience slightly higher latency while containers start. See [Cold Starts](/infrastructure/overview/cold-starts) documentation for strategies to minimize this impact
+
+## Related Topics
+
+- [Cold Starts](/infrastructure/overview/cold-starts) - Understand and minimize cold start latency
+- [Compute Regions](/infrastructure/overview/compute-regions) - Learn about Globe's global compute regions
+- [Global CDN](/infrastructure/overview/global-cdn) - Understand Globe's content delivery network
+- [Deployments](/core-concepts/deployments) - Learn about deployment lifecycle and management
