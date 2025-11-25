@@ -1,5 +1,6 @@
 ---
 title: Compute Regions
+description: Configure preferred compute regions for your Globe deployments to optimize performance, ensure data residency, and co-locate with region-specific services.
 ---
 
 After a request passes through the [Global CDN & Edge Network](/infrastructure/overview/global-cdn), it's processed by your Dart application in a Compute Region. These are the global data centers where your code runs.
@@ -17,20 +18,21 @@ Globe optimizes request handling through intelligent loadbalancers that distribu
 
 ## When to Use Preferred Regions
 
-For most applications, the default behavior is ideal. However, you should consider specifying **preferred regions** when your application has specific geographic needs, such as:
+For most applications, the default behavior is ideal. However, you should consider specifying preferred regions when your application has specific geographic needs, such as:
 
-- Connecting to a **region-specific database** or external service.
-- Ensuring **data residency** to comply with local regulations.
-- Consolidating processing in specific regions to manage resources.
+- Connecting to a region-specific database or external service
+- Ensuring data residency to comply with local regulations
+- Consolidating processing in specific regions to manage resources
 
-A common use case is co-locating your compute with your database. If your app in Europe needs to make multiple queries to a database in North America, it's often faster to run the code in a North American **compute region** to minimize high-latency, transatlantic round-trip.
+A common use case is co-locating your compute with your database. If your app in Europe needs to make multiple queries to a database in North America, it's often faster to run the code in a North American compute region to minimize high-latency, transatlantic round-trip.
 
 ## How to Configure Preferred Regions
 
-You can configure preferred regions in two ways:
+You can configure preferred regions in three ways:
 
-- **Via Globe Dashboard**: In your project settings, you can select one or more preferred regions. This configuration applies to all new deployments.
-- **Via HTTP Header**: For per-request control, use the `X-Globe-Preferred-Region` header (e.g., `X-Globe-Preferred-Region: DFW, PDX`) to override the dashboard settings.
+- **Via Globe Dashboard**: In your project settings, you can select one or more preferred regions. This configuration applies to all new deployments
+- **Via globe.yaml**: Define preferred regions in your `globe.yaml` file for version-controlled configuration. See [The globe.yaml File](/core-concepts/globe-yaml) for details
+- **Via HTTP Header**: For per-request control, use the `X-Globe-Preferred-Region` header (e.g., `X-Globe-Preferred-Region: DFW, PDX`) to override the dashboard or `globe.yaml` settings
 
 ## Available Compute Regions
 
@@ -83,3 +85,10 @@ Globe uses three-letter IATA airport codes to identify regions.
   Malaysia, Thailand, New Zealand, Greece, Norway, South Africa, Austria, and
   Sweden.
 </Info>
+
+## Related Topics
+
+- [Global CDN](/infrastructure/overview/global-cdn) - Learn how requests are routed through the edge network
+- [Infrastructure Overview](/infrastructure/overview) - Understand Globe's serverless infrastructure
+- [Cold Starts](/infrastructure/overview/cold-starts) - Learn how regions affect cold start latency
+- [Deployments](/core-concepts/deployments) - Understand deployment lifecycle
