@@ -1,30 +1,31 @@
 ---
 title: Performance
+description: Optimize your Globe deployments for performance with automatic scaling, global edge network, caching strategies, and best practices for Dart and Flutter apps.
 ---
 
-Globe is built for **responsive**, **serverless** workloads. Performance is handled automatically across a **distributed infrastructure**, so your apps stay **fast** without requiring manual setup. Understanding how this works helps you design more efficient applications.
+Globe is built for responsive, serverless workloads. Performance is handled automatically across a distributed infrastructure, so your apps stay fast without requiring manual setup. Understanding how this works helps you design more efficient applications.
 
-## Key Behaviours
+## Key Behaviors
 
 ### Global Edge Network
 
 Globe utilizes a globally distributed edge network spanning [300+ cities in over 100 countries](https://www.cloudflare.com/en-gb/network/):
 
-- Requests are automatically routed to the nearest **edge location**
+- Requests are automatically routed to the nearest edge location
 - Initial request processing happens close to your users
-- Static assets are cached at **edge locations**
+- Static assets are cached at edge locations
 - Request routing optimizes for minimal [latency](https://www.cloudflare.com/learning/performance/glossary/what-is-latency/)
 - [DDoS](https://www.cloudflare.com/learning/ddos/what-is-a-ddos-attack/) protection and security filtering happen without a performance penalty
 
-This edge network ensures that users worldwide experience minimal **latency** when accessing your application.
+This edge network ensures that users worldwide experience minimal latency when accessing your application.
 
 ### Automatic Scaling
 
 Globe's serverless infrastructure dynamically scales to match your application's needs:
 
-- New containers are provisioned on **demand** as traffic increases
+- New containers are provisioned on demand as traffic increases
 - Resources scale down automatically during periods of low usage
-- No manual configuration of **scaling rules** required
+- No manual configuration of scaling rules required
 - Scaling happens independently in each region based on local demand
 - No practical upper limit on concurrent request handling
 
@@ -36,9 +37,9 @@ Globe optimizes resource utilization through intelligent container management:
 
 - Containers run only when processing requests
 - No resources are wasted on idle processes
-- Pay only for actual **compute usage**
+- Pay only for actual compute usage
 - Short-lived operations use minimal resources
-- **Memory** and **CPU allocation** are optimized based on workload
+- Memory and CPU allocation are optimized based on workload
 
 This approach eliminates the overhead of maintaining continuously running servers.
 
@@ -46,24 +47,24 @@ This approach eliminates the overhead of maintaining continuously running server
 
 Globe implements multi-layered caching to improve performance:
 
-- Static asset **caching** at edge locations
+- Static asset caching at edge locations
 - Regional response caching minimizes repeated compute
-- **Cache control** via standard HTTP headers
+- Cache control via standard HTTP headers
 - Automatic cache invalidation on new deployments
 - Fine-grained cache control settings available
 
 Proper use of caching can dramatically improve application performance while reducing compute resource usage.
 
-## Optimising App Performance
+## Optimizing App Performance
 
 ### Optimize for Cold Starts
 
 Minimizing the impact of cold starts improves user experience:
 
 - Keep dependencies minimal and well-managed
-- Optimize application **startup code**
-- Use **lazy initialization** where appropriate
-- Consider regional **warming strategies** for critical endpoints
+- Optimize application startup code
+- Use lazy initialization where appropriate
+- Consider regional warming strategies for critical endpoints
 - Monitor cold start frequency with the `x-globe-temperature` header
 
 See the [Cold Starts](/infrastructure/overview/cold-starts) documentation for more details.
@@ -72,21 +73,21 @@ See the [Cold Starts](/infrastructure/overview/cold-starts) documentation for mo
 
 Globe's distributed architecture works best with parallel processing patterns:
 
-- Break large operations into smaller **parallel tasks**
-- Use **asynchronous programming** patterns
-- Implement appropriate **timeout handling**
-- Design with **eventual consistency** in mind
-- Consider **database connection pooling** for data-intensive operations
+- Break large operations into smaller parallel tasks
+- Use asynchronous programming patterns
+- Implement appropriate timeout handling
+- Design with eventual consistency in mind
+- Consider database connection pooling for data-intensive operations
 
 ### Optimize Database Operations
 
 Efficient database access is critical for serverless applications:
 
-- Use **connection pooling** when possible
-- Implement **caching** for frequently accessed data
+- Use connection pooling when possible
+- Implement caching for frequently accessed data
 - Keep database connections short-lived
-- Use efficient **queries** and **indexes**
-- Consider **database proximity** when configuring preferred regions
+- Use efficient queries and indexes
+- Consider database proximity when configuring preferred regions
 
 ### Leverage HTTP Caching Headers
 
@@ -112,18 +113,25 @@ Response handleAssetRequest(Request request) {
 Efficient asset delivery improves perceived performance:
 
 - Compress text-based assets (`JavaScript`, `CSS`, `HTML`)
-- Optimize **image sizes** and formats
-- Use appropriate **compression algorithms**
-- Consider implementing a **CDN** for static content
-- Set long **cache lifetimes** for static assets
+- Optimize image sizes and formats
+- Use appropriate compression algorithms
+- Consider implementing a CDN for static content
+- Set long cache lifetimes for static assets
 
 ## Common Performance Pitfalls
 
 Avoid these common issues that can impact performance:
 
-- Excessive **cold starts** due to underutilized regions
-- Long-running **synchronous operations**
-- Inefficient **database** queries
-- Missing or inappropriate **cache headers**
-- Large dependencies increasing **startup time**
-- **Memory leaks** in long-running processes
+- Excessive cold starts due to underutilized regions
+- Long-running synchronous operations
+- Inefficient database queries
+- Missing or inappropriate cache headers
+- Large dependencies increasing startup time
+- Memory leaks in long-running processes
+
+## Related Topics
+
+- [Cold Starts](/infrastructure/overview/cold-starts) - Minimize cold start impact on performance
+- [Automatic Caching](/infrastructure/overview/automatic-caching) - Optimize asset delivery with caching
+- [Global CDN](/infrastructure/overview/global-cdn) - Understand Globe's edge network performance
+- [Resources and Limits](/infrastructure/overview/resources-and-limits) - Understand resource constraints
