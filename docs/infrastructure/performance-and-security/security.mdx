@@ -1,25 +1,26 @@
 ---
 title: Security
+description: Learn about Globe's built-in security features including container isolation, HTTPS encryption, DDoS protection, and security best practices for your applications.
 ---
 
-Security is built into Globe’s platform. Your apps run in isolated environments with **network-level protections** and ongoing **monitoring**.
+Security is built into Globe's platform. Your apps run in isolated environments with network-level protections and ongoing monitoring.
 
 ## Security Architecture
 
-Globe employs a layered security approach that combines **container isolation**, **runtime restrictions**, and robust **network defenses**. These protections work together to reduce risk and provide a **secure-by-default** environment.
+Globe employs a layered security approach that combines container isolation, runtime restrictions, and robust network defenses. These protections work together to reduce risk and provide a secure-by-default environment.
 
 ### Deployment Isolation
 
-- **Sandboxed Environments**: Each deployment runs in its own isolated **environment**, preventing unauthorized access between applications.
-- **Runtime Restrictions**: Strict limits on **system calls** to prevent unsafe operations.
-- **Resource Isolation**: **CPU** and **memory** usage are isolated per deployment to prevent interference and resource contention.
+- **Sandboxed Environments**: Each deployment runs in its own isolated environment, preventing unauthorized access between applications
+- **Runtime Restrictions**: Strict limits on system calls to prevent unsafe operations
+- **Resource Isolation**: CPU and memory usage are isolated per deployment to prevent interference and resource contention
 
 ### Network Security
 
-- **HTTPS Encryption**: All traffic between your apps and Globe is encrypted using **HTTPS (TLS)**, protecting data in transit.
-- **DDoS Protection**: Built-in edge-level defenses help mitigate **denial-of-service** attacks and keep your apps accessible.
-- **Controlled Network Access**: Fine-grained controls over **inbound** and **outbound traffic** reduce exposure to external threats.
-- **Secure Request Handling**: All requests are validated and sanitized to guard against **injection attacks** and malformed inputs.
+- **HTTPS Encryption**: All traffic between your apps and Globe is encrypted using HTTPS (TLS), protecting data in transit
+- **DDoS Protection**: Built-in edge-level defenses help mitigate denial-of-service attacks and keep your apps accessible
+- **Controlled Network Access**: Fine-grained controls over inbound and outbound traffic reduce exposure to external threats
+- **Secure Request Handling**: All requests are validated and sanitized to guard against injection attacks and malformed inputs
 
 ## Security Best Practices
 
@@ -27,21 +28,28 @@ To maximize the security of your Globe deployments:
 
 ### Configuration Security
 
-- **Environment Variables**: Store sensitive information **(API keys, passwords)** in environment variables, not in your code.
-- **Least Privilege**: Grant only the permissions your application truly needs to function.
-- **Regular Updates**: Keep dependencies and packages updated to take advantage of the latest **security patches**.
+- **Environment Variables**: Store sensitive information (API keys, passwords) in environment variables, not in your code
+- **Least Privilege**: Grant only the permissions your application truly needs to function
+- **Regular Updates**: Keep dependencies and packages updated to take advantage of the latest security patches
 
 #### Application Security
 
-- **Input Validation**: Validate and sanitize all incoming data to prevent [injection attacks](https://www.crowdstrike.com/en-us/cybersecurity-101/cyberattacks/injection-attack/).
-- **Output Encoding**: Encode outputs correctly to avoid [XSS vulnerabilities](https://www.cloudflare.com/learning/security/threats/cross-site-scripting/).
-- **Authentication**: Use strong **authentication** mechanisms to verify user identity.
-- **Authorization**: Enforce **access controls** to protect sensitive resources and operations.
+- **Input Validation**: Validate and sanitize all incoming data to prevent [injection attacks](https://www.crowdstrike.com/en-us/cybersecurity-101/cyberattacks/injection-attack/)
+- **Output Encoding**: Encode outputs correctly to avoid [XSS vulnerabilities](https://www.cloudflare.com/learning/security/threats/cross-site-scripting/)
+- **Authentication**: Use strong authentication mechanisms to verify user identity
+- **Authorization**: Enforce access controls to protect sensitive resources and operations
 
 ### Security Compliance
 
-Globe's infrastructure is regularly updated with **security patches** to maintain compliance with industry standards. The platform is designed to help you build applications that can meet various **compliance** requirements.
+Globe's infrastructure is regularly updated with security patches to maintain compliance with industry standards. The platform is designed to help you build applications that can meet various compliance requirements.
 
 ### Getting Help
 
-If you encounter a **security** issue or have questions about best practices for securing your app on Globe, reach out to our team on [Discord](https://discord.gg/UCcCYjDaTy).
+If you encounter a security issue or have questions about best practices for securing your app on Globe, reach out to our team on [Discord](https://discord.gg/UCcCYjDaTy).
+
+## Related Topics
+
+- [Infrastructure Overview](/infrastructure/overview) - Learn about Globe's isolated execution environment
+- [Using FFI](/infrastructure/overview/using-ffi) - Understand security restrictions for native code
+- [Environment Variables](/core-concepts/environment-variables) - Securely manage secrets and configuration
+- [HTTP Headers](/infrastructure/overview/http-headers) - Use security-related headers in your application
