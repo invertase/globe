@@ -1,8 +1,9 @@
 ---
 title: "Using FFI with Native Code"
+description: Use Dart's Foreign Function Interface (FFI) with native code in Globe deployments, including requirements for x86_64 architecture and security considerations.
 ---
 
-Globe supports Dart's **Foreign Function Interface (FFI)**, which allows you to call native code (e.g., C/C++) from your Dart application. This is powerful for CPU-intensive tasks, leveraging existing native libraries, or accessing low-level system features.
+Globe supports Dart's Foreign Function Interface (FFI), which allows you to call native code (e.g., C/C++) from your Dart application. This is powerful for CPU-intensive tasks, leveraging existing native libraries, or accessing low-level system features.
 
 However, to ensure security and compatibility across the platform, you must adhere to the following requirements.
 
@@ -10,9 +11,15 @@ However, to ensure security and compatibility across the platform, you must adhe
 
 The single most important requirement is the target architecture.
 
-- **Binaries Must Target `x86_64`**: Globe's execution environment runs on the `x86_64` CPU architecture. If your application uses FFI, any compiled native binaries or libraries that you bundle with your deployment **must** be compiled for this target. Deployments with binaries for other architectures (like ARM) will fail during the build process.
+- **Binaries Must Target `x86_64`**: Globe's execution environment runs on the `x86_64` CPU architecture. If your application uses FFI, any compiled native binaries or libraries that you bundle with your deployment must be compiled for this target. Deployments with binaries for other architectures (like ARM) will fail during the build process
 
 ## Limitations & Best Practices
 
-- **Restricted System-Level Access**: For security, your application runs inside a **sandboxed container**. This environment prevents a subset of system calls that could compromise the isolation between deployments. If your native code relies on specific or unusual system-level behaviors, it is crucial to **test your application early** by deploying a minimal version to Globe to verify its functionality.
-- **Stateless Environment**: Remember that Globe's file system is ephemeral. If your FFI code needs to write temporary files, it is permitted, but those files will be discarded when the request is complete. For any state that needs to persist, use an external database or storage service.
+- **Restricted System-Level Access**: For security, your application runs inside a sandboxed container. This environment prevents a subset of system calls that could compromise the isolation between deployments. If your native code relies on specific or unusual system-level behaviors, it is crucial to test your application early by deploying a minimal version to Globe to verify its functionality
+- **Stateless Environment**: Remember that Globe's file system is ephemeral. If your FFI code needs to write temporary files, it is permitted, but those files will be discarded when the request is complete. For any state that needs to persist, use an external database or storage service
+
+## Related Topics
+
+- [Infrastructure Overview](/infrastructure/overview) - Learn about Globe's serverless infrastructure and execution environment
+- [Resources and Limits](/infrastructure/overview/resources-and-limits) - Understand execution time and resource constraints
+- [Deployments](/core-concepts/deployments) - Learn about the deployment process
