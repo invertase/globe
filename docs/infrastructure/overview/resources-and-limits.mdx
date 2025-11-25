@@ -1,14 +1,15 @@
 ---
 title: Resources & Limits
+description: Understand Globe's resource limits including requests, bandwidth, memory, CPU, execution time, databases, and cron jobs for your Dart and Flutter applications.
 ---
 
-Globe runs your applications on a globally distributed infrastructure designed for automatic **routing**, **caching**, and **scaling**. To maintain high reliability and platform stability, we apply resource usage limits based on fair use principles.
+Globe runs your applications on a globally distributed infrastructure designed for automatic routing, caching, and scaling. To maintain high reliability and platform stability, we apply resource usage limits based on fair use principles.
 
 Understanding these limits helps you design resilient applications and avoid unexpected disruptions.
 
 ## Default Resource Allowances
 
-Your Globe account operates with the following default resource thresholds and behaviours:
+Your Globe account operates with the following default resource thresholds and behaviors:
 
 | **Resource**          | **Current Thresholds** | **Notes**                                          |
 | --------------------- | ---------------------- | -------------------------------------------------- |
@@ -21,18 +22,18 @@ Your Globe account operates with the following default resource thresholds and b
 | **CPU Usage**         | Varies based on load   | Avoid CPU-heavy tasks for extended periods         |
 | **Execution time**    | 30 seconds per request | Maximum processing time allowed per single request |
 
-These baseline thresholds are intended for general use. Production apps should monitor usage and optimise accordingly.
+These baseline thresholds are intended for general use. Production apps should monitor usage and optimize accordingly.
 
 ## Requests
 
-Your Globe account includes **50K requests per month**. Every HTTP interaction with your app counts toward this total, including:
+Your Globe account includes 50K requests per month. Every HTTP interaction with your app counts toward this total, including:
 
 - API endpoint calls
 - Page views rendered by your application
-- Requests for static assets (like images or scripts), _even if served from Globe's edge cache_
+- Requests for static assets (like images or scripts), even if served from Globe's edge cache
 - Each new WebSocket connection established
 
-When your application reaches this request limit, any new incoming requests will be **rejected** with an error response until your usage cycle resets at the start of the next month.
+When your application reaches this request limit, any new incoming requests will be rejected with an error response until your usage cycle resets at the start of the next month.
 
 ## Bandwidth
 
@@ -58,41 +59,48 @@ If you exceed either bandwidth allowance, you may experience request rejections 
 
 ## Memory Usage
 
-Each running instance of your application in Globe has access to **256MB of memory**.
+Each running instance of your application in Globe has access to 256MB of memory.
 
 If your application exceeds this memory limit, Globe will terminate your application instance. Also, any active requests will fail as a result.
 
 ## CPU Usage
 
-Globe dynamically monitors CPU load across the platform. There's no hard limit per instance instead, applications using excessive CPU for extended periods may have requests **terminated**.
+Globe dynamically monitors CPU load across the platform. There's no hard limit per instance; instead, applications using excessive CPU for extended periods may have requests terminated.
 
 ## Execution Time
 
-Each request to your application is allowed a maximum of **30 seconds** from start to finish, from the time Globe receives the request to when the response is completed.
+Each request to your application is allowed a maximum of 30 seconds from start to finish, from the time Globe receives the request to when the response is completed.
 
-If a request takes longer than 30 seconds, it will be **automatically terminated**, regardless of its progress.
+If a request takes longer than 30 seconds, it will be automatically terminated, regardless of its progress.
 
 ## Databases
 
-Your Globe account includes **2 active databases** per organization. Each database provides:
+Your Globe account includes 2 active databases per organization. Each database provides:
 
-- **Serverless SQLite compatibility** with LibSQL protocol
-- **Integrated dashboard** for data management and querying
-- **External client support** for connecting from any LibSQL-compatible tool
+- Serverless SQLite compatibility with LibSQL protocol
+- Integrated dashboard for data management and querying
+- External client support for connecting from any LibSQL-compatible tool
 
 When you reach your database limit, you must delete an existing database before creating a new one.
 
 ## Cron Jobs
 
-Your Globe account includes **1 cron job** with unlimited invocations. Cron jobs allow you to:
+Your Globe account includes 1 cron job with unlimited invocations. Cron jobs allow you to:
 
-- **Schedule recurring tasks** using standard cron syntax
-- **Execute HTTP requests** to specific endpoints in your application
-- **Run automatically** after production deployments
-- **Monitor execution** through the Globe dashboard
+- Schedule recurring tasks using standard cron syntax
+- Execute HTTP requests to specific endpoints in your application
+- Run automatically after production deployments
+- Monitor execution through the Globe dashboard
 
-Cron jobs run in **UTC timezone** and are synchronized with your production deployments.
+Cron jobs run in UTC timezone and are synchronized with your production deployments.
 
 ## No Overage Charges
 
-Globe provides predictable pricing with **no overage charges**. When you reach your limits, requests are rejected rather than incurring additional fees, giving you full control over your costs.
+Globe provides predictable pricing with no overage charges. When you reach your limits, requests are rejected rather than incurring additional fees, giving you full control over your costs.
+
+## Related Topics
+
+- [Usage](/core-concepts/usage) - Monitor your resource consumption and usage metrics
+- [Automatic Caching](/infrastructure/overview/automatic-caching) - Learn how caching affects bandwidth usage
+- [Infrastructure Overview](/infrastructure/overview) - Understand Globe's serverless infrastructure
+- [Cron Jobs](/core-concepts/cron-jobs) - Learn about scheduling recurring tasks
