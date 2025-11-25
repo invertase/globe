@@ -1,37 +1,38 @@
 ---
 title: Cold Starts
+description: Understand cold starts in Globe's serverless platform, learn how to minimize their impact, and optimize application startup performance for better latency.
 ---
 
-Cold starts happen when Globe's serverless platform needs to initialize a new container to process a request. This is common in environments where resources aren't always running. Since initialization takes time, cold starts introduce [latency](https://www.cloudflare.com/learning/performance/glossary/what-is-latency/), which can affect **performance** and **user experience**, especially in time-sensitive applications.
+Cold starts happen when Globe's serverless platform needs to initialize a new container to process a request. This is common in environments where resources aren't always running. Since initialization takes time, cold starts introduce [latency](https://www.cloudflare.com/learning/performance/glossary/what-is-latency/), which can affect performance and user experience, especially in time-sensitive applications.
 
 ## Why Cold Starts Matter on Globe
 
-Globe is designed for **dynamic scaling** and **high availability**, but this flexibility means containers may shut down when idle and reinitialize when traffic resumes. This process can delay response times for the **first request**, particularly in low-traffic regions or after a deployment.
+Globe is designed for dynamic scaling and high availability, but this flexibility means containers may shut down when idle and reinitialize when traffic resumes. This process can delay response times for the first request, particularly in low-traffic regions or after a deployment.
 
 ## How Globe Manages Starts
 
 Globe uses three container start states, based on how recently a container was last active:
 
-1. **Cold start**: Globe fetches and initializes a new container image.
+1. **Cold start**: Globe fetches and initializes a new container image
 
-   - Happens after **long idle periods** or in a region receiving its first request.
-   - Takes around **500ms** (currently being optimized).
+   - Happens after long idle periods or in a region receiving its first request
+   - Takes around 500ms (currently being optimized)
 
-2. **Warm start**: Globe resumes a paused container that was active recently.
+2. **Warm start**: Globe resumes a paused container that was active recently
 
-   - Happens when a container was active recently but became idle.
-   - **Faster** than cold starts, with reduced **latency**.
+   - Happens when a container was active recently but became idle
+   - Faster than cold starts, with reduced latency
 
-3. **Hot start**: Globe routes the request to an already-running container.
+3. **Hot start**: Globe routes the request to an already-running container
 
-   - Happens when ongoing traffic keeps the container active.
-   - Delivers the lowest latency.
+   - Happens when ongoing traffic keeps the container active
+   - Delivers the lowest latency
 
-Globe's infrastructure is engineered to minimize cold starts compared to other serverless platforms, with **optimizations** continuing during the preview period.
+Globe's infrastructure is engineered to minimize cold starts compared to other serverless platforms, with optimizations continuing during the preview period.
 
 <Info>
   Globe adds an `x-globe-temperature: cold | warm | hot` header to each
-  response, allowing you to monitor container **temperature** in your logs or
+  response, allowing you to monitor container temperature in your logs or
   analytics.
 </Info>
 
@@ -39,44 +40,51 @@ Globe's infrastructure is engineered to minimize cold starts compared to other s
 
 ### Optimize Application Size
 
-Smaller applications initialize **faster**. To reduce size:
+Smaller applications initialize faster. To reduce size:
 
-- Remove **unused dependencies** from `pubspec.yaml` to decrease package payload
-- Enable **tree shaking** when your dependencies support it to eliminate **dead code**
-- Minimize included **assets** by optimizing images and removing unnecessary resources
-- Split functionality into **separate deployments** when you need different scaling patterns or when components have significantly different resource requirements
+- Remove unused dependencies from `pubspec.yaml` to decrease package payload
+- Enable tree shaking when your dependencies support it to eliminate dead code
+- Minimize included assets by optimizing images and removing unnecessary resources
+- Split functionality into separate deployments when you need different scaling patterns or when components have significantly different resource requirements
 
 ### Improve Startup Performance
 
 Speed up your application's initialization process by:
 
-- Deferring **non-essential initialization** until after the first request is handled
-- Replacing **synchronous operations** with **asynchronous** alternatives during startup
-- Implementing **lazy loading** for components that aren't needed for initial requests
-- **Caching** computation results to avoid repeated expensive operations
+- Deferring non-essential initialization until after the first request is handled
+- Replacing synchronous operations with asynchronous alternatives during startup
+- Implementing lazy loading for components that aren't needed for initial requests
+- Caching computation results to avoid repeated expensive operations
 
 ### Keep Containers Warm
 
-For critical applications with strict **latency requirements**:
+For critical applications with strict latency requirements:
 
-- Create scheduled tasks that periodically **ping** your application endpoints
+- Create scheduled tasks that periodically ping your application endpoints
 - Distribute these pings across your highest-priority regions
-- Focus warming efforts on **business-critical endpoints** that require immediate response
+- Focus warming efforts on business-critical endpoints that require immediate response
 
 ### Monitor and analyze
 
-Use Globe's **temperature header** to understand your application's **performance**:
+Use Globe's temperature header to understand your application's performance:
 
-- Track **cold start frequency** patterns by region, time of day, and day of week
-- Identify which specific **endpoints** experience the most cold starts
-- Measure actual **latency impact** to determine if optimization is needed
+- Track cold start frequency patterns by region, time of day, and day of week
+- Identify which specific endpoints experience the most cold starts
+- Measure actual latency impact to determine if optimization is needed
 
 ## Cold Starts and Deployment Planning
 
-When planning deployments, factor in how cold starts might affect **performance**:
+When planning deployments, factor in how cold starts might affect performance:
 
-- **Deploy during lower-traffic windows**: This reduces the risk of **latency spikes** impacting end users. Ideal for apps with predictable usage patterns.
-- **Warm up critical regions post-deploy**: Schedule background **pings** or traffic simulators to keep containers hot, especially in regions with **mission-critical traffic**.
-- **Monitor early post-deploy latency**: Use `x-globe-temperature` metrics to track cold start frequency and take corrective action if needed.
+- **Deploy during lower-traffic windows**: This reduces the risk of latency spikes impacting end users. Ideal for apps with predictable usage patterns
+- **Warm up critical regions post-deploy**: Schedule background pings or traffic simulators to keep containers hot, especially in regions with mission-critical traffic
+- **Monitor early post-deploy latency**: Use `x-globe-temperature` metrics to track cold start frequency and take corrective action if needed
 
-These strategies help maintain a **smooth experience** during and after deployment rollouts.
+These strategies help maintain a smooth experience during and after deployment rollouts.
+
+## Related Topics
+
+- [Infrastructure Overview](/infrastructure/overview) - Learn about Globe's serverless infrastructure
+- [Compute Regions](/infrastructure/overview/compute-regions) - Understand how regions affect cold starts
+- [Deployments](/core-concepts/deployments) - Plan deployments to minimize cold start impact
+- [Cron Jobs](/core-concepts/cron-jobs) - Use cron jobs to keep containers warm
