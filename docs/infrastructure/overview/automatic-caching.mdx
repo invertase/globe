@@ -1,16 +1,17 @@
 ---
 title: Automatic Caching
+description: Understand Globe's automatic caching system for static assets, learn how to control cache behavior with HTTP headers, and optimize asset delivery performance.
 ---
 
-Globe's infrastructure includes a multi-layered caching system designed to improve your application's performance. Caching is handled **automatically** at our global edge locations, so you benefit from it without any initial configuration.
+Globe's infrastructure includes a multi-layered caching system designed to improve your application's performance. Caching is handled automatically at our global edge locations, so you benefit from it without any initial configuration.
 
 ## How Automatic Caching Works
 
 When a request for a static asset (like an image, CSS, or JavaScript file) reaches Globe's Edge Network, the following happens:
 
-1. **Cache Check**: Globe checks if a fresh copy of the asset exists in the cache of the edge location that received the request.
-2. **Cache Hit**: If a valid copy exists (a "**cache hit**"), the asset is served directly from the edge. This is extremely fast and does not count against your project's [uncached bandwidth](/infrastructure/overview/resources-and-limits).
-3. **Cache Miss**: If the asset is not in the cache or has expired (a "cache miss"), the request is forwarded to a compute region. Your application processes the request, and the response is sent back to the user and stored in the edge cache for future requests.
+1. **Cache Check**: Globe checks if a fresh copy of the asset exists in the cache of the edge location that received the request
+2. **Cache Hit**: If a valid copy exists (a "cache hit"), the asset is served directly from the edge. This is extremely fast and does not count against your project's [uncached bandwidth](/infrastructure/overview/resources-and-limits)
+3. **Cache Miss**: If the asset is not in the cache or has expired (a "cache miss"), the request is forwarded to a compute region. Your application processes the request, and the response is sent back to the user and stored in the edge cache for future requests
 
 New deployments automatically invalidate the entire cache, ensuring your users always receive the latest version of your assets.
 
@@ -18,10 +19,10 @@ New deployments automatically invalidate the entire cache, ensuring your users a
 
 While caching is automatic, you can fine-tune its behavior using standard HTTP `Cache-Control` headers in your responses. This gives you precise control over what is cached and for how long.
 
-## Key Headers:
+## Key Headers
 
-- `Cache-Control`: The primary header to define a caching policy. Use `public` to allow caching and `max-age` to specify the duration in seconds.
-- `ETag`: A unique identifier for a specific version of a resource, used for validation.
+- `Cache-Control`: The primary header to define a caching policy. Use `public` to allow caching and `max-age` to specify the duration in seconds
+- `ETag`: A unique identifier for a specific version of a resource, used for validation
 
 ## Example in Dart (Shelf):
 
@@ -43,3 +44,10 @@ Response handleAssetRequest(Request request) {
 ```
 
 By effectively leveraging these headers, you can optimize asset delivery, reduce the load on your application, and minimize bandwidth costs.
+
+## Related Topics
+
+- [Global CDN](/infrastructure/overview/global-cdn) - Learn how Globe's edge network delivers cached content
+- [Static Assets](/core-concepts/static-assets) - Configure static assets for your application
+- [HTTP Headers](/infrastructure/overview/http-headers) - Understand HTTP headers in Globe deployments
+- [Resources and Limits](/infrastructure/overview/resources-and-limits) - Learn about bandwidth limits and usage
