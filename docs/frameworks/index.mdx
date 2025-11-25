@@ -1,10 +1,11 @@
 ---
 title: Frameworks
+description: Learn about supported Dart and Flutter frameworks on Globe, including Dart Frog, Shelf, Flutter Web, and Jaspr with automatic preset detection.
 ---
 
 Globe is **framework-agnostic** and supports **any Dart-based project** that can be built **without additional tooling**. If your framework does not require extra setup or custom build steps, it will work on Globe by default.
 
-For supported frameworks with specific build requirements, Globe applies **preconfigured framework** presets that detect and run the necessary build commands automatically. This includes support for tools like `build_runner` and `melos`.
+For supported frameworks with specific build requirements, Globe applies **preconfigured framework presets** that automatically detect and run the necessary build commands. This includes support for tools like `build_runner` and `melos`.
 
 You can also configure a custom build command for frameworks not yet supported by presets.
 
@@ -12,10 +13,16 @@ You can also configure a custom build command for frameworks not yet supported b
 
 Globe currently includes presets for:
 
-- [Dart Shelf](/frameworks/shelf-server): Minimal HTTP server framework for Dart.
-- [Dart Frog](/frameworks/dart-frog): File system-based routing framework for Dart.
-- [Flutter Web](/frameworks/flutter-web): Frontend framework for building SPAs and web applications.
-- [Jaspr](/frameworks/jaspr): Modern web framework for building websites in Dart.
-- [Monorepo](/frameworks/monorepos): Deploy Dart applications from monorepos and workspaces managed by Melos or Pub Workspaces.
+- [Dart Shelf](/frameworks/shelf-server): Minimal HTTP server framework for Dart
+- [Dart Frog](/frameworks/dart-frog): File system-based routing framework for Dart
+- [Flutter Web](/frameworks/flutter-web): Frontend framework for building SPAs and web applications
+- [Jaspr](/frameworks/jaspr): Modern web framework for building websites in Dart
+- [Monorepo](/frameworks/monorepos): Deploy Dart applications from monorepos and workspaces managed by Melos or Pub Workspaces
 
 More frameworks are in progress. To request support for a specific framework, [submit a feature request](https://invertase.canny.io/globe).
+
+## Related Topics
+
+- [Build Settings](/core-concepts/build-settings) - Configure framework presets and build commands
+- [Deployments](/core-concepts/deployments) - Understand how frameworks are deployed
+- [Globe CLI](/core-concepts/cli) - Deploy frameworks using the command line
