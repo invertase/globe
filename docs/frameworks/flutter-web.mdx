@@ -1,8 +1,9 @@
 ---
 title: Deploying a Flutter Web Application
+description: Deploy Flutter Web applications to Globe's global CDN with optimized builds and edge caching for high-performance SPAs.
 ---
 
-Deploying Flutter Web on Globe enables you to host high-performance single-page applications (SPAs) globally with minimal setup. Globe detects Flutter projects automatically and applies optimized defaults for build, deploy, and caching. This page outlines requirements and deployment behaviour.
+Deploying Flutter Web on Globe enables you to host high-performance single-page applications (SPAs) globally with minimal setup. Globe applies optimized defaults for build, deploy, and caching. This page outlines requirements and deployment behavior.
 
 ## Project Setup
 
@@ -42,25 +43,25 @@ Once deployed, your app is available at the unique URL shown in your dashboard (
 
 ![Flutter Web Application](/assets/flutter-web.png)
 
-## Deployment Behaviour
+## Deployment Behavior
 
 Globe builds your Flutter Web project and uploads the compiled output (build/web) to its CDN network.
 
-- **Preset detection**: Flutter Web projects are automatically recognized.
-- **Environment**: No manual configuration required.
-- **Build runner**: If used, it is auto-detected and executed before deployment.
+- **Preset detection**: Flutter Web projects are automatically recognized
+- **Environment**: No manual configuration required
+- **Build runner**: If used, it is auto-detected and executed before deployment
 - **Asset handling**:
-  - Assets are hashed and fingerprinted for cache optimization.
-  - Base href is automatically set to /.
+  - Assets are hashed and fingerprinted for cache optimization
+  - Base href is automatically set to /
 
-## Best practices
+## Best Practices
 
-- Use responsive design principles for optimal display across different devices.
-- Test your application across multiple browsers before deployment.
-- Consider using web-specific optimizations like lazy loading for better performance.
+- Use responsive design principles for optimal display across different devices
+- Test your application across multiple browsers before deployment
+- Consider using web-specific optimizations like lazy loading for better performance
 
-## Learn more
+## Related Topics
 
-- [Managing deployments](/core-concepts/deployments)
-- [Globe CLI reference](/core-concepts/cli)
-- [GitHub integration](/core-concepts/github-integration)
+- [Connect a Flutter App to Backend](/guides/connect-flutter-app) - Connect Flutter frontend to backend
+- [Managing deployments](/core-concepts/deployments) - Understand deployment lifecycle
+- [Globe CLI reference](/core-concepts/cli) - Command-line deployment tools
