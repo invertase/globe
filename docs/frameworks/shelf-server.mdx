@@ -1,8 +1,9 @@
 ---
 title: Deploying a Shelf Server
+description: Deploy Shelf server applications to Globe with zero configuration, automatic framework detection, and support for flexible Dart web server deployments.
 ---
 
-Shelf is a flexible web server framework for Dart. Globe supports deploying Shelf applications with zero custom configuration. This page outlines requirements and deployment behaviour.
+Shelf is a flexible web server framework for Dart. Globe supports deploying Shelf applications with zero custom configuration. This page outlines requirements and deployment behavior.
 
 ## Project Setup
 
@@ -12,7 +13,7 @@ To create a new project using the Globe template, run the following command:
 globe create –t crud_rest_api_shelf
 ```
 
-To create a Shelf project manually
+To create a Shelf project manually:
 
 1. Create a basic Dart application:
 
@@ -80,23 +81,23 @@ To create a Shelf project manually
 
 3. Wait for the deployment to complete. You'll receive a unique URL for accessing your deployment.
 
-## Deployment Behaviour
+## Deployment Behavior
 
-- **Environment**: Globe sets the `PORT` variable automatically. Your app must listen to it.
-- **Build runner**: Detected and triggered based on Dart project structure.
-- **Preset**: No config needed for Shelf; Globe uses sensible defaults.
-- **Logs**: Real-time logs are available in the dashboard under the **Logs** tab.
+- **Preset detection**: Globe recognizes Shelf projects and handles all configs automatically
+- **Environment**: Globe sets the `PORT` variable automatically. Your app must listen to it
+- **Build runner**: Detected and triggered based on Dart project structure
+- **Logs**: Real-time logs are available in the dashboard under the **Logs** tab
 
-## Best practices
+## Best Practices
 
-- Always listen on the `PORT` environment variable with a fallback for local development.
-- Implement proper error handling with appropriate HTTP status codes.
-- Use middleware for **logging**, **authentication**, and other cross-cutting concerns.
-- Separate route handlers into dedicated files for better maintainability.
-- Validate and sanitize all user input to prevent security vulnerabilities.
+- Always listen on the `PORT` environment variable with a fallback for local development
+- Implement proper error handling with appropriate HTTP status codes
+- Use middleware for logging, authentication, and other cross-cutting concerns
+- Separate route handlers into dedicated files for better maintainability
+- Validate and sanitize all user input to prevent security vulnerabilities
 
-## Learn more
+## Related Topics
 
-- [Managing deployments](/core-concepts/deployments)
-- [Globe CLI reference](/core-concepts/cli)
-- [GitHub integration](/core-concepts/github-integration)
+- [Use Shelf for Backend](/guides/shelf-backend-globe) - Step-by-step Shelf deployment guide
+- [Managing deployments](/core-concepts/deployments) - Understand deployment lifecycle
+- [Globe CLI reference](/core-concepts/cli) - Command-line deployment tools
