@@ -1,34 +1,32 @@
 ---
 title: Deploying a Jaspr Application
+description: Deploy Jaspr applications to Globe with support for all rendering modes including server-side, static, and client-side rendering for Dart web apps.
 ---
 
-Jaspr is a modern web framework for building websites in Dart. Globe supports the deployment of Jaspr applications in all its [rendering modes](https://docs.jaspr.site/get_started/modes).
-
-This page outlines the requirements and deployment behaviour when deploying a Jaspr application to Globe.
+Jaspr is a modern web framework for building websites in Dart. Globe supports deploying Jaspr applications in all its [rendering modes](https://docs.jaspr.site/get_started/modes). This page outlines requirements and deployment behavior.
 
 ## Project Setup
 
 To create a new Jaspr project:
 
-1.  Install the Jaspr CLI:
+1. Install the Jaspr CLI:
 
-    ```bash
-    dart pub global activate jaspr_cli
-    ```
+   ```bash
+   dart pub global activate jaspr_cli
+   ```
 
-2.  Create a new Jaspr project, specifying your chosen rendering mode (`server`, `static`, or `client`):
+2. Create a new Jaspr project, specifying your chosen rendering mode (`server`, `static`, or `client`):
 
-    ```bash
-    jaspr create my_jaspr_app
+   ```bash
+   jaspr create my_jaspr_app
+   cd my_jaspr_app
+   ```
 
-    cd my_jaspr_app
-    ```
+3. Test your application locally:
 
-3.  Test your application locally:
-
-    ```bash
-    jaspr serve
-    ```
+   ```bash
+   jaspr serve
+   ```
 
 ## Deploying to Globe
 
@@ -52,12 +50,13 @@ Once deployed, your app is available at the unique URL shown in your dashboard (
 
 ## Jaspr vs Flutter Web
 
-Jaspr is best suited for building **static websites**, **server-rendered**, or **single page apps** using Dart with native web technologies (HTML, DOM, CSS). It brings a Flutter-like structure but embraces the web’s natural rendering model.
-Flutter Web, in contrast, is optimized for building **cross-platform apps** and paints UI via a canvas, which may not align well with **document-centric** or **content-heavy websites**.
+Jaspr is best suited for building static websites, server-rendered, or single page apps using Dart with native web technologies (HTML, DOM, CSS). It brings a Flutter-like structure but embraces the web's natural rendering model.
 
-## Learn more
+Flutter Web, in contrast, is optimized for building cross-platform apps and paints UI via a canvas, which may not align well with document-centric or content-heavy websites.
 
-- [Jaspr documentation](https://docs.jaspr.site/)
-- [Managing deployments](/core-concepts/deployments)
-- [Globe CLI reference](/core-concepts/cli)
-- [GitHub integration](/core-concepts/github-integration)
+## Related Topics
+
+- [Jaspr documentation](https://docs.jaspr.site/) - Official Jaspr docs
+- [Deploy a Jaspr App](/guides/jaspr-globe-deployment) - Step-by-step deployment guide
+- [Managing deployments](/core-concepts/deployments) - Understand deployment lifecycle
+- [Globe CLI reference](/core-concepts/cli) - Command-line deployment tools
