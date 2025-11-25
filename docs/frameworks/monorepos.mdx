@@ -1,8 +1,9 @@
 ---
 title: Deploying from a Monorepo
+description: Deploy individual Dart applications from monorepos and workspaces managed by Melos or Pub Workspaces, with automatic Flutter environment detection.
 ---
 
-When working with monorepos or workspaces (managed by tools like [Melos](https://melos.invertase.dev/) or [Pub Workspaces](https://dart.dev/tools/pub/workspaces)), you can deploy individual Dart applications from within your workspace structure. Globe automatically detects when you're deploying from a workspace that contains Flutter projects and applies the appropriate build configuration to ensure compatibility.
+When working with monorepos or workspaces (managed by tools like [Melos](https://melos.invertase.dev/) or [Pub Workspaces](https://dart.dev/tools/pub/workspaces)), you can deploy individual Dart applications from within your workspace structure. Globe applies the appropriate build configuration to ensure compatibility when deploying from workspaces that contain Flutter projects.
 
 ## Workspace Structure
 
@@ -34,10 +35,10 @@ When deploying from a monorepo, Globe needs to know exactly where your backend c
 
 You will be prompted to provide:
 
-- **Root Directory**: The path to your backend package (e.g. `packages/server`).
-- **Entrypoint**: The path to your main entry file relative to the root directory (e.g. `bin/server.dart`).
+- **Root Directory**: The path to your backend package (e.g., `packages/server`)
+- **Entrypoint**: The path to your main entry file relative to the root directory (e.g., `bin/server.dart`)
 
-When a Dart project is deployed from a workspace that contains a Flutter project, Globe automatically detects the environment and applies the **Monorepo** preset to ensure build compatibility.
+When a Dart project is deployed from a workspace that contains a Flutter project, Globe applies the **Monorepo** preset to ensure build compatibility.
 
 ## Why is this required?
 
@@ -49,9 +50,9 @@ When a Dart project is deployed from a workspace that contains a Flutter project
 
 It is important to understand how Globe treats different types of projects within a workspace:
 
-- **Flutter Projects**: Deploying the `flutter_app` works out of the box. Globe automatically detects the Flutter environment and builds the web application accordingly.
+- **Flutter Projects**: Deploying the `flutter_app` works out of the box. Globe detects the Flutter environment and builds the web application accordingly
 
-- **Backend Projects**: Deploying the `server` (Dart Frog, Shelf, etc.) when a Flutter project is present in the workspace requires the **Monorepo preset** to prevent dependency resolution errors.
+- **Backend Projects**: Deploying the `server` (Dart Frog, Shelf, etc.) when a Flutter project is present in the workspace requires the **Monorepo preset** to prevent dependency resolution errors
 
 ## Manual Configuration
 
@@ -64,9 +65,9 @@ If your backend build fails due to missing Flutter dependencies (and the CLI did
 
 <Image src="/assets/monorepo-settings.png" />
 
-## Learn more
+## Related Topics
 
-- [Melos Documentation](https://melos.invertase.dev/)
-- [Dart Workspaces](https://dart.dev/tools/pub/workspaces)
-- [Managing deployments](/core-concepts/deployments)
-- [Globe CLI reference](/core-concepts/cli)
+- [Melos Documentation](https://melos.invertase.dev/) - Official Melos documentation
+- [Dart Workspaces](https://dart.dev/tools/pub/workspaces) - Learn about Pub Workspaces
+- [Managing deployments](/core-concepts/deployments) - Understand deployment lifecycle
+- [Globe CLI reference](/core-concepts/cli) - Command-line deployment tools
