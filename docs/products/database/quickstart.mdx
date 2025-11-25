@@ -1,13 +1,14 @@
 ---
 title: Quickstart
+description: Deploy a complete Dart backend with Globe DB in under 10 minutes, including database creation, CRUD API setup with Drift, and live testing.
 ---
 
 Deploy a complete Dart backend with a globally distributed database in under 10 minutes. This quickstart covers creating a Globe DB, writing a full CRUD API with Drift, and testing it live.
 
 ## Prerequisites
 
-- A Globe account.
-- The Dart SDK.
+- A Globe account
+- The Dart SDK
 
 ## 1. Create a Database
 
@@ -38,7 +39,7 @@ Create a new Dart server project by running the following commands in your termi
 
 ## 3. Define the Database and Tables
 
-Create a new file at `lib/database.dart` to define your schema with Drift. **Remember to replace `your-db-name` with the name automatically assigned to your database in Step 1**.
+Create a new file at `lib/database.dart` to define your schema with Drift. Remember to replace `your-db-name` with the name automatically assigned to your database in Step 1.
 
 ```dart
 import 'package:drift/drift.dart';
@@ -196,3 +197,9 @@ After deployment, test the live API endpoints using `curl`.
   ```bash
   curl -X DELETE https://your-live-url.globe.app/users/1
   ```
+
+## Related Topics
+
+- [Globe DB Overview](/products/database) - Learn about Globe DB features
+- [Managing Your Database](/products/database/database-management) - Manage databases through the dashboard
+- [Build Notes API with Globe DB](/guides/build-notes-app) - Complete guide with Dart Frog
