@@ -1,8 +1,9 @@
 ---
 title: HTTP Headers in Globe
+description: Use Globe's automatic HTTP headers for geolocation, request tracking, container temperature monitoring, and GDPR compliance in your Dart applications.
 ---
 
-Globe automatically adds several **HTTP headers** to each **request** reaching your application. These headers provide valuable information about the **request context**, **execution environment**, and **geographic details** that you can use for **customizing behavior** and **diagnostics**.
+Globe automatically adds several HTTP headers to each request reaching your application. These headers provide valuable information about the request context, execution environment, and geographic details that you can use for customizing behavior and diagnostics.
 
 ## Request headers provided by Globe
 
@@ -114,9 +115,16 @@ Response handleRequest(Request request) {
 
 You can monitor the x-globe-temperature response header to track cold start frequency and impact.
 
-## Best practices
+## Best Practices
 
 - Don't assume all headers will be present; always provide fallback values
 - For location-specific features, use the headers as a convenience, but provide user options to override
 - Include the `x-globe-request-id` in logs to simplify request tracking
 - Consider storing region information in analytics to identify performance patterns
+
+## Related Topics
+
+- [Automatic Caching](/infrastructure/overview/automatic-caching) - Learn how HTTP headers control caching behavior
+- [Cold Starts](/infrastructure/overview/cold-starts) - Monitor container temperature using response headers
+- [Compute Regions](/infrastructure/overview/compute-regions) - Understand how region headers are determined
+- [Infrastructure Overview](/infrastructure/overview) - Learn about Globe's serverless infrastructure
