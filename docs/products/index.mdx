@@ -1,12 +1,13 @@
 ---
 title: Globe KV
+description: Use Globe KV, a fast key-value store for Dart and Flutter apps, ideal for caching, user settings, session storage, and feature flags with global edge caching.
 ---
 
-Globe KV is a **key-value store** designed for **fast reads** and **low-latency data access**. It is ideal for **caching**, **user settings**, **session storage**, and **feature flags** in Dart applications.
+Globe KV is a key-value store designed for fast reads and low-latency data access. It is ideal for caching, user settings, session storage, and feature flags in Dart applications.
 
-Unlike traditional databases, Globe KV does not guarantee **immediate consistency**. Updates can take up to **60 seconds** to propagate globally. This makes it great for **temporary** or **frequently accessed data** but unsuitable for operations requiring absolute consistency (e.g., payments, counters).
+Unlike traditional databases, Globe KV does not guarantee immediate consistency. Updates can take up to 60 seconds to propagate globally. This makes it great for temporary or frequently accessed data but unsuitable for operations requiring absolute consistency (e.g., payments, counters).
 
-This page covers setup, storing and retrieving data, data expiration, performance characteristics, and eventual consistency
+This page covers setup, storing and retrieving data, data expiration, performance characteristics, and eventual consistency.
 
 ## Setting Up Globe KV
 
@@ -41,7 +42,7 @@ flutter pub add globe_kv
 
 ### 2. Creating a Namespace
 
-To use Globe KV, you need a **KV namespace**.
+To use Globe KV, you need a KV namespace.
 
 1. From your Globe dashboard, go to the **KV** section
 2. Select **Create Namespace**
@@ -56,22 +57,22 @@ Create a new Globe KV instance, passing in your KV namespace.
 import 'package:globe_kv/globe_kv.dart';
 
 // Replace 'namespace-id' with your actual KV namespace
-final kv = Globe KV('namespace-id');
+final kv = GlobeKV('namespace-id');
 ```
 
 ### 4. Persist Data to Your Local Filesystem
 
-In development, Globe KV will use **in-memory storage** so your data will be lost when the Dart app is restarted. To persist data to your local filesystem, use the GlobeFileStore instance:
+In development, Globe KV will use in-memory storage so your data will be lost when the Dart app is restarted. To persist data to your local filesystem, use the GlobeFileStore instance:
 
 ```dart
-final kv = Globe KV('namespace-id', store: GlobeFileStore());
+final kv = GlobeKV('namespace-id', store: GlobeFileStore());
 ```
 
 ## Using Globe KV
 
 ### Storing, Retrieving, and Deleting Data
 
-Globe KV is a **key-value store**, meaning you store and retrieve data using **keys**.
+Globe KV is a key-value store, meaning you store and retrieve data using keys.
 
 #### Writing Data
 
@@ -94,7 +95,7 @@ await kv.delete('user:123');
 
 #### Retrieving Data
 
-Globe KV supports **typed retrieval**, so you can fetch data in a specific format:
+Globe KV supports typed retrieval, so you can fetch data in a specific format:
 
 ```dart
 await kv.getString('key');  // String?
@@ -105,7 +106,7 @@ await kv.getBinary('key');  // List<int>?
 
 ### Listing and Filtering Data
 
-When storing multiple related keys (e.g., user data), use prefixes to **group** and **filter** keys.
+When storing multiple related keys (e.g., user data), use prefixes to group and filter keys.
 
 #### Listing All Keys with a Prefix
 
@@ -116,7 +117,7 @@ print(result.results.map((e) => e.key)); // ['user:123', 'user:456']
 
 #### Paginating Large Datasets
 
-By default, list() returns up to **1000 keys per page**. If you have more, paginate:
+By default, list() returns up to 1000 keys per page. If you have more, paginate:
 
 ```dart
 final result = await kv.list(prefix: 'user:', limit: 10);
@@ -127,7 +128,7 @@ if (!result.complete) {
 
 ### Expiring Data (TTL & Absolute Expiration)
 
-Globe KV supports **automatic data deletion**, which is useful for managing temporary session data or cached API responses. You can configure expiration when you write data, and it will be automatically removed from the store after the specified time.
+Globe KV supports automatic data deletion, which is useful for managing temporary session data or cached API responses. You can configure expiration when you write data, and it will be automatically removed from the store after the specified time.
 
 <Info>
   The `ttl` parameter described here applies to the `set` method and controls
@@ -159,23 +160,23 @@ await kv.set(
 
 #### When to Use TTL vs. Absolute Expiration
 
-- **TTL (time-to-live)** is best for short-lived cache data where the lifetime starts from the moment of creation (e.g., "keep this for 5 minutes").
-- **Absolute expiration** is best when data must expire at a fixed point in time, regardless of when it was created (e.g., "delete this at midnight").
+- **TTL (time-to-live)**: Best for short-lived cache data where the lifetime starts from the moment of creation (e.g., "keep this for 5 minutes")
+- **Absolute expiration**: Best when data must expire at a fixed point in time, regardless of when it was created (e.g., "delete this at midnight")
 
 ### Performance: Hot vs Cold Reads
 
 #### Understanding Edge Caching
 
-Globe KV uses **edge locations** (Points of Presence, POPs) to **cache data closer to users**, reducing latency. When you request data:
+Globe KV uses edge locations (Points of Presence, POPs) to cache data closer to users, reducing latency. When you request data:
 
-- If the data is already cached at a nearby edge location, it's a **Hot Read** (very fast).
-- If the data is not cached, it must be fetched from the central store, resulting in a **Cold Read** (slower).
+- If the data is already cached at a nearby edge location, it's a Hot Read (very fast)
+- If the data is not cached, it must be fetched from the central store, resulting in a Cold Read (slower)
 
-By default, the cache for a hot read lasts **60 seconds**.
+By default, the cache for a hot read lasts 60 seconds.
 
 #### Controlling Edge Cache with `ttl` on Reads
 
-You can control how long a value is cached at the edge by providing a `ttl` parameter to the `get` method. This `ttl` specifies a **cache time-to-live for the read result** and does **not** affect the original key's expiration that was set using `kv.set()`.
+You can control how long a value is cached at the edge by providing a `ttl` parameter to the `get` method. This `ttl` specifies a cache time-to-live for the read result and does not affect the original key's expiration that was set using `kv.set()`.
 
 To cache a read result for longer than the 60-second default, provide a custom `ttl` (in seconds):
 
@@ -189,7 +190,7 @@ Use this for data that rarely changes, like feature flags or app settings, to en
 
 ### Eventual Consistency
 
-Globe KV is **not fully consistent**—updates may take **up to 60 seconds** to reflect globally.
+Globe KV is not fully consistent—updates may take up to 60 seconds to reflect globally.
 
 #### Good for:
 
@@ -204,10 +205,16 @@ Globe KV is **not fully consistent**—updates may take **up to 60 seconds** to 
 
 #### For Less Frequent Updates, Use a Longer Cache
 
-If your data doesn't change often, increasing the **TTL on reads** can improve performance:
+If your data doesn't change often, increasing the TTL on reads can improve performance:
 
 ```dart
 await kv.get('user:123', ttl: 60 * 60 * 24); // Cache for 24 hours
 ```
 
 This reduces cold reads and improves performance for users.
+
+## Related Topics
+
+- [What To Store in Globe KV](/tutorials/what-to-store-in-globe-kv) - Learn ideal use cases for Globe KV
+- [Build Snippet App with Globe KV](/guides/build-snippet-app) - Step-by-step guide for building with KV
+- [Cache GitHub API with Globe KV](/guides/cache-github-api-with-kv) - Practical caching example
