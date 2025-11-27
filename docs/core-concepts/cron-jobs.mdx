@@ -1,12 +1,13 @@
 ---
 title: Cron Jobs
+description: Schedule recurring HTTP-based background tasks in your Globe deployments using cron jobs defined in globe.yaml, running automatically on production.
 ---
 
-Schedule **recurring background tasks** by defining HTTP-based cron jobs. Tasks run automatically **after production deployments**; no separate job runner needed.
+Use cron jobs to run scheduled HTTP requests to your application endpoints at regular intervals. Define them in your `globe.yaml` file and they'll execute automatically on your production deployment without requiring a separate job runner.
 
-Globe supports defining cron jobs directly in your `globe.yaml` file. These scheduled tasks run periodically against specified HTTP paths in your production deployment, helping you maintain consistency, reduce manual overhead, and scale reliably.
+## How Cron Jobs Work
 
-## Cron Jobs in Globe.dev:
+Cron jobs in Globe:
 
 - Execute HTTP requests to specific endpoints in your application
 - Only run on **production deployments** (not preview or development)
@@ -17,30 +18,35 @@ Globe supports defining cron jobs directly in your `globe.yaml` file. These sche
 
 Once defined, cron jobs are visible in your Globe dashboard after a production deployment. If a job no longer appears in your `globe.yaml`, it becomes inactive and stops running until re-added.
 
+To view and manage your cron jobs:
+
 1. From your Globe dashboard, navigate to your project
 2. Navigate to **Cron Jobs**
-3. View your defined Cron Jobs by **Active** and **Inactive** jobs
+3. View your defined cron jobs by **Active** and **Inactive** status
 
 ## How to Define a Cron Job
 
-Here’s how you can define a simple cron job in `globe.yaml`:
+Define cron jobs in your `globe.yaml` file. Here's a simple example:
 
 ```yaml
 crons:
   - id: refresh_auth_token
-    schedule: '*/45 * * * *'
-    path: '/auth/refresh' # This is the application endpoint that Globe will call
+    schedule: "*/45 * * * *"
+    path: "/auth/refresh" # This is the application endpoint that Globe will call
 ```
 
-This example schedules a POST request to your application's `/auth/refresh` endpoint every 45 minutes. The path value is the **HTTP route** in your application that Globe will call. For more details on cron syntax, see the [unix-cron documentation](https://crontab.guru/).
+This example schedules a POST request to your application's `/auth/refresh` endpoint every 45 minutes. The `path` value is the **HTTP route** in your application that Globe will call. For more details on cron syntax, see the [unix-cron documentation](https://crontab.guru/).
 
-Globe ensures that these cron-triggered requests are **private by default**, meaning only internal events can trigger them.
+<Info>
+  Globe ensures that cron-triggered requests are **private by default**, meaning
+  only internal events can trigger them.
+</Info>
 
 ## How to Handle Cron Job Requests
 
-Each cron job triggers **an HTTP POST request** to the specified path. You need to write a route to handle this in your application.
+Each cron job triggers **a HTTP POST request** to the specified path. You need to write a route handler in your application to process these requests.
 
-Here’s an example using `shelf_router`:
+Here's an example using `shelf_router`:
 
 ```dart
 import 'package:shelf_router/shelf_router.dart';
@@ -61,7 +67,7 @@ If your handler returns a status code outside the `2xx` range, it will be displa
 The `id` field represents the unique identifier of the cron job. It is used to manage job states and view logs in the dashboard.
 
 - The list **cannot** contain duplicate IDs
-- Max length: 50 characters
+- Maximum length: 50 characters
 - Allowed characters: `a-z`, `0-9`, and `_`
 
 If a job is removed and later re-added with the same ID, its log history will persist.
@@ -73,6 +79,8 @@ If a job is removed and later re-added with the same ID, its log history will pe
 - Monitor jobs via the dashboard to catch issues early
 - Consider logging actions/failures in cron handlers for easier observability
 
-## Next
+## Related Topics
 
-Manage **cron jobs** and all other project settings in one place with the **Project Configuration** (`globe.yaml` File).
+- [The globe.yaml File](/core-concepts/globe-yaml) - Define cron jobs in your project configuration
+- [Deployments](/core-concepts/deployments) - Understand how cron jobs run on production deployments
+- [Schedule Cron Jobs on Globe](/guides/globe-cron-jobs) - Step-by-step guide for setting up cron jobs
