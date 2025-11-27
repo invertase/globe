@@ -254,7 +254,16 @@ class DeployCommand extends BaseGlobeCommand {
       return ExitCode.success.code;
     } on ApiException catch (e) {
       deployProgress.fail();
-      logger.err('✗ Failed to deploy project: ${e.message}');
+      if (e.statusCode == 413) {
+        logger.err(
+          '✗ Failed to deploy project: Request body exceeded Cloudflare upload limits.',
+        );
+        logger.info(
+          'Learn more: https://globe.dev/docs/troubleshooting/error-413',
+        );
+      } else {
+        logger.err('✗ Failed to deploy project: ${e.message}');
+      }
       return ExitCode.software.code;
     } catch (e, s) {
       deployProgress.fail();
