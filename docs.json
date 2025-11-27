@@ -306,6 +306,10 @@
         {
           "title": "Project Size Limit (413)",
           "href": "/troubleshooting/error-413"
+        },
+        {
+          "title": "Domain Issues",
+          "href": "/troubleshooting/domains"
         }
       ]
     },
