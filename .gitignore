@@ -9,3 +9,4 @@ dist/
 *.iml
 .dart_tool
 .fvm
+docs/guides/TEMPLATE.md

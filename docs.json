@@ -368,6 +368,10 @@
         {
           "title": "Sign in with Google",
           "href": "/guides/sign-in-with-google"
+        },
+        {
+          "title": "Sign in with Apple",
+          "href": "/guides/sign-in-with-apple"
         }
       ]
     },
