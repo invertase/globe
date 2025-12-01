@@ -467,6 +467,10 @@
           "group": "Version History",
           "pages": [
             {
+              "title": "0.22.0 (Nov 25)",
+              "href": "/releases/v/0.22.0"
+            },
+            {
               "title": "0.21.0 (Oct 25)",
               "href": "/releases/v/0.21.0"
             },
