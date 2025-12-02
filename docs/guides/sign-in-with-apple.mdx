@@ -348,10 +348,16 @@ Now that you have your Globe deployment URL, you can complete the Apple Services
 
 ## Step 9: Update Environment Variables and Test
 
-- **Update your `.env` file** with your actual Globe URL:
+- **Update your local `.env` file** with your actual Globe URL:
   ```env
   APPLE_REDIRECT_URI=https://your-app.globeapp.dev/auth/callback
   ```
+- **Update the environment variable in the Globe dashboard**:
+  - Go to your project in the [Globe dashboard](https://globe.dev)
+  - Navigate to **Settings** → **Environment Variables**
+  - Find `APPLE_REDIRECT_URI` in the list and click to edit it
+  - Update the value to `https://your-app.globeapp.dev/auth/callback` (replace `your-app` with your actual Globe project name)
+  - Select **Save**
 - **Redeploy** to Globe so the updated environment variable takes effect:
   ```bash
   globe deploy --prod
@@ -373,9 +379,8 @@ you to test the complete flow.
 
 ## What's Next
 
-- **Get Started Quickly**: Use our [Apple OAuth template](https://globe.dev/templates/dartfrog_apple_auth/) to bootstrap your project with all the code from this guide and more.
 - **Implement Other Social Logins**: Apply the same OAuth 2.0 pattern by following our guides for [Sign in with GitHub](/guides/sign-in-with-github) or [Sign in with Google](/guides/sign-in-with-google).
-- **Create a Session**: Instead of just showing a success page, create a JWT for the user to manage a real session in your application.
+- **Create a Session**: Instead of just showing a success page, create a JWT for the user to manage a real session in your application. Check out our [JWT authentication guide](/guides/shelf-jwt-auth) for examples.
 - **Handle Email Privacy**: Implement logic to handle cases where users choose to hide their email address, as Apple provides a private relay email in those cases.
 
 ---
