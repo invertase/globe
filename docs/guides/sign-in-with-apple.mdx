@@ -31,7 +31,7 @@ This guide will walk you through building the complete backend flow for "Sign in
 
 ## Step 1: Create Your Apple Identifiers and Key
 
-First, you need to create the necessary identifiers and key in Apple Developer Portal. You'll configure the web authentication URLs after deploying to Globe in Step 7.
+First, you need to create the necessary identifiers and key in the Apple Developer Portal. You'll configure the web authentication URLs after deploying to Globe in Step 7.
 
 1. Log in to the [Apple Developer Portal](https://developer.apple.com/account/).
 2. Navigate to **Certificates, Identifiers & Profiles**.
@@ -112,7 +112,7 @@ We will use a `.env` file for your secret credentials and a middleware to load t
   `https://placeholder.globeapp.dev/auth/callback`) - you'll update it after
   deployment.
 </Info>
-- Next, create a root middleware to make these variables available to all routes.
+- Next, create a root-level middleware to make these variables available to all routes.
 Create a file at `routes/_middleware.dart`:
 
 ```dart
