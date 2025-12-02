@@ -320,14 +320,19 @@ This is where Apple redirects the user back after they approve your app. Apple u
 Since Apple requires HTTPS and a proper domain (not `localhost`), we'll deploy to Globe first to get a production URL.
 
 - Deploy your application to Globe:
+
   ```bash
   globe deploy --prod
   ```
+
 - During deployment, you'll be prompted:
+
   ```
   An .env file was detected, would you like to:
   ```
+
   Select **"Upload local environment variables"** to ensure all the environment variables we set earlier (including `APPLE_CLIENT_ID`, `APPLE_TEAM_ID`, `APPLE_KEY_ID`, and `APPLE_PRIVATE_KEY`) are uploaded to Globe.
+
 - After deployment, Globe will provide you with a URL (e.g., `https://your-app.globeapp.dev`). Copy this URL - you'll need it in the next step.
 
 ## Step 8: Configure Sign in with Apple in Apple Developer Portal
@@ -349,9 +354,11 @@ Now that you have your Globe deployment URL, you can complete the Apple Services
 ## Step 9: Update Environment Variables and Test
 
 - **Update your local `.env` file** with your actual Globe URL:
+
   ```env
   APPLE_REDIRECT_URI=https://your-app.globeapp.dev/auth/callback
   ```
+
 - **Update the environment variable in the Globe dashboard**:
   - Go to your project in the [Globe dashboard](https://globe.dev)
   - Navigate to **Settings** → **Environment Variables**
@@ -359,9 +366,11 @@ Now that you have your Globe deployment URL, you can complete the Apple Services
   - Update the value to `https://your-app.globeapp.dev/auth/callback` (replace `your-app` with your actual Globe project name)
   - Select **Save**
 - **Redeploy** to Globe so the updated environment variable takes effect:
+
   ```bash
   globe deploy --prod
   ```
+
 - Open your web browser and navigate to: `https://your-app.globeapp.dev/auth/apple`
 - You will be redirected to Apple to log in and authorize the application.
 - After authorizing, you will be redirected back to your callback URL and see the "Success!" message with your Apple account information.
