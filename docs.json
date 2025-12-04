@@ -198,6 +198,10 @@
           "href": "/frameworks/jaspr"
         },
         {
+          "title": "Serverpod",
+          "href": "/frameworks/serverpod"
+        },
+        {
           "title": "Monorepo",
           "href": "/frameworks/monorepos"
         }
