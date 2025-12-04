@@ -1,0 +1,400 @@
+---
+title: Implement Sign in with Apple using Dart Frog
+description: Learn to build a complete OAuth 2.0 flow, allowing users to sign in to your application securely with their Apple account.
+---
+
+Social logins are a must-have feature for modern applications. They provide a fast, trusted, and secure way for users to sign up and log in without creating a new set of credentials. [Apple](https://www.apple.com/) offers a privacy-focused authentication solution that gives users control over their personal information.
+
+This guide will walk you through building the complete backend flow for "Sign in with Apple" using [Dart Frog](https://dart-frog.dev/). You'll learn how to configure an Apple Services ID, generate a client secret using a private key, handle the redirect flow, securely exchange an authorization code for an access token, and use that token to fetch user information.
+
+<Info>
+  If you're new to the concepts behind OAuth, we recommend reading our
+  foundational tutorial, [What is OAuth 2.0?](/tutorials/what-is-oauth), before
+  you start.
+</Info>
+
+**20 min read**
+
+---
+
+### Features Covered
+
+- Configuring an Apple Services ID and generating a client secret
+- Handling OAuth 2.0 redirects in Dart Frog
+- Securely loading secrets from a `.env` file using middleware
+- Using an access token to fetch user data from Apple's API
+
+### Prerequisites
+
+- An **Apple Developer Account**: Sign up or log in at [developer.apple.com](https://developer.apple.com/). A paid membership ($99/year) is required.
+- **Dart Frog CLI Installed**: Install the Dart Frog CLI by running `dart pub global activate dart_frog_cli`.
+
+## Step 1: Create Your Apple Identifiers and Key
+
+First, you need to create the necessary identifiers and key in the Apple Developer Portal. You'll configure the web authentication URLs after deploying to Globe in Step 7.
+
+1. Log in to the [Apple Developer Portal](https://developer.apple.com/account/).
+2. Navigate to **Certificates, Identifiers & Profiles**.
+3. **Create a Primary App ID** (if you don't have one):
+   - Click on **Identifiers** in the sidebar, then click the **+** button.
+   - Select **App IDs** and click **Continue**.
+   - Select **App** and click **Continue**.
+   - Enter a **Description** (e.g., "My Dart Frog App") and a **Bundle ID** (e.g., `com.example.myapp`).
+   - Under **Capabilities**, check **Sign in with Apple**.
+   - Click **Continue**, then **Register**.
+4. **Create a Services ID**:
+   - Still in **Identifiers**, click the **+** button again.
+   - Select **Services IDs** and click **Continue**.
+   - Enter a **Description** (e.g., "My Dart Frog Web App") and an **Identifier** (e.g., `com.example.myapp.web`).
+   - Click **Continue**, then **Register**.
+
+<Info>
+  Do not configure Sign in with Apple yet - you'll do this after deploying to
+  Globe.
+</Info>
+
+5. **Get your Client ID**:
+   - Your **Client ID** is the **Identifier** value shown in the Services IDs list (e.g., `com.example.myapp.web`). Copy this value - you'll use it as your `APPLE_CLIENT_ID` in the `.env` file.
+6. **Create a Key for Sign in with Apple**:
+   - Navigate to **Keys** in the sidebar and click the **+** button.
+   - Enter a **Key Name** (e.g., "Sign in with Apple Key") and check **Sign in with Apple**.
+   - Click **Configure**, select your Primary App ID (the one you created in step 3), and click **Save**.
+   - Click **Continue**, then **Register**.
+   - **Download the key file** (`.p8` file) - you can only download this once, so keep it safe.
+   - Note your **Key ID** (displayed after registration). Copy this value.
+
+## Step 2: Create and Set Up Your Dart Frog Project
+
+Now, create a Dart Frog project and add the necessary dependencies.
+
+- Create the project:
+
+  ```bash
+  dart_frog create apple_auth_app
+  cd apple_auth_app
+  ```
+
+- Open the newly created `apple_auth_app` folder in your favorite code editor.
+- Add the dependencies for making API calls, loading environment variables, and handling JWT:
+
+  ```bash
+  dart pub add http
+  dart pub add dotenv
+  dart pub add jose
+  ```
+
+## Step 3: Store and Load Your Secrets
+
+We will use a `.env` file for your secret credentials and a middleware to load them into your application's context.
+
+- In the root of your project, create a file named `.env`.
+- Add your Apple credentials to this file:
+
+  ```env
+  APPLE_CLIENT_ID=your_services_id_here
+  APPLE_TEAM_ID=your_team_id_here
+  APPLE_KEY_ID=your_key_id_here
+  APPLE_PRIVATE_KEY=-----BEGIN PRIVATE KEY-----\nMIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQg...\n-----END PRIVATE KEY-----
+  APPLE_REDIRECT_URI=https://your-app.globeapp.dev/auth/callback
+  ```
+
+- **Important**: Add `.env` to your `.gitignore` file.
+- Your Team ID can be found in the top-right corner of the Apple Developer Portal.
+- For the `APPLE_PRIVATE_KEY` value:
+  - Open your downloaded `.p8` file from Apple
+  - Copy the entire content (including `-----BEGIN PRIVATE KEY-----` and `-----END PRIVATE KEY-----`)
+  - Replace each actual newline with `\n` (the literal characters backslash and n)
+  - Paste it as the value for `APPLE_PRIVATE_KEY` in your `.env` file
+
+<Info>
+  Replace `your-app` with your actual Globe project name. You'll get this URL
+  after deploying to Globe in Step 7. For now, you can use a placeholder (e.g.,
+  `https://placeholder.globeapp.dev/auth/callback`) - you'll update it after
+  deployment.
+</Info>
+- Next, create a root-level middleware to make these variables available to all routes.
+Create a file at `routes/_middleware.dart`:
+
+```dart
+import 'package:dart_frog/dart_frog.dart';
+import 'package:dotenv/dotenv.dart';
+
+// Create a single, top-level instance of DotEnv and load the file.
+final _env = DotEnv(includePlatformEnvironment: true)..load();
+
+Handler middleware(Handler handler) {
+  // Provide the DotEnv instance to all routes.
+  return handler.use(provider<DotEnv>((_) => _env));
+}
+```
+
+## Step 4: Create the Client Secret Generator
+
+Apple requires a JWT-based client secret instead of a static secret. We'll create a helper function to generate this.
+
+- Create a new file at `lib/apple_auth.dart`.
+- Add the following code to generate the client secret:
+
+  ```dart
+  import 'package:dotenv/dotenv.dart';
+  import 'package:jose/jose.dart';
+
+  String generateAppleClientSecret(DotEnv env) {
+    final clientId = env['APPLE_CLIENT_ID']!;
+    final teamId = env['APPLE_TEAM_ID']!;
+    final keyId = env['APPLE_KEY_ID']!;
+    final privateKeyContent = env['APPLE_PRIVATE_KEY']!;
+
+    // Convert literal \n characters to actual newlines
+    final privateKeyPem = privateKeyContent.replaceAll(r'\n', '\n');
+
+    // Create the JWT claims
+    final now = DateTime.now();
+    final claims = JsonWebTokenClaims.fromJson({
+      'iss': teamId,
+      'iat': now.millisecondsSinceEpoch ~/ 1000,
+      'exp': now.add(const Duration(hours: 6)).millisecondsSinceEpoch ~/ 1000,
+      'aud': 'https://appleid.apple.com',
+      'sub': clientId,
+    });
+
+    // Create a builder for the JWT
+    final key = JsonWebKey.fromPem(privateKeyPem);
+    final builder = JsonWebSignatureBuilder()
+      ..jsonContent = claims.toJson()
+      ..setProtectedHeader('kid', keyId)
+      ..addRecipient(key, algorithm: 'ES256');
+
+    // Build the JWS and return the compact serialization
+    final jws = builder.build();
+    return jws.toCompactSerialization();
+  }
+  ```
+
+## Step 5: Create the Redirect Endpoint
+
+This route will kick off the login process by redirecting the user to Apple.
+
+- Create a new file at `routes/auth/apple.dart`.
+- Add the following code, which correctly constructs the redirect response:
+
+  ```dart
+  import 'dart:io';
+  import 'package:dart_frog/dart_frog.dart';
+  import 'package:dotenv/dotenv.dart';
+
+  Response onRequest(RequestContext context) {
+    final env = context.read<DotEnv>();
+    final clientId = env['APPLE_CLIENT_ID'];
+
+    // Get the redirect URI from environment variables
+    // This should be your Globe deployment URL (e.g., https://your-app.globeapp.dev/auth/callback)
+    final redirectUri = env['APPLE_REDIRECT_URI'] ?? 'https://your-app.globeapp.dev/auth/callback';
+
+    final uri = Uri.https('appleid.apple.com', '/auth/authorize', {
+      'client_id': clientId,
+      'redirect_uri': redirectUri,
+      'response_type': 'code',
+      'response_mode': 'form_post',
+      'scope': 'name email',
+    });
+
+    return Response(
+      statusCode: HttpStatus.found,
+      headers: {
+        HttpHeaders.locationHeader: uri.toString(),
+      },
+    );
+  }
+  ```
+
+## Step 6: Create the Callback Endpoint
+
+This is where Apple redirects the user back after they approve your app. Apple uses `form_post` response mode, so the authorization code comes in the request body, not query parameters.
+
+- Create a new file at `routes/auth/callback.dart`.
+- Add the following code:
+
+  ```dart
+  import 'dart:convert';
+  import 'dart:io';
+  import 'package:dart_frog/dart_frog.dart';
+  import 'package:dotenv/dotenv.dart';
+  import 'package:http/http.dart' as http;
+  import '../../lib/apple_auth.dart';
+
+  Future<Response> onRequest(RequestContext context) async {
+    final env = context.read<DotEnv>();
+    final clientId = env['APPLE_CLIENT_ID'];
+    final redirectUri = env['APPLE_REDIRECT_URI'] ?? 'https://your-app.globeapp.dev/auth/callback';
+
+    // Apple sends the code via form_post, so we need to read the body
+    final body = await context.request.body();
+    final formData = Uri.splitQueryString(body);
+    final code = formData['code'];
+    final user = formData['user']; // Optional: contains user info if first authorization
+
+    if (code == null) {
+      return Response(
+        statusCode: HttpStatus.badRequest,
+        body: 'Missing authorization code',
+      );
+    }
+
+    // Generate the client secret JWT
+    final clientSecret = generateAppleClientSecret(env);
+
+    // Exchange the code for an access token
+    final tokenResponse = await http.post(
+      Uri.parse('https://appleid.apple.com/auth/token'),
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: {
+        'client_id': clientId,
+        'client_secret': clientSecret,
+        'code': code,
+        'grant_type': 'authorization_code',
+        'redirect_uri': redirectUri,
+      },
+    );
+
+    final tokenJson = jsonDecode(tokenResponse.body) as Map<String, dynamic>;
+
+    if (tokenJson.containsKey('error')) {
+      return Response(
+        statusCode: HttpStatus.badRequest,
+        body: 'Token exchange failed: ${tokenJson['error']}',
+      );
+    }
+
+    final idToken = tokenJson['id_token'] as String;
+
+    // Decode the ID token to get user information
+    // The ID token is a JWT with user claims
+    final idTokenParts = idToken.split('.');
+    if (idTokenParts.length != 3) {
+      return Response(
+        statusCode: HttpStatus.badRequest,
+        body: 'Invalid ID token format',
+      );
+    }
+
+    // Decode the payload (second part of JWT)
+    final payload = idTokenParts[1];
+    // Add padding if needed for base64 decoding
+    final normalizedPayload = payload.padRight(
+      (payload.length + 3) ~/ 4 * 4,
+      '=',
+    );
+    final decodedPayload = utf8.decode(base64Url.decode(normalizedPayload));
+    final userClaims = jsonDecode(decodedPayload) as Map<String, dynamic>;
+
+    // Extract user information
+    final email = userClaims['email'] as String?;
+    final userId = userClaims['sub'] as String;
+
+    // If user info was provided in the initial request, decode it
+    String? userName;
+    if (user != null) {
+      try {
+        final userInfo = jsonDecode(user) as Map<String, dynamic>;
+        final name = userInfo['name'] as Map<String, dynamic>?;
+        if (name != null) {
+          userName = '${name['firstName']} ${name['lastName']}'.trim();
+        }
+      } catch (e) {
+        // User info parsing failed, continue without name
+      }
+    }
+
+    final displayName = userName ?? email ?? userId;
+
+    return Response(
+      body: '<html><h1>Success!</h1><p>Logged in as $displayName.</p></html>',
+      headers: {'Content-Type': 'text/html'},
+    );
+  }
+  ```
+
+## Step 7: Deploy to Globe
+
+Since Apple requires HTTPS and a proper domain (not `localhost`), we'll deploy to Globe first to get a production URL.
+
+- Deploy your application to Globe:
+
+  ```bash
+  globe deploy --prod
+  ```
+
+- During deployment, you'll be prompted:
+
+  ```
+  An .env file was detected, would you like to:
+  ```
+
+  Select **"Upload local environment variables"** to ensure all the environment variables we set earlier (including `APPLE_CLIENT_ID`, `APPLE_TEAM_ID`, `APPLE_KEY_ID`, and `APPLE_PRIVATE_KEY`) are uploaded to Globe.
+
+- After deployment, Globe will provide you with a URL (e.g., `https://your-app.globeapp.dev`). Copy this URL - you'll need it in the next step.
+
+## Step 8: Configure Sign in with Apple in Apple Developer Portal
+
+Now that you have your Globe deployment URL, you can complete the Apple Services ID configuration.
+
+- Go back to the [Apple Developer Portal](https://developer.apple.com/account/).
+- Navigate to **Certificates, Identifiers & Profiles** → **Identifiers**.
+- Select your Services ID from the list.
+- Check the **Sign in with Apple** checkbox.
+- Click **Configure** next to "Sign in with Apple".
+- Under **Primary App ID**, select the App ID you created in Step 1.
+- In the **Web Authentication Configuration** section, add your **Website URLs**:
+  - **Important**: Apple does not accept `localhost` as a valid domain. You must use a proper domain name with HTTPS.
+  - **Domains and Subdomains**: Use your Globe deployment domain (e.g., `your-app.globeapp.dev` - the domain part without `https://`)
+  - **Return URLs**: `https://your-app.globeapp.dev/auth/callback` (replace `your-app` with your actual Globe project name)
+- Click **Next**, then **Done**, then **Continue**, and finally **Save**.
+
+## Step 9: Update Environment Variables and Test
+
+- **Update your local `.env` file** with your actual Globe URL:
+
+  ```env
+  APPLE_REDIRECT_URI=https://your-app.globeapp.dev/auth/callback
+  ```
+
+- **Update the environment variable in the Globe dashboard**:
+  - Go to your project in the [Globe dashboard](https://globe.dev)
+  - Navigate to **Settings** → **Environment Variables**
+  - Find `APPLE_REDIRECT_URI` in the list and click to edit it
+  - Update the value to `https://your-app.globeapp.dev/auth/callback` (replace `your-app` with your actual Globe project name)
+  - Select **Save**
+- **Redeploy** to Globe so the updated environment variable takes effect:
+
+  ```bash
+  globe deploy --prod
+  ```
+
+- Open your web browser and navigate to: `https://your-app.globeapp.dev/auth/apple`
+- You will be redirected to Apple to log in and authorize the application.
+- After authorizing, you will be redirected back to your callback URL and see the "Success!" message with your Apple account information.
+
+<Info>
+  **Alternative Options for Local Development:** If you prefer to test locally
+  before deploying, you can use:
+  - **ngrok**: Run `ngrok http 8080` to get an HTTPS URL that tunnels to localhost
+  - **Local domain**: Configure a local domain via hosts file with a self-signed certificate
+
+However, using your Globe production URL is the simplest approach and allows
+you to test the complete flow.
+
+</Info>
+
+## What's Next
+
+- **Implement Other Social Logins**: Apply the same OAuth 2.0 pattern by following our guides for [Sign in with GitHub](/guides/sign-in-with-github) or [Sign in with Google](/guides/sign-in-with-google).
+- **Create a Session**: Instead of just showing a success page, create a JWT for the user to manage a real session in your application. Check out our [JWT authentication guide](/guides/shelf-jwt-auth) for examples.
+- **Handle Email Privacy**: Implement logic to handle cases where users choose to hide their email address, as Apple provides a private relay email in those cases.
+
+---
+
+<Info>
+  Couldn't find the guide you need? [Talk to us in
+  Discord](https://invertase.link/globe-discord)
+</Info>
