@@ -1,0 +1,184 @@
+---
+title: Deploying a Serverpod Application
+description: Deploy Serverpod applications to Globe with database configuration and support for both server and Flutter client deployments.
+---
+
+Serverpod is a full-stack framework for building scalable server applications in Dart. It includes a server component and a Flutter client library. Globe supports deploying both the Serverpod server and Flutter client applications. This page outlines requirements and deployment behavior.
+
+## Project Setup
+
+To create a new Serverpod project:
+
+1. Install the Serverpod CLI:
+
+   ```bash
+   dart pub global activate serverpod_cli
+   ```
+
+2. Create a new Serverpod project:
+
+   ```bash
+   serverpod create my_serverpod_app
+   cd my_serverpod_app
+   ```
+
+3. Test your server locally:
+
+   ```bash
+   cd my_serverpod_app_server
+   dart run bin/main.dart
+   ```
+
+<Info>
+  Serverpod creates directories with your project name as a prefix. For a
+  project named `my_serverpod_app`, the directories will be
+  `my_serverpod_app_server` and `my_serverpod_app_flutter`.
+</Info>
+
+## Deploying the Serverpod Server
+
+Serverpod requires a database connection to function. You'll need to set up a database and configure your Serverpod server before deploying.
+
+### Step 1: Set Up Your Database
+
+Serverpod requires a PostgreSQL database. You can use services like [Neon](https://neon.tech), [Supabase](https://supabase.com), or any PostgreSQL provider.
+
+1. Create a PostgreSQL database using your preferred service
+2. Copy the following connection details:
+   - **Host**: Your database host URL
+   - **Database name**: Your database name
+   - **Database user**: Your database username
+   - **Database password**: Your database password
+
+### Step 2: Configure Serverpod Database Settings
+
+Update your Serverpod configuration files with the database connection details.
+
+1. Navigate to the `my_serverpod_app_server` directory in your Serverpod project:
+
+   ```bash
+   cd my_serverpod_app_server
+   ```
+
+2. Open `config/production.yaml` and update the database configuration:
+
+   ```yaml
+   database:
+     host: your-database-host
+     name: your-database-name
+     user: your-database-username
+     # password will be set via environment variable
+   ```
+
+3. Optionally, update `config/staging.yaml` with staging database credentials if you have a separate staging database.
+
+<Info>
+  The database password is not stored in the YAML files. Instead, it's set as an
+  environment variable in Globe for security.
+</Info>
+
+### Step 3: Link Your Project to Globe
+
+Before setting environment variables, you need to link your server project to Globe. This creates the project in the Globe dashboard.
+
+1. From the root directory of your Serverpod project (e.g., `my_serverpod_app`), run:
+
+   ```bash
+   globe link
+   ```
+
+2. When prompted to select the root directory, choose `my_serverpod_app_server`
+3. Follow the prompts to create a new project or link to an existing one
+
+### Step 4: Set Database Password Environment Variable
+
+After linking your project, set the database password as an environment variable in the Globe dashboard.
+
+1. Navigate to your project in the [Globe dashboard](https://globe.dev)
+2. Go to **Settings** → **Environment Variables**
+3. Click **Add Variable**
+4. Create a variable named `SERVERPOD_DATABASE_PASSWORD` with your database password as the value
+5. Select the environments where this variable should be available (preview, production, or both)
+6. Click **Save**
+
+<Info>
+  You can set different database passwords for preview and production
+  environments by configuring the environment variable separately for each
+  environment.
+</Info>
+
+### Step 5: Deploy the Server
+
+Deploy your Serverpod server to Globe.
+
+1. From the root directory of your Serverpod project (where you ran `globe link`), deploy:
+
+   ```bash
+   globe deploy --prod
+   ```
+
+2. Wait for the deployment to complete
+3. Note your server's deployment URL (e.g., `https://my-serverpod-server.globeapp.dev`)
+
+<Info>
+  Make sure to copy the full URL including the trailing slash, as you'll need it
+  for the Flutter client configuration.
+</Info>
+
+## Deploying the Flutter Client
+
+The Flutter client needs to know the URL of your deployed server. Configure the `SERVER_URL` environment variable before deploying.
+
+### Step 1: Link the Flutter Project
+
+Before configuring environment variables, link your Flutter client project to Globe.
+
+1. From the root directory of your Serverpod project (e.g., `my_serverpod_app`), run:
+
+   ```bash
+   globe link
+   ```
+
+2. When prompted to select the root directory, choose `my_serverpod_app_flutter`
+3. Follow the prompts to create a new project for your Flutter client
+
+### Step 2: Configure Server URL
+
+After linking your project, set the `SERVER_URL` environment variable to point to your deployed server. Copy the full URL of your deployed server (from Step 5 of the server deployment) including the trailing slash.
+
+1. Navigate to your Flutter client project in the [Globe dashboard](https://globe.dev)
+2. Go to **Settings** → **Environment Variables**
+3. Click **Add Variable**
+4. Create a variable named `SERVER_URL` with your deployed server URL as the value (e.g., `https://my-serverpod-server.globeapp.dev/`)
+5. Make sure to include the trailing slash in the URL
+6. Select the environments where this variable should be available
+7. Click **Save**
+
+### Step 3: Deploy the Flutter Client
+
+Deploy your Flutter client application to Globe.
+
+1. From the root directory of your Serverpod project (where you ran `globe link`), deploy:
+
+   ```bash
+   globe deploy --prod
+   ```
+
+2. Wait for the deployment to complete
+3. Your Flutter application will be available at the provided URL
+
+## How it works
+
+Serverpod applications on Globe work as follows:
+
+- **Server deployment**: The Serverpod server runs as a Dart backend application, connecting to your configured PostgreSQL database
+- **Database connection**: The database password is securely stored as an environment variable and injected at runtime
+- **Flutter client**: The Flutter web application communicates with the deployed server using the `SERVER_URL` environment variable
+- **Environment variables**: Both server and client use environment variables for configuration, keeping sensitive data out of source code
+
+## Related Topics
+
+- [Serverpod documentation](https://docs.serverpod.dev) - Official Serverpod framework documentation
+- [Environment Variables](/core-concepts/environment-variables) - Managing secrets and configuration
+- [Managing deployments](/core-concepts/deployments) - Understand deployment lifecycle
+- [Globe CLI reference](/core-concepts/cli) - Command-line deployment tools
