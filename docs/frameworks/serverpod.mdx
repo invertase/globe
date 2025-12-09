@@ -1,0 +1,144 @@
+---
+title: Deploying a Serverpod Application
+description: Deploy Serverpod applications to Globe with database configuration and support for both server and Flutter client deployments.
+---
+
+Serverpod is a full-stack framework for building scalable server applications in Dart. It includes a server component and a Flutter client library. Globe supports deploying both the Serverpod server and Flutter client applications. This page outlines requirements and deployment behavior.
+
+## Project Setup
+
+To create a new Serverpod project:
+
+1. Install the Serverpod CLI:
+
+   ```bash
+   dart pub global activate serverpod_cli
+   ```
+
+2. Create a new Serverpod project:
+
+   ```bash
+   serverpod create my_serverpod_app
+   cd my_serverpod_app
+   ```
+
+3. Test your server locally:
+
+   ```bash
+   cd my_serverpod_app_server
+   dart run bin/main.dart
+   ```
+
+<Info>
+  Serverpod creates directories with your project name as a prefix. For a
+  project named `my_serverpod_app`, the directories will be
+  `my_serverpod_app_server` and `my_serverpod_app_flutter`.
+</Info>
+
+## Database Requirements
+
+Serverpod requires a PostgreSQL database. Compatible providers include [Neon](https://neon.tech), [Supabase](https://supabase.com), or any PostgreSQL service.
+
+Required connection details:
+
+- **Host**: Database host URL
+- **Database name**: Name of the database
+- **User**: Database username
+- **Password**: Database password (configured as environment variable)
+
+## Configuration
+
+Database connection details are stored in Serverpod's configuration files located in `my_serverpod_app_server/config/`.
+
+Example `config/production.yaml`:
+
+```yaml
+database:
+  host: your-database-host
+  name: your-database-name
+  user: your-database-username
+  # password is injected via SERVERPOD_DATABASE_PASSWORD environment variable
+```
+
+The `staging.yaml` file can be configured with separate staging database credentials.
+
+<Info>
+  Database passwords are not stored in configuration files. They are injected at
+  runtime via environment variables.
+</Info>
+
+## Environment Variables
+
+Serverpod deployments require the following environment variables:
+
+### Server
+
+| Variable                      | Description                  |
+| ----------------------------- | ---------------------------- |
+| `SERVERPOD_DATABASE_PASSWORD` | PostgreSQL database password |
+
+### Flutter Client
+
+| Variable     | Description                                  |
+| ------------ | -------------------------------------------- |
+| `SERVER_URL` | Deployed server URL (include trailing slash) |
+
+Different values can be configured for preview and production environments. See [Environment Variables](/core-concepts/environment-variables) for configuration details.
+
+## Deploying to Globe
+
+Serverpod projects contain two deployable components that are linked and deployed separately.
+
+### Server Deployment
+
+1. From the project root directory, link the server project:
+
+   ```bash
+   globe link
+   ```
+
+2. Select `my_serverpod_app_server` as the root directory when prompted
+
+3. Configure the `SERVERPOD_DATABASE_PASSWORD` environment variable in the Globe dashboard
+
+4. Deploy to production:
+
+   ```bash
+   globe deploy --prod
+   ```
+
+The deployment URL (e.g., `https://my-serverpod-server.globeapp.dev/`) is required for the Flutter client configuration.
+
+### Flutter Client Deployment
+
+1. From the project root directory, link the Flutter project:
+
+   ```bash
+   globe link
+   ```
+
+2. Select `my_serverpod_app_flutter` as the root directory when prompted
+
+3. Configure the `SERVER_URL` environment variable with the deployed server URL (include trailing slash)
+
+4. Deploy to production:
+
+   ```bash
+   globe deploy --prod
+   ```
+
+## Deployment Behavior
+
+Globe handles Serverpod deployments with the following behavior:
+
+- **Preset detection**: Serverpod server projects are automatically recognized as Dart backend applications
+- **Database configuration**: Connection details are read from `config/production.yaml` with passwords injected via environment variables
+- **Flutter client**: Deployed as a standard Flutter Web application to Globe's CDN
+- **Multi-project structure**: Each component (server, Flutter client) is linked and deployed as a separate Globe project
+
+## Related Topics
+
+- [Serverpod documentation](https://docs.serverpod.dev) - Official Serverpod framework documentation
+- [Environment Variables](/core-concepts/environment-variables) - Managing secrets and configuration
+- [Managing deployments](/core-concepts/deployments) - Understand deployment lifecycle
+- [Globe CLI reference](/core-concepts/cli) - Command-line deployment tools
