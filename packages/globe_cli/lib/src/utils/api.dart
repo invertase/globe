@@ -72,6 +72,7 @@ class GlobeApi {
   Future<T> _callGlobeApi<T>(
     FutureOr<http.Response> Function() apiCall, {
     bool needsAuth = true,
+    bool canRetry = true,
   }) async {
     if (needsAuth) requireAuth();
 
@@ -100,7 +101,11 @@ class GlobeApi {
     }
 
     try {
-      final result = await makeApiCall().retry(debugLabel: 'Globe API');
+      final task = canRetry
+          ? makeApiCall().retry(debugLabel: 'Globe API')
+          : makeApiCall();
+      final result = await task;
+
       return result.data;
     } catch (e) {
       var message =
@@ -299,7 +304,15 @@ class GlobeApi {
     );
 
     final response = await _callGlobeApi<Map<Object?, Object?>>(
-      () => request.send().then(http.Response.fromStream),
+      () async {
+        try {
+          final stream = await request.send();
+          return http.Response.fromStream(stream);
+        } on SocketException catch (e) {
+          throw ApiException._(413, e.message);
+        }
+      },
+      canRetry: false,
     );
 
     return Deployment.fromJson(response);
