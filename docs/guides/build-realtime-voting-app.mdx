@@ -1,0 +1,1239 @@
+---
+title: Build a Real-Time Voting App with Dart Frog, Globe DB and Pusher
+description: Create a live voting application with instant updates across all connected clients.
+---
+
+Real-time features like live dashboards, collaborative tools, and instant notifications are essential for modern applications. This guide walks you through building a complete real-time voting application where votes update instantly across all connected devices. You'll learn how to combine a Dart Frog backend on Globe with [Pusher](https://pusher.com/) Channels for real-time event broadcasting and a Flutter frontend that reacts to live updates.
+
+**20 min read**
+
+---
+
+### Features Covered
+
+- Setting up a Pusher Channels application for real-time messaging
+- Building a Dart Frog backend with Globe DB for persistence
+- Triggering server-side events to Pusher from Dart
+- Connecting a Flutter app to receive live updates via Pusher
+- Deploying both backend and frontend to Globe
+
+### Prerequisites
+
+- **Dart SDK Installed**: If you have Flutter installed, the Dart SDK is already included. If not, [Install Dart](https://dart.dev/get-dart).
+- **Flutter SDK Installed**: Required for the frontend application. [Install Flutter](https://docs.flutter.dev/install).
+- **Globe Account**: You'll need an account to deploy projects. [Sign up or log in to Globe](https://globe.dev/login).
+- **Globe CLI Installed and Authenticated**: Install the CLI by running `dart pub global activate globe_cli` and log in using `globe login`.
+- **Dart Frog CLI Installed**: Install by running `dart pub global activate dart_frog_cli`.
+- **Pusher Account**: Sign up for free at [pusher.com](https://pusher.com). The free tier includes 200k messages/day and 100 concurrent connections.
+
+## Part 1: Set Up External Services
+
+### Step 1: Create Your Pusher App
+
+Set up a Pusher Channels application to handle real-time message broadcasting.
+
+- Go to [pusher.com](https://pusher.com) and sign in or create an account.
+- From your dashboard, click **Channels** then **Create app**.
+- Name your app (e.g., `voting-app`) and select a cluster closest to your users.
+- Once created, go to **App Keys** and note down these values:
+  - `app_id`
+  - `key`
+  - `secret`
+  - `cluster`
+
+<Warning>
+  Keep your Pusher **secret** secure. It should only be used on your backend
+  server, never in client-side code.
+</Warning>
+
+### Step 2: Create Your Globe Database
+
+Create a serverless SQLite database on Globe for storing candidates and votes.
+
+- Navigate to the [Globe dashboard](https://globe.dev/login).
+- Go to the **Databases** tab and click **Create Database**.
+- Select a location close to your users and click **Create**.
+- Copy the **auto-generated database name** (e.g., `silver-falcon-1234`). You'll need this later.
+
+## Part 2: Build the Dart Frog Backend
+
+### Step 3: Set Up the Dart Frog Project
+
+Create a new Dart Frog project and add the necessary dependencies.
+
+```bash
+# Create a new Dart Frog project
+dart_frog create voting_backend
+cd voting_backend
+
+# Add dependencies
+dart pub add drift sqlite3 crypto http dotenv
+dart pub add --dev drift_dev build_runner
+```
+
+### Step 4: Configure Environment Variables
+
+Create a `.env` file in your project root to store sensitive configuration. This file should be added to `.gitignore`.
+
+```bash
+# .env
+PUSHER_APP_ID=your_app_id
+PUSHER_KEY=your_key
+PUSHER_SECRET=your_secret
+PUSHER_CLUSTER=your_cluster
+DATABASE_NAME=your-globe-db-name
+```
+
+Create `lib/config/environment.dart` to load these variables:
+
+```dart
+import 'package:dotenv/dotenv.dart';
+
+class Environment {
+  Environment._();
+
+  static final DotEnv _env = DotEnv(
+    includePlatformEnvironment: true,
+    quiet: true,
+  );
+
+  static bool _initialized = false;
+
+  static void init() {
+    if (_initialized) return;
+    _env.load();
+    _initialized = true;
+  }
+
+  static String get(String key, {String? fallback}) {
+    if (!_initialized) init();
+    return _env[key] ?? fallback ?? (throw StateError('Missing env var: $key'));
+  }
+
+  // Pusher configuration
+  static String get pusherAppId => get('PUSHER_APP_ID');
+  static String get pusherKey => get('PUSHER_KEY');
+  static String get pusherSecret => get('PUSHER_SECRET');
+  static String get pusherCluster => get('PUSHER_CLUSTER');
+
+  // Database configuration
+  static String get databaseName => get('DATABASE_NAME');
+}
+```
+
+### Step 5: Define the Database Schema
+
+Create `lib/database/database.dart` to define your candidates table using Drift:
+
+```dart
+import 'package:drift/drift.dart';
+import 'package:drift/native.dart';
+import 'package:sqlite3/sqlite3.dart';
+import 'package:voting_backend/config/environment.dart';
+
+part 'database.g.dart';
+
+@DataClassName('Candidate')
+class Candidates extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get name => text().withLength(min: 1, max: 100)();
+  IntColumn get votes => integer().withDefault(const Constant(0))();
+}
+
+@DriftDatabase(tables: [Candidates])
+class AppDatabase extends _$AppDatabase {
+  AppDatabase() : super(_openConnection());
+
+  @override
+  int get schemaVersion => 1;
+
+  static QueryExecutor _openConnection() {
+    final dbName = Environment.databaseName;
+    return NativeDatabase.opened(sqlite3.open(dbName));
+  }
+}
+```
+
+Generate the Drift code:
+
+```bash
+dart run build_runner build --delete-conflicting-outputs
+```
+
+### Step 6: Build the Pusher Service
+
+Create `lib/services/pusher_service.dart` to handle server-side event triggering. Pusher requires HMAC-SHA256 authentication for API requests:
+
+```dart
+import 'dart:convert';
+import 'dart:developer' as developer;
+import 'package:crypto/crypto.dart';
+import 'package:http/http.dart' as http;
+import 'package:voting_backend/config/environment.dart';
+
+class PusherService {
+  PusherService();
+
+  /// Triggers an event on a Pusher channel.
+  ///
+  /// [channel] - The channel name (e.g., 'voting-updates')
+  /// [event] - The event name (e.g., 'vote-cast')
+  /// [data] - The payload to send to subscribers
+  Future<void> trigger({
+    required String channel,
+    required String event,
+    required Map<String, dynamic> data,
+  }) async {
+    final appId = Environment.pusherAppId;
+    final key = Environment.pusherKey;
+    final secret = Environment.pusherSecret;
+    final cluster = Environment.pusherCluster;
+
+    // Build the request body
+    // Note: 'data' must be a JSON string, not an object
+    final body = jsonEncode({
+      'name': event,
+      'channel': channel,
+      'data': jsonEncode(data), // Double-encode: object -> JSON string
+    });
+
+    // Security: MD5 hash prevents body tampering
+    final bodyMd5 = md5.convert(utf8.encode(body)).toString();
+
+    // Security: Timestamp prevents replay attacks (Pusher rejects >600s old)
+    final timestamp = (DateTime.now().millisecondsSinceEpoch ~/ 1000).toString();
+    final path = '/apps/$appId/events';
+
+    // Build string to sign: "METHOD\nPATH\nQUERY_PARAMS"
+    // Query params MUST be in alphabetical order!
+    final queryParams = 'auth_key=$key'
+        '&auth_timestamp=$timestamp'
+        '&auth_version=1.0'
+        '&body_md5=$bodyMd5';
+
+    final stringToSign = 'POST\n$path\n$queryParams';
+
+    // Security: HMAC-SHA256 proves ownership of the secret key
+    final hmacSha256 = Hmac(sha256, utf8.encode(secret));
+    final signature = hmacSha256.convert(utf8.encode(stringToSign)).toString();
+
+    // Build the full URL with auth params
+    final url = Uri.parse(
+      'https://api-$cluster.pusher.com$path?$queryParams&auth_signature=$signature',
+    );
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        developer.log(
+          'Event "$event" triggered on "$channel"',
+          name: 'PusherService',
+        );
+      } else {
+        developer.log(
+          'Pusher error ${response.statusCode}: ${response.body}',
+          name: 'PusherService',
+          level: 1000, // Severe
+        );
+      }
+    } catch (e) {
+      developer.log(
+        'Pusher exception: $e',
+        name: 'PusherService',
+        level: 1000,
+        error: e,
+      );
+    }
+  }
+}
+```
+
+### Step 7: Build the Voting Service
+
+Create `lib/services/voting_service.dart` to handle database operations and broadcast updates:
+
+```dart
+import 'dart:async';
+import 'dart:developer' as developer;
+import 'package:drift/drift.dart';
+import 'package:voting_backend/database/database.dart';
+import 'package:voting_backend/services/pusher_service.dart';
+
+/// Exception thrown when a voting operation fails.
+class VotingException implements Exception {
+  VotingException(this.message);
+
+  final String message;
+
+  @override
+  String toString() => message;
+}
+
+class VotingService {
+  VotingService({
+    required this.db,
+    required this.pusher,
+  });
+
+  final AppDatabase db;
+  final PusherService pusher;
+
+  static const _channel = 'voting-updates';
+
+  /// Fetches all candidates, sorted by votes descending.
+  Future<List<Map<String, dynamic>>> getAllCandidates() async {
+    final candidates = await (db.select(db.candidates)
+          ..orderBy([(t) => OrderingTerm.desc(t.votes)]))
+        .get();
+
+    return candidates.map((c) => c.toJson()).toList();
+  }
+
+  /// Adds a new candidate and broadcasts the update.
+  Future<Candidate> addCandidate(String name) async {
+    // Validate input
+    final trimmedName = name.trim();
+    if (trimmedName.isEmpty) {
+      throw VotingException('Candidate name cannot be empty');
+    }
+
+    // Insert into database
+    final candidate = await db.into(db.candidates).insertReturning(
+          CandidatesCompanion.insert(name: trimmedName),
+        );
+
+    developer.log('Added candidate: ${candidate.name}', name: 'VotingService');
+
+    // Broadcast update (non-blocking)
+    unawaited(_broadcastState('candidate-added'));
+
+    return candidate;
+  }
+
+  /// Casts a vote for a candidate and broadcasts the update.
+  Future<void> vote(int candidateId) async {
+    // Atomic increment using raw SQL expression
+    final rowsAffected = await (db.update(db.candidates)
+          ..where((t) => t.id.equals(candidateId)))
+        .write(
+      CandidatesCompanion.custom(
+        votes: const CustomExpression<int>('votes + 1'),
+      ),
+    );
+
+    if (rowsAffected == 0) {
+      throw VotingException('Candidate not found: $candidateId');
+    }
+
+    developer.log('Vote cast for candidate ID: $candidateId', name: 'VotingService');
+
+    // Broadcast update (non-blocking)
+    unawaited(_broadcastState('vote-cast'));
+  }
+
+  /// Deletes a candidate and broadcasts the update.
+  Future<void> deleteCandidate(int candidateId) async {
+    final rowsAffected = await (db.delete(db.candidates)
+          ..where((t) => t.id.equals(candidateId)))
+        .go();
+
+    if (rowsAffected == 0) {
+      throw VotingException('Candidate not found: $candidateId');
+    }
+
+    developer.log('Deleted candidate ID: $candidateId', name: 'VotingService');
+
+    // Broadcast update (non-blocking)
+    unawaited(_broadcastState('candidate-deleted'));
+  }
+
+  /// Fetches fresh state and broadcasts to all connected clients.
+  Future<void> _broadcastState(String eventName) async {
+    try {
+      final candidates = await getAllCandidates();
+
+      await pusher.trigger(
+        channel: _channel,
+        event: eventName,
+        data: {'candidates': candidates},
+      );
+    } catch (e) {
+      developer.log('Broadcast failed: $e', name: 'VotingService', level: 1000, error: e);
+    }
+  }
+}
+```
+
+<Info>
+  Notice the use of `unawaited()` for broadcasting. This ensures the API
+  responds immediately while the Pusher event is sent in the background, keeping
+  your endpoints fast.
+</Info>
+
+### Step 8: Create REST Endpoints
+
+Create the route handlers for your API.
+
+**Create `routes/_middleware.dart`** to provide dependencies and handle CORS:
+
+```dart
+import 'package:dart_frog/dart_frog.dart';
+import 'package:shelf_cors_headers/shelf_cors_headers.dart';
+import 'package:voting_backend/config/environment.dart';
+import 'package:voting_backend/database/database.dart';
+import 'package:voting_backend/services/pusher_service.dart';
+import 'package:voting_backend/services/voting_service.dart';
+
+// Initialize singletons
+final _db = AppDatabase();
+final _pusher = PusherService();
+
+Handler middleware(Handler handler) {
+  // Initialize environment on startup
+  Environment.init();
+
+  return handler
+      .use(
+        provider<VotingService>(
+          (context) => VotingService(db: _db, pusher: _pusher),
+        ),
+      )
+      .use(requestLogger())
+      .use(
+        fromShelfMiddleware(
+          corsHeaders(
+            headers: {
+              ACCESS_CONTROL_ALLOW_ORIGIN: '*',
+              ACCESS_CONTROL_ALLOW_METHODS: 'GET, POST, OPTIONS',
+              ACCESS_CONTROL_ALLOW_HEADERS: 'Origin, Content-Type',
+            },
+          ),
+        ),
+      );
+}
+```
+
+Add the CORS dependency:
+
+```bash
+dart pub add shelf_cors_headers
+```
+
+**Create `routes/candidates/index.dart`** for listing and adding candidates:
+
+```dart
+import 'dart:io';
+import 'package:dart_frog/dart_frog.dart';
+import 'package:voting_backend/services/voting_service.dart';
+
+Future<Response> onRequest(RequestContext context) async {
+  final votingService = context.read<VotingService>();
+
+  return switch (context.request.method) {
+    HttpMethod.get => _handleGet(votingService),
+    HttpMethod.post => _handlePost(context, votingService),
+    HttpMethod.delete => _handleDelete(context, votingService),
+    _ => Future.value(Response(statusCode: HttpStatus.methodNotAllowed)),
+  };
+}
+
+Future<Response> _handleGet(VotingService service) async {
+  final candidates = await service.getAllCandidates();
+  return Response.json(body: candidates);
+}
+
+Future<Response> _handlePost(
+  RequestContext context,
+  VotingService service,
+) async {
+  try {
+    final body = await context.request.json() as Map<String, dynamic>;
+    final name = body['name'] as String?;
+
+    if (name == null || name.trim().isEmpty) {
+      return Response.json(
+        statusCode: HttpStatus.badRequest,
+        body: {'error': 'Name is required'},
+      );
+    }
+
+    final candidate = await service.addCandidate(name);
+    return Response.json(
+      statusCode: HttpStatus.created,
+      body: candidate.toJson(),
+    );
+  } catch (e) {
+    return Response.json(
+      statusCode: HttpStatus.badRequest,
+      body: {'error': e.toString()},
+    );
+  }
+}
+
+Future<Response> _handleDelete(
+  RequestContext context,
+  VotingService service,
+) async {
+  try {
+    final body = await context.request.json() as Map<String, dynamic>;
+    final id = body['id'] as int?;
+
+    if (id == null) {
+      return Response.json(
+        statusCode: HttpStatus.badRequest,
+        body: {'error': 'ID is required'},
+      );
+    }
+
+    await service.deleteCandidate(id);
+    return Response.json(body: {'status': 'deleted'});
+  } on VotingException catch (e) {
+    return Response.json(
+      statusCode: HttpStatus.notFound,
+      body: {'error': e.message},
+    );
+  } catch (e) {
+    return Response.json(
+      statusCode: HttpStatus.internalServerError,
+      body: {'error': 'Failed to delete candidate'},
+    );
+  }
+}
+```
+
+**Create `routes/vote/index.dart`** for casting votes:
+
+```dart
+import 'dart:io';
+import 'package:dart_frog/dart_frog.dart';
+import 'package:voting_backend/services/voting_service.dart';
+
+Future<Response> onRequest(RequestContext context) async {
+  if (context.request.method != HttpMethod.post) {
+    return Response(statusCode: HttpStatus.methodNotAllowed);
+  }
+
+  final votingService = context.read<VotingService>();
+
+  try {
+    final body = await context.request.json() as Map<String, dynamic>;
+    final candidateId = body['id'] as int?;
+
+    if (candidateId == null) {
+      return Response.json(
+        statusCode: HttpStatus.badRequest,
+        body: {'error': 'Candidate ID is required'},
+      );
+    }
+
+    await votingService.vote(candidateId);
+    return Response.json(body: {'status': 'voted'});
+  } on VotingException catch (e) {
+    return Response.json(
+      statusCode: HttpStatus.notFound,
+      body: {'error': e.message},
+    );
+  } catch (e) {
+    return Response.json(
+      statusCode: HttpStatus.internalServerError,
+      body: {'error': 'Failed to cast vote'},
+    );
+  }
+}
+```
+
+### Step 9: Test the Backend Locally
+
+Run your server and verify the endpoints work correctly.
+
+- Start the development server:
+
+  ```bash
+  dart_frog dev
+  ```
+
+- Open the [Pusher Debug Console](https://dashboard.pusher.com) for your app to see events in real-time.
+
+- In a **new terminal**, test your endpoints:
+
+  - **Add a candidate**:
+
+    ```bash
+    curl -X POST http://localhost:8080/candidates \
+      -H "Content-Type: application/json" \
+      -d '{"name": "Flutter"}'
+    ```
+
+  - **List candidates**:
+
+    ```bash
+    curl http://localhost:8080/candidates
+    ```
+
+  - **Cast a vote**:
+
+    ```bash
+    curl -X POST http://localhost:8080/vote \
+      -H "Content-Type: application/json" \
+      -d '{"id": 1}'
+    ```
+
+You should see events appearing in your Pusher Debug Console each time you add a candidate or cast a vote.
+
+### Step 10: Deploy Backend to Globe
+
+Deploy your backend with the required environment variables.
+
+```bash
+globe deploy --prod
+```
+
+When prompted:
+
+- Select to create a **new project** for your backend.
+- The Globe CLI will automatically connect your database.
+
+After deployment, add your Pusher environment variables in the Globe dashboard:
+
+- Go to **Settings** > **Environment Variables**.
+- Add `PUSHER_APP_ID`, `PUSHER_KEY`, `PUSHER_SECRET`, and `PUSHER_CLUSTER`.
+- **Important**: Redeploy after adding variables for them to take effect.
+
+Note your deployment URL (e.g., `https://voting-backend.globeapp.dev`).
+
+## Part 3: Build the Flutter Frontend
+
+### Step 11: Create the Flutter Project
+
+Create a new Flutter project for the frontend.
+
+```bash
+flutter create voting_app
+cd voting_app
+```
+
+Add the required dependencies:
+
+```bash
+flutter pub add http provider pusher_channels_flutter
+```
+
+**Important for Flutter Web:** Add the Pusher JavaScript library to `web/index.html`. Insert this script tag in the `<head>` section:
+
+```html
+<script
+  charset="utf-8"
+  src="https://js.pusher.com/8.3.0/pusher.min.js"
+></script>
+```
+
+### Step 12: Build the Voting Provider
+
+Create `lib/voting_provider.dart` to manage state and handle real-time updates:
+
+```dart
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+import 'package:pusher_channels_flutter/pusher_channels_flutter.dart';
+
+/// Model class for a voting candidate.
+class Candidate {
+  final int id;
+  final String name;
+  final int votes;
+
+  Candidate({required this.id, required this.name, required this.votes});
+
+  factory Candidate.fromJson(Map<String, dynamic> json) {
+    return Candidate(
+      id: json['id'] as int,
+      name: json['name'] as String,
+      votes: json['votes'] as int? ?? 0,
+    );
+  }
+}
+
+/// State management for the voting application.
+class VotingProvider extends ChangeNotifier {
+  // ---------------------------------------------------------------------------
+  // Configuration - Update these values
+  // ---------------------------------------------------------------------------
+
+  // Your deployed backend URL
+  // Important: Replace with your own deployment url
+  static const _backendUrl = 'https://voting-backend.globeapp.dev';
+
+  /// Your Pusher credentials (safe to expose - this is the public key)
+  static const _pusherKey = 'your_pusher_key';
+  static const _pusherCluster = 'your_cluster';
+
+  // ---------------------------------------------------------------------------
+  // State
+  // ---------------------------------------------------------------------------
+
+  List<Candidate> _candidates = [];
+  List<Candidate> get candidates => _candidates;
+
+  bool _isConnected = false;
+  bool get isConnected => _isConnected;
+
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
+  String? _error;
+  String? get error => _error;
+
+  PusherChannelsFlutter? _pusher;
+
+  // ---------------------------------------------------------------------------
+  // Initialization
+  // ---------------------------------------------------------------------------
+
+  /// Initialize the provider by fetching data and connecting to Pusher.
+  Future<void> init() async {
+    _isLoading = true;
+    notifyListeners();
+
+    await _fetchInitialCandidates();
+    await _connectToPusher();
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  /// Fetch the initial list of candidates via HTTP.
+  Future<void> _fetchInitialCandidates() async {
+    try {
+      final response = await http.get(Uri.parse('$_backendUrl/candidates'));
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        _candidates = data.map((e) => Candidate.fromJson(e)).toList();
+        _error = null;
+      } else {
+        _error = 'Failed to load candidates';
+      }
+    } catch (e) {
+      _error = 'Network error: $e';
+      debugPrint('Fetch error: $e');
+    }
+  }
+
+  /// Connect to Pusher and subscribe to the voting channel.
+  Future<void> _connectToPusher() async {
+    try {
+      _pusher = PusherChannelsFlutter.getInstance();
+
+      await _pusher!.init(
+        apiKey: _pusherKey,
+        cluster: _pusherCluster,
+        onConnectionStateChange: _onConnectionStateChange,
+        onError: _onPusherError,
+      );
+
+      await _pusher!.connect();
+
+      // Subscribe to the voting updates channel
+      await _pusher!.subscribe(
+        channelName: 'voting-updates',
+        onEvent: _onPusherEvent,
+      );
+    } catch (e) {
+      debugPrint('Pusher connection error: $e');
+      _isConnected = false;
+      notifyListeners();
+    }
+  }
+
+  void _onConnectionStateChange(String currentState, String previousState) {
+    debugPrint('Pusher: $previousState -> $currentState');
+    _isConnected = currentState == 'CONNECTED';
+    notifyListeners();
+  }
+
+  void _onPusherError(String message, int? code, dynamic e) {
+    debugPrint('Pusher error: $message (code: $code)');
+  }
+
+  /// Handle incoming Pusher events.
+  dynamic _onPusherEvent(dynamic event) {
+    final pusherEvent = event as PusherEvent;
+    debugPrint('Received event: ${pusherEvent.eventName}');
+
+    // Handle all voting-related events
+    if (pusherEvent.eventName == 'candidate-added' ||
+        pusherEvent.eventName == 'candidate-deleted' ||
+        pusherEvent.eventName == 'vote-cast') {
+      try {
+        // Handle both String (mobile) and Map (web) data types
+        final dynamic rawData = pusherEvent.data;
+        final Map<String, dynamic> data;
+
+        if (rawData is String) {
+          data = jsonDecode(rawData) as Map<String, dynamic>;
+        } else if (rawData is Map) {
+          data = Map<String, dynamic>.from(rawData);
+        } else {
+          debugPrint('Unexpected data type: ${rawData.runtimeType}');
+          return null;
+        }
+
+        if (data['candidates'] != null) {
+          final List<dynamic> candidatesList = data['candidates'] as List;
+          _candidates = candidatesList
+              .map((e) => Candidate.fromJson(Map<String, dynamic>.from(e)))
+              .toList();
+          notifyListeners();
+        }
+      } catch (e) {
+        debugPrint('Event parse error: $e');
+      }
+    }
+    return null;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Actions
+  // ---------------------------------------------------------------------------
+
+  /// Cast a vote for a candidate.
+  Future<void> vote(int candidateId) async {
+    try {
+      await http.post(
+        Uri.parse('$_backendUrl/vote'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'id': candidateId}),
+      );
+      // UI will update automatically via Pusher event
+    } catch (e) {
+      debugPrint('Vote error: $e');
+    }
+  }
+
+  /// Add a new candidate.
+  Future<void> addCandidate(String name) async {
+    try {
+      await http.post(
+        Uri.parse('$_backendUrl/candidates'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'name': name}),
+      );
+      // UI will update automatically via Pusher event
+    } catch (e) {
+      debugPrint('Add candidate error: $e');
+    }
+  }
+
+  /// Delete a candidate.
+  Future<void> deleteCandidate(int candidateId) async {
+    try {
+      await http.delete(
+        Uri.parse('$_backendUrl/candidates'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'id': candidateId}),
+      );
+      // UI will update automatically via Pusher event
+    } catch (e) {
+      debugPrint('Delete candidate error: $e');
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Cleanup
+  // ---------------------------------------------------------------------------
+
+  @override
+  void dispose() {
+    _pusher?.disconnect();
+    super.dispose();
+  }
+}
+```
+
+<Info>
+  Notice that `vote()` and `addCandidate()` don't update the local state
+  directly. Instead, they wait for the Pusher event to update the UI. This
+  ensures all clients show the exact same data from the server.
+</Info>
+
+### Step 13: Build the Voting UI
+
+Replace `lib/main.dart` with the complete voting interface:
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'voting_provider.dart';
+
+void main() {
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => VotingProvider()..init(),
+      child: const VotingApp(),
+    ),
+  );
+}
+
+class VotingApp extends StatelessWidget {
+  const VotingApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Real-Time Voting',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData.dark().copyWith(
+        scaffoldBackgroundColor: const Color(0xFF1A1A1A),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blueAccent,
+          brightness: Brightness.dark,
+        ),
+      ),
+      home: const VotingScreen(),
+    );
+  }
+}
+
+class VotingScreen extends StatelessWidget {
+  const VotingScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final provider = context.watch<VotingProvider>();
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Tech Stack Wars'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          _ConnectionIndicator(isConnected: provider.isConnected),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => _showAddDialog(context, provider),
+        icon: const Icon(Icons.add),
+        label: const Text('Add Candidate'),
+      ),
+      body: _VotingBody(provider: provider),
+    );
+  }
+
+  void _showAddDialog(BuildContext context, VotingProvider provider) {
+    final controller = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Add New Candidate'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          decoration: const InputDecoration(
+            hintText: 'e.g., Svelte, Go, Rust',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () {
+              if (controller.text.trim().isNotEmpty) {
+                provider.addCandidate(controller.text);
+                Navigator.pop(ctx);
+              }
+            },
+            child: const Text('Add'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _VotingBody extends StatelessWidget {
+  const _VotingBody({required this.provider});
+
+  final VotingProvider provider;
+
+  @override
+  Widget build(BuildContext context) {
+    if (provider.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (provider.error != null) {
+      return _ErrorView(
+        error: provider.error!,
+        onRetry: provider.init,
+      );
+    }
+
+    if (provider.candidates.isEmpty) {
+      return _EmptyState(provider: provider);
+    }
+
+    return _CandidateList(provider: provider);
+  }
+}
+
+class _ErrorView extends StatelessWidget {
+  const _ErrorView({required this.error, required this.onRetry});
+
+  final String error;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(error, style: const TextStyle(color: Colors.red)),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: onRetry,
+            child: const Text('Retry'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _EmptyState extends StatelessWidget {
+  const _EmptyState({required this.provider});
+
+  final VotingProvider provider;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.how_to_vote, size: 80, color: Colors.grey),
+          const SizedBox(height: 16),
+          const Text(
+            'No candidates yet!',
+            style: TextStyle(fontSize: 20, color: Colors.grey),
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton(
+            onPressed: () {
+              provider.addCandidate('Flutter');
+              provider.addCandidate('React Native');
+            },
+            child: const Text('Add Flutter vs React Native'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CandidateList extends StatelessWidget {
+  const _CandidateList({required this.provider});
+
+  final VotingProvider provider;
+
+  @override
+  Widget build(BuildContext context) {
+    final maxVotes = provider.candidates.isNotEmpty
+        ? provider.candidates.map((c) => c.votes).reduce((a, b) => a > b ? a : b)
+        : 0;
+
+    return ListView.separated(
+      padding: const EdgeInsets.all(16),
+      itemCount: provider.candidates.length,
+      separatorBuilder: (_, _) => const SizedBox(height: 12),
+      itemBuilder: (context, index) {
+        final candidate = provider.candidates[index];
+        final percentage = maxVotes == 0 ? 0.0 : candidate.votes / maxVotes;
+
+        return _CandidateCard(
+          candidate: candidate,
+          percentage: percentage,
+          onVote: () => provider.vote(candidate.id),
+          onDelete: () => provider.deleteCandidate(candidate.id),
+        );
+      },
+    );
+  }
+}
+
+class _ConnectionIndicator extends StatelessWidget {
+  final bool isConnected;
+
+  const _ConnectionIndicator({required this.isConnected});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      margin: const EdgeInsets.only(right: 16),
+      decoration: BoxDecoration(
+        color: (isConnected ? Colors.green : Colors.red).withAlpha(51),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isConnected ? Colors.green : Colors.red,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.circle,
+            size: 8,
+            color: isConnected ? Colors.green : Colors.red,
+          ),
+          const SizedBox(width: 6),
+          Text(
+            isConnected ? 'LIVE' : 'CONNECTING',
+            style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CandidateCard extends StatelessWidget {
+  final Candidate candidate;
+  final double percentage;
+  final VoidCallback onVote;
+  final VoidCallback onDelete;
+
+  const _CandidateCard({
+    required this.candidate,
+    required this.percentage,
+    required this.onVote,
+    required this.onDelete,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 70,
+      decoration: BoxDecoration(
+        color: Colors.grey[900],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white10),
+      ),
+      child: Stack(
+        children: [
+          // Animated progress bar
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: AnimatedFractionallySizedBox(
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeOutQuart,
+              widthFactor: percentage.clamp(0.0, 1.0),
+              heightFactor: 1.0,
+              child: Container(color: Colors.blueAccent.withAlpha(51)),
+            ),
+          ),
+          // Content
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        candidate.name,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        '${candidate.votes} votes',
+                        style: TextStyle(color: Colors.grey[400], fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton.filled(
+                  onPressed: onVote,
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.blueAccent.withAlpha(51),
+                    foregroundColor: Colors.blueAccent,
+                  ),
+                  icon: const Icon(Icons.thumb_up_rounded),
+                ),
+                const SizedBox(width: 8),
+                IconButton.filled(
+                  onPressed: onDelete,
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.red.withAlpha(51),
+                    foregroundColor: Colors.red,
+                  ),
+                  icon: const Icon(Icons.delete_rounded),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+```
+
+### Step 14: Update Configuration and Deploy
+
+Before deploying, update the configuration values in `voting_provider.dart`:
+
+```dart
+/// Your deployed backend URL
+static const _backendUrl = 'https://your-backend.globeapp.dev';
+
+/// Your Pusher credentials
+static const _pusherKey = 'your_pusher_key';
+static const _pusherCluster = 'your_cluster';
+```
+
+Deploy your Flutter web app:
+
+```bash
+globe deploy --prod
+```
+
+When prompted, select to create a **new project** for your frontend.
+
+## Testing Your Real-Time App
+
+Once both projects are deployed:
+
+1. Open your Flutter app URL in multiple browser windows.
+2. Add a candidate in one window.
+3. Watch it appear instantly in all other windows.
+4. Cast votes and see the counts update in real-time across all clients.
+
+The votes should synchronize instantly without any manual refresh!
+
+## What's Next
+
+- **Add Authentication**: Implement user authentication to prevent vote manipulation. See our guide on [Securing Dart APIs](/guides/secure-dart-apis).
+- **Private Channels**: Use Pusher's private channels to authenticate WebSocket connections.
+- **Rate Limiting**: Add rate limiting to prevent spam voting.
+- **Explore Other Real-Time Features**: Build chat applications, live notifications, or collaborative tools using the same patterns.
+
+---
+
+<Info>
+  Couldn't find the guide you need? [Talk to us in
+  Discord](https://invertase.link/globe-discord)
+</Info>

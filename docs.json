@@ -402,6 +402,10 @@
         {
           "title": "Cache GitHub API with Globe KV",
           "href": "/guides/cache-github-api-with-kv"
+        },
+        {
+          "title": "Build Real-Time Voting App",
+          "href": "/guides/build-realtime-voting-app"
         }
       ]
     },
