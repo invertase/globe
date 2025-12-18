@@ -1,0 +1,259 @@
+---
+title: What is Backend Validation?
+description: Learn why backend validation differs from frontend validation and how to protect your Dart APIs from malicious or malformed data.
+---
+
+When building a Flutter app, you're used to validating user input in forms with `TextFormField` validators. But once that data leaves your app and hits your backend API, a completely different set of rules applies. **Backend validation is your last line of defense** against bad data entering your system.
+
+This tutorial explains why backend validation is fundamentally different from what you do on the client, the types of validation you need to implement, and how to communicate errors back to clients effectively.
+
+**10 min read**
+
+---
+
+## What You Will Learn
+
+- Why you can never trust data coming from a client application
+- The key differences between frontend and backend validation
+- The types of validation every backend must perform
+- How to structure and return validation error responses
+- Common pitfalls Flutter developers face when building their first backend
+
+## Prerequisites
+
+- Familiarity with Flutter form validation (e.g., `TextFormField` validators)
+- A basic understanding of REST APIs and JSON
+
+## Exploring Backend Validation
+
+### 1. The Golden Rule: Never Trust the Client
+
+On the frontend, you add validation to improve **user experience**. You show helpful error messages so users can fix their input before submitting. But here's the critical difference:
+
+> **Frontend validation is a courtesy. Backend validation is a requirement.**
+
+A user can bypass your Flutter app entirely. They can use tools like `curl`, Postman, or write a script to send any data they want directly to your API. Even if your Flutter app has perfect validation, a malicious actor (or a buggy third-party client) can send:
+
+- Missing required fields
+- Wrong data types (a string where you expect a number)
+- Values outside acceptable ranges
+- Malicious content (SQL injection, script tags, etc.)
+
+**Your backend must validate every piece of incoming data as if it came from an untrusted source—because it did.**
+
+### 2. Frontend vs. Backend Validation: A Comparison
+
+Here's how the mindset shifts when you move from Flutter form validation to backend API validation:
+
+| Aspect            | Frontend (Flutter)       | Backend (Dart API)                  |
+| ----------------- | ------------------------ | ----------------------------------- |
+| **Purpose**       | Improve user experience  | Protect data integrity and security |
+| **Trust Level**   | User is cooperating      | Assume nothing; validate everything |
+| **Data Source**   | Controlled input widgets | Raw JSON from HTTP requests         |
+| **Type Safety**   | Compile-time types       | `dynamic` - no guarantees           |
+| **Error Display** | Inline field errors      | JSON error responses                |
+| **Bypass Risk**   | Low (user uses your app) | High (anyone can call your API)     |
+
+#### The Type Safety Problem
+
+In Flutter, when you access a `TextEditingController.text`, you get a `String`. It's type-safe at compile time.
+
+On your backend, when you parse JSON from a request body, you get `Map<String, dynamic>`. The word `dynamic` is the key; Dart has no idea what types are inside that map until runtime:
+
+```dart
+// This could crash if 'email' is missing or not a String
+final body = await request.json() as Map<String, dynamic>;
+final email = body['email'] as String; // Runtime error if wrong type
+```
+
+This is why backend validation isn't optional—it's how you safely extract typed data from untyped input.
+
+### 3. The Three Layers of Backend Validation
+
+A robust backend validates incoming data at three levels:
+
+#### Layer 1: Presence and Type Validation
+
+The most basic check: Is the data there, and is it the right type?
+
+```dart
+final body = await request.json() as Map<String, dynamic>;
+final email = body['email'];
+final age = body['age'];
+
+// Check presence
+if (email == null) {
+  return Response.json(
+    statusCode: 400,
+    body: {'error': 'Email is required'},
+  );
+}
+
+// Check type
+if (email is! String) {
+  return Response.json(
+    statusCode: 400,
+    body: {'error': 'Email must be a string'},
+  );
+}
+```
+
+#### Layer 2: Format and Constraint Validation
+
+Once you know the data exists and is the right type, validate its format and constraints:
+
+```dart
+// Format validation
+final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+if (!emailRegex.hasMatch(email)) {
+  return Response.json(
+    statusCode: 400,
+    body: {'error': 'Invalid email format'},
+  );
+}
+
+// Constraint validation
+if (age < 0 || age > 150) {
+  return Response.json(
+    statusCode: 400,
+    body: {'error': 'Age must be between 0 and 150'},
+  );
+}
+```
+
+#### Layer 3: Business Rule Validation
+
+These are rules specific to your application's logic:
+
+```dart
+// Check if email is already registered
+final existingUser = await db.findUserByEmail(email);
+if (existingUser != null) {
+  return Response.json(
+    statusCode: 409, // Conflict
+    body: {'error': 'A user with this email already exists'},
+  );
+}
+```
+
+### 4. Structuring Error Responses
+
+When validation fails, your API should return a **400 Bad Request** status code with a structured JSON body that helps the client understand what went wrong.
+
+#### Simple Error Response
+
+For single errors, a simple structure works:
+
+```dart
+return Response.json(
+  statusCode: 400,
+  body: {'error': 'Email is required'},
+);
+```
+
+#### Structured Error Response
+
+For multiple validation errors (like form submissions), return an object that maps field names to their errors:
+
+```dart
+return Response.json(
+  statusCode: 400,
+  body: {
+    'message': 'Validation failed',
+    'errors': {
+      'email': 'Invalid email format',
+      'password': 'Password must be at least 8 characters',
+      'age': 'Age must be a positive number',
+    },
+  },
+);
+```
+
+This structure is easy for Flutter clients to parse and display field-specific errors.
+
+### 5. Connecting to Flutter: Handling Validation Errors
+
+On the Flutter side, you can catch these structured errors and display them appropriately:
+
+```dart
+try {
+  final response = await dio.post('/register', data: formData);
+  // Success
+} on DioException catch (e) {
+  if (e.response?.statusCode == 400) {
+    final errors = e.response?.data['errors'] as Map<String, dynamic>?;
+    if (errors != null) {
+      // Display errors next to form fields
+      setState(() {
+        emailError = errors['email'];
+        passwordError = errors['password'];
+      });
+    }
+  }
+}
+```
+
+This creates a seamless experience where backend validation errors integrate naturally with your Flutter UI.
+
+### 6. Common Pitfalls for Flutter Developers
+
+When building your first backend, watch out for these mistakes:
+
+#### Pitfall 1: Assuming Type Safety
+
+```dart
+// Wrong: Assumes 'name' exists and is a String
+final name = body['name'] as String;
+
+// Right: Check before casting
+final name = body['name'];
+if (name == null || name is! String) {
+  return Response.json(statusCode: 400, body: {'error': 'Name is required'});
+}
+```
+
+#### Pitfall 2: Only Validating on the Frontend
+
+Even if your Flutter app has perfect validation, always duplicate critical validation on the backend. The frontend can be bypassed.
+
+#### Pitfall 3: Exposing Internal Errors
+
+```dart
+// Wrong: Exposes internal details
+return Response.json(
+  statusCode: 500,
+  body: {'error': exception.toString()},
+);
+
+// Right: Return generic message, log the details
+log('Database error: $exception');
+return Response.json(
+  statusCode: 500,
+  body: {'error': 'An internal error occurred'},
+);
+```
+
+#### Pitfall 4: Inconsistent Error Formats
+
+Pick a consistent error response structure and use it everywhere. Your Flutter app will thank you.
+
+### 7. Key Takeaways
+
+- **Never trust client data**—validate everything on the backend, regardless of frontend validation
+- **JSON is untyped**—always check presence and types before using values
+- **Layer your validation**—presence, format, and business rules
+- **Return structured errors**—use consistent 400 responses with field-level error details
+- **Think like an attacker**—consider how someone could abuse your API with malformed data
+
+## What's Next
+
+- **Implement Validation**: Learn how to use schema-based validation with Luthor in our guide: [Validate API Requests with Luthor](/guides/validate-api-requests).
+- **Secure Your APIs**: Take security further with authentication in [How to Secure Your Dart APIs on Globe](/guides/secure-dart-apis).
+- **Understand Middleware**: Learn how to centralize validation logic in [What is Middleware?](/tutorials/what-is-middleware).
+
+---
+
+<Info>
+  Didn't find what you were looking for? [Talk to us on
+  Discord](https://invertase.link/globe-discord)
+</Info>
