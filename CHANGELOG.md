@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2025-12-18
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`globe_cli` - `v0.0.16+3`](#globe_cli---v00163)
+
+---
+
+#### `globe_cli` - `v0.0.16+3`
+
+ - **FIX**: Handle Cloudflare upload limits error ([#258](https://github.com/invertase/globe/issues/258)). ([06057003](https://github.com/invertase/globe/commit/06057003a08985379af75c9c4118e6a7e86abc82))
+ - **DOCS**: Add guide for Serinus deployment ([#235](https://github.com/invertase/globe/issues/235)). ([dd0fbf6f](https://github.com/invertase/globe/commit/dd0fbf6f1dd0b511b985c85b06e66e73510b782e))
+
+
 ## 2025-09-03
 
 ### Changes
