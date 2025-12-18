@@ -460,6 +460,10 @@
         {
           "title": "What is a Middleware",
           "href": "/tutorials/what-is-middleware"
+        },
+        {
+          "title": "What is Backend Validation",
+          "href": "/tutorials/what-is-backend-validation"
         }
       ]
     },
