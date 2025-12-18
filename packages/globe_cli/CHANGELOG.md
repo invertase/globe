@@ -1,3 +1,8 @@
+## 0.0.16+3
+
+ - **FIX**: Handle Cloudflare upload limits error ([#258](https://github.com/invertase/globe/issues/258)). ([06057003](https://github.com/invertase/globe/commit/06057003a08985379af75c9c4118e6a7e86abc82))
+ - **DOCS**: Add guide for Serinus deployment ([#235](https://github.com/invertase/globe/issues/235)). ([dd0fbf6f](https://github.com/invertase/globe/commit/dd0fbf6f1dd0b511b985c85b06e66e73510b782e))
+
 ## 0.0.16+2
 
  - **DOCS**: Add the globe.yaml page in core concepts ([#213](https://github.com/invertase/globe/issues/213)). ([597282f7](https://github.com/invertase/globe/commit/597282f78dca9da6c1d9978409dda0b77d9bed13))
