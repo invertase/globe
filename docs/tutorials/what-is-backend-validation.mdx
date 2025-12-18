@@ -39,7 +39,7 @@ A user can bypass your Flutter app entirely. They can use tools like `curl`, Pos
 - Values outside acceptable ranges
 - Malicious content (SQL injection, script tags, etc.)
 
-**Your backend must validate every piece of incoming data as if it came from an untrusted source—because it did.**
+**Your backend must validate every piece of incoming data as if it came from an untrusted source because it did.**
 
 ### 2. Frontend vs. Backend Validation: A Comparison
 
@@ -66,7 +66,7 @@ final body = await request.json() as Map<String, dynamic>;
 final email = body['email'] as String; // Runtime error if wrong type
 ```
 
-This is why backend validation isn't optional—it's how you safely extract typed data from untyped input.
+This is why backend validation isn't optional; it's how you safely extract typed data from untyped input.
 
 ### 3. The Three Layers of Backend Validation
 
@@ -239,11 +239,11 @@ Pick a consistent error response structure and use it everywhere. Your Flutter a
 
 ### 7. Key Takeaways
 
-- **Never trust client data**—validate everything on the backend, regardless of frontend validation
-- **JSON is untyped**—always check presence and types before using values
-- **Layer your validation**—presence, format, and business rules
-- **Return structured errors**—use consistent 400 responses with field-level error details
-- **Think like an attacker**—consider how someone could abuse your API with malformed data
+- **Never trust client data**: Validate everything on the backend, regardless of frontend validation
+- **JSON is untyped**: Always check presence and types before using values
+- **Layer your validation** Presence, format, and business rules
+- **Return structured errors** Use consistent 400 responses with field-level error details
+- **Think like an attacker** Consider how someone could abuse your API with malformed data
 
 ## What's Next
 
