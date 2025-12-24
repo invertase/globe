@@ -1,0 +1,372 @@
+---
+title: Validate API Requests with Luthor
+description: Use schema-based validation to protect your Dart APIs from malformed or malicious data.
+---
+
+Manual validation with `if` statements quickly becomes repetitive and error-prone as your API grows. Schema-based validation provides a cleaner, more maintainable approach by defining the expected shape of your data once and validating against it consistently.
+
+This guide shows you how to use [Luthor](https://luthor.netlify.app/), a powerful Dart validation library, to validate incoming API requests in a Dart Frog backend. You'll learn to define schemas, validate request bodies, and return structured error responses.
+
+**15 min read**
+
+---
+
+### Features Covered
+
+- Installing and setting up Luthor in a Dart Frog project
+- Defining validation schemas for API endpoints
+- Validating request bodies against schemas
+- Returning structured validation error responses
+- Creating reusable validation helpers
+
+### Prerequisites
+
+- **Dart SDK Installed**: If you have Flutter installed, the Dart SDK is already included. If not, [Install Dart](https://dart.dev/get-dart).
+- **Globe Account**: You'll need an account to deploy projects. [Sign up or log in to Globe](https://globe.dev/login).
+- **Globe CLI Installed and Authenticated**: Install the CLI by running `dart pub global activate globe_cli` and log in using `globe login`.
+- **Dart Frog CLI Installed**: Install by running `dart pub global activate dart_frog_cli`.
+
+## Step 1: Create Your Project
+
+Bootstrap a new Dart Frog project to work with.
+
+- In your terminal, run the following commands:
+
+  ```bash
+  dart_frog create my_validated_api
+  cd my_validated_api
+  ```
+
+## Step 2: Add Luthor Dependency
+
+Add the Luthor validation library to your project.
+
+- Run the following command:
+
+  ```bash
+  dart pub add luthor
+  ```
+
+## Step 3: Understand Luthor Basics
+
+Luthor uses a schema-based approach similar to Zod (JavaScript) or Yup. You define the expected structure of your data, then validate incoming data against that schema.
+
+Here's a quick overview of common validators:
+
+```dart
+import 'package:luthor/luthor.dart';
+
+// String validators
+l.string()              // Must be a string
+l.string().min(1)       // Minimum 1 character
+l.string().max(100)     // Maximum 100 characters
+l.string().email()      // Must be valid email format
+
+// Number validators
+l.int()                 // Must be an integer
+l.double()              // Must be a double
+l.int().min(0)          // Minimum value 0
+l.int().max(150)        // Maximum value 150
+
+// Other validators
+l.boolean()             // Must be a boolean
+l.list()                // Must be a list
+
+// Making fields required (fields are optional by default)
+l.string().required()   // Required string field
+l.int().required()      // Required integer field
+
+// Combining validators
+l.string().min(8).max(128).required()  // Required string, 8-128 chars
+```
+
+## Step 4: Create a User Registration Schema
+
+Let's create a practical example: validating user registration data.
+
+- Create a new file at `lib/schemas/user_schema.dart`:
+
+  ```dart
+  import 'package:luthor/luthor.dart';
+
+  /// Schema for user registration requests.
+  /// Expects: { "email": string, "password": string, "name": string, "age": int? }
+  final registerUserSchema = l.schema({
+    'email': l.string().email().required(),
+    'password': l.string().min(8).max(128).required(),
+    'name': l.string().min(1).max(100).required(),
+    'age': l.int().min(0).max(150), // Optional by default
+  });
+
+  /// Schema for user login requests.
+  /// Expects: { "email": string, "password": string }
+  final loginUserSchema = l.schema({
+    'email': l.string().email().required(),
+    'password': l.string().min(8).required(),
+  });
+  ```
+
+<Info>
+  Fields are optional by default in Luthor. Use `.required()` to make a field
+  mandatory.
+</Info>
+
+## Step 5: Create a Validation Helper
+
+To keep your route handlers clean, create a helper function that validates requests and returns structured errors.
+
+- Create a new file at `lib/helpers/validation_helper.dart`:
+
+  ```dart
+  import 'dart:io';
+  import 'package:dart_frog/dart_frog.dart';
+  import 'package:luthor/luthor.dart';
+
+  /// Validates a request body against a Luthor schema.
+  ///
+  /// Returns the validated data as a Map if successful.
+  /// Returns a 400 Bad Request Response with structured errors if validation fails.
+  Future<Object> validateRequest(
+    RequestContext context,
+    Validator schema,
+  ) async {
+    final body = await context.request.json() as Map<String, dynamic>;
+    final result = schema.validateSchema<Map<String, dynamic>>(body);
+
+    switch (result) {
+      case SchemaValidationSuccess():
+        return body;
+      case SchemaValidationError(errors: final errors):
+        return Response.json(
+          statusCode: HttpStatus.badRequest,
+          body: {
+            'message': 'Validation failed',
+            'errors': errors,
+          },
+        );
+    }
+  }
+
+  /// Extension to check if validation returned data or an error response.
+  extension ValidationResultCheck on Object {
+    bool get isValidationError => this is Response;
+    Response get asErrorResponse => this as Response;
+    Map<String, dynamic> get asValidData => this as Map<String, dynamic>;
+  }
+  ```
+
+## Step 6: Create Validated API Endpoints
+
+Now use the schema and helper in your route handlers.
+
+- Create a file at `routes/auth/register.dart`:
+
+  ```dart
+  import 'dart:io';
+  import 'package:dart_frog/dart_frog.dart';
+  import 'package:my_validated_api/helpers/validation_helper.dart';
+  import 'package:my_validated_api/schemas/user_schema.dart';
+
+  Future<Response> onRequest(RequestContext context) async {
+    if (context.request.method != HttpMethod.post) {
+      return Response(statusCode: HttpStatus.methodNotAllowed);
+    }
+
+    // Validate the request body
+    final validationResult = await validateRequest(
+      context,
+      registerUserSchema,
+    );
+
+    // If validation failed, return the error response
+    if (validationResult.isValidationError) {
+      return validationResult.asErrorResponse;
+    }
+
+    // Validation passed - safely access the data
+    final data = validationResult.asValidData;
+    final email = data['email'] as String;
+    final password = data['password'] as String;
+    final name = data['name'] as String;
+    final age = data['age'] as int?; // Optional field
+
+    // TODO: Add your business logic here
+    // - Check if user already exists
+    // - Hash the password
+    // - Save to database
+
+    return Response.json(
+      statusCode: HttpStatus.created,
+      body: {
+        'message': 'User registered successfully',
+        'user': {
+          'email': email,
+          'name': name,
+          if (age != null) 'age': age,
+        },
+      },
+    );
+  }
+  ```
+
+- Create a file at `routes/auth/login.dart`:
+
+  ```dart
+  import 'dart:io';
+  import 'package:dart_frog/dart_frog.dart';
+  import 'package:my_validated_api/helpers/validation_helper.dart';
+  import 'package:my_validated_api/schemas/user_schema.dart';
+
+  Future<Response> onRequest(RequestContext context) async {
+    if (context.request.method != HttpMethod.post) {
+      return Response(statusCode: HttpStatus.methodNotAllowed);
+    }
+
+    // Validate the request body
+    final validationResult = await validateRequest(context, loginUserSchema);
+
+    if (validationResult.isValidationError) {
+      return validationResult.asErrorResponse;
+    }
+
+    final data = validationResult.asValidData;
+    final email = data['email'] as String;
+    final password = data['password'] as String;
+
+    // TODO: Add your authentication logic here
+    // - Find user by email
+    // - Verify password hash
+    // - Generate JWT token
+
+    return Response.json(
+      body: {
+        'message': 'Login successful',
+        'token': 'your-jwt-token-here',
+      },
+    );
+  }
+  ```
+
+## Step 7: Test Your Validation Locally
+
+Start the development server and test your validation with various inputs.
+
+- Start the server:
+
+  ```bash
+  dart_frog dev
+  ```
+
+- In a new terminal, test with **valid data**:
+
+  ```bash
+  curl -X POST http://localhost:8080/auth/register \
+    -H "Content-Type: application/json" \
+    -d '{"email": "ada@example.com", "password": "securepass123", "name": "Ada Lovelace"}'
+  ```
+
+  Expected response:
+
+  ```json
+  {
+    "message": "User registered successfully",
+    "user": { "email": "ada@example.com", "name": "Ada Lovelace" }
+  }
+  ```
+
+- Test with **invalid data** (missing fields, wrong types):
+
+  ```bash
+  curl -X POST http://localhost:8080/auth/register \
+    -H "Content-Type: application/json" \
+    -d '{"email": "not-an-email", "password": "short"}'
+  ```
+
+  Expected response:
+
+  ```json
+  {
+    "message": "Validation failed",
+    "errors": {
+      "email": ["email must be a valid email address"],
+      "password": ["password must be at least 8 characters"],
+      "name": ["name is required"]
+    }
+  }
+  ```
+
+## Step 8: Create More Complex Schemas
+
+For more advanced use cases, Luthor supports nested schemas and lists.
+
+- Create a file at `lib/schemas/post_schema.dart`:
+
+  ```dart
+  import 'package:luthor/luthor.dart';
+
+  /// Schema for creating a blog post with tags.
+  final createPostSchema = l.schema({
+    'title': l.string().min(1).max(200).required(),
+    'content': l.string().min(10).required(),
+    'tags': l.list(validators: [l.string().min(1)]),
+    'metadata': l.schema({
+      'draft': l.boolean(),
+    }),
+  });
+  ```
+
+This validates:
+
+- `title`: Required string (`.required()`), 1-200 characters
+- `content`: Required string (`.required()`), at least 10 characters
+- `tags`: Optional array of non-empty strings (no `.required()`)
+- `metadata`: Optional object with a `draft` boolean (no `.required()`)
+
+## Step 9: Named Schemas for Better Debugging
+
+Use named schemas for clearer error messages:
+
+```dart
+final userSchema = l.withName('User').schema({
+  'email': l.string().email().required(),
+  'password': l.string().min(8).required(),
+});
+```
+
+## Step 10: Deploy to Globe
+
+Deploy your validated API to Globe.
+
+```bash
+globe deploy --prod
+```
+
+## Step 11: Test the Live API
+
+After deployment, test your live endpoints:
+
+```bash
+# Test successful registration
+curl -X POST https://<YOUR_GLOBE_URL>/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"email": "user@example.com", "password": "securepass123", "name": "Test User"}'
+
+# Test validation errors
+curl -X POST https://<YOUR_GLOBE_URL>/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"email": "invalid", "password": "123"}'
+```
+
+## What's Next
+
+- **Understand the Concepts**: Read our tutorial on [What is Backend Validation?](/tutorials/what-is-backend-validation) to understand why validation matters.
+- **Add Authentication**: Combine validation with JWT authentication in [How to Secure Your Dart APIs on Globe](/guides/secure-dart-apis).
+- **Explore Luthor**: Check the full [Luthor documentation](https://luthor.netlify.app/) for advanced validators and custom rules.
+- **Use a Database**: Store validated data with [Globe Database](/products/database/quickstart).
+
+---
+
+<Info>
+  Couldn't find the guide you need? [Talk to us in
+  Discord](https://invertase.link/globe-discord)
+</Info>

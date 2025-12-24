@@ -366,6 +366,10 @@
           "href": "/guides/secure-dart-apis"
         },
         {
+          "title": "Validate API Requests",
+          "href": "/guides/validate-api-requests"
+        },
+        {
           "title": "Auth Email Verification",
           "href": "/guides/auth-email-verification"
         },
