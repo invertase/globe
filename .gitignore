@@ -10,4 +10,5 @@ dist/
 .dart_tool
 .fvm
 docs/guides/TEMPLATE.md
+docs/IDEAS.md
 skills/

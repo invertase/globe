@@ -1,0 +1,203 @@
+---
+title: Understanding File Uploads in Serverless
+description: Learn why traditional file handling doesn't work in serverless environments and how to build reliable file upload solutions.
+---
+
+Serverless platforms fundamentally change how you work with files. This tutorial explains the constraints you'll encounter when handling file uploads on Globe and other serverless platforms, and the strategies to overcome them.
+
+**8 min read**
+
+---
+
+## What You Will Learn
+
+- Why you can't save files to disk in serverless environments
+- The key constraints: ephemeral filesystems, memory limits, and timeouts
+- Different approaches to handling file uploads in serverless
+- When to use each approach based on your requirements
+
+## Prerequisites
+
+- Basic understanding of file uploads in web applications
+- Familiarity with REST APIs
+
+## Exploring Serverless File Handling
+
+### 1. The Problem: No Persistent Filesystem
+
+On a traditional server, handling file uploads is straightforward:
+
+```dart
+// Traditional server: save file to disk
+final file = File('/uploads/image.jpg');
+await file.writeAsBytes(uploadedBytes);
+// File persists until you delete it
+```
+
+In a serverless environment like Globe, this approach fails because:
+
+> **Serverless functions run in ephemeral containers. Anything written to disk is discarded when the container shuts down.**
+
+Your code runs inside a container that spins up on demand and shuts down when idle. Since you can't control container lifecycle and requests may be routed to different containers, you cannot rely on filesystem persistence.
+
+### 2. The Three Constraints
+
+Beyond ephemeral storage, serverless environments impose additional constraints that affect file handling:
+
+#### Constraint 1: Memory Limits
+
+Serverless functions have limited RAM. When you receive a file upload, the entire file must be buffered in memory before you can process it:
+
+```dart
+// This loads the entire file into memory
+final bodyBytes = await request.bytes();
+```
+
+If your function has 256MB of memory and someone uploads a 300MB file, your function will be terminated with an out-of-memory error.
+
+**Practical limit**: Keep file uploads well under 256MB to leave headroom for your application code and processing overhead.
+
+#### Constraint 2: Request Timeouts
+
+Serverless platforms terminate requests that take too long. On Globe, requests have a 30-second timeout.
+
+A large file upload over a slow connection might exceed this limit:
+
+- 50MB file on a 2Mbps connection = ~200 seconds (timeout)
+- 10MB file on a 2Mbps connection = ~40 seconds (timeout)
+- 5MB file on a 2Mbps connection = ~20 seconds (safe)
+
+**Practical limit**: Factor in your slowest expected client connection when setting file size limits.
+
+#### Constraint 3: Cold Starts
+
+When a serverless function hasn't been used recently, it needs time to "cold start" (initialize the runtime, load your code, etc.). On Globe, cold starts take around 500ms, though this is continuously being optimized.
+
+For file uploads, this means:
+
+- Cold start latency adds to your total request time
+- Very large uploads have less margin before hitting the 30-second timeout
+
+### 3. The Solution: External Storage Services
+
+Since you can't store files on the server, you need an external storage service. These services are designed for file storage and provide:
+
+- **Persistent storage**: Files remain until you delete them
+- **Scalability**: Handle any number of files without server changes
+- **Access control**: Manage who can upload and download files
+
+Many also offer CDN integration for fast global downloads.
+
+Popular options include:
+
+| Service                                                          | Provider   | Notes                                   |
+| ---------------------------------------------------------------- | ---------- | --------------------------------------- |
+| [Cloudflare R2](https://developers.cloudflare.com/r2/)           | Cloudflare | S3-compatible, no egress fees           |
+| [Amazon S3](https://aws.amazon.com/s3/)                          | AWS        | Industry standard, extensive ecosystem  |
+| [Google Cloud Storage](https://cloud.google.com/storage)         | GCP        | Integrates well with other GCP services |
+| [Firebase Storage](https://firebase.google.com/products/storage) | Google     | Easy integration with Firebase Auth     |
+| [Supabase Storage](https://supabase.com/storage)                 | Supabase   | PostgreSQL row-level security for files |
+
+### 4. Two Approaches to File Uploads
+
+There are two main patterns for handling file uploads in serverless architectures:
+
+#### Approach A: Backend-Handled Uploads
+
+```
+┌─────────┐     ┌─────────────-┐     ┌───────────────┐
+│  Client │────▶│ Your Backend │────▶│ Cloud Storage │
+└─────────┘     └─────────────-┘     └───────────────┘
+    File bytes flow through your server
+```
+
+The client sends the file to your backend API. Your backend validates the file, then uploads it to cloud storage.
+
+**Advantages:**
+
+- Full control over validation before storage
+- Can process files (resize, compress, scan) before storing
+- Can associate files with database records in the same request
+- Simpler client implementation
+
+**Disadvantages:**
+
+- Files consume your server's bandwidth and memory
+- Subject to serverless timeout and memory limits
+- Your backend becomes a bottleneck for large files
+
+**Best for**: Small to medium files, when you need to validate or process files before storing.
+
+#### Approach B: Direct-to-Storage Uploads (Presigned URLs)
+
+```
+┌─────────┐ 1. Request URL ┌────────────-─┐
+│  Client │───────────────▶│ Your Backend │
+└─────────┘                └──────────-───┘
+     │                            │
+     │ 2. Presigned URL           │
+     ◀────────────────────────────┘
+     │
+     │ 3. Upload directly
+     ▼
+┌───────────────┐
+│ Cloud Storage │
+└───────────────┘
+    File bytes bypass your server
+```
+
+Your backend generates a temporary, signed URL that grants the client permission to upload directly to cloud storage. The file never touches your server.
+
+**Advantages:**
+
+- No bandwidth or memory load on your server
+- No timeout concerns for large files
+- Cloud storage handles the upload complexity
+
+**Disadvantages:**
+
+- Less control over validation (post-upload only)
+- More complex client implementation
+- Harder to link files to database records
+- Requires secure URL generation logic
+
+**Best for**: Large files, high-volume uploads, when minimizing server load is critical.
+
+### 5. Choosing the Right Approach
+
+Use this decision tree to pick the right pattern:
+
+| Question                                 | If Yes                    | If No                    |
+| ---------------------------------------- | ------------------------- | ------------------------ |
+| Large files that may hit timeout/memory? | Use presigned URLs        | Backend-handled may work |
+| Need to process files before storing?    | Backend-handled           | Either approach          |
+| High upload volume?                      | Consider presigned URLs   | Either approach          |
+| Need to link files to database records?  | Backend-handled is easier | Either approach          |
+| Minimal server infrastructure?           | Presigned URLs            | Either approach          |
+
+For many applications, **backend-handled uploads** are the right choice because:
+
+- Most user uploads (profile pictures, documents) are relatively small
+- You almost always want to validate files before storing
+- The implementation is simpler and more maintainable
+
+Reserve presigned URLs for scenarios where their benefits outweigh the added complexity.
+
+### 6. Key Takeaways
+
+- **Serverless has no persistent filesystem**: Files written to disk are discarded when the container shuts down
+- **Memory and timeout limits**: Stay well under 256MB memory; requests timeout at 30 seconds
+- **External storage is required**: Use services like R2, S3, or Firebase Storage
+- **Two patterns exist**: Backend-handled for control, presigned URLs for large files
+- **Start simple**: Use backend-handled uploads unless you have a specific need for presigned URLs
+
+## What's Next
+
+- **Add Authentication**: Protect your upload endpoints with [How to Secure Your Dart APIs on Globe](/guides/secure-dart-apis).
+
+---
+
+<Info>
+  Didn't find what you were looking for? [Talk to us on
+  Discord](https://invertase.link/globe-discord)
+</Info>
