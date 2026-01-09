@@ -410,6 +410,10 @@
         {
           "title": "Build Real-Time Voting App",
           "href": "/guides/build-realtime-voting-app"
+        },
+        {
+          "title": "Handle File Uploads",
+          "href": "/guides/handle-file-uploads"
         }
       ]
     },
