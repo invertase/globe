@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:mason_logger/mason_logger.dart';
 import 'package:path/path.dart';
@@ -39,6 +40,7 @@ class GlobeApi {
   Map<String, String> get headers {
     final currentSession = auth.currentSession;
     final currentScope = GlobeScope.value;
+    final templateInfo = GetIt.instance.get<GlobeScope>().templateInfo;
 
     return {
       'X-Globe-Platform': 'globe_cli',
@@ -47,6 +49,10 @@ class GlobeApi {
         'X-Globe-Organization-Id': currentScope.orgId,
         'X-Globe-Project-Id': currentScope.projectId,
         'X-Globe-Project-Slug': currentScope.projectSlug,
+      },
+      if (templateInfo != null) ...{
+        'X-Globe-Template-Id': templateInfo.$1,
+        'X-Globe-Template-Source': templateInfo.$2,
       },
       if (currentSession != null &&
           currentSession.authenticationMethod == AuthenticationMethod.jwt)

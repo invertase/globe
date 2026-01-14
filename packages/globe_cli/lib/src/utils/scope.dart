@@ -19,14 +19,13 @@ class GlobeScope {
     required this.metadata,
   });
 
-  File get _projectFile {
-    return File(
-      p.join(
-        _projectDirectory.path,
-        metadata.projectFileName,
-      ),
-    );
-  }
+  late final _projectFile = File(
+    p.join(_projectDirectory.path, metadata.projectFileName),
+  );
+
+  late final _maybeTemplateFile = File(
+    p.join(_projectDirectory.path, GlobeMetadata.templateFileName),
+  );
 
   late final List<ScopeMetadata> workspace;
 
@@ -57,6 +56,22 @@ class GlobeScope {
     _projectFile
       ..createSync(recursive: true)
       ..writeAsStringSync(const JsonEncoder.withIndent(' ').convert(workspace));
+  }
+
+  void setTemplatePath(String templateName, String templateRepoUrl) {
+    _maybeTemplateFile
+      ..createSync(recursive: true)
+      ..writeAsStringSync('$templateName\n$templateRepoUrl');
+  }
+
+  // First param is template name, second param is template repo url
+  (String, String)? get templateInfo {
+    if (!_maybeTemplateFile.existsSync()) return null;
+
+    final template = _maybeTemplateFile.readAsLinesSync();
+    if (template.isEmpty) return null;
+
+    return (template[0], template[1]);
   }
 
   /// Sets the current project scope.

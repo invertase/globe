@@ -22,6 +22,8 @@ class GlobeMetadata {
   String get projectFileName =>
       _isLocal ? 'project.local.json' : 'project.json';
 
+  static const String templateFileName = '.template';
+
   String get sessionFileName =>
       _isLocal ? 'dart_globe_auth.local.json' : 'dart_globe_auth.json';
 
