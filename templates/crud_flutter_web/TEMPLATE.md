@@ -5,7 +5,7 @@ tags: ["Full stack", "Shelf", "Flutter web"]
 username: Invertase
 ---
 
-# Flutter Web App + Shelf Server
+# Flutter Web App
 
 ## Overview
 
