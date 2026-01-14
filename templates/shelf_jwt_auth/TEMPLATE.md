@@ -1,11 +1,11 @@
 ---
-name: Shelf JWT Auth
-description: Building a simple Shelf Backend with JWT Auth
-tags: ["shelf", "jwt", "authentication"]
+name: Dart Backend with Authentication (Shelf)
+description: Dart Shelf backend with JWT authentication and protected routes.
+tags: ["API", "Authentication", "Shelf", "JWT"]
 username: Invertase
 ---
 
-# Shelf JWT Auth
+# Dart Backend with Authentication (Shelf)
 
 ## Overview
 

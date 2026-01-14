@@ -1,7 +1,7 @@
 ---
-name: Notes API with Dart Frog & Globe DB
-description: Build a CRUD API for notes using Dart Frog and Globe's serverless SQLite database
-tags: ["dart", "dart-frog", "globedb", "drift"]
+name: Dart Database
+description: Notes CRUD API using DartFrog and Globe's serverless SQLite database.
+tags: ["Full stack", "Dart Frog", "Database", "Globe DB", "Drift"]
 username: Invertase
 ---
 
@@ -65,11 +65,13 @@ $ dart_frog dev --port 8080
 ### API Endpoints
 
 #### List All Notes
+
 ```bash
 curl http://localhost:8080/notes
 ```
 
 #### Create a Note
+
 ```bash
 curl -X POST -H "Content-Type: application/json" \
   -d '{"title": "My First Note", "content": "Hello Globe DB!"}' \
@@ -77,11 +79,13 @@ curl -X POST -H "Content-Type: application/json" \
 ```
 
 #### Get a Specific Note
+
 ```bash
 curl http://localhost:8080/notes/1
 ```
 
 #### Update a Note
+
 ```bash
 curl -X PATCH -H "Content-Type: application/json" \
   -d '{"content": "Updated content"}' \
@@ -89,6 +93,7 @@ curl -X PATCH -H "Content-Type: application/json" \
 ```
 
 #### Delete a Note
+
 ```bash
 curl -X DELETE http://localhost:8080/notes/1
 ```
@@ -106,11 +111,13 @@ The template includes a simple notes table with the following structure:
 #### Deploy to Globe
 
 1. Make sure you're logged in to Globe CLI:
+
 ```shell
 $ globe login
 ```
 
 2. Deploy your API:
+
 ```shell
 $ globe deploy
 ```
@@ -162,5 +169,3 @@ notes_api_dartfrog_globedb/
 - **Add Error Handling**: Enhance error responses
 - **Add Tests**: Write unit and integration tests
 - **Add Documentation**: Generate API documentation
-
-

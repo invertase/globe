@@ -1,11 +1,11 @@
 ---
-name: Simple Shelf Server
-description: Building a simple CRUD REST API backend with Dart Shelf
-tags: ["dart", "shelf"]
+name: Dart Backend (Shelf)
+description: REST API with CRUD Operations built on Dart Shelf.
+tags: ["API", "Starter", "Shelf"]
 username: Invertase
 ---
 
-# Simple Shelf Server
+# Dart Backend (Shelf)
 
 ## Overview
 
