@@ -1,0 +1,669 @@
+---
+title: Handle File Uploads in Dart Frog with Cloudflare R2
+description: Receive multipart file uploads in your Dart API and store them in cloud storage.
+---
+
+Serverless environments don't have persistent filesystems—you can't save uploaded files to disk. This guide shows you how to receive file uploads in Dart Frog and store them in Cloudflare R2 cloud storage.
+
+**15 min read**
+
+---
+
+### Features Covered
+
+- Parsing multipart/form-data requests in Dart Frog
+- Validating uploaded files (type, size, name)
+- Uploading file bytes to Cloudflare R2 from the backend
+- Building a Flutter app that sends multipart file uploads
+- Deploying the complete solution to Globe
+
+### Prerequisites
+
+- **Dart SDK Installed**: If you have Flutter installed, the Dart SDK is already included. If not, [Install Dart](https://dart.dev/get-dart).
+- **Flutter SDK Installed**: Required for the frontend application. [Install Flutter](https://docs.flutter.dev/install).
+- **Globe Account**: You'll need an account to deploy projects. [Sign up or log in to Globe](https://globe.dev/login).
+- **Globe CLI Installed and Authenticated**: Install the CLI by running `dart pub global activate globe_cli` and log in using `globe login`.
+- **Dart Frog CLI Installed**: Install by running `dart pub global activate dart_frog_cli`.
+- **Cloudflare Account**: Required for R2 storage. [Sign up for Cloudflare](https://dash.cloudflare.com/sign-up).
+
+## Part 1: Set Up Cloudflare R2
+
+### Step 1: Create an R2 Bucket
+
+Set up your cloud storage bucket in Cloudflare.
+
+- Log in to the [Cloudflare Dashboard](https://dash.cloudflare.com).
+- In the sidebar, go to **Storage & databases** → **R2 object storage**.
+- Click **Create bucket**.
+- Enter a bucket name (e.g., `my-app-uploads`) and click **Create**.
+
+### Step 2: Generate API Credentials
+
+Create API tokens for your backend to upload files to R2.
+
+- Go back to the R2 overview page (**Storage & databases** → **R2 object storage**).
+- Click **Manage R2 API Tokens** in the top right.
+- Click **Create API token**.
+- Select **Object Read & Write** permissions.
+- Choose your bucket under **Specify bucket(s)**.
+- Click **Create API Token**.
+- Copy and save these values:
+  - **Access Key ID**
+  - **Secret Access Key**
+  - Your **Account ID** (visible in the Cloudflare dashboard URL)
+
+<Warning>
+  Keep your Secret Access Key secure. Never commit it to version control or
+  expose it in client-side code.
+</Warning>
+
+## Part 2: Build the Dart Frog Backend
+
+### Step 3: Set Up the Dart Frog Project
+
+Create a new Dart Frog project and add dependencies for multipart parsing and cryptography.
+
+- In your terminal, run the following commands:
+
+  ```bash
+  dart_frog create upload_backend
+  cd upload_backend
+  dart pub add cloudflare_r2 dotenv
+  ```
+
+### Step 4: Configure Environment Variables
+
+Create a `.env` file in your project root to store R2 credentials. Add this file to `.gitignore`.
+
+```bash
+# .env
+R2_ACCESS_KEY_ID=your_access_key_id
+R2_SECRET_ACCESS_KEY=your_secret_access_key
+R2_ACCOUNT_ID=your_account_id
+R2_BUCKET_NAME=my-app-uploads
+```
+
+Create `lib/config/environment.dart` to load these variables:
+
+```dart
+import 'package:dotenv/dotenv.dart';
+
+class Environment {
+  Environment._();
+
+  static final DotEnv _env = DotEnv(
+    includePlatformEnvironment: true,
+    quiet: true,
+  );
+
+  static bool _initialized = false;
+
+  static void initialize() {
+    if (!_initialized) {
+      _env.load();
+      _initialized = true;
+    }
+  }
+
+  static String get r2AccessKeyId => _env['R2_ACCESS_KEY_ID'] ?? '';
+  static String get r2SecretAccessKey => _env['R2_SECRET_ACCESS_KEY'] ?? '';
+  static String get r2AccountId => _env['R2_ACCOUNT_ID'] ?? '';
+  static String get r2BucketName => _env['R2_BUCKET_NAME'] ?? '';
+}
+```
+
+### Step 5: Create the Upload Endpoint
+
+Build the API endpoint that receives multipart uploads, validates them, and stores them in R2.
+
+Create `routes/upload/index.dart`:
+
+```dart
+import 'dart:io';
+import 'dart:typed_data';
+import 'package:cloudflare_r2/cloudflare_r2.dart';
+import 'package:dart_frog/dart_frog.dart';
+import 'package:upload_backend/config/environment.dart';
+
+/// Maximum file size (adjust based on your use case and memory constraints)
+const _maxFileSize = 10 * 1024 * 1024; // 10MB
+
+/// Allowed MIME types
+const _allowedMimeTypes = [
+  'image/jpeg',
+  'image/png',
+  'image/gif',
+  'image/webp',
+];
+
+Future<Response> onRequest(RequestContext context) async {
+  return switch (context.request.method) {
+    HttpMethod.post => _handleUpload(context),
+    _ => Future.value(Response(statusCode: HttpStatus.methodNotAllowed)),
+  };
+}
+
+Future<Response> _handleUpload(RequestContext context) async {
+  try {
+    // Parse the multipart form data (built-in Dart Frog support)
+    final formData = await context.request.formData();
+
+    // Get the uploaded file
+    final uploadedFile = formData.files['file'];
+    if (uploadedFile == null) {
+      return Response.json(
+        statusCode: HttpStatus.badRequest,
+        body: {'error': 'No file provided. Use field name "file".'},
+      );
+    }
+
+    // Validate file type
+    final mimeType = uploadedFile.contentType.mimeType;
+    if (!_allowedMimeTypes.contains(mimeType)) {
+      return Response.json(
+        statusCode: HttpStatus.badRequest,
+        body: {
+          'error': 'File type not allowed.',
+          'allowed': _allowedMimeTypes,
+          'received': mimeType,
+        },
+      );
+    }
+
+    // Read file bytes
+    final bytes = await uploadedFile.readAsBytes();
+
+    // Validate file size
+    if (bytes.length > _maxFileSize) {
+      return Response.json(
+        statusCode: HttpStatus.badRequest,
+        body: {
+          'error': 'File too large.',
+          'maxSize': '${_maxFileSize ~/ (1024 * 1024)}MB',
+          'receivedSize': '${(bytes.length / (1024 * 1024)).toStringAsFixed(2)}MB',
+        },
+      );
+    }
+
+    // Generate a unique object key
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final sanitizedFilename =
+        uploadedFile.name.replaceAll(RegExp('[^a-zA-Z0-9._-]'), '_');
+    final objectKey = 'uploads/$timestamp-$sanitizedFilename';
+
+    // Upload to R2 using cloudflare_r2 package
+    await CloudFlareR2.putObject(
+      bucket: Environment.r2BucketName,
+      objectName: objectKey,
+      objectBytes: Uint8List.fromList(bytes),
+      contentType: mimeType,
+    );
+
+    // Return success response
+    return Response.json(
+      statusCode: HttpStatus.created,
+      body: {
+        'message': 'File uploaded successfully',
+        'objectKey': objectKey,
+        'filename': uploadedFile.name,
+        'size': bytes.length,
+        'contentType': mimeType,
+        // Include any additional form fields
+        'metadata': formData.fields,
+      },
+    );
+  } on FormatException catch (e) {
+    return Response.json(
+      statusCode: HttpStatus.badRequest,
+      body: {'error': 'Invalid form data: ${e.message}'},
+    );
+  } catch (e) {
+    return Response.json(
+      statusCode: HttpStatus.internalServerError,
+      body: {'error': 'Upload failed: $e'},
+    );
+  }
+}
+```
+
+### Step 6: Initialize R2 on Server Start
+
+Use Dart Frog's custom init method to initialize CloudFlareR2 once when the server starts, not on every request.
+
+Create `main.dart` in your project root:
+
+```dart
+import 'dart:io';
+
+import 'package:cloudflare_r2/cloudflare_r2.dart';
+import 'package:dart_frog/dart_frog.dart';
+import 'package:upload_backend/config/environment.dart';
+
+Future<void> init(InternetAddress ip, int port) async {
+  // Initialize environment and R2 client once on server start
+  Environment.initialize();
+  CloudFlareR2.init(
+    accountId: Environment.r2AccountId,
+    accessKeyId: Environment.r2AccessKeyId,
+    secretAccessKey: Environment.r2SecretAccessKey,
+  );
+}
+
+Future<HttpServer> run(Handler handler, InternetAddress ip, int port) {
+  return serve(handler, ip, port);
+}
+```
+
+### Step 7: Add CORS Middleware
+
+Add CORS support for Flutter web clients.
+
+Create `routes/_middleware.dart`:
+
+```dart
+import 'package:dart_frog/dart_frog.dart';
+
+Handler middleware(Handler handler) {
+  return (context) async {
+    // Handle preflight requests
+    if (context.request.method == HttpMethod.options) {
+      return Response(headers: _corsHeaders);
+    }
+
+    final response = await handler(context);
+    return response.copyWith(
+      headers: {...response.headers, ..._corsHeaders},
+    );
+  };
+}
+
+const _corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+};
+```
+
+### Step 8: Test Locally
+
+Start your development server and test the upload endpoint.
+
+- Start the development server:
+
+  ```bash
+  dart_frog dev
+  ```
+
+- In a **new terminal window**, test with curl:
+
+  ```bash
+  curl -X POST http://localhost:8080/upload \
+    -F "file=@/path/to/your/image.jpg" \
+    -F "description=My test upload"
+  ```
+
+- You should receive a response like:
+
+  ```json
+  {
+    "message": "File uploaded successfully",
+    "objectKey": "uploads/1234567890-image.jpg",
+    "filename": "image.jpg",
+    "size": 102400,
+    "contentType": "image/jpeg",
+    "metadata": {
+      "description": "My test upload"
+    }
+  }
+  ```
+
+## Part 3: Build the Flutter App
+
+### Step 9: Create the Flutter Project
+
+Create a Flutter app that sends multipart file uploads.
+
+```bash
+flutter create upload_app
+cd upload_app
+flutter pub add http http_parser image_picker
+```
+
+### Step 10: Build the Upload Screen
+
+Replace `lib/main.dart` with the following:
+
+```dart
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+import 'package:image_picker/image_picker.dart';
+
+void main() => runApp(const MyApp());
+
+/// Get MIME type from filename extension (fallback when mimeType is null)
+String _getMimeType(String filename) {
+  final ext = filename.split('.').last.toLowerCase();
+  return switch (ext) {
+    'jpg' || 'jpeg' => 'image/jpeg',
+    'png' => 'image/png',
+    'gif' => 'image/gif',
+    'webp' => 'image/webp',
+    _ => 'application/octet-stream',
+  };
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'File Upload Demo',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple),
+        useMaterial3: true,
+      ),
+      home: const UploadScreen(),
+    );
+  }
+}
+
+class UploadScreen extends StatefulWidget {
+  const UploadScreen({super.key});
+
+  @override
+  State<UploadScreen> createState() => _UploadScreenState();
+}
+
+class _UploadScreenState extends State<UploadScreen> {
+  final ImagePicker _picker = ImagePicker();
+  final TextEditingController _descriptionController = TextEditingController();
+
+  bool _isUploading = false;
+  Map<String, dynamic>? _uploadResult;
+  String? _error;
+
+  // Replace with your deployed backend URL
+  static const _backendUrl = 'http://localhost:8080';
+
+  @override
+  void dispose() {
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pickAndUpload() async {
+    setState(() {
+      _isUploading = true;
+      _error = null;
+      _uploadResult = null;
+    });
+
+    try {
+      // 1. Pick an image from gallery
+      final XFile? image = await _picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1920,
+        maxHeight: 1080,
+        imageQuality: 85,
+      );
+
+      if (image == null) {
+        setState(() => _isUploading = false);
+        return;
+      }
+
+      // 2. Read file bytes (works on all platforms including web)
+      final bytes = await image.readAsBytes();
+
+      // 3. Create multipart request
+      final request = http.MultipartRequest(
+        'POST',
+        Uri.parse('$_backendUrl/upload'),
+      );
+
+      // Add the file using fromBytes (cross-platform)
+      final mimeType = image.mimeType ?? _getMimeType(image.name);
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'file',
+          bytes,
+          filename: image.name,
+          contentType: MediaType.parse(mimeType),
+        ),
+      );
+
+      // Add additional form fields
+      request.fields['description'] = _descriptionController.text;
+
+      // 4. Send the request
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == 201) {
+        final result = jsonDecode(response.body) as Map<String, dynamic>;
+        setState(() {
+          _uploadResult = result;
+          _isUploading = false;
+        });
+      } else {
+        throw Exception('${response.statusCode}: ${response.body}');
+      }
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+        _isUploading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('File Upload'),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            TextField(
+              controller: _descriptionController,
+              decoration: const InputDecoration(
+                labelText: 'Description (optional)',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 24),
+            _UploadStatusWidget(
+              isUploading: _isUploading,
+              uploadResult: _uploadResult,
+              error: _error,
+            ),
+            const SizedBox(height: 24),
+            FilledButton.icon(
+              onPressed: _isUploading ? null : _pickAndUpload,
+              icon: const Icon(Icons.upload),
+              label: const Text('Pick & Upload Image'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+}
+
+class _UploadStatusWidget extends StatelessWidget {
+  const _UploadStatusWidget({
+    required this.isUploading,
+    required this.uploadResult,
+    required this.error,
+  });
+
+  final bool isUploading;
+  final Map<String, dynamic>? uploadResult;
+  final String? error;
+
+  @override
+  Widget build(BuildContext context) {
+    if (isUploading) {
+      return const Card(
+        child: Padding(
+          padding: EdgeInsets.all(24),
+          child: Column(
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 16),
+              Text('Uploading to server...'),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (uploadResult != null) {
+      return Card(
+        color: Colors.green.shade50,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Row(
+                children: [
+                  Icon(Icons.check_circle, color: Colors.green),
+                  SizedBox(width: 8),
+                  Text(
+                    'Upload Successful!',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green,
+                    ),
+                  ),
+                ],
+              ),
+              const Divider(),
+              Text('File: ${uploadResult!['filename']}'),
+              Text('Size: ${(uploadResult!['size'] / 1024).toStringAsFixed(1)} KB'),
+              Text('Key: ${uploadResult!['objectKey']}'),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (error != null) {
+      return Card(
+        color: Colors.red.shade50,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              const Icon(Icons.error, color: Colors.red),
+              const SizedBox(width: 8),
+              Expanded(child: Text('Error: $error')),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return const Card(
+      child: Padding(
+        padding: EdgeInsets.all(24),
+        child: Text(
+          'Select an image to upload',
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+}
+```
+
+### Step 11: Run and Test the App
+
+Test the complete upload flow locally.
+
+- Ensure your backend is running (`dart_frog dev` in the backend directory).
+- Run the Flutter app:
+
+  ```bash
+  flutter run
+  ```
+
+- Enter an optional description, tap **Pick & Upload Image**, select an image, and verify it uploads successfully.
+- Check your Cloudflare R2 bucket to confirm the file was stored.
+
+## Part 4: Deploy to Globe
+
+### Step 12: Deploy the Backend
+
+Deploy your Dart Frog backend to Globe with environment variables.
+
+- Link your project to Globe:
+
+  ```bash
+  cd upload_backend
+  globe link
+  ```
+
+- In the [Globe Dashboard](https://globe.dev), go to your project's **Settings** → **Environment Variables** and add:
+
+  - `R2_ACCESS_KEY_ID`
+  - `R2_SECRET_ACCESS_KEY`
+  - `R2_ACCOUNT_ID`
+  - `R2_BUCKET_NAME`
+
+- Deploy your backend:
+
+  ```bash
+  globe deploy --prod
+  ```
+
+### Step 13: Update and Deploy the Flutter App
+
+Update your Flutter app to use the deployed backend URL.
+
+- In `lib/main.dart`, update `_backendUrl` to your Globe deployment URL:
+
+  ```dart
+  static const _backendUrl = 'https://your-project.globe.dev';
+  ```
+
+- Deploy the Flutter web app:
+
+  ```bash
+  globe deploy --prod
+  ```
+
+## Serverless Considerations
+
+When handling file uploads on Globe, keep these constraints in mind:
+
+| Constraint          | Limit      | Recommendation                           |
+| ------------------- | ---------- | ---------------------------------------- |
+| **Request timeout** | 30 seconds | Factor in upload time for large files    |
+| **Memory**          | 256MB      | Stay well under this limit for file size |
+| **Bandwidth**       | 1GB/month  | Monitor upload volumes                   |
+
+For large files or high-volume upload scenarios, consider implementing chunked uploads or using presigned URLs for direct-to-storage uploads.
+
+## What's Next
+
+- **Add Authentication**: Protect your upload endpoint with [Secure Dart APIs](/guides/secure-dart-apis).
+- **Store Metadata**: Save file references in [Globe DB](/guides/build-notes-app) to track uploads.
+- **Process Uploads**: Use [Cron Jobs](/guides/globe-cron-jobs) to process or transform uploaded files.
+
+---
+
+<Info>
+  Couldn't find the guide you need? [Talk to us in
+  Discord](https://invertase.link/globe-discord)
+</Info>
