@@ -5,6 +5,8 @@ import 'package:mason_logger/mason_logger.dart';
 import 'package:path/path.dart' as p;
 import '../command.dart';
 
+const _templateRepo = 'https://github.com/invertase/globe';
+
 class CreateProjectFromTemplate extends BaseGlobeCommand {
   CreateProjectFromTemplate() {
     argParser.addOption(
@@ -73,7 +75,7 @@ class CreateProjectFromTemplate extends BaseGlobeCommand {
       // Initialize a new Git repository
       await _runGitCommand(['init'], processWorkingDir: directory.path);
       await _runGitCommand(
-        const ['remote', 'add', 'origin', 'https://github.com/invertase/globe'],
+        const ['remote', 'add', 'origin', _templateRepo],
         processWorkingDir: directory.path,
       );
 
@@ -106,10 +108,31 @@ class CreateProjectFromTemplate extends BaseGlobeCommand {
         throw Exception('Template: $template does not exist');
       }
 
-      await _copyPath(
-        templateDir.path,
+      final projectDir = Directory(
         p.join(Directory.current.path, projectDirName),
       );
+
+      await _copyPath(templateDir.path, projectDir.path);
+
+      // set current directory to the new project directory
+      Directory.current = projectDir;
+
+      scope.setTemplatePath(template, _templateRepo);
+
+      progress.complete('Project created successfully.');
+
+      // add next steps and let user to run globe deploy
+      logger.info('');
+      logger.info(styleBold.wrap('🚀 Next steps'));
+      logger.info('────────────────────────────────────────');
+      logger.info('  1. Navigate to your project');
+      logger.info('     ${cyan.wrap('cd $projectDirName')}');
+      logger.info('');
+      logger.info('  2. Deploy your project');
+      logger.info('     ${cyan.wrap('globe deploy')}');
+      logger.info('');
+      logger.info('${lightGray.wrap('✨ Happy building with Globe!')}');
+      logger.info('');
 
       return ExitCode.success.code;
     } on ProcessException catch (e) {
