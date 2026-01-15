@@ -1,11 +1,11 @@
 ---
-name: Simple DartFrog Server
-description: Building a simple CRUD REST API backend with DartFrog
-tags: ["dart", "dart-frog"]
+name: Dart Backend (Dart Frog)
+description: Structured REST API using DartFrog routing and request handling.
+tags: ["API", "Starter", "Dart Frog"]
 username: Invertase
 ---
 
-# Simple DartFrog Server
+# Dart Backend (Dart Frog)
 
 ## Overview
 

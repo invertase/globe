@@ -1,11 +1,11 @@
 ---
-name: Dart-Frog Google Auth
-description: Google OAuth 2.0 authentication implementation using Dart Frog
-tags: ['dart-frog', 'oauth', 'google', 'authentication']
+name: Google OAuth for Dart Backend
+description: Google OAuth 2.0 authentication flow for Dart backends with profile access.
+tags: ["API", "Authentication", "Dart Frog", "Google", "OAuth"]
 username: Invertase
 ---
 
-# Google OAuth Authentication with Dart Frog
+# Google OAuth for Dart Backend
 
 ## Overview
 

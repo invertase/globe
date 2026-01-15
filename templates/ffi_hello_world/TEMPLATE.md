@@ -1,11 +1,11 @@
 ---
-name: Dart + Rust FFI
-description: Building a simple Dart+FFI API backend
-tags: ["dart", "dart-ffi"]
+name: Dart & Rust FFI Backend
+description: Dart backend integrating Rust via FFI for native performance.
+tags: ["API", "Shelf", "FFI", "Rust"]
 username: Invertase
 ---
 
-# Dart + Rust FFI
+# Dart & Rust FFI Backend
 
 ## Overview
 

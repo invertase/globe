@@ -1,11 +1,11 @@
 ---
-name: Dart-Frog GitHub Auth
-description: GitHub OAuth 2.0 authentication implementation using Dart Frog
-tags: ['dart-frog', 'oauth', 'github', 'authentication']
+name: GitHub OAuth for Dart Backend
+description: GitHub OAuth 2.0 login flow for Dart backends using DartFrog.
+tags: ["API", "Authentication", "Dart Frog", "GitHub", "OAuth"]
 username: Invertase
 ---
 
-# GitHub OAuth Authentication with Dart Frog
+# GitHub OAuth for Dart Backend
 
 ## Overview
 

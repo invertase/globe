@@ -1,15 +1,15 @@
 ---
-name: Flutter + Firebase Auth + Shelf Backend
-description: Build a Notes App using Flutter Web, Firebase Auth and a custom backend using Shelf.
-tags: ["firebase", "shelf", "flutter", "firestore"]
+name: Flutter Web Notes App
+description: Full-stack Notes app built with Flutter Web, Firebase Auth, and a Dart Shelf backend.
+tags: ["Full stack", "Authentication", "Shelf", "Flutter web", "Firebase Auth"]
 username: Invertase
 ---
 
-# Flutter + Firebase Auth + Shelf Backend
+# Flutter Web Notes App
 
 ## Overview
 
-Build a Simple Notes App using Flutter Web, Firebase Auth and Dart for our backend.
+Build a Full-stack Notes App using Flutter Web, Firebase Auth and Dart for our backend.
 
 ### Getting Started
 

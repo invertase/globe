@@ -1,11 +1,11 @@
 ---
-name: Dart-Frog JWT Auth
-description: Building a simple Dart-Frog Backend with JWT Auth
-tags: ["dart-frog", "jwt", "authentication"]
+name: Dart Backend with Authentication (Dart Frog)
+description: JWT authentication for Dart backends with protected routes.
+tags: ["API", "Authentication", "Dart Frog", "JWT"]
 username: Invertase
 ---
 
-# Dart-Frog JWT Auth
+# Dart Backend with Authentication (Dart Frog)
 
 ## Overview
 

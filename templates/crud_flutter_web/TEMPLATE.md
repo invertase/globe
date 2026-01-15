@@ -1,11 +1,11 @@
 ---
-name: Simple Flutter App
-description: Building a simple CRUD Flutter Web application that connects to a Shelf Server
-tags: ["flutter", "web", "shelf", "api"]
+name: Flutter Web App
+description: Full-stack Flutter Web app with a Dart backend supporting CRUD operations.
+tags: ["Full stack", "Shelf", "Flutter web"]
 username: Invertase
 ---
 
-# Flutter Web + Shelf Server
+# Flutter Web App
 
 ## Overview
 
