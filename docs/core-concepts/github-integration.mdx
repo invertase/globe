@@ -21,17 +21,29 @@ Connect your GitHub repository to **deploy automatically** from **pushes** and *
 
 ## How to Create a Project from a GitHub Repository
 
-When creating a new project, you can import a GitHub repository during the setup process.
+Import a repository to create a new Globe project with automatic deployments enabled from the start.
 
-### Step 1. Authorize GitHub Access
+### Step 1. Start Project Creation
 
-1. From the Globe dashboard, go to **Projects → Create Project**
-2. Select **Connect your GitHub account** and authorize the **Globe GitHub App**
-3. You'll be redirected back to the **Project Create** screen afterward
+From the Globe dashboard, go to **Projects → Create Project** and select **Import from GitHub**.
 
-<Image src="/assets/core-concepts/connect-github.png" />
+What you see next depends on whether your GitHub account is already connected:
 
-### Step 2. Choose Repositories
+- **Already connected?** You'll see a list of your repositories ready to import. Skip to Step 3.
+
+  <Image src="/assets/core-concepts/github-apps-list.png" />
+
+- **Not connected yet?** You'll see a **Connect** button. Continue with Step 2.
+
+  <Image src="/assets/core-concepts/connect-github.png" />
+
+### Step 2. Connect Your GitHub Account (if needed)
+
+1. Select the **Connect** button to authorize the **Globe GitHub App**
+2. You'll be redirected to GitHub to grant access
+3. After authorization, you'll return to the **Project Create** screen
+
+### Step 3. Choose Repositories
 
 After authorizing the GitHub app, configure the repositories that are available to Globe:
 
@@ -41,7 +53,7 @@ After authorizing the GitHub app, configure the repositories that are available 
 
 <Image src="/assets/core-concepts/select-project-github.png" />
 
-### Step 3. Import & Configure
+### Step 4. Import & Configure
 
 1. Select **Import** next to the repository you want to use
 2. Configure the following:
@@ -50,6 +62,10 @@ After authorizing the GitHub app, configure the repositories that are available 
    - **Build config:** SDK version, build runner, Melos
    - **Environment variables**
 3. Select **Deploy** to trigger the first deployment
+
+<Warning>
+  Your project's root directory must contain a `pubspec.yaml` file.
+</Warning>
 
 <Image src="/assets/core-concepts/configure-github.png" />
 

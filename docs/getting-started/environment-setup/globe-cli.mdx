@@ -29,10 +29,34 @@ The CLI gives you full control from the terminal.
     globe login
     ```
 
-    This command will open a browser window to complete the login process.
+    This opens a browser window to complete the login process. Once authenticated, you'll see a confirmation message in your terminal:
+
+    ```
+    ✓ Successfully logged in!
+    ```
 
   </Step>
 
 </Steps>
 
-You can now deploy directly from your project directory.
+<Warning>
+  If `globe` is not recognized after installation, ensure your Dart SDK's `bin`
+  directory is in your system PATH. Run `dart pub global list` to verify the CLI
+  is installed.
+</Warning>
+
+## What's Next
+
+You're ready to deploy. Choose your path:
+
+<CardGroup>
+  <Card title="Deploy Your First App" href="/getting-started/quickstart">
+    Pick a framework and deploy in minutes.
+  </Card>
+  <Card
+    title="Start from a Template"
+    href="/core-concepts/cli/creating-a-new-project"
+  >
+    Use `globe create` to scaffold a new project with best practices.
+  </Card>
+</CardGroup>

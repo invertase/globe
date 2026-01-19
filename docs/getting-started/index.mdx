@@ -3,32 +3,43 @@ title: Getting started with Globe
 description: Get started with Globe by installing the Dart SDK, creating an account, and choosing between CLI or GitHub integration for deploying Dart and Flutter applications.
 ---
 
+Deploy your first Dart or Flutter application in minutes. Complete the prerequisites below, then choose a deployment method that fits your workflow.
+
+## Prerequisites
+
 Before deploying, make sure you have the following:
 
-- Dart SDK Installed
-
-  [Install Dart →](https://dart.dev/get-dart)
-
-- A Globe.dev account to deploy projects
-
-  [Sign up or log in →](https://globe.dev/login)
+- **Dart SDK Installed** — [Install Dart](https://dart.dev/get-dart)
+- **A Globe.dev account** — [Sign up or log in](https://globe.dev/login)
 
 <Info>If you have Flutter installed, the Dart SDK is already included.</Info>
 
-### Choose Your Deployment Method
+## Choose Your Deployment Method
 
-You can deploy in two ways:
+Globe supports two deployment methods. Choose based on your workflow:
+
+| Method                 | Best For                                           | How It Works                                   |
+| ---------------------- | -------------------------------------------------- | ---------------------------------------------- |
+| **Globe CLI**          | Local development, quick iteration, manual control | Run `globe deploy` from your terminal          |
+| **GitHub Integration** | Teams, CI/CD, automatic deployments                | Push to GitHub and Globe deploys automatically |
+
+<Info>
+  **New to Globe?** Start with the CLI to understand the deployment process,
+  then add GitHub integration for automation later.
+</Info>
 
 <CardGroup>
-  <Card title="Globe CLI" href="/getting-started/environment-setup/globe-cli">
-    Deploy from your terminal using a lightweight CLI tool. Great for local
-    development, quick iteration, and preview builds.
-  </Card>
   <Card
-    title="GitHub Integration"
-    href="/getting-started/environment-setup/github"
+    title="Set Up the Globe CLI"
+    href="/getting-started/environment-setup/globe-cli"
   >
-    Connect your GitHub repo and deploy automatically on every push. Perfect
-    for teams and Git-based workflows.
+    Install the CLI and deploy from your terminal. Great for local development
+    and quick iteration.
+  </Card>
+  <Card title="Connect GitHub" href="/getting-started/environment-setup/github">
+    Enable automatic deployments on every push. Perfect for teams and Git-based
+    workflows.
   </Card>
 </CardGroup>
+
+Once you've set up your deployment method, head to the [Quickstart](/getting-started/quickstart) to deploy your first app.
