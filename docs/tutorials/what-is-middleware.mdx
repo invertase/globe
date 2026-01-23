@@ -3,6 +3,8 @@ title: What is a Middleware?
 description: Learn how middleware intercepts, processes, and shapes requests and responses in your API, using analogies and code examples from Dart frameworks.
 ---
 
+<Image src="/assets/tutorials/middleware.png" />
+
 When building a backend API, you quickly realize many requests need similar processing before your main logic runs (like checking authentication) or after (like logging the result). Putting this common code in every single route handler would be repetitive and hard to maintain (violating the [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) - Don't Repeat Yourself - principle). So, how do backend frameworks solve this? The answer is **Middleware**.
 
 Middleware is a fundamental pattern in backend development that provides a clean, reusable way to manage the flow of requests and responses. It acts like a series of checkpoints or processing stations that requests pass through.
