@@ -1,0 +1,117 @@
+---
+title: "What is Serverless?"
+description: "A plain-language guide to serverless architecture for Flutter developers building their first backend: what it means, how it works, and when to use it."
+---
+
+If you're a Flutter developer building an app that needs a backend, you've probably heard the term **serverless**. It sounds contradictory: how can you have a backend without a server? The name is a bit misleading. Serverless doesn't mean there are no servers; it means **you** don't manage them. The platform runs your code on demand, handles scaling, and bills you for what you use.
+
+This tutorial explains what serverless actually means, how statelessness and cold starts affect your app, how scaling and pricing work, and when serverless is a good fit (and when it isn't).
+
+**8 min read**
+
+---
+
+## What You Will Learn
+
+- What "serverless" really means and why the name can be confusing
+- Why serverless functions are stateless and what that implies for your design
+- What cold starts are and how they affect latency
+- How automatic scaling works and how pricing typically works
+- When to choose serverless and when to consider alternatives
+
+## Prerequisites
+
+- Basic idea of client-server apps (e.g. a Flutter app calling an API)
+- Familiarity with building or planning a backend for a mobile or web app
+
+## Exploring Serverless
+
+### 1. What "Serverless" Actually Means
+
+In a traditional setup, you rent or own a server. You install the OS, run your Dart backend 24/7, and you're responsible for updates, scaling, and keeping it online. **Serverless** flips that: the platform owns the servers. You deploy your code; the platform runs it when a request comes in and shuts it down when it's idle.
+
+Think of it like a gym. Traditional hosting is renting a private room and leaving your equipment there all the time. Serverless is using the gym's equipment only when you're working out. You don't maintain the building or the machines.
+
+On Globe, you deploy a Dart backend (e.g. Dart Frog, Shelf, or Serverpod). Globe runs it in containers that start on demand, serve requests, and scale up or down automatically. You don't configure servers, load balancers, or scaling rules; Globe handles that.
+
+### 2. Stateless Functions: No Memory Between Requests
+
+Serverless runtimes run your code in short-lived execution environments. Each request may be handled by a different instance. **There is no durable in-memory state between requests.** Anything you store in a variable is gone after the request (and possibly the container) ends.
+
+Practical implications:
+
+- **Sessions and user state** must live elsewhere: a database, Globe KV, or signed cookies/tokens the client sends back.
+- **Caching** in memory only helps within a single request or a single container's lifetime; for shared or persistent cache, use a store like Globe KV or an external cache.
+- **Connection pools** (e.g. to a database) are often recreated per container or request, so you design for that.
+
+This stateless model is why serverless backends rely on databases, key-value stores, and external APIs for anything that must persist or be shared across requests.
+
+### 3. Cold Starts: The First-Request Cost
+
+When no instance of your backend has been used recently, the next request triggers a **cold start**: the platform allocates a container, loads the runtime and your code, and then runs your handler. That one-time cost adds latency to the first request, often a few hundred milliseconds. On Globe, cold starts are typically around 500ms and are being optimized over time.
+
+After that, the instance is **warm** and can serve more requests with much lower latency until it goes idle and is shut down again.
+
+So:
+
+- **Cold start**: First request (or first after idle) pays the startup cost.
+- **Warm**: Later requests on the same instance are fast.
+
+Globe uses three start states (cold, warm, and hot) depending on whether a new container is created, a paused one is resumed, or a request is routed to an already-running container. See [Cold Starts](/infrastructure/overview/cold-starts) for Globe-specific details and how to minimize their impact.
+
+For most APIs and web apps, cold starts are acceptable. For very latency-sensitive or real-time flows, you might need to keep traffic steady (e.g. health checks) or accept that the first user after idle may see a slightly slower response.
+
+### 4. Scaling: Automatic and Elastic
+
+The platform scales out when traffic increases and scales in when it drops; you don't choose instance sizes or set thresholds.
+
+- **No capacity planning**: You don't provision for peak load.
+- **No idle cost at zero**: If no one calls your API, you don't pay for a sitting server.
+- **Spikes are handled**: A burst of traffic is served by new instances instead of overloading one machine.
+
+The tradeoff is less control over capacity and runtime; you gain simplicity and pay-per-use instead.
+
+### 5. Pricing Models: Pay for What You Use
+
+Traditional hosting usually charges for a server (or VM) that runs 24/7, whether you get one request or a million. **Serverless pricing** is typically based on:
+
+- **Requests**: Cost per invocation (e.g. per API call).
+- **Execution time**: Cost per unit of time your code runs (e.g. per second or per 100 ms).
+
+In practice:
+
+- **Low or variable traffic**: You pay little when idle and more when traffic grows, often cheaper than a fixed server.
+- **Steady, high traffic**: Cost can rise with volume; compare with reserved or always-on capacity if needed.
+
+Globe's model fits this pattern: you're billed for usage (requests and compute) rather than for a reserved server. The exact details are in Globe's pricing and usage docs.
+
+### 6. When to Use Serverless (and When Not)
+
+**Serverless is a good fit when:**
+
+- You're building **APIs, webhooks, or small backends** that respond to HTTP requests.
+- Traffic is **variable or unpredictable**; you want to avoid paying for idle capacity.
+- You're a **small team or solo developer** and want to focus on app logic, not servers.
+- You're already in the **Dart/Flutter ecosystem** and want a Dart-native backend (e.g. on Globe) that deploys and scales without DevOps.
+
+**Consider alternatives when:**
+
+- You need **long-running jobs** (e.g. batch processing for many minutes). Serverless time limits (e.g. 30-second request timeout on Globe) may not suit. Use a job queue and workers, or a different compute model.
+- You have **very strict latency requirements** and cannot tolerate cold starts; you may need always-on instances or a way to keep functions warm.
+- You rely heavily on **in-memory state** or complex in-process caching. Stateless serverless pushes you to external stores, which may change your design.
+
+For many Flutter apps (REST APIs, auth, webhooks, server-rendered pages), serverless on Globe is a strong fit.
+
+## What's Next
+
+- **See constraints in practice**: [Understanding File Uploads in Serverless](/tutorials/serverless-file-handling) explains how the serverless model affects file handling and what patterns to use.
+- **Globe-specific behavior**: [Cold Starts](/infrastructure/overview/cold-starts) and [Infrastructure Overview](/infrastructure/overview) for details on how Globe runs your code and how to optimize.
+- **Deploy your backend**: Get started with the [Quickstart](/getting-started/quickstart) or deploy a [Dart Frog](/guides/dart-frog-deployment) or [Shelf](/guides/shelf-backend-globe) backend on Globe.
+- **Connect your Flutter app**: Once your backend is on Globe, [connect your Flutter app](/guides/connect-flutter-app) to it for a full-stack setup.
+
+---
+
+<Info>
+  Didn't find what you were looking for? [Talk to us on
+  Discord](https://invertase.link/globe-discord)
+</Info>

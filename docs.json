@@ -474,6 +474,10 @@
           "href": "/tutorials/what-is-backend-validation"
         },
         {
+          "title": "What is Serverless",
+          "href": "/tutorials/what-is-serverless"
+        },
+        {
           "title": "File Uploads in Serverless",
           "href": "/tutorials/serverless-file-handling"
         }
