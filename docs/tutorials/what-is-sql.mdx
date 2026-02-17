@@ -1,130 +1,113 @@
 ---
 title: "What is SQL?"
-description: "SQL fundamentals for Flutter developers building their first backend with Globe DB: tables, relationships, keys, and basic queries in plain terms."
+description: "A guide to SQL concepts: database structure, keys, relationships, and queries in plain terms."
 ---
 
-If you're a Flutter developer building a backend with Globe DB, you're using Drift to define tables and run CRUD operations. Under the hood, that generates **SQL** (Structured Query Language). Understanding SQL helps you design better schemas and debug what your code is doing. This tutorial explains what SQL is, how a database relates to tables and rows, and the core ideas you'll see in Globe DB and Drift.
+If you're building a backend, you'll work with a database. That usually means **SQL** (Structured Query Language). This guide explains the core concepts: how data is stored, how tables link, and how you read and write it.
 
-This tutorial will walk you through what SQL is, the relationship between a database and its tables (one database, many tables), how tables relate to each other, data modeling and normalization, primary and foreign keys, basic queries (SELECT, INSERT, UPDATE, DELETE), and JOINs.
-
-**10 min read**
+**8 min read**
 
 ---
 
 ## What You Will Learn
 
-- What SQL is and why it matters when using Globe DB or Drift
-- The relationship between database, tables, columns, and rows (one database, many tables)
-- How tables relate to each other and how to think about data modeling
-- Normalization (1NF, 2NF, 3NF) at a high level
-- Primary and foreign keys and how they enforce structure
-- Basic queries: SELECT, INSERT, UPDATE, DELETE
-- How JOINs combine data from multiple tables
+- The hierarchy: database, tables, columns, and rows
+- Primary and foreign keys
+- Why we split data into separate tables (and how to link them)
+- How to read and write data (SELECT, INSERT, UPDATE, DELETE)
+- How to combine data from multiple tables (JOINs)
 
 ## Prerequisites
 
-- You're building or planning a backend, or already using Globe DB or Drift. No SQL experience required.
+- Basic idea of backends or APIs (e.g. an app sending requests to a server).
 
 ## Exploring SQL
 
-### 1. What is SQL?
+### 1. Database, Tables, Columns, and Rows
 
-**SQL** (Structured Query Language) is how you talk to a **relational database**. You use it to create tables, insert and update data, ask questions (queries), and define relationships between tables. When you use Drift in Dart, you define your schema in code; Drift turns that into SQL and runs it against your database.
+Relational data has a simple hierarchy: **one database** holds **many tables**; each table has **columns** (structure) and **rows** (data). You don't get one database per table.
 
-Globe DB is built on **SQLite**, a lightweight relational database. So when you create a Globe DB and use Drift, you're using SQL under the hood. A bit of SQL literacy makes it easier to reason about your schema and to read logs or errors when something goes wrong.
+- **Database**: The container for your stored data. One database holds all your tables.
 
-### 2. Database, Tables, Columns, and Rows
+- **Table**: A named set of records of one kind (e.g. `users`, `notes`). Each table has a fixed set of columns.
 
-A common confusion is thinking you have one database per table. In fact, **one database holds many tables**.
+- **Columns**: The field names and types (e.g. `id`, `name`, `email`). Columns define the structure of the table.
 
-- **Database**: The container. When you create a Globe DB in the dashboard, you get **one** database (e.g. `my-app-db`). That single database is where all your app's persistent data lives.
+- **Rows**: The records. Each row has one value per column. Add more rows and the table grows; the columns stay the same. For example, one row in `users` might be: `id` 1, `name` 'Alice', `email` 'alice@example.com'.
 
-- **Tables**: Inside that database you create **tables**. Each table has a name (e.g. `users`, `notes`) and represents one kind of thing. You can have many tables in the same database: for example, one database might contain both a `users` table and a `notes` table.
+#### Primary Key
 
-- **Columns**: Each table has a fixed set of **columns** (the field names and types). For a `notes` table you might have columns like `id`, `title`, `content`, `created_at`. Columns define the *structure* of the table.
+Every row needs a unique identity so you can find, update, or delete it. The **primary key** is a column (or set of columns) that uniquely identifies each row. Usually an integer `id` that auto-increments. In practice, every table should have one.
 
-- **Rows**: **Rows** are the actual records. Each row has one value per column. So one row in `notes` might be `id: 1, title: "Hello", content: "World", created_at: 2025-01-15`. Add more rows and the table grows; the columns stay the same.
+### 2. Relationships
 
-So the hierarchy is: **one database → many tables → each table has columns (structure) and rows (data)**. In Globe DB, you create one database per app (or per environment); inside it you define as many tables as your app needs.
+In SQL, related data lives in separate tables and is linked by keys—so you keep one source of truth and avoid duplicate or inconsistent data. For example, users and their notes: each note belongs to one user, and we link them so we can query "notes for this user" or "who wrote this note."
 
-### 3. Tables and Relationships
+#### Why we split data
 
-Tables often need to reference each other. For example, a note might belong to a user. You don't copy the user's name into every note row; instead, you store a **reference** to the user (e.g. a `user_id` column in the `notes` table that points to a row in the `users` table). That's a **relationship**: one user has many notes (one-to-many).
+If you stored the user's name in every note row, and the user changed their name, you'd have to update every note. Instead, we split data into separate tables and link them.
 
-Relationships are enforced with **foreign keys**: a column in one table that holds the primary key of another table. So `notes.user_id` might reference `users.id`. That way, you keep one source of truth for the user and link notes to them. We'll cover primary and foreign keys in a moment.
+#### Foreign key (the how)
 
-### 4. Data Modeling
+A **foreign key** is a column in one table that stores the primary key of a row in another table. It creates the link.
 
-**Data modeling** is deciding what tables you need and what columns each has, based on your app's needs. You think in terms of **entities** (users, notes, products) and **relationships** (user has many notes, product belongs to a category). Then you create one table per entity and add columns for their attributes and for any foreign keys that express the relationships. Getting the model right up front makes queries and updates much simpler later.
+Example: a `notes` table has `user_id`. That column holds the `id` of a row in the `users` table. So each note points to one user. The database can enforce that the referenced row exists.
 
-### 5. Normalization (1NF, 2NF, 3NF)
+### 3. Reading and Writing Data (CRUD)
 
-**Normalization** is a set of rules for structuring data so you avoid redundancy and inconsistency. In short:
+You talk to the database with **SQL statements**.
 
-- **1NF (First Normal Form)**: Each column holds a single value; no repeating groups. Rows are unique (e.g. each row has a unique primary key).
-
-- **2NF (Second Normal Form)**: Builds on 1NF. Every non-key column depends on the *whole* primary key, not just part of it. So you don't store the same fact in multiple places.
-
-- **3NF (Third Normal Form)**: Builds on 2NF. Non-key columns don't depend on other non-key columns. So you don't duplicate derived or redundant data.
-
-You don't need to memorize the formal definitions. The idea is: **split data into tables so each fact lives in one place**. When you need to change something (e.g. a user's name), you change it once; relationships (foreign keys) keep everything consistent. That's why we have separate `users` and `notes` tables instead of repeating the user's name in every note row.
-
-### 6. Primary and Foreign Keys
-
-- **Primary key**: A column (or set of columns) that uniquely identifies each row in a table. Usually you use an `id` column (integer, often auto-increment). Every table should have a primary key so you can refer to a specific row.
-
-- **Foreign key**: A column in one table that stores the primary key value of a row in *another* table. For example, `notes.user_id` might be a foreign key to `users.id`. That enforces the relationship: a note "belongs to" a user, and the database can ensure you don't reference a user that doesn't exist.
-
-Together, primary and foreign keys keep your data consistent and let you express relationships (one-to-many, many-to-one) between tables.
-
-### 7. Basic Queries
-
-SQL uses a small set of verbs for the main operations. You'll see these when you use Drift or read SQL logs:
-
-- **SELECT**: Read data. "Select these columns from this table, optionally where some condition holds."
-
-  ```sql
-  SELECT id, title, content FROM notes WHERE id = 1;
-  ```
-
-- **INSERT**: Create a new row.
-
-  ```sql
-  INSERT INTO notes (title, content) VALUES ('Hello', 'World');
-  ```
-
-- **UPDATE**: Change existing row(s).
-
-  ```sql
-  UPDATE notes SET title = 'Hi' WHERE id = 1;
-  ```
-
-- **DELETE**: Remove row(s).
-
-  ```sql
-  DELETE FROM notes WHERE id = 1;
-  ```
-
-In Drift, you write Dart code that generates SQL like this; understanding SELECT, INSERT, UPDATE, and DELETE helps you map between your Dart API and what the database is doing.
-
-### 8. JOINs
-
-Data you need often lives in **multiple tables**. For example, you want to show a list of notes with each note's author name. The author name is in `users`; the note is in `notes`. A **JOIN** combines rows from two (or more) tables by matching on a key.
-
-For example, to get each note with its author's name, you join `notes` to `users` on `notes.user_id = users.id`:
+**INSERT** — add a new row:
 
 ```sql
-SELECT notes.title, notes.content, users.name AS author_name
+INSERT INTO notes (title, content, user_id) VALUES ('Buy milk', 'Milk, eggs', 1);
+```
+
+The `id` is usually auto-generated by the database, so we don't include it.
+
+**SELECT** — read data. This returns all columns from `notes` where `user_id` is 1:
+
+```sql
+SELECT * FROM notes WHERE user_id = 1;
+```
+
+**UPDATE** — change existing rows:
+
+```sql
+UPDATE notes SET title = 'Buy almond milk' WHERE id = 101;
+```
+
+**DELETE** — remove rows:
+
+```sql
+DELETE FROM notes WHERE id = 101;
+```
+
+### 4. Combining Data (JOINs)
+
+Data you need often sits in more than one table. To get a note with its author's name, you **JOIN** the tables: match rows in `notes` with rows in `users` where the foreign key equals the primary key.
+
+```sql
+SELECT notes.title, users.name
 FROM notes
 JOIN users ON notes.user_id = users.id;
 ```
 
-That returns one row per note, with the corresponding user's name attached. JOINs are how you follow relationships in a single query. Drift supports joins in Dart, so you can fetch related data without writing raw SQL, but the idea is the same: match rows across tables by their keys.
+You get one result row per note, with the matching user's name attached. This is an **INNER JOIN**: only notes that have a matching user appear.
+
+## Summary
+
+- **Database**: The container; one database holds all your tables.
+- **Table**: A set of records with the same columns.
+- **Row**: One record (one value per column).
+- **Primary key**: Uniquely identifies each row in a table.
+- **Foreign key**: A column that references a primary key in another table (the link).
+- **JOIN**: Combines rows from two or more tables by matching keys.
 
 ## What's Next
 
-- **Try Globe DB**: [Globe DB Quickstart](/products/database/quickstart) gets you from zero to a deployed CRUD API with a database in minutes.
-- **Build an API**: [Build a Notes CRUD API with Globe DB](/guides/build-notes-app) walks through schema definition with Drift, endpoints, and deployment.
+- **Quickstart**: [Deploy a CRUD API with a database](/products/database/quickstart) in minutes.
+- **Build an API**: [Build a Notes CRUD API](/guides/build-notes-app) with schema definition, endpoints, and deployment.
 
 ---
 
