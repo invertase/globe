@@ -72,11 +72,12 @@ FakeProcessResult runWithIOOverrides(
 }) {
   Future<int> runProcess() async {
     final previousOnExit = onExit;
+    var currentOnExit = onExit;
     var exitCodeResult = 0;
     try {
       exitOverride = (exitCode) {
         exitCodeResult = exitCode;
-        onExit?.call(exitCode);
+        currentOnExit?.call(exitCode);
         throw ExitException();
       };
       await testFn();
@@ -86,7 +87,7 @@ FakeProcessResult runWithIOOverrides(
       // Voluntary abort, not an actual error.
       return exitCodeResult;
     } finally {
-      onExit = previousOnExit;
+      currentOnExit = previousOnExit;
     }
   }
 
