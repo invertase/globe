@@ -1,0 +1,109 @@
+---
+title: "Designing Data for Globe Database"
+description: "Design tables and relationships for your Dart or Flutter app using Globe DB, Drift, and serverless SQLite."
+---
+
+When you build a backend or full-stack app on Globe, you store data in **Globe Database**: serverless SQLite that works with Dart and Drift. Before you wire up endpoints or deploy, you need a clear picture of how your data is structured: which tables you have, how they link, and how that maps to the API and Flutter app you're building. This tutorial explains how to design that structure so your schema fits Globe DB and your deployment workflow.
+
+**8 min read**
+
+---
+
+## What You Will Learn
+
+- Why data design matters when using Globe DB with Drift and Dart Frog
+- How tables, columns, and rows map to Drift table classes and your API
+- Primary keys and why every table needs a unique identity
+- Relationships and foreign keys: splitting data into tables and linking them
+- How reading and writing data (CRUD) translates to Drift and Globe DB
+- When and how to combine data from multiple tables (JOINs) for your API
+
+## Prerequisites
+
+- Basic idea of backends or APIs (e.g. a Flutter app sending requests to a server)
+- Optional: [Globe DB overview](/products/database) for product context
+
+## Exploring Data Design for Globe Database
+
+### 1. Why Data Design Matters on Globe
+
+Globe DB is serverless SQLite. You create a database from the [Globe dashboard](https://globe.dev), and your Dart backend (e.g. Dart Frog or Shelf) connects to it by name. You don't manage the server or the disk; Globe runs the database and your code runs in stateless functions. Your **schema** (tables, columns, and relationships) is the contract: it defines what your API can read and write and what your Flutter app can display.
+
+You define that schema in Dart with **Drift**. Drift generates type-safe code and talks to SQLite under the hood. So the decisions you make about tables and keys show up in your Drift table classes, your API routes, and eventually in `globe deploy`. Getting the structure right up front avoids messy migrations and unclear APIs later.
+
+### 2. Tables, Columns, and Rows
+
+In SQLite (and therefore Globe DB), **one database** holds **many tables**. Each table has a fixed set of **columns** (names and types) and stores **rows** (the actual records). You don't create one database per table; you create one Globe DB per app or service and put all your tables in it.
+
+In Drift, you model each table as a Dart class. Columns become getters with types like `IntColumn`, `TextColumn`, and so on. For example, a simple notes table for a Globe-backed API looks like this:
+
+```dart
+class Notes extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get title => text()();
+  TextColumn get content => text()();
+}
+```
+
+Here, **columns** are `id`, `title`, and `content`. Each **row** is one note: one value per column. Adding more rows grows the table; the column set stays the same. This is the same structure you'll use in the [Build a Notes CRUD API with Globe Database](/guides/build-notes-app) guide when you define your schema and deploy to Globe.
+
+### 3. Primary Keys: A Unique Identity for Every Row
+
+Every row needs a unique identity so you can fetch, update, or delete it. The **primary key** is the column (or set of columns) that uniquely identifies each row. In Drift, you usually use an integer `id` with `autoIncrement()` so the database assigns the next value when you insert. In the `Notes` example above, `id` is the primary key.
+
+Without a primary key, you can't reliably target a single row in an `UPDATE` or `DELETE`, and your API would have no stable way to refer to a resource (e.g. `PATCH /notes/101`). Every table you define for Globe DB should have a primary key; Drift and SQLite support this pattern everywhere.
+
+### 4. Relationships and Foreign Keys
+
+Related data often belongs in **separate tables** so you keep one source of truth and avoid duplicate or inconsistent data. For example, users and their notes: each note belongs to one user. If you stored the user's name in every note row, a name change would force updates in many places. Instead, you put users in a `users` table and notes in a `notes` table, and you **link** them.
+
+A **foreign key** is a column in one table that stores the primary key of a row in another table. For example, `notes` can have a `user_id` column that holds the `id` of a row in `users`. That column is the foreign key. The database can enforce that the referenced row exists, so you don't end up with notes pointing at missing users.
+
+In Drift, you define the column and can add a foreign key constraint. When you build an API that serves "notes for this user" or "the user who wrote this note," you're using that relationship. The same idea applies whether you're building a notes API, a task list, or any app that stores structured data on Globe DB.
+
+### 5. Reading and Writing Data (CRUD)
+
+Your API reads and writes the database through Drift (and thus SQLite). The four operations map as follows:
+
+- **Create**: Insert a new row. In SQL, `INSERT INTO notes (title, content) VALUES (...)`. In Drift, you use the generated insert methods; the `id` is usually filled by the database.
+- **Read**: Select rows, optionally filtered. In SQL, `SELECT * FROM notes WHERE ...`. In Drift, you write type-safe queries that compile down to SQL.
+- **Update**: Change existing rows. In SQL, `UPDATE notes SET title = ? WHERE id = ?`. In Drift, you use update statements keyed by primary key or other columns.
+- **Delete**: Remove rows. In SQL, `DELETE FROM notes WHERE id = ?`. In Drift, you use delete statements.
+
+Globe DB runs standard SQLite, so all normal SQL semantics apply. Your Dart Frog (or Shelf) routes call Drift, and Drift sends the corresponding SQL to Globe DB. When you test locally, you use a local SQLite file; when you deploy with `globe deploy`, you point to your Globe DB instance by name (e.g. `sqlite3.open('your-db-name.db')` in the connection setup).
+
+### 6. Combining Data from Multiple Tables (JOINs)
+
+Often the data you need for a response lives in more than one table. For example, you want to return each note with its author's name. The notes are in `notes` and the names are in `users`; you **JOIN** the tables by matching the foreign key to the primary key.
+
+In SQL, you might write:
+
+```sql
+SELECT notes.title, users.name
+FROM notes
+JOIN users ON notes.user_id = users.id;
+```
+
+You get one result row per note, with the matching user's name attached. In Drift, you express the same thing with join queries in Dart. The idea is the same: you're combining rows from two (or more) tables so your API can return a single, coherent response. When you design your tables and foreign keys, you're deciding exactly what kinds of combined reads your API will need.
+
+### 7. Key Takeaways
+
+- **Globe DB** is serverless SQLite; your schema is defined in Dart with **Drift** and is the contract for your API and app.
+- **Tables** have **columns** (structure) and **rows** (data). One database holds many tables.
+- **Primary key**: one column (or set) that uniquely identifies each row. Use an auto-incrementing `id` in Drift for every table.
+- **Foreign key**: a column that references another table's primary key. Use it to link tables (e.g. notes to users) and keep one source of truth.
+- **CRUD** (insert, select, update, delete) is how your API talks to Globe DB via Drift; your routes call Drift, which runs SQL against your Globe DB instance.
+- **JOINs** combine rows from multiple tables so you can return richer responses; design your tables and keys with those responses in mind.
+
+## What's Next
+
+- **[Quickstart](/products/database/quickstart)**: Deploy a CRUD API with Globe DB in minutes.
+- **[Build a Notes CRUD API with Globe Database](/guides/build-notes-app)**: Full guide with schema definition, Dart Frog endpoints, and deployment.
+- **[Managing Your Database](/products/database/database-management)**: Manage your Globe DB instance from the dashboard.
+
+---
+
+<Info>
+  Didn't find what you were looking for? [Talk to us on
+  Discord](https://invertase.link/globe-discord)
+</Info>
