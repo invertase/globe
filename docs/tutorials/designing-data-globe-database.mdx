@@ -3,7 +3,7 @@ title: "Designing Data for Globe Database"
 description: "Design tables and relationships for your Dart or Flutter app using Globe DB, Drift, and serverless SQLite."
 ---
 
-When you build a backend or full-stack app on Globe, you store data in **Globe Database**: serverless SQLite that works with Dart and Drift. Before you wire up endpoints or deploy, you need a clear picture of how your data is structured: which tables you have, how they link, and how that maps to the API and Flutter app you're building. This tutorial explains how to design that structure so your schema fits Globe DB and your deployment workflow.
+When you build a backend or full-stack app on Globe, you can store data in **Globe Database**: serverless SQLite that works with Dart and Drift. A clear data structure gives you type-safe Drift code, predictable API shapes, and fewer migrations. This tutorial explains how to design tables and relationships so your schema fits Globe DB and your deployment workflow.
 
 **8 min read**
 
@@ -21,11 +21,11 @@ When you build a backend or full-stack app on Globe, you store data in **Globe D
 ## Prerequisites
 
 - Basic idea of backends or APIs (e.g. a Flutter app sending requests to a server)
-- Optional: [Globe DB overview](/products/database) for product context
+- [Globe DB overview](/products/database) for product context
 
 ## Exploring Data Design for Globe Database
 
-### 1. Why Data Design Matters on Globe
+### 1. Why Data Design Matters for Your App on Globe
 
 Globe DB is serverless SQLite. You create a database from the [Globe dashboard](https://globe.dev), and your Dart backend (e.g. Dart Frog or Shelf) connects to it by name. You don't manage the server or the disk; Globe runs the database and your code runs in stateless functions. Your **schema** (tables, columns, and relationships) is the contract: it defines what your API can read and write and what your Flutter app can display.
 
