@@ -50,10 +50,10 @@ Future<List<int>> zipDir(Directory directory) async {
       final dirname = p.dirname(file.path);
       ignorePatterns.addAll(
         patterns.map((pattern) {
-          pattern = pattern.startsWith('/')
+          final path = pattern.startsWith('/')
               ? dirname + pattern
               : dirname + p.separator + pattern;
-          return pattern.replaceFirst(directoryPath, '');
+          return path.replaceFirst(directoryPath, '');
         }),
       );
     }
