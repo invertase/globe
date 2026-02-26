@@ -52,12 +52,14 @@ Create a new Dart Frog project and add Jao dependencies.
 
 ## Step 3: Initialize Jao
 
-Run the Jao CLI to scaffold the project structure:
+Run the Jao CLI to scaffold the project structure.
 
-```bash
-dart pub global activate jao_cli
-jao init
-```
+- Run the following commands:
+
+  ```bash
+  dart pub global activate jao_cli
+  jao init
+  ```
 
 This creates:
 
@@ -68,116 +70,128 @@ This creates:
 
 ## Step 4: Configure the Database
 
-Open `lib/config/database.dart` and replace the database name with the one you copied in Step 1:
+Open `lib/config/database.dart` and replace the database name with the one you copied in Step 1.
 
-```dart
-import 'package:jao/jao.dart';
+- Replace the file contents with the following (use your database name for `your-db-name`):
 
-/// Database configuration.
-final databaseConfig = DatabaseConfig.sqlite('your-db-name.db');
+  ```dart
+  import 'package:jao/jao.dart';
 
-/// Database adapter.
-const databaseAdapter = SqliteAdapter();
-```
+  /// Database configuration.
+  final databaseConfig = DatabaseConfig.sqlite('your-db-name.db');
+
+  /// Database adapter.
+  const databaseAdapter = SqliteAdapter();
+  ```
 
 ## Step 5: Define Your Model
 
-Create a new file at `lib/models/models.dart` to define the Note model using Jao's annotation-based syntax:
+Create a new file at `lib/models/models.dart` to define the Note model using Jao's annotation-based syntax.
 
-```dart
-import 'package:jao/jao.dart';
+- Add the following:
 
-part 'models.g.dart';
+  ```dart
+  import 'package:jao/jao.dart';
 
-@Model()
-class Note {
-  @AutoField()
-  late int id;
+  part 'models.g.dart';
 
-  @CharField(maxLength: 200)
-  late String title;
+  @Model()
+  class Note {
+    @AutoField()
+    late int id;
 
-  @TextField()
-  late String content;
+    @CharField(maxLength: 200)
+    late String title;
 
-  @DateTimeField(autoNowAdd: true)
-  late DateTime createdAt;
-}
-```
+    @TextField()
+    late String content;
+
+    @DateTimeField(autoNowAdd: true)
+    late DateTime createdAt;
+  }
+  ```
 
 Unlike Drift where you define table classes, Jao uses a Django-style approach. Annotate a plain Dart class with `@Model()` and its fields with typed annotations like `@CharField()`, `@AutoField()`, and `@DateTimeField()`.
 
 ## Step 6: Generate the Code
 
-Run `build_runner` to generate the ORM code:
+Run `build_runner` to generate the ORM code.
 
-```bash
-dart run build_runner build --delete-conflicting-outputs
-```
+- In your project root, run:
+
+  ```bash
+  dart run build_runner build --delete-conflicting-outputs
+  ```
 
 This generates `lib/models/models.g.dart`, which contains the `Notes` manager class with query methods like `Notes.objects.all()`, `Notes.objects.create()`, and `Notes.objects.get()`.
 
 ## Step 7: Register the Model Schema in the Migration Runner
 
-Before creating migrations, register your `Note` model so the Jao CLI knows about it. Open `bin/migrate.dart` and set `modelSchemas` to include `Notes.schema`:
+Before creating migrations, register your `Note` model so the Jao CLI knows about it.
 
-```dart
-import 'dart:io';
+- Open `bin/migrate.dart` and replace its contents with the following (so `modelSchemas` includes `Notes.schema`):
 
-import 'package:jao_cli/jao_cli.dart';
-import 'package:my_notes_api/models/models.dart';
+  ```dart
+  import 'dart:io';
 
-import '../lib/config/database.dart';
-import '../lib/migrations/migrations.dart';
+  import 'package:jao_cli/jao_cli.dart';
+  import 'package:my_notes_api/models/models.dart';
 
-void main(List<String> args) async {
-  final config = MigrationRunnerConfig(
-    database: databaseConfig,
-    adapter: databaseAdapter,
-    migrations: allMigrations,
-    modelSchemas: [Notes.schema],
-    verbose: args.contains('-v') || args.contains('--verbose'),
-  );
+  import '../lib/config/database.dart';
+  import '../lib/migrations/migrations.dart';
 
-  final cli = JaoCli(config);
-  exit(await cli.run(args));
-}
-```
+  void main(List<String> args) async {
+    final config = MigrationRunnerConfig(
+      database: databaseConfig,
+      adapter: databaseAdapter,
+      migrations: allMigrations,
+      modelSchemas: [Notes.schema],
+      verbose: args.contains('-v') || args.contains('--verbose'),
+    );
+
+    final cli = JaoCli(config);
+    exit(await cli.run(args));
+  }
+  ```
 
 Adding `Notes.schema` to `modelSchemas` ensures the migration runner can generate and apply migrations for the `note` table.
 
 ## Step 8: Create the Migration
 
-Use the Jao CLI to auto-generate a migration from your model:
+Use the Jao CLI to auto-generate a migration from your model.
 
-```bash
-jao makemigrations
-```
+- Run:
+
+  ```bash
+  jao makemigrations
+  ```
 
 This detects the new `Note` model and creates a timestamped migration file in `lib/migrations/` that creates the `note` table with the correct columns.
 
 ## Step 9: Configure the Server Entry Point
 
-Create `main.dart` at your project root with the following to initialize Jao and run migrations on startup:
+Create a custom entry point so the app initializes Jao and runs migrations on startup.
 
-```dart
-import 'dart:io';
+- Create `main.dart` at your project root with the following:
 
-import 'package:dart_frog/dart_frog.dart';
-import 'package:jao/jao.dart';
-import 'package:my_notes_api/config/database.dart';
-import 'package:my_notes_api/migrations/migrations.dart';
+  ```dart
+  import 'dart:io';
 
-Future<HttpServer> run(Handler handler, InternetAddress ip, int port) async {
-  final jao = await Jao.configure(adapter: databaseAdapter, config: databaseConfig);
+  import 'package:dart_frog/dart_frog.dart';
+  import 'package:jao/jao.dart';
+  import 'package:my_notes_api/config/database.dart';
+  import 'package:my_notes_api/migrations/migrations.dart';
 
-  // Auto-run pending migrations on startup
-  final runner = MigrationRunner(adapter: databaseAdapter, pool: jao.pool);
-  await runner.migrate(allMigrations);
+  Future<HttpServer> run(Handler handler, InternetAddress ip, int port) async {
+    final jao = await Jao.configure(adapter: databaseAdapter, config: databaseConfig);
 
-  return serve(handler, ip, port);
-}
-```
+    // Auto-run pending migrations on startup
+    final runner = MigrationRunner(adapter: databaseAdapter, pool: jao.pool);
+    await runner.migrate(allMigrations);
+
+    return serve(handler, ip, port);
+  }
+  ```
 
 `Jao.configure()` initializes the database connection and `runner.migrate()` applies any pending migrations. This runs once at startup, so there's no need for per-request middleware.
 
@@ -186,6 +200,8 @@ Future<HttpServer> run(Handler handler, InternetAddress ip, int port) async {
 Create the route files to handle all CRUD operations.
 
 ### A. Handle GET (list) and POST (create)
+
+This route handles listing all notes and creating a new one.
 
 - Create a file at `routes/notes/index.dart` and add the following:
 
@@ -241,6 +257,8 @@ Create the route files to handle all CRUD operations.
 The query API stays simple: `Notes.objects.all()` to list and `Notes.objects.create({...})` to insert. No raw SQL and no Companion classes.
 
 ### B. Handle GET (one), PATCH, and DELETE
+
+This route handles fetching, updating, and deleting a single note by ID.
 
 - Create a file at `routes/notes/[id].dart` and add the following:
 
@@ -369,20 +387,22 @@ Run your server to ensure all endpoints work.
 
 ## Step 12: Deploy to Globe
 
-The Dart `sqlite3` package (which Jao uses) bundles its own SQLite binary by default. On Globe, the runtime supplies the database layer, so the app must use that instead. Add this to your `pubspec.yaml` so the package loads SQLite from the runtime rather than bundling it (see the [sqlite3 build hook options](https://pub.dev/documentation/sqlite3/latest/topics/hook-topic.html)):
+The Dart `sqlite3` package (which Jao uses) bundles its own SQLite binary by default. On Globe, the runtime supplies the database layer, so the app must use that instead.
 
-```yaml
-hooks:
-  user_defines:
-    sqlite3:
-      source: system
-```
+- Add the following to your `pubspec.yaml` so the package loads SQLite from the runtime rather than bundling it (see the [sqlite3 build hook options](https://pub.dev/documentation/sqlite3/latest/topics/hook-topic.html)):
 
-Then deploy the API:
+  ```yaml
+  hooks:
+    user_defines:
+      sqlite3:
+        source: system
+  ```
 
-```bash
-globe deploy
-```
+- Deploy the API:
+
+  ```bash
+  globe deploy
+  ```
 
 The Globe CLI will guide you through linking the project and will automatically connect your database. Once complete, you will receive a unique URL for your live API.
 
