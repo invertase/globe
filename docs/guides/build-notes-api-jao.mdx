@@ -1,0 +1,418 @@
+---
+title: Build a Notes CRUD API with Globe Database and Jao ORM
+description: Deploy a Dart backend with a serverless SQLite database in under 10 minutes using Dart Frog and Jao.
+---
+
+<Image src="/assets/guides/notes-globe-db.png" />
+
+Using this guide, you'll build and deploy a CRUD API using Globe's serverless SQLite database, Dart Frog, and [Jao](https://jao.nexlab.studio/) ORM. It covers database setup, model definition, automatic migrations, endpoints creation, and deployment to Globe's global network.
+
+**10 min read**
+
+---
+
+### Features Covered
+
+- Creating a new Globe Database instance from the dashboard
+- Defining models with Jao's Django-style annotations
+- Generating and running migrations with the Jao CLI
+- Building a full CRUD API with Dart Frog
+- Testing the API locally and live with `curl`
+- Deploying a data-driven app to Globe
+
+### Prerequisites
+
+- **Dart SDK Installed**: If you have Flutter installed, the Dart SDK is already included. If not, [Install Dart](https://dart.dev/get-dart).
+- **Globe Account**: You'll need an account to deploy projects. [Sign up or log in to Globe](https://globe.dev/login).
+- **Globe CLI Installed and Authenticated**: Install the CLI by running `dart pub global activate globe_cli` and log in using `globe login`.
+
+## Step 1: Create Your Globe Database
+
+First, create the database on the Globe dashboard.
+
+- Navigate to the [Globe dashboard](https://globe.dev/login)
+- Go to the **Databases** tab and click **Create Database**
+- Select a location, click **Create**, and a name will be automatically assigned
+- Copy the **auto-generated database name** (e.g., `gold-butterfly-1234`)
+
+## Step 2: Set Up the Dart Frog Project
+
+Create a new Dart Frog project and add Jao dependencies.
+
+In your terminal, run the following commands:
+
+```bash
+dart_frog create my_notes_api
+cd my_notes_api
+dart pub add jao jao_cli
+dart pub add --dev build_runner jao_generator
+```
+
+Now, open the newly created `my_notes_api` folder in your favorite code editor.
+
+## Step 3: Initialize Jao
+
+Run the Jao CLI to scaffold the project structure:
+
+```bash
+dart pub global activate jao_cli
+jao init
+```
+
+This creates:
+
+- `jao.yaml` — configuration file
+- `lib/config/database.dart` — database settings
+- `lib/migrations/` — migration files directory
+- `bin/migrate.dart` — CLI entry point for running migrations
+
+## Step 4: Configure the Database
+
+Open `lib/config/database.dart` and replace the database name with the one you copied in Step 1:
+
+```dart
+import 'package:jao/jao.dart';
+
+/// Database configuration.
+final databaseConfig = DatabaseConfig.sqlite('your-db-name.db');
+
+/// Database adapter.
+const databaseAdapter = SqliteAdapter();
+```
+
+## Step 5: Define Your Model
+
+Create a new file at `lib/models/models.dart` to define the Note model using Jao's annotation-based syntax:
+
+```dart
+import 'package:jao/jao.dart';
+
+part 'models.g.dart';
+
+@Model()
+class Note {
+  @AutoField()
+  late int id;
+
+  @CharField(maxLength: 200)
+  late String title;
+
+  @TextField()
+  late String content;
+
+  @DateTimeField(autoNowAdd: true)
+  late DateTime createdAt;
+}
+```
+
+Unlike Drift where you define table classes, Jao uses a Django-style approach. Annotate a plain Dart class with `@Model()` and its fields with typed annotations like `@CharField()`, `@AutoField()`, and `@DateTimeField()`.
+
+## Step 6: Generate the Code
+
+Run `build_runner` to generate the ORM code:
+
+```bash
+dart run build_runner build --delete-conflicting-outputs
+```
+
+This generates `lib/models/models.g.dart`, which contains the `Notes` manager class with query methods like `Notes.objects.all()`, `Notes.objects.create()`, and `Notes.objects.get()`.
+
+## Step 7: Register the Model Schema in the Migration Runner
+
+Before creating migrations, register your `Note` model so the Jao CLI knows about it. Open `bin/migrate.dart` and set `modelSchemas` to include `Notes.schema`:
+
+```dart
+import 'dart:io';
+
+import 'package:jao_cli/jao_cli.dart';
+import 'package:my_notes_api/models/models.dart';
+
+import '../lib/config/database.dart';
+import '../lib/migrations/migrations.dart';
+
+void main(List<String> args) async {
+  final config = MigrationRunnerConfig(
+    database: databaseConfig,
+    adapter: databaseAdapter,
+    migrations: allMigrations,
+    modelSchemas: [Notes.schema],
+    verbose: args.contains('-v') || args.contains('--verbose'),
+  );
+
+  final cli = JaoCli(config);
+  exit(await cli.run(args));
+}
+```
+
+Adding `Notes.schema` to `modelSchemas` ensures the migration runner can generate and apply migrations for the `note` table.
+
+## Step 8: Create the Migration
+
+Use the Jao CLI to auto-generate a migration from your model:
+
+```bash
+jao makemigrations
+```
+
+This detects the new `Note` model and creates a timestamped migration file in `lib/migrations/` that creates the `note` table with the correct columns.
+
+## Step 9: Configure the Server Entry Point
+
+Create `main.dart` at your project root with the following to initialize Jao and run migrations on startup:
+
+```dart
+import 'dart:io';
+
+import 'package:dart_frog/dart_frog.dart';
+import 'package:jao/jao.dart';
+import 'package:my_notes_api/config/database.dart';
+import 'package:my_notes_api/migrations/migrations.dart';
+
+Future<HttpServer> run(Handler handler, InternetAddress ip, int port) async {
+  final jao = await Jao.configure(adapter: databaseAdapter, config: databaseConfig);
+
+  // Auto-run pending migrations on startup
+  final runner = MigrationRunner(adapter: databaseAdapter, pool: jao.pool);
+  await runner.migrate(allMigrations);
+
+  return serve(handler, ip, port);
+}
+```
+
+`Jao.configure()` initializes the database connection and `runner.migrate()` applies any pending migrations. This runs once at startup, so there's no need for per-request middleware.
+
+## Step 10: Write the API Logic
+
+Create the route files to handle all CRUD operations.
+
+### A. Handle GET (list) and POST (create)
+
+Create a file at `routes/notes/index.dart`:
+
+```dart
+import 'dart:convert';
+
+import 'package:dart_frog/dart_frog.dart';
+import 'package:my_notes_api/models/models.dart';
+
+Future<Response> onRequest(RequestContext context) async {
+  return switch (context.request.method) {
+    HttpMethod.get => _listNotes(),
+    HttpMethod.post => _createNote(context),
+    _ => Future.value(Response(statusCode: 405, body: 'Method not allowed')),
+  };
+}
+
+Future<Response> _listNotes() async {
+  final notes = await Notes.objects.all().toList();
+  return Response.json(
+    body: notes
+        .map((n) => {
+              'id': n.id,
+              'title': n.title,
+              'content': n.content,
+              'created_at': n.createdAt.toIso8601String(),
+            })
+        .toList(),
+  );
+}
+
+Future<Response> _createNote(RequestContext context) async {
+  final body = await context.request.body();
+  final data = jsonDecode(body) as Map<String, dynamic>;
+
+  final note = await Notes.objects.create({
+    'title': data['title'] as String,
+    'content': data['content'] as String,
+  });
+
+  return Response.json(
+    statusCode: 201,
+    body: {
+      'id': note.id,
+      'title': note.title,
+      'content': note.content,
+      'created_at': note.createdAt.toIso8601String(),
+    },
+  );
+}
+```
+
+The query API stays simple: `Notes.objects.all()` to list and `Notes.objects.create({...})` to insert. No raw SQL and no Companion classes.
+
+### B. Handle GET (one), PATCH, and DELETE
+
+Create a file at `routes/notes/[id].dart`:
+
+```dart
+import 'dart:convert';
+
+import 'package:dart_frog/dart_frog.dart';
+import 'package:my_notes_api/models/models.dart';
+
+Future<Response> onRequest(RequestContext context, String id) async {
+  final noteId = int.tryParse(id);
+  if (noteId == null) {
+    return Response.json(
+      statusCode: 400,
+      body: {'error': 'Invalid note id'},
+    );
+  }
+
+  return switch (context.request.method) {
+    HttpMethod.get => _getNote(noteId),
+    HttpMethod.patch => _updateNote(context, noteId),
+    HttpMethod.delete => _deleteNote(noteId),
+    _ => Future.value(Response(statusCode: 405, body: 'Method not allowed')),
+  };
+}
+
+Future<Response> _getNote(int id) async {
+  final note = await Notes.objects.getOrNull(id);
+  if (note == null) {
+    return Response.json(statusCode: 404, body: {'error': 'Note not found'});
+  }
+  return Response.json(
+    body: {
+      'id': note.id,
+      'title': note.title,
+      'content': note.content,
+      'created_at': note.createdAt.toIso8601String(),
+    },
+  );
+}
+
+Future<Response> _updateNote(RequestContext context, int id) async {
+  final note = await Notes.objects.getOrNull(id);
+  if (note == null) {
+    return Response.json(statusCode: 404, body: {'error': 'Note not found'});
+  }
+
+  final body = await context.request.body();
+  final data = jsonDecode(body) as Map<String, dynamic>;
+
+  final updates = <String, dynamic>{};
+  if (data.containsKey('title')) updates['title'] = data['title'] as String;
+  if (data.containsKey('content')) updates['content'] = data['content'] as String;
+
+  await Notes.objects.filter(Notes.$.id.eq(id)).update(updates);
+  final updated = await Notes.objects.get(id);
+
+  return Response.json(
+    body: {
+      'id': updated.id,
+      'title': updated.title,
+      'content': updated.content,
+      'created_at': updated.createdAt.toIso8601String(),
+    },
+  );
+}
+
+Future<Response> _deleteNote(int id) async {
+  final note = await Notes.objects.getOrNull(id);
+  if (note == null) {
+    return Response.json(statusCode: 404, body: {'error': 'Note not found'});
+  }
+
+  await Notes.objects.filter(Notes.$.id.eq(id)).delete();
+  return Response(statusCode: 204);
+}
+```
+
+The filter API uses type-safe field references: `Notes.$.id.eq(id)` instead of raw column strings.
+
+## Step 11: Test Your API Locally
+
+Run your server to ensure all endpoints work.
+
+Start the development server:
+
+```bash
+dart_frog dev --port 8080
+```
+
+In a new terminal window, use `curl` to test.
+
+Create a note:
+
+```bash
+curl -X POST -H "Content-Type: application/json" \
+  -d '{"title": "My First Note", "content": "Hello Globe DB!"}' \
+  http://localhost:8080/notes
+```
+
+List all notes:
+
+```bash
+curl http://localhost:8080/notes
+```
+
+Get a single note:
+
+```bash
+curl http://localhost:8080/notes/1
+```
+
+Update a note:
+
+```bash
+curl -X PATCH -H "Content-Type: application/json" \
+  -d '{"content": "Updated content!"}' \
+  http://localhost:8080/notes/1
+```
+
+Delete a note:
+
+```bash
+curl -X DELETE http://localhost:8080/notes/1
+```
+
+## Step 12: Deploy to Globe
+
+The Dart `sqlite3` package (which Jao uses) bundles its own SQLite binary by default. On Globe, the runtime supplies the database layer, so the app must use that instead. Add this to your `pubspec.yaml` so the package loads SQLite from the runtime rather than bundling it (see the [sqlite3 build hook options](https://pub.dev/documentation/sqlite3/latest/topics/hook-topic.html)):
+
+```yaml
+hooks:
+  user_defines:
+    sqlite3:
+      source: system
+```
+
+Then deploy the API:
+
+```bash
+globe deploy
+```
+
+The Globe CLI will guide you through linking the project and will automatically connect your database. Once complete, you will receive a unique URL for your live API.
+
+## Step 13: Test the Live API
+
+After deployment, test the live API endpoints using `curl` and your new URL.
+
+Create a note on your live API:
+
+```bash
+curl -X POST https://<YOUR_LIVE_URL>/notes \
+  -H "Content-Type: application/json" \
+  -d '{"title": "Live Note", "content": "This is on Globe!"}'
+```
+
+Get the list of live notes:
+
+```bash
+curl https://<YOUR_LIVE_URL>/notes
+```
+
+## What's Next
+
+- **[Jao documentation](https://jao.nexlab.studio/)** — Models, queries, migrations, and advanced usage from the JAO team.
+- **New to data design?** [Designing Data for Globe Database](/tutorials/designing-data-globe-database) covers tables, relationships, and how they map to Globe DB.
+- We want your feedback. Globe DB is in Beta; share your thoughts on [Discord](https://invertase.link/globe-discord).
+
+---
+
+<Info>
+  Couldn't find the guide you need? [Talk to us in
+  Discord](https://invertase.link/globe-discord)
+</Info>

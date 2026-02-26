@@ -400,6 +400,10 @@
           "href": "/guides/build-notes-app"
         },
         {
+          "title": "Build Notes API with Globe DB and Jao",
+          "href": "/guides/build-notes-api-jao"
+        },
+        {
           "title": "Build Snippet App with Globe KV",
           "href": "/guides/build-snippet-app"
         },
