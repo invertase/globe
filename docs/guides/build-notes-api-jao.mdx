@@ -185,15 +185,19 @@ Create a custom entry point so the app initializes Jao and runs migrations on st
   Future<HttpServer> run(Handler handler, InternetAddress ip, int port) async {
     final jao = await Jao.configure(adapter: databaseAdapter, config: databaseConfig);
 
-    // Auto-run pending migrations on startup
+    // Auto-run pending migrations only during Globe's build phase
     final runner = MigrationRunner(adapter: databaseAdapter, pool: jao.pool);
-    await runner.migrate(allMigrations);
+    final isBuildEnv = Platform.environment['GLOBE_BUILD_ENV'] == '1';
+
+    if (isBuildEnv) {
+      await runner.migrate(allMigrations);
+    }
 
     return serve(handler, ip, port);
   }
   ```
 
-`Jao.configure()` initializes the database connection and `runner.migrate()` applies any pending migrations. This runs once at startup, so there's no need for per-request middleware.
+`Jao.configure()` initializes the database connection. Migrations run only when `GLOBE_BUILD_ENV` is set (during Globe's build phase), so they are not run on every cold start.
 
 ## Step 10: Write the API Logic
 
