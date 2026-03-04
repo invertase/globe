@@ -1,9 +1,6 @@
 ---
-title: Platform Migration Guide
-description: Migrate your Globe deployments, custom domains, databases, and KV data to other platforms with zero data loss and minimal downtime.
+title: Globe Platform Migration Guide
 ---
-
-# Globe Platform Migration Guide
 
 Globe is shutting down on **Friday 3 April 2026 at 5pm GMT**. After that, deployments stop running and all of your account data, including your projects and deployments, will be deleted.
 
@@ -17,18 +14,19 @@ If you need any further support, please contact us at contact@globe.dev and incl
 
 ## Migration Index
 
-- [Before you begin](#before-you-begin)
-- [Part 1: Dart backend](#part-1-migrating-dart-backend-deployments)
-- [Part 2: Flutter Web](#part-2-migrating-flutter-web-deployments)
-- [Part 3: Jaspr](#part-3-migrating-jaspr-projects)
-- [Part 4: Custom domain](#part-4-migrating-custom-domains)
-- [Part 5: Globe DB](#part-5-migrating-globe-db-data)
-- [Part 6: Globe KV](#part-6-migrating-globe-kv-data)
-- [Migration checklist](#migration-checklist)
+- [Before you begin](/migration#before-you-begin)
+- [Part 1: Dart backend](/migration#part-1-migrating-dart-backend-deployments)
+- [Part 2: Flutter Web](/migration#part-2-migrating-flutter-web-deployments)
+- [Part 3: Jaspr](/migration#part-3-migrating-jaspr-projects)
+- [Part 4: Custom domain](/migration#part-4-migrating-custom-domains)
+- [Part 5: Globe DB](/migration#part-5-migrating-globe-db-data)
+- [Part 6: Globe KV](/migration#part-6-migrating-globe-kv-data)
+- [Migration checklist](/migration#migration-checklist)
 
 ---
 
-## Before You Begin
+<span id="before-you-begin" style="display: block; height: 0; padding-top: 8rem; margin-top: -8rem;" aria-hidden="true"></span>
+<h2>Before You Begin</h2>
 
 Take a moment to inventory what you are using on Globe. This will help you plan your migration.
 
@@ -54,7 +52,8 @@ Take a moment to inventory what you are using on Globe. This will help you plan 
 
 ---
 
-## Part 1: Migrating Dart Backend Deployments
+<span id="part-1-migrating-dart-backend-deployments" style="display: block; height: 0; padding-top: 8rem; margin-top: -8rem;" aria-hidden="true"></span>
+<h2>Part 1: Migrating Dart Backend Deployments</h2>
 
 Globe ran your Dart backend code in serverless containers. To move to another platform, you will need to containerize your application with Docker. The good news: Dart has official Docker support, and the process is straightforward regardless of which framework you use.
 
@@ -254,7 +253,8 @@ For a VPS deployment, the general process is:
 
 ---
 
-## Part 2: Migrating Flutter Web Deployments
+<span id="part-2-migrating-flutter-web-deployments" style="display: block; height: 0; padding-top: 8rem; margin-top: -8rem;" aria-hidden="true"></span>
+<h2>Part 2: Migrating Flutter Web Deployments</h2>
 
 Flutter Web applications are static assets after building. This means you have many hosting options, and most of them are free or very affordable.
 
@@ -326,7 +326,8 @@ Alternatively, build locally and use the Vercel CLI: `vercel deploy build/web`
 
 ---
 
-## Part 3: Migrating Jaspr Projects
+<span id="part-3-migrating-jaspr-projects" style="display: block; height: 0; padding-top: 8rem; margin-top: -8rem;" aria-hidden="true"></span>
+<h2>Part 3: Migrating Jaspr Projects</h2>
 
 Jaspr projects come in three modes, and each requires a different migration approach.
 
@@ -371,7 +372,8 @@ Note: Verify the exact build output paths for your Jaspr version. The compiled s
 
 ---
 
-## Part 4: Migrating Custom Domains
+<span id="part-4-migrating-custom-domains" style="display: block; height: 0; padding-top: 8rem; margin-top: -8rem;" aria-hidden="true"></span>
+<h2>Part 4: Migrating Custom Domains</h2>
 
 If you connected a custom domain to your Globe project, here is how to point it to your new provider. Globe managed custom domains through Cloudflare DNS, so you previously added a CNAME record pointing to `domains.globeapp.dev`.
 
@@ -411,7 +413,8 @@ To minimize downtime, we recommend this sequence:
 
 ---
 
-## Part 5: Migrating Globe DB Data
+<span id="part-5-migrating-globe-db-data" style="display: block; height: 0; padding-top: 8rem; margin-top: -8rem;" aria-hidden="true"></span>
+<h2>Part 5: Migrating Globe DB Data</h2>
 
 Globe DB is powered by Turso, a distributed SQLite-compatible database built on libSQL. Your data is stored in Turso's infrastructure, and there are clear paths to export it.
 
@@ -445,7 +448,8 @@ sqlite3 my_local.db < my_data_dump.sql
 
 ---
 
-## Part 6: Migrating Globe KV Data
+<span id="part-6-migrating-globe-kv-data" style="display: block; height: 0; padding-top: 8rem; margin-top: -8rem;" aria-hidden="true"></span>
+<h2>Part 6: Migrating Globe KV Data</h2>
 
 Globe KV is powered by Cloudflare Workers KV under the hood. KV data is stored as key-value pairs in a Cloudflare namespace.
 
@@ -485,7 +489,8 @@ wrangler kv bulk put kv_data.json --namespace-id=YOUR_NEW_NAMESPACE_ID
 
 ---
 
-## Migration Checklist
+<span id="migration-checklist" style="display: block; height: 0; padding-top: 8rem; margin-top: -8rem;" aria-hidden="true"></span>
+<h2>Migration Checklist</h2>
 
 Use this checklist to make sure you have covered everything.
 
