@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <strong>Globe is shutting down on Friday 3 April 2026 at 5pm GMT.</strong> Migrating your applications? See the <a href="https://globe.dev/docs/migration">Platform Migration Guide</a>.
+  <strong>Globe is shutting down on Friday 3 April 2026 at 5pm GMT.</strong> Migrating your applications? See the <a href="https://github.com/invertase/globe/blob/main/docs/migration.mdx">Platform Migration Guide</a>.
 </p>
 
 <p align="center">
