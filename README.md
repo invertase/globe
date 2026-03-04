@@ -10,6 +10,10 @@
 </p>
 
 <p align="center">
+  <strong>Globe is shutting down on Friday 3 April 2026 at 5pm GMT.</strong> Migrating your applications? See the <a href="https://globe.dev/docs/migration">Platform Migration Guide</a>.
+</p>
+
+<p align="center">
   <a href="https://github.com/invertase/melos#readme-badge"><img src="https://img.shields.io/badge/maintained%20with-melos-f700ff.svg?style=flat-square" alt="Melos" /></a>
  <a href="https://discord.gg/UCcCYjDaTy">
    <img src="https://img.shields.io/discord/1179425190007021568.svg?style=flat-square&colorA=7289da&label=Chat%20on%20Discord" alt="Chat on Discord">
@@ -18,6 +22,7 @@
 
 <p align="center">
   <a href="https://globe.dev/docs">Documentation</a> &bull;
+  <a href="https://globe.dev/docs/migration">Migration Guide</a> &bull;
   <a href="https://github.com/invertase/globe/blob/main/LICENSE">License</a>
 </p>
 

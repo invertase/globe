@@ -1,0 +1,547 @@
+---
+title: Globe Platform Migration Guide
+---
+
+Globe is shutting down on **Friday 3 April 2026 at 5pm GMT**. After that, deployments stop running and all of your account data, including your projects and deployments, will be deleted.
+
+This Globe platform migration guide helps you move with **minimal downtime**.
+
+The Dart ecosystem has evolved since Globe launched. In particular, **Firebase Functions will soon support Dart**, as outlined in the [Flutter and Dart 2026 roadmap](https://blog.flutter.dev/flutter-darts-2026-roadmap-89378f17ebbd). This means developers will soon be able to run Dart backends directly on Firebase infrastructure.
+
+Because Firebase's Dart support is still rolling out, this guide focuses on migration paths you can use **today**. When Firebase Functions becomes generally available for Dart, it will likely become a strong option for Flutter developers building full-stack applications.
+
+If you need any further support, please contact us at contact@globe.dev and include your project name, plus any DB names and KV namespace IDs.
+
+## Migration Index
+
+- [Before you begin](/migration#before-you-begin)
+- [Part 1: Dart backend](/migration#part-1-migrating-dart-backend-deployments)
+- [Part 2: Flutter Web](/migration#part-2-migrating-flutter-web-deployments)
+- [Part 3: Jaspr](/migration#part-3-migrating-jaspr-projects)
+- [Part 4: Custom domain](/migration#part-4-migrating-custom-domains)
+- [Part 5: Globe DB](/migration#part-5-migrating-globe-db-data)
+- [Part 6: Globe KV](/migration#part-6-migrating-globe-kv-data)
+- [Migration checklist](/migration#migration-checklist)
+
+---
+
+## Before You Begin
+
+Take a moment to inventory what you are using on Globe. This will help you plan your migration.
+
+**Deployment type:**
+
+- Dart backend (Shelf, Dart Frog, Serinus, Serverpod, or custom)
+- Flutter Web application
+- Jaspr project (Server, Client, or Static mode)
+
+**Globe services:**
+
+- Custom domain connected via Globe
+- Globe DB (SQLite database powered by Turso)
+- Globe KV (key-value store powered by Cloudflare)
+
+**Things to collect before migrating:**
+
+- Your project source code (from your local machine or GitHub repository)
+- Environment variables currently set in the Globe dashboard
+- Your custom domain registrar login credentials (if applicable)
+- Your Globe DB database name(s) (if applicable)
+- Your Globe KV namespace ID(s) (if applicable)
+
+---
+
+## Part 1: Migrating Dart Backend Deployments
+
+Globe ran your Dart backend code in serverless containers. To move to another platform, you will need to containerize your application with Docker. The good news: Dart has official Docker support, and the process is straightforward regardless of which framework you use.
+
+### Step 1: Create a Dockerfile
+
+If your project does not already have a Dockerfile, create one at the root of your project. The following Dockerfile works for most Dart backend frameworks including Shelf, Dart Frog, and Serinus.
+
+```dockerfile
+FROM dart:stable AS build
+
+WORKDIR /app
+
+# Copy dependency files first for better caching
+COPY pubspec.* ./
+RUN dart pub get
+
+# Copy the rest of the project and compile
+COPY . .
+RUN dart build cli --target bin/server.dart -o output
+
+# Use a minimal runtime image
+FROM scratch
+
+COPY --from=build /runtime/ /
+COPY --from=build /app/output/bundle/ /app/
+
+EXPOSE 8080
+
+CMD ["/app/bin/server"]
+```
+
+A few important notes on this Dockerfile:
+
+- Replace `bin/server.dart` with your actual entry point file. For Shelf projects, this is typically `bin/server.dart`. For Serinus projects, it is `bin/<project_name>.dart`.
+- The `dart build cli` command requires Dart 3.10 or later. If you are on an older SDK version, use `dart compile exe bin/server.dart -o bin/server` instead and replace the runtime stage with `FROM scratch` plus `COPY --from=build /runtime/ /` and `COPY --from=build /app/bin/server /app/bin/server`.
+- The `EXPOSE 8080` line should match the port your server listens on. Globe defaulted to port 8080.
+- Make sure your server binds to `0.0.0.0` (not `localhost` or `127.0.0.1`) so it is reachable inside the container.
+- For Serinus projects, update the `CMD` to match your project name: `CMD ["/app/bin/my_serinus_app"]`.
+
+**For Dart Frog projects specifically**, your entry point is generated. You need to install the Dart Frog CLI, run the code generation step, then compile from the build output:
+
+```dockerfile
+FROM dart:stable AS build
+
+WORKDIR /app
+COPY . .
+
+# Install the Dart Frog CLI and add it to PATH
+RUN dart pub global activate dart_frog_cli
+ENV PATH="/root/.pub-cache/bin:${PATH}"
+
+# Resolve dependencies and generate server code
+RUN dart pub get
+RUN dart_frog build
+
+# Compile the generated server
+RUN dart build cli --target build/bin/server.dart -o output
+
+FROM scratch
+COPY --from=build /runtime/ /
+COPY --from=build /app/output/bundle/ /app/
+EXPOSE 8080
+CMD ["/app/bin/server"]
+```
+
+**For Serinus projects**, Serinus defaults to port 3000 and `localhost`. You will need to update your entry point to bind to `0.0.0.0` and read the `PORT` environment variable so the server is reachable inside a container:
+
+```dart
+import 'dart:io';
+import 'package:serinus/serinus.dart';
+
+void main() async {
+  final app = await serinus.createApplication(
+    entrypoint: AppModule(),
+    host: '0.0.0.0',
+    port: int.parse(Platform.environment['PORT'] ?? '8080'),
+  );
+  await app.serve();
+}
+```
+
+### Step 2: Handle Environment Variables
+
+On Globe, you configured environment variables through the dashboard. Your new platform will have its own mechanism for setting these. Before you migrate, open the Globe dashboard and note down every environment variable and its value for each environment (preview and production).
+
+In your Dart code, make sure you are reading environment variables using `Platform.environment`:
+
+```dart
+import 'dart:io';
+
+final port = int.parse(Platform.environment['PORT'] ?? '8080');
+final databaseUrl = Platform.environment['DATABASE_URL'] ?? '';
+```
+
+Most deployment platforms inject a `PORT` environment variable. Update your server to respect it.
+
+### Step 3: Choose a Deployment Platform
+
+Here are the recommended alternatives, ranked by ease of migration for Dart developers.
+
+#### Tier 1: Easiest Migration
+
+**Railway** is the closest experience to Globe for Dart developers. It auto-detects Dockerfiles, provides instant deploys from GitHub, and handles SSL and networking automatically. Railway also supports cron jobs and persistent storage if you need them.
+
+To deploy on Railway:
+
+1. Push your project (with the Dockerfile) to GitHub.
+2. Create a new project on [railway.com](https://railway.com).
+3. Connect your GitHub repository.
+4. Railway detects the Dockerfile and builds automatically.
+5. Add your environment variables in the Railway dashboard.
+6. Railway assigns a public URL. You can add a custom domain later.
+
+Railway pricing starts with a free trial ($5 one-time credit), then the Hobby plan at $5/month which includes $5 of resource usage. You only pay more if your usage exceeds that $5 allowance.
+
+**Render** is another strong option with a similar workflow. It supports Docker deployments, auto-deploy from GitHub, free SSL, and a straightforward dashboard.
+
+To deploy on Render:
+
+1. Push your project (with the Dockerfile) to GitHub.
+2. Create a new Web Service on [render.com](https://render.com).
+3. Connect your GitHub repository.
+4. Render detects the Dockerfile and sets the **Language** to Docker automatically. If it does not, select Docker from the dropdown.
+5. Add your environment variables. Render sets `PORT` to `10000` by default.
+6. Click **Deploy Web Service**. Render builds and deploys automatically.
+
+Render has a free tier for web services (spins down after 15 minutes of inactivity) and a paid Starter tier at $7/month that stays always-on.
+
+#### Tier 2: More Control, Slightly More Setup
+
+**Google Cloud Run** is a strong choice if you want managed serverless infrastructure backed by Google Cloud. It scales to zero when idle (similar to Globe's behavior) and only charges for actual request time.
+
+The quickest way to deploy is with the `gcloud` CLI. Cloud Run supports two approaches: deploying a pre-compiled binary using the OS-only runtime (no Dockerfile needed), or building and deploying a Docker container image.
+
+**Option 1: OS-only runtime (recommended for speed).** Compile your Dart backend locally for Linux and deploy the binary directly. Cloud Run mounts it into a minimal Ubuntu base image, skipping the remote container build entirely:
+
+```bash
+# Compile for Linux
+dart compile exe bin/server.dart -o build_deploy/bin/server \
+  --target-os=linux --target-arch=x64
+
+# Deploy pre-built binary
+gcloud beta run deploy your-app \
+  --source build_deploy \
+  --region us-central1 \
+  --base-image=osonly24 \
+  --allow-unauthenticated \
+  --no-build \
+  --command=bin/server
+```
+
+**Option 2: Dockerfile deployment.** Build and push your Docker image to Artifact Registry (Google Container Registry is shut down, so always use Artifact Registry):
+
+```bash
+# Create an Artifact Registry repository (one-time setup)
+gcloud artifacts repositories create my-dart-repo \
+  --repository-format=docker \
+  --location=us-central1
+
+# Build and push
+gcloud builds submit \
+  --tag us-central1-docker.pkg.dev/YOUR_PROJECT_ID/my-dart-repo/your-app
+
+# Deploy
+gcloud run deploy your-app \
+  --image us-central1-docker.pkg.dev/YOUR_PROJECT_ID/my-dart-repo/your-app \
+  --platform managed \
+  --region us-central1 \
+  --allow-unauthenticated \
+  --set-env-vars "DATABASE_URL=your_value"
+```
+
+Cloud Run's free tier includes 2 million requests per month, 180,000 vCPU-seconds, and 360,000 GiB-seconds of memory. Beyond that, pricing is pay-per-use based on actual request time.
+
+For a complete walkthrough of deploying a full-stack Dart application (Flutter Web frontend + Dart backend) on Cloud Run, including shared code packages and CI/CD setup, see the official Google Cloud blog post: [Flutter on Cloud Run: Full Stack Dart Architecture](https://cloud.google.com/blog/topics/developers-practitioners/flutter-on-cloud-run-full-stack-dart-architecture).
+
+#### Tier 3: Full Control
+
+**DigitalOcean App Platform** and **VPS providers** (DigitalOcean Droplets, Hetzner, Linode) are options if you want complete control over your infrastructure. These require more setup (managing Docker, reverse proxies, SSL certificates) but give you full access to the server.
+
+For a VPS deployment, the general process is:
+
+1. Provision a server and SSH in.
+2. Install Docker.
+3. Copy your project files or clone from GitHub.
+4. Build and run: `docker build -t my-app . && docker run -d -p 80:8080 my-app`
+5. Set up a reverse proxy (Caddy is the simplest option for automatic SSL).
+
+### Platform Comparison Summary
+
+| Platform | Ease of Setup | Auto-scaling | Free Tier | Custom Domains | Best For |
+| --- | --- | --- | --- | --- | --- |
+| Railway | Very Easy | Yes | $5 credit | Yes | Quick migration, small-to-mid apps |
+| Render | Very Easy | Paid plans | Free (spins down) | Yes | Predictable pricing |
+| Cloud Run | Moderate | Yes (to zero) | Generous | Yes | Serverless, pay-per-use |
+| VPS | More work | Manual | No | Manual | Full control, cost efficiency |
+
+---
+
+## Part 2: Migrating Flutter Web Deployments
+
+Flutter Web applications are static assets after building. This means you have many hosting options, and most of them are free or very affordable.
+
+### Step 1: Build Your Flutter Web App
+
+Run the Flutter build command locally:
+
+```bash
+flutter build web --release
+```
+
+This creates a `build/web/` directory containing your compiled application (HTML, JavaScript, CSS, and assets).
+
+### Step 2: Choose a Hosting Platform
+
+**Firebase Hosting** (Recommended for Flutter developers)
+
+Firebase is a natural fit if you are already in the Flutter ecosystem.
+
+1. Install the Firebase CLI: `npm install -g firebase-tools`
+2. Log in: `firebase login`
+3. Initialize from your project root: `firebase init hosting`
+4. Set the public directory to `build/web`.
+5. Configure as a single-page app when prompted (answer "yes").
+6. Deploy: `firebase deploy --only hosting`
+
+Firebase Hosting is free for up to 10GB of storage and 10GB/month of data transfer.
+
+**Cloudflare Pages** (Recommended for performance)
+
+Cloudflare Pages offers excellent global performance with a generous free tier.
+
+1. Push your project to GitHub.
+2. Go to the [Cloudflare dashboard](https://dash.cloudflare.com) and create a new Pages project.
+3. Connect your GitHub repository.
+4. Set the build command to `flutter build web --release`.
+5. Set the output directory to `build/web`.
+6. Deploy.
+
+Note: Cloudflare Pages build environments do not have the Flutter SDK pre-installed. You have two options: build locally and push the `build/web/` directory, or add Flutter SDK installation to a custom build script.
+
+The simpler approach is to build locally and deploy the output:
+
+1. Run `flutter build web --release` locally.
+2. Use Wrangler to deploy: `npx wrangler pages deploy build/web --project-name=your-project`
+
+Cloudflare Pages free tier includes unlimited sites, unlimited bandwidth, and 500 builds per month.
+
+**Vercel**
+
+1. Push your project to GitHub.
+2. Import in the [Vercel dashboard](https://vercel.com).
+3. Set the output directory to `build/web`.
+4. Set the build command to `flutter build web --release` (same caveat about Flutter SDK availability as Cloudflare).
+5. Deploy.
+
+Alternatively, build locally and use the Vercel CLI: `vercel deploy build/web`
+
+**Netlify** follows a similar pattern: connect GitHub, configure the build, and deploy. Like the others, building locally and deploying the `build/web` output is the most reliable approach.
+
+### Flutter Web Hosting Comparison
+
+| Platform | Free Tier | Custom Domains | CDN | Build from Source |
+| --- | --- | --- | --- | --- |
+| Firebase Hosting | 10GB storage, 10GB/month | Yes | Yes | Yes (with setup) |
+| Cloudflare Pages | Unlimited bandwidth | Yes | Yes (330+ locations) | Requires custom build |
+| Vercel | 100GB bandwidth/month | Yes | Yes | Requires custom build |
+| Netlify | 100GB bandwidth/month | Yes | Yes | Requires custom build |
+
+---
+
+## Part 3: Migrating Jaspr Projects
+
+Jaspr projects come in three modes, and each requires a different migration approach.
+
+### Jaspr Static (mode: static)
+
+Static Jaspr projects are the simplest to migrate. Build locally and deploy the output to any static hosting provider.
+
+1. Build: `jaspr build`
+2. The output is in `build/jaspr/`. Deploy this directory to Cloudflare Pages, Firebase Hosting, Vercel, or Netlify using the same steps described in Part 2.
+
+### Jaspr Client (client-side rendering)
+
+Client-rendered Jaspr projects also produce static assets. Follow the same process as Jaspr Static. Build with `jaspr build` and deploy the `build/jaspr/` directory to a static hosting provider.
+
+### Jaspr Server (mode: server)
+
+Server-rendered Jaspr projects require a server runtime, similar to Dart backends. You will need to containerize and deploy to a platform that supports long-running servers.
+
+1. Build the project: `jaspr build`
+2. Create a Dockerfile:
+
+```dockerfile
+FROM dart:stable AS build
+
+WORKDIR /app
+COPY . .
+RUN dart pub get
+RUN dart run jaspr build
+RUN dart build cli --target build/jaspr/app.dart -o output
+
+FROM scratch
+COPY --from=build /runtime/ /
+COPY --from=build /app/output/bundle/ /app/
+COPY --from=build /app/build/jaspr/web /app/web
+EXPOSE 8080
+CMD ["/app/bin/app"]
+```
+
+Note: Verify the exact build output paths for your Jaspr version. The compiled server binary and static web assets both need to be included in the final image.
+
+3. Deploy using any platform from Part 1 (Railway, Render, Cloud Run, etc.).
+
+---
+
+## Part 4: Migrating Custom Domains
+
+If you connected a custom domain to your Globe project, here is how to point it to your new provider. Globe managed custom domains through Cloudflare DNS, so you previously added a CNAME record pointing to `domains.globeapp.dev`.
+
+### Step 1: Identify Your Current DNS Setup
+
+Log in to your domain registrar (the service where you purchased your domain, such as Namecheap, GoDaddy, Cloudflare Registrar, or Squarespace Domains). Navigate to the DNS management section and locate the CNAME record that currently points to `domains.globeapp.dev`.
+
+### Step 2: Update DNS Records for Your New Provider
+
+Each hosting platform provides its own target for custom domains. Here is what to change:
+
+**Railway:** In the Railway dashboard, go to your service settings and add your custom domain. Railway will give you a CNAME target (typically `*.up.railway.app`). Update your DNS record to point to this target.
+
+**Render:** In the Render dashboard, go to your service settings and add a custom domain. Render provides a CNAME target for subdomains or an A record for apex domains. Update your DNS accordingly.
+
+**Cloud Run:** Map your domain in the Cloud Run console under "Manage Custom Domains." Google provides the DNS records to configure.
+
+**Firebase Hosting:** In the Firebase console, go to the Hosting page and click "Add custom domain." Firebase walks you through domain verification (a TXT record) and then provides A records to point your domain to Firebase's servers.
+
+**Cloudflare Pages:** If your domain is already on Cloudflare, adding it to a Pages project is a one-click operation in the dashboard. If your domain is with another registrar, add a CNAME record pointing to your `*.pages.dev` subdomain.
+
+### Step 3: Wait for DNS Propagation
+
+After updating your DNS records, allow up to 24 hours for changes to propagate globally. In practice, most updates take effect within 1 to 2 hours.
+
+### Step 4: Verify SSL
+
+All recommended platforms automatically provision SSL certificates for custom domains. After DNS propagation, verify that your domain loads over HTTPS. If you see certificate errors, wait a bit longer. SSL provisioning typically completes within minutes of successful DNS verification but can take up to 24 hours in some cases.
+
+### Important: Timing the Switch
+
+To minimize downtime, we recommend this sequence:
+
+1. Deploy your application to the new platform first and verify it works on the platform's default URL.
+2. Then update your DNS records to point to the new platform.
+3. Keep your Globe project active (if possible) during DNS propagation so users hitting the old records still get a response.
+
+---
+
+## Part 5: Migrating Globe DB Data
+
+Globe DB is powered by Turso, a distributed SQLite-compatible database built on libSQL. Your data is stored in Turso's infrastructure, and there are clear paths to export it.
+
+### How to Request Your Data
+
+Contact us at **contact@globe.dev** with your Globe project name and database name(s). We will export your database as a `.sql` dump file or a `.db` SQLite file and deliver it to you.
+
+### What to Do With Your Exported Data
+
+Once you have your `.sql` dump or `.db` file, you have several options:
+
+**Continue with Turso directly.** You can create your own Turso account at [turso.tech](https://turso.tech) and import the data. Turso has a free tier (5GB storage, 500 million row reads/month, 10 million row writes/month). Import with:
+
+```bash
+turso db create my-new-database --from-dump my_data_dump.sql
+```
+
+Or if you have a `.db` file:
+
+```bash
+turso db import my_data_dump.db
+```
+
+**Move to local SQLite.** If your new deployment platform supports file-based storage (a VPS or any provider with persistent volumes), you can use SQLite directly. Load the dump into a local database:
+
+```bash
+sqlite3 my_local.db < my_data_dump.sql
+```
+
+**Migrate to another database.** If you want to move to PostgreSQL, MySQL, or another database system, use the SQL dump as a reference for your schema and write a migration script to transform the data. SQLite syntax is close to standard SQL, so most `CREATE TABLE` and `INSERT` statements will transfer with minor modifications.
+
+---
+
+## Part 6: Migrating Globe KV Data
+
+Globe KV is powered by Cloudflare Workers KV under the hood. KV data is stored as key-value pairs in a Cloudflare namespace.
+
+### How to Request Your Data
+
+Contact us at **contact@globe.dev** with your project name and KV namespace ID(s). We will export your KV data and deliver it as a JSON file in the following format:
+
+```json
+{
+  "key-1": "value-1",
+  "key-2": "value-2",
+  "key-3": "{\"nested\": \"json-value\"}"
+}
+```
+
+### What to Do With Your Exported KV Data
+
+**Redis.** If your new platform supports Redis (most do), you can import your KV data into a Redis instance. Services like Upstash offer serverless Redis with a free tier. Load your exported JSON and write each key-value pair:
+
+```dart
+// Pseudocode for loading into Redis
+final kvData = jsonDecode(File('kv_export.json').readAsStringSync());
+for (final entry in kvData.entries) {
+  await redis.set(entry.key, entry.value);
+}
+```
+
+**Cloudflare KV directly.** If you are deploying to Cloudflare Pages or Workers, you can create your own Cloudflare account and KV namespace, then bulk-write the data using the Wrangler CLI:
+
+```bash
+# Format your data as a JSON array
+# [{"key": "key-1", "value": "value-1"}, ...]
+wrangler kv bulk put kv_data.json --namespace-id=YOUR_NEW_NAMESPACE_ID
+```
+
+**In-application storage.** For small datasets, consider storing the data directly in your database (Globe DB replacement or any SQL/NoSQL database) instead of maintaining a separate KV store.
+
+---
+
+## Migration Checklist
+
+Use this checklist to make sure you have covered everything.
+
+**Deployment:**
+
+- [ ] Source code is accessible (local or GitHub)
+- [ ] Dockerfile is created and tested locally
+- [ ] Application starts and responds on the expected port
+- [ ] New platform is selected and account is created
+- [ ] Application is deployed and accessible on the platform's default URL
+- [ ] All environment variables are configured on the new platform
+
+**Custom Domains:**
+
+- [ ] Domain registrar credentials are accessible
+- [ ] DNS records are updated to point to the new platform
+- [ ] SSL certificate is provisioned and working
+- [ ] Application is accessible via the custom domain over HTTPS
+
+**Globe DB:**
+
+- [ ] Database is exported (SQL dump or .db file)
+- [ ] Data integrity is verified (row counts, sample queries)
+- [ ] Data is imported into the new database solution
+- [ ] Application is updated to connect to the new database
+- [ ] Application reads and writes work correctly with the new database
+
+**Globe KV:**
+
+- [ ] KV data is exported (JSON file)
+- [ ] Data is imported into the replacement service (Redis, Cloudflare KV, or database)
+- [ ] Application is updated to use the new KV connection
+- [ ] Read and write operations work correctly
+
+**Final Verification:**
+
+- [ ] All application features work end-to-end on the new platform
+- [ ] Performance is acceptable
+- [ ] Monitoring and logging are configured (if applicable)
+
+---
+
+## Getting Help
+
+For framework-specific questions, these community resources can help:
+
+- **Dart Frog:** [GitHub](https://github.com/dart-frog-dev/dart_frog) and [documentation](https://dart-frog.dev/)
+- **Shelf:** [pub.dev documentation](https://pub.dev/packages/shelf)
+- **Jaspr:** [jaspr.site](https://jaspr.site/) and [GitHub](https://github.com/schultek/jaspr)
+- **Serinus:** [pub.dev documentation](https://pub.dev/packages/serinus)
+- **Flutter Web:** [flutter.dev/web](https://flutter.dev/web)
+
+For platform-specific deployment help:
+
+- **Railway:** [docs.railway.com](https://docs.railway.com)
+- **Render:** [render.com/docs](https://render.com/docs)
+- **Google Cloud Run:** [cloud.google.com/run/docs](https://cloud.google.com/run/docs)
+- **Firebase Hosting:** [firebase.google.com/docs/hosting](https://firebase.google.com/docs/hosting)
+- **Cloudflare Pages:** [developers.cloudflare.com/pages](https://developers.cloudflare.com/pages)
+- **Turso:** [docs.turso.tech](https://docs.turso.tech)
+
+We want to extend a massive thank you to everyone who used Globe, provided feedback, and helped us shape the developer experience for full-stack Dart.
