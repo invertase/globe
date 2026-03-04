@@ -25,8 +25,7 @@ If you need any further support, please contact us at contact@globe.dev and incl
 
 ---
 
-<span id="before-you-begin" style="display: block; height: 0; padding-top: 8rem; margin-top: -8rem;" aria-hidden="true"></span>
-<h2>Before You Begin</h2>
+## Before You Begin
 
 Take a moment to inventory what you are using on Globe. This will help you plan your migration.
 
@@ -52,8 +51,7 @@ Take a moment to inventory what you are using on Globe. This will help you plan 
 
 ---
 
-<span id="part-1-migrating-dart-backend-deployments" style="display: block; height: 0; padding-top: 8rem; margin-top: -8rem;" aria-hidden="true"></span>
-<h2>Part 1: Migrating Dart Backend Deployments</h2>
+## Part 1: Migrating Dart Backend Deployments
 
 Globe ran your Dart backend code in serverless containers. To move to another platform, you will need to containerize your application with Docker. The good news: Dart has official Docker support, and the process is straightforward regardless of which framework you use.
 
@@ -253,8 +251,7 @@ For a VPS deployment, the general process is:
 
 ---
 
-<span id="part-2-migrating-flutter-web-deployments" style="display: block; height: 0; padding-top: 8rem; margin-top: -8rem;" aria-hidden="true"></span>
-<h2>Part 2: Migrating Flutter Web Deployments</h2>
+## Part 2: Migrating Flutter Web Deployments
 
 Flutter Web applications are static assets after building. This means you have many hosting options, and most of them are free or very affordable.
 
@@ -326,8 +323,7 @@ Alternatively, build locally and use the Vercel CLI: `vercel deploy build/web`
 
 ---
 
-<span id="part-3-migrating-jaspr-projects" style="display: block; height: 0; padding-top: 8rem; margin-top: -8rem;" aria-hidden="true"></span>
-<h2>Part 3: Migrating Jaspr Projects</h2>
+## Part 3: Migrating Jaspr Projects
 
 Jaspr projects come in three modes, and each requires a different migration approach.
 
@@ -372,8 +368,7 @@ Note: Verify the exact build output paths for your Jaspr version. The compiled s
 
 ---
 
-<span id="part-4-migrating-custom-domains" style="display: block; height: 0; padding-top: 8rem; margin-top: -8rem;" aria-hidden="true"></span>
-<h2>Part 4: Migrating Custom Domains</h2>
+## Part 4: Migrating Custom Domains
 
 If you connected a custom domain to your Globe project, here is how to point it to your new provider. Globe managed custom domains through Cloudflare DNS, so you previously added a CNAME record pointing to `domains.globeapp.dev`.
 
@@ -413,8 +408,7 @@ To minimize downtime, we recommend this sequence:
 
 ---
 
-<span id="part-5-migrating-globe-db-data" style="display: block; height: 0; padding-top: 8rem; margin-top: -8rem;" aria-hidden="true"></span>
-<h2>Part 5: Migrating Globe DB Data</h2>
+## Part 5: Migrating Globe DB Data
 
 Globe DB is powered by Turso, a distributed SQLite-compatible database built on libSQL. Your data is stored in Turso's infrastructure, and there are clear paths to export it.
 
@@ -448,8 +442,7 @@ sqlite3 my_local.db < my_data_dump.sql
 
 ---
 
-<span id="part-6-migrating-globe-kv-data" style="display: block; height: 0; padding-top: 8rem; margin-top: -8rem;" aria-hidden="true"></span>
-<h2>Part 6: Migrating Globe KV Data</h2>
+## Part 6: Migrating Globe KV Data
 
 Globe KV is powered by Cloudflare Workers KV under the hood. KV data is stored as key-value pairs in a Cloudflare namespace.
 
@@ -489,8 +482,7 @@ wrangler kv bulk put kv_data.json --namespace-id=YOUR_NEW_NAMESPACE_ID
 
 ---
 
-<span id="migration-checklist" style="display: block; height: 0; padding-top: 8rem; margin-top: -8rem;" aria-hidden="true"></span>
-<h2>Migration Checklist</h2>
+## Migration Checklist
 
 Use this checklist to make sure you have covered everything.
 
