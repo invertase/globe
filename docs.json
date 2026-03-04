@@ -59,6 +59,10 @@
       "tab": "root",
       "pages": [
         {
+          "title": "Platform Migration Guide",
+          "href": "/migration"
+        },
+        {
           "title": "Overview",
           "href": "/"
         },
