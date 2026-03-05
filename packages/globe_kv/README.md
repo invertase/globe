@@ -1,5 +1,7 @@
 # 🌍 GlobeKV - Key-Value Storage for Dart Applications, backed by [Globe](https://globe.dev).
 
+> **Notice:** As of 3 April 2026, this package is no longer maintained following the closure of Globe.dev.
+
 GlobeKV is an eventually-consistent data storage system for storing and retrieving data from a global datastore, designed for high-reads at low latency. 
 
 GlobeKV features:
