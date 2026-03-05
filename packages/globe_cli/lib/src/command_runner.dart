@@ -82,12 +82,16 @@ class GlobeCliCommandRunner extends CompletionCommandRunner<int> {
 
   final Logger _logger;
   final PubUpdater _pubUpdater;
+  static const _shutdownWarning =
+      '[!] IMPORTANT: Globe will shut down on Friday 3 April 2026 at 5pm GMT. [Migrate your projects] before the deadline.';
 
   @override
   void printUsage() => _logger.info(usage);
 
   @override
   Future<int> run(Iterable<String> args) async {
+    _logger.warn(_shutdownWarning);
+
     final GlobeMetadata metadata;
 
     try {
