@@ -84,8 +84,7 @@ class GlobeCliCommandRunner extends CompletionCommandRunner<int> {
   final PubUpdater _pubUpdater;
   static const _shutdownWarning =
       '[!] IMPORTANT: Globe will shut down on Friday 3 April 2026 at 5pm GMT.';
-  static const _migrationMessage =
-      'Migrate your projects before the deadline:';
+  static const _migrationMessage = 'Migrate your projects before the deadline:';
   static const _migrationUrl =
       'https://github.com/invertase/globe/blob/main/docs/migration.mdx';
 
