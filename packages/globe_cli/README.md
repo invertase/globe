@@ -23,6 +23,8 @@
 
 ---
 
+> **Notice:** As of 3 April 2026, this package is no longer maintained following the closure of Globe.dev.
+
 # CLI
 
 The Globe CLI is a command line tool that allows you to interact with your Globe account and deploy from the command line. It is not required to use Globe, but it can be useful for some workflows.
